@@ -1,0 +1,6 @@
+- Club system.
+- Tournament system.
+- Club matchmaking.
+- Replace account and character ids with session ids for security.
+- Possible: Room master must be room host.
+- Udp authentication support. Is this actually needed?
