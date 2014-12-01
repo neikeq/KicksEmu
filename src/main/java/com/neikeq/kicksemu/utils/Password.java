@@ -1,17 +1,12 @@
 package com.neikeq.kicksemu.utils;
 
-import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class Password {
-    private static final int SALT_LENGTH = 24;
-    private static final int HASH_LENGTH = 24;
-    private static final int ITERATIONS = 1000;
 
     // SHA-256
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
@@ -22,19 +17,6 @@ public class Password {
         SecretKeyFactory skf = SecretKeyFactory.getInstance(ALGORITHM);
 
         return skf.generateSecret(spec).getEncoded();
-    }
-
-    private static String create(String password)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] salt = new byte[SALT_LENGTH];
-
-        new SecureRandom().nextBytes(salt);
-
-        byte[] hash = hash(password, salt, ITERATIONS, HASH_LENGTH);
-
-        return ITERATIONS + "$" +
-                bytesToString(salt) + "$" +
-                bytesToString(hash);
     }
 
     public static boolean validate(String password, String correctPassword)
@@ -49,16 +31,6 @@ public class Password {
         byte[] hash = hash(password, salt, iterations, correctHash.length);
 
         return compare(correctHash, hash);
-    }
-
-    public static String bytesToString(byte[] array) {
-        String result = new BigInteger(1, array).toString(16);
-
-        if (result.length() % 2 != 0) {
-            result = "0" + result;
-        }
-
-        return result;
     }
 
     public static byte[] stringToBytes(String str) {
