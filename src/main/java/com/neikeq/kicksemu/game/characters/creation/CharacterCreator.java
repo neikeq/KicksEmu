@@ -56,7 +56,7 @@ public class CharacterCreator {
                     " stats_tackling, stats_heading, stats_short_shots, stats_long_shots," +
                     " stats_crossing, stats_short_passes, stats_long_passes, stats_marking," +
                     " stats_goalkeeping, stats_punching, stats_defense, inventory_items," +
-                    " inventory_training, inventory_skills, inventory_celebrations, friends)" +
+                    " inventory_training, inventory_skills, inventory_celebration, friends)" +
                     " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
             try (PreparedStatement stmt = con.prepareStatement(creation_query)) {
@@ -106,6 +106,7 @@ public class CharacterCreator {
                 }
             }
         } catch (SQLException e) {
+            System.err.println(e.getMessage());
             characterId = -1;
         }
 
