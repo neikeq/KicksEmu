@@ -17,8 +17,6 @@ Requires **JDK 8**.
 
 ##### Ant
 
-First, make sure the value of `jdk.home.1.8` in `build.properties` is pointing to a valid jdk.
-
 Compile:
 
 ```
