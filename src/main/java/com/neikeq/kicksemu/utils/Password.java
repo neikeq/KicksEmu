@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.utils;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -25,22 +26,16 @@ public class Password {
 
         int iterations = Integer.parseInt(stored[0]);
 
-        byte[] salt = stringToBytes(stored[1]);
-        byte[] correctHash = stringToBytes(stored[2]);
+        byte[] salt = stored[1].getBytes();
+        byte[] correctHash = fromBase64(stored[2]);
 
         byte[] hash = hash(password, salt, iterations, correctHash.length);
 
         return compare(correctHash, hash);
     }
 
-    public static byte[] stringToBytes(String str) {
-        byte[] result = new byte[str.length() / 2];
-
-        for(int i = 0; i < str.length(); i += 2) {
-            result[i / 2] = (byte)Integer.parseInt(str.substring(i, i + 2), 16);
-        }
-
-        return result;
+    public static byte[] fromBase64(String str) {
+        return Base64.getDecoder().decode(str.getBytes());
     }
 
     public static boolean compare(byte[] a, byte[] b) {
