@@ -480,7 +480,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage changeStatusMessage(String statusMessage, byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.CHANGE_STATUS_MESSAGE);
+        ServerMessage msg = new ServerMessage(MessageId.STATUS_MESSAGE);
 
         msg.append(result);
         msg.append((byte)(result == 0 ? 0 : 255));

@@ -21,7 +21,7 @@ public class MessageId {
     public static final int TRAINING_LIST = 2102;
     public static final int SKILL_LIST = 2103;
     public static final int CELEBRATION_LIST = 2104;
-    public static final int CHANGE_STATUS_MESSAGE = 2150;
+    public static final int STATUS_MESSAGE = 2150;
     public static final int ROOM_LIST = 2200;
     public static final int CREATE_ROOM = 2201;
     public static final int JOIN_ROOM = 2202;
@@ -36,5 +36,5 @@ public class MessageId {
     public static final int LOBBY_LIST = 2318;
     public static final int CHAT_MESSAGE = 2320;
     public static final int UPDATE_SETTINGS = 2901;
-    public static final int UDP_AUTHENTICATE = 3001;
+    public static final int UDP_CHECK = 3001;
 }

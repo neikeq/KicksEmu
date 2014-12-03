@@ -20,7 +20,7 @@ public class StatusMessage {
     private static final List<String> censuredWords =
             Arrays.asList();
 
-    public static void changeStatusMessage(Session session, ClientMessage msg) {
+    public static void statusMessage(Session session, ClientMessage msg) {
         String statusMessage = msg.readString(35);
 
         byte result = 0;
