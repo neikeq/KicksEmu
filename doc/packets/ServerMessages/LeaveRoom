@@ -1,0 +1,10 @@
+// LeaveRoom
+// Tcp
+
+Id: 2310
+Size: 10
+
+Data:
+int packet_id
+short reason
+int character_id

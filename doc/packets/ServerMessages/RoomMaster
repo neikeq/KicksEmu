@@ -1,0 +1,10 @@
+// RoomMaster
+// Tcp
+
+Id: 2311
+Size: 10
+
+Data:
+int packet_id
+short set_new // If not zero, there won't be new host
+int player_id

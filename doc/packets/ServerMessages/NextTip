@@ -1,0 +1,13 @@
+// NextTip
+// Tcp
+
+Id: 2204
+Size: 128
+
+Data:
+int packet_id
+byte reason
+byte response
+byte golden_time
+byte club_time
+char[120] tip_message

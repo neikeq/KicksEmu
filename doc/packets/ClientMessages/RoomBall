@@ -1,0 +1,10 @@
+// RoomBall
+// Tcp
+
+Id: 2315
+Size: 8
+
+Data:
+int packet_id
+short room_id
+short ball

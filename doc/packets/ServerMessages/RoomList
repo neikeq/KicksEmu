@@ -1,0 +1,26 @@
+// RoomList
+// Tcp
+
+Id: 2200
+Size: 328
+
+Data:
+int packet_id
+byte reason
+byte response
+short page_index
+// Apply the following for each room
+byte type // Free: 1, Password: 2
+byte status // Waiting: 0, Playing: 1
+short number
+char[44] name
+int unknown
+byte min_level
+byte max_level
+byte max_size
+byte size
+/*
+ * List of player's positions inside room
+ * A byte per character position
+ */
+char[10] positions

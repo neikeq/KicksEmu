@@ -1,0 +1,183 @@
+// RoomPlayerInfo
+// Tcp
+
+Id: 2301
+Size: 1584
+
+Data:
+int packet_id
+short visible // 2 bytes boolean
+int character_id
+char[15] name
+char[15] club_name
+short team // Red: 0, Blue: 1
+bool observer
+short unknown
+int country // flag
+short unknown
+char[16] player_ip
+short unknown
+short level
+int experience
+short stats_points
+int kash
+int points
+char[8]
+short tickets_kash
+short tickets_points
+short unknown
+short animation // Boy: 1, Girl: 2
+short face
+int default_head
+int default_shirts
+int default_pants
+int default_shoes
+short position
+char[9] unknown
+// Stats
+short running
+short endurance
+short agility
+short ball_control
+short dribbling
+short stealing
+short tackling
+short heading
+short short_shots
+short long_shots
+short crossing
+short short_passes
+short long_passes
+short marking
+short goalkeeping
+short punching
+short defense
+// Training points
+short training_running
+short training_endurance
+short training_agility
+short training_ball_control
+short training_dribbling
+short training_stealing
+short training_tackling
+short training_heading
+short training_short_shots
+short training_long_shots
+short training_crossing
+short training_short_passes
+short training_long_passes
+short training_marking
+short training_goalkeeping // Should not be allowed to buy this training
+short training_punching // Should not be allowed to buy this training
+short training_defense // Should not be allowed to buy this training
+// Bonus points
+short bonus_running
+short bonus_endurance
+short bonus_agility
+short bonus_ball_control
+short bonus_dribbling
+short bonus_stealing
+short bonus_tackling
+short bonus_heading
+short bonus_short_shots
+short bonus_long_shots
+short bonus_crossing
+short bonus_short_passes
+short bonus_long_passes
+short bonus_marking
+short bonus_goalkeeping
+short bonus_punching
+short bonus_defense
+/*
+ * Items in use (fill non-used with zeros)
+ * Send the following for:
+ * Head, Glasses, Shirts, Pants, Glove, Shoes, Socks, Wrist, Arm, Knee, Ear, Neck, Mask, Muffler, Package
+ */
+int inventory_id
+int item_id
+bool selected
+/*
+ * Expiration codes:
+ * matches: 1, values: 10, 50, 100
+ * days: 2, values: 7, 30, 999 (permanent)
+ * 
+ * Making:
+ * decimal: 2 digits (90 + expiration type), 2 digits (01), 3 digits (expiration values)
+ * example: 9201030 -> 30 days, 9201999 -> permanent, 9101050 -> 50 matches
+ */
+int expiration
+/*
+ * Stat index:
+ * running: 1, endurance: 2, agility: 3, ball_controll: 4, dribbling: 5, stealing: 6,
+ * tackling: 7, heading: 8, short_shoots: 9, long_shoots: 10, crossing: 11,
+ * short_passes: 12, long_passes: 13, marking: 14, goalkeeping: 15, punching: 16, defense: 17
+ * 
+ * Bonus type codes:
+ * stats: 10 + stat index, values: 1 to 10
+ * experience bonus: 31, values: 100, 200
+ * points bonus: 32, values: 100, 200
+ * skill slot: 33, values: 3, 6
+ * 
+ * Making:
+ * decimal: 2 digits (bonus tye), 2 digits (01), 3 digits (bonus value)
+ * example: 2301008 -> +8 long shooting, 3301003 -> +3 skill slots, 3101200 -> +200% exp bonux
+ */
+int stats_bonus_one
+int stats_bonus_two
+short usages_remain // Only readed for usage items
+int timestamp_expire
+bool visible // Still usable even if not visible
+// Club uniform
+int home_shirts
+int home_pants
+int home_socks
+int home_wrist
+int away_shirts
+int away_pants
+int away_socks
+int away_wrist
+/*
+ * Skills in use (fill non-used with zeros)
+ * Send the following 30 times:
+ */
+int inventory_id
+int skill_id
+byte selection_index // Not selected: 0, Selected: Index
+/*
+ * Expiration type codes:
+ * matches: 1, values: 10, 50, 100
+ * days: 2, values: 7, 30, 999 (permanent)
+ * 
+ * Making:
+ * decimal: 2 digits (90 + expiration type), 2 digits (01), 3 digits (expiration values)
+ * example: 9201030 -> 30 days, 9201999 -> permanent, 9101050 -> 50 matches
+ */
+int expiration
+int unknown // Ignored
+int unknown // Ignored
+int timestamp_expire
+bool visible // Still usable even if not visible
+/*
+ * Celebrations in use (fill non-used with zeros)
+ * Send the following 5 times:
+ */
+int inventory_id
+short celebration_id
+byte selection_index // Not selected: 0, Selected: Index
+/*
+ * Expiration type codes:
+ * matches: 1, values: 10, 50, 100
+ * days: 2, values: 7, 30, 999 (permanent)
+ * 
+ * Making:
+ * decimal: 2 digits (90 + expiration type), 2 digits (01), 3 digits (expiration values)
+ * example: 9201030 -> 30 days, 9201999 -> permanent, 9101050 -> 50 matches
+ */
+int expiration
+int unknown // Ignored
+int unknown // Ignored
+int timestamp_expire
+bool visible // Still usable even if not visible
+
+Notes:
+// Send this packet for each character in room, including the receiver

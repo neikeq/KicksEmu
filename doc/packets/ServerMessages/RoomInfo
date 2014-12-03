@@ -1,0 +1,38 @@
+// RoomInfo
+// Tcp
+
+Id: 2300
+Size: 71
+
+Data:
+int packet_id
+byte reason
+byte response
+byte type
+short room_id
+char[45] name // Client allows to type just 30 digits
+char[4] password
+byte unknown
+int master_id
+/*
+ * Goalkeeper mode codes:
+ * AI: 0, Player: 1, Training 1: 2, Training 2: 3, Training 3: 4
+ * Strangeness:
+ * Higher values are the same as AI mode, but GK's ball clearing is way shorter
+ * Player mode is not supported by the client, so there won't be any gk during the match
+ */
+byte goalkeeper_mode
+byte min_level
+byte max_level
+/*
+ * Map codes:
+ * A Back Street: 1, A Main Street: 2, A Slum: 3, Roof Arena: 4, E-Park: 5, Construction: 6,
+ * Training Camp: 7, Factory: 8, Country Summer: 9, Country Winter: 10, Reservoir: 11, Old Town: 12
+ */
+short map
+/*
+ * Ball codes:
+ * Star: 1, Tango: 2, Quest: 3, Try: 4, FeverHeat: 5, TeamArena: 6, T-10Y: 7, T-10W: 8, John's Eye: 9
+ */
+short ball
+byte maxSize // 3v3: 6, 4v4: 8, 5v5: 10

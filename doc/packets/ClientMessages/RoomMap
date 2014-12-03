@@ -1,0 +1,10 @@
+// RoomMap
+// Tcp
+
+Id: 2314
+Size: 8
+
+Data:
+int packet_id
+short room_id
+short map

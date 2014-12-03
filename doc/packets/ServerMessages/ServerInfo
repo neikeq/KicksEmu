@@ -1,0 +1,22 @@
+// ServerInfo
+// Tcp
+
+Id: 1201
+Size: 32
+
+Data:
+int packet_id
+byte reason
+/*
+ * You cannot access private server: 251
+ * You need to be a club member: 252
+ * Level not allowed: 253
+ * Server is full: 254
+ */
+byte response // Rejected: 255, Success: 0
+short server_id
+short unknown
+short min_level
+short max_level
+char[16] server_ip
+short server_port

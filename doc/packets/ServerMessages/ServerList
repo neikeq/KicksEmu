@@ -1,0 +1,20 @@
+// ServerList
+// Tcp
+
+Id: 1200
+Size: 8 + 75 per server
+
+Data:
+int packet_id
+byte reason
+byte response
+short amount
+// Send the following for each server
+short server_id
+char[30] name
+byte status // Online: 1, Offline: 0
+short max_users
+short connected_users
+char[16] server_ip
+short port
+char[20] unknwon

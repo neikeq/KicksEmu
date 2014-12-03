@@ -1,0 +1,12 @@
+// GameExit
+// Tcp
+
+Id: 2001
+Size: 28
+
+Data:
+int packet_id
+short unknown
+int character_id
+char[16] player_ip // not needed ?
+short unknown

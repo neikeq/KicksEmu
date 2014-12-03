@@ -1,0 +1,35 @@
+// SkillList
+// Tcp
+
+Id: 2103
+Size: 9 + 26 per skill
+
+Data:
+int packet_id
+byte reason // Invalid information: 254, System problem: 255
+byte response // Success: 0, Rejected: 255
+/*
+ * Pages:
+ * Amount of items, increased (if necessary) to be divisible by 6 (rows per page)
+ * calculation: amount + (6 - amount <modulus %> 6)
+ */
+byte pages
+short amount
+// Apply the following for each skill
+int inventory_id
+int skill_id
+byte selection_index // Not selected: 0, Selected: Index
+/*
+ * Expiration type codes:
+ * matches: 1, values: 10, 50, 100
+ * days: 2, values: 7, 30, 999 (permanent)
+ * 
+ * Making:
+ * decimal: 2 digits (90 + expiration type), 2 digits (01), 3 digits (expiration values)
+ * example: 9201030 -> 30 days, 9201999 -> permanent, 9101050 -> 50 matches
+ */
+int expiration
+int unknown // Ignored
+int unknown // Ignored
+int timestamp_expire
+bool visible // Still usable even if not visible

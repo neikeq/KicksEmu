@@ -1,0 +1,10 @@
+// GameLogin
+// Tcp
+
+Id: 2000
+Size: 12
+
+Data:
+int packet_id
+int account_id
+int character_id

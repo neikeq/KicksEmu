@@ -1,0 +1,11 @@
+ClientMessages:
+// Header is not encrypted
+// The encryption method is very simple. Just Xor each byte by 229
+// Pseudo code:
+
+FOR i = 0 TO body_length
+    decrypted[i] = encrypted[i] XOR 229
+ENDFOR
+
+ServerMessages:
+// Server messages are not encrypted

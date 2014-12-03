@@ -1,0 +1,16 @@
+// ServerList
+// Tcp
+
+Id: 1200
+Size: 6
+
+Data:
+int packet_id
+/*
+ * Server filters:
+ * Noobice (Default): 1,
+ * Practice: 8,
+ * Free: 9,
+ * League 1: 11, League 2: 12, League 3: 13
+ */
+short server_filter

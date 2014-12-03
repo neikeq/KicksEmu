@@ -1,0 +1,9 @@
+// StatusMessage
+// Tcp
+
+Id: 2150
+Size: 39
+
+Data:
+int packet_id
+char[35] status_message

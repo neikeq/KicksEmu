@@ -1,0 +1,226 @@
+// PlayerInfo
+// Tcp
+
+Id: 2100
+Size: 1001
+
+Data:
+int packet_id
+byte reason
+byte response
+int character_id
+int unknown
+char[50] unknown
+char[15] name
+char[15] club_name
+char[35] status_message
+short quest_current // 1 to 4 (where 4 means finished)
+short quest_matches_remain
+byte tutorial_dribbling
+byte tutorial_passing
+byte tutorial_shooting
+byte tutorial_defense
+char[24] unknown
+short level
+int experience
+short stats_points
+int kash
+int points
+char[8]
+short tickets_kash
+short tickets_points
+short unknown
+short animation // Boy: 1, Girl: 2
+short face
+int default_head
+int default_shirts
+int default_pants
+int default_shoes
+short position
+char[6] unknown
+// Stats
+short running
+short endurance
+short agility
+short ball_control
+short dribbling
+short stealing
+short tackling
+short heading
+short short_shots
+short long_shots
+short crossing
+short short_passes
+short long_passes
+short marking
+short goalkeeping
+short punching
+short defense
+// Training points
+short training_running
+short training_endurance
+short training_agility
+short training_ball_control
+short training_dribbling
+short training_stealing
+short training_tackling
+short training_heading
+short training_short_shots
+short training_long_shots
+short training_crossing
+short training_short_passes
+short training_long_passes
+short training_marking
+short training_goalkeeping // Should not be allowed to buy this training
+short training_punching // Should not be allowed to buy this training
+short training_defense // Should not be allowed to buy this training
+// Bonus points
+short bonus_running
+short bonus_endurance
+short bonus_agility
+short bonus_ball_control
+short bonus_dribbling
+short bonus_stealing
+short bonus_tackling
+short bonus_heading
+short bonus_short_shots
+short bonus_long_shots
+short bonus_crossing
+short bonus_short_passes
+short bonus_long_passes
+short bonus_marking
+short bonus_goalkeeping
+short bonus_punching
+short bonus_defense
+// History
+int history_matches
+int history_wins
+int history_draws
+int history_MOM
+int history_valid_goals
+int history_valid_assists
+int history_valid_interception
+int history_valid_shooting
+int history_valid_stealing
+int history_valid_tackling
+int history_unknown
+int history_shooting
+int history_stealing
+int history_tackling
+int history_unknown
+int history_total_points
+// history last month
+int history_month_matches
+int history_month_wins
+int history_month_draws
+int history_month_MOM
+int history_month_valid_goals
+int history_month_valid_assists
+int history_month_valid_interception
+int history_month_valid_shooting
+int history_month_valid_stealing
+int history_month_valid_tackling
+int history_month_unknown
+int history_month_shooting
+int history_month_stealing
+int history_month_tackling
+int history_month_unknown
+int history_month_total_points
+// ranking
+short ranking_matches
+short ranking_wins
+short ranking_points
+short ranking_MOM
+short ranking_valid_goals
+short ranking_valid_assists
+short ranking_valid_interception
+short ranking_valid_shooting
+short ranking_valid_stealing
+short ranking_valid_tackling
+short ranking_unknown // -1
+short ranking_avg_goals
+short ranking_avg_assists
+short ranking_avg_interception
+short ranking_avg_shooting
+short ranking_avg_stealing
+short ranking_avg_tackling
+short ranking_unknown // -1
+short ranking_avg_vote_points
+short ranking_shooting
+short ranking_stealing
+short ranking_tackling
+short ranking_unknown // -1
+short ranking_total_points
+// ranking last month
+short ranking_month_matches
+short ranking_month_wins
+short ranking_month_points
+short ranking_month_MOM
+short ranking_month_valid_goals
+short ranking_month_valid_assists
+short ranking_month_valid_interception
+short ranking_month_valid_shooting
+short ranking_month_valid_stealing
+short ranking_month_valid_tackling
+short ranking_month_unknown // -1
+short ranking_month_avg_goals
+short ranking_month_avg_assists
+short ranking_month_avg_interception
+short ranking_month_avg_shooting
+short ranking_month_avg_stealing
+short ranking_month_avg_tackling
+short ranking_month_unknown // -1
+short ranking_month_avg_vote_points
+short ranking_month_shooting
+short ranking_month_stealing
+short ranking_month_tackling
+short ranking_month_unknown // -1
+short ranking_month_total_points
+/*
+ * Items in use
+ * Send the following for:
+ * Head, Glasses, Shirts, Pants, Glove, Shoes, Socks, Wrist, Arm, Knee, Ear, Neck, Mask, Muffler, Package
+ */
+int inventory_id
+int item_id
+bool selected
+/*
+ * Expiration type codes:
+ * matches: 1, values: 10, 50, 100
+ * days: 2, values: 7, 30, 999 (permanent)
+ * 
+ * Making:
+ * decimal: 2 digits (90 + expiration type), 2 digits (01), 3 digits (expiration values)
+ * example: 9201030 -> 30 days, 9201999 -> permanent, 9101050 -> 50 matches
+ */
+int expiration
+/*
+ * Stat Index:
+ * running: 1, endurance: 2, agility: 3, ball_control: 4, dribbling: 5, stealing: 6,
+ * tackling: 7, heading: 8, short_shoots: 9, long_shoots: 10, crossing: 11,
+ * short_passes: 12, long_passes: 13, marking: 14, goalkeeping: 15, punching: 16, defense: 17
+ * 
+ * Bonus type codes:
+ * stats: 10 + stat index, values: 1 to 10
+ * experience bonus: 31, values: 100, 200
+ * points bonus: 32, values: 100, 200
+ * skill slot: 33, values: 3, 6
+ * 
+ * Making:
+ * decimal: 2 digits (bonus tye), 2 digits (01), 3 digits (bonus value)
+ * example: 2301008 -> +8 long shooting, 3301003 -> +3 skill slots, 3101200 -> +200% exp bonux
+ */
+int stats_bonus_one
+int stats_bonus_two
+short usages_remain // Only readed for usage items
+int timestamp_expire
+bool visible // Still usable even if not visible
+// Club uniform
+int home_shirts
+int home_pants
+int home_socks
+int home_wrist
+int away_shirts
+int away_pants
+int away_socks
+int away_wrist

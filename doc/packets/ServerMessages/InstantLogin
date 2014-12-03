@@ -1,0 +1,24 @@
+// InstantLogin
+// Tcp
+
+Id: 1002
+Size: 10
+
+Data:
+int packet_id
+byte reason
+/*
+ * Success: 0
+ * Term of validity expired, buy new KASH pack: 246
+ * Account blocked: 247
+ * Wrong client version: 248
+ * Server is full: 249
+ * Authentication server failure: 250
+ * Access server failure: 251
+ * Already connected: 252
+ * Wrong password: 253
+ * Invalid account: 254
+ * System found a problem: 255
+ */
+byte response // Success: 0, Rejected: 255
+int account_id

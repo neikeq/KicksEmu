@@ -1,0 +1,18 @@
+// LobbyList
+// Tcp
+
+Id: 2318
+Size: 587
+
+Data:
+int packet_id
+byte reason
+byte response
+byte page_index
+// Apply the following for each player
+bool visible
+int character_id
+char[15] name
+short level
+byte position
+char[35] status

@@ -1,0 +1,22 @@
+// ChatMessage
+// Tcp
+
+Id: 2320
+Size: 127
+
+Data:
+int packet_id
+byte reason
+byte response
+int character_id
+char[15] character_name
+/*
+ * Message type codes:
+ * Normal: 0, Team: 1, Moderator: 4, Whisper from: 5, Whisper to: 6, Club: 7,
+ * Character does not exist: 8 (when whispering to an invalid or offline user),
+ * Server Notice: 9, Server: 10/15, Tournament will start soon: 11,
+ * [$CLUB_NAME] Club is the winner: 12 (where message is $CLUB_NAME),
+ * [0R 0Match] $message: 13, [0R 0Match] $CLUB_NAME win by default: 14 (where message is $CLUB_NAME)
+ */
+byte message_type
+char[101] message // Maximum message length is 55

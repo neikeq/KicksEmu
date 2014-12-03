@@ -1,0 +1,16 @@
+// CreateCharacter
+// Tcp
+
+Id: 1101
+Size: 6
+
+Data:
+int packet_id
+byte reason
+/*
+ * Problem with the character: 252
+ * Account already has 3 characters: 253
+ * Invalid name or already in use: 254
+ * System found a problem: 255
+ */
+byte response // Success: 0, Rejected: 255

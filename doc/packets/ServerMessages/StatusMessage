@@ -1,0 +1,15 @@
+// StatusMessage
+// Tcp
+
+Id: 2150
+Size: 41
+
+Data:
+int packet_id
+byte reason
+/*
+ * Invalid word or characters: 254
+ * System problem: 255
+ */
+byte response
+char[35] status_message

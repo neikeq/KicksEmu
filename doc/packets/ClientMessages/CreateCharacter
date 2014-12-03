@@ -1,0 +1,53 @@
+// CreateCharacter
+// Tcp
+
+Id: 1101
+Size: 89
+
+Data:
+int packet_id
+int accound_id
+// Client allows typing just 14 characters
+char[15] character_name
+short stats_points
+short unknown
+short animation
+/*
+ * Face codes:
+ * Boy 1: 101, Boy 2: 102, Boy 3: 103, Boy 4: 104, Boy 5: 105, Boy 6: 106, Boy 7: 201,
+ * Boy 8: 202, Boy 9: 203, Boy 10: 301, Boy 11: 302, Boy 12: 303, Boy 13: 304, 
+ * Girl 1: 401, Girl 2: 402, Girl 3: 403, Girl 4: 404, Girl 5: 405,
+ *  Girl 6: 406, Girl 7: 407, Girl 8: 408, Girl 9: 409
+ */
+short face
+int head // Black: 1010010, Brown: 1010011, Blue: 1010012
+int shirts // Red: 1030010, Blue: 1010011, Beige: 1010012, Green: 1010013, Black: 1010014
+int pants // Beige: 1040010, Black: 1040011, Gray: 1040012, Military: 1040013, Military2: 1040014
+int shoes // Black: 1060010, Blue: 1060011, Red: 1060012
+/*
+ * Position codes:
+ * FW: 10, ST: 11, CF: 12, WF: 13,
+ * MF: 20, AMF: 21, SMF: 22, CMF: 23, DMF: 24,
+ * DF: 30, SB: 31, CB: 32, SW: 33
+ */
+short position
+short unknown
+int unknown
+// Stats
+short running
+short endurance
+short agility
+short ball_control
+short dribbling
+short stealing
+short tackling
+short heading
+short short_shots
+short long_shots
+short crossing
+short short_passes
+short long_passes
+short marking
+short goalkeeping
+short punching
+short defense

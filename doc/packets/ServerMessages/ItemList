@@ -1,0 +1,46 @@
+// ItemList
+// Tcp
+
+Id: 2101
+Size: 8 + 27 per item
+
+Data:
+int packet_id
+byte reason // Invalid information: 254, System problem: 255
+byte response // Success: 0, Rejected: 255
+short amount
+// Apply the following for each item
+int inventory_id
+int item_id
+bool selected
+/*
+ * Expiration type codes:
+ * matches: 1, values: 10, 50, 100
+ * days: 2, values: 7, 30, 999 (permanent)
+ * 
+ * Making:
+ * decimal: 2 digits (90 + expiration type), 2 digits (01), 3 digits (expiration values)
+ * example: 9201030 -> 30 days, 9201999 -> permanent, 9101050 -> 50 matches
+ */
+int expiration
+/*
+ * Stats index:
+ * running: 1, endurance: 2, agility: 3, ball_control: 4, dribbling: 5, stealing: 6,
+ * tackling: 7, heading: 8, short_shots: 9, long_shots: 10, crossing: 11,
+ * short_passes: 12, long_passes: 13, marking: 14, goalkeeping: 15, punching: 16, defense: 17
+ * 
+ * Bonus type codes:
+ * stats: 10 + stat index, values: 1 to 10
+ * experience bonus: 31, values: 100, 200
+ * points bonus: 32, values: 100, 200
+ * skill slot: 33, values: 3, 6
+ * 
+ * Making:
+ * decimal: 2 digits (bonus tye), 2 digits (01), 3 digits (bonus value)
+ * example: 2301008 -> +8 long shooting, 3301003 -> +3 skill slots, 3101200 -> +200% exp bonux
+ */
+int stats_bonus_one
+int stats_bonus_two
+short usages_remain // Only readed for usage items
+int timestamp_expire // Should not be used. Trainings should never expire.
+bool visible // Still usable even if not visible

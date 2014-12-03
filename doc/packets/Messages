@@ -1,0 +1,37 @@
+// List of messages with its respective ids
+
+CertifyLogin: 1001
+InstantLogin: 1002
+InstantExit: 1003
+CertifyExit: 1004
+CharacterInfo: 1100
+CreateCharacter: 1101
+ChoiceCharacter: 1102
+RemoveCharacter: 1103
+ServerList: 1200
+ServerInfo: 1201
+UpdateTutorial: 1301
+GameLogin: 2000
+GameExit: 2001
+UdpConfirm: 2002
+PlayerInfo: 2100
+ItemList: 2101
+TrainingList: 2102
+SkillList: 2103
+CelebrationList: 2104
+StatusMessage: 2150
+RoomList: 2200
+CreateRoom: 2201
+JoinRoom: 2202
+NextTip: 2204
+RoomInfo: 2300
+RoomPlayerInfo: 2301
+LeaveRoom: 2310
+RoomMaster: 2311
+RoomMap: 2314
+RoomBall: 2315
+RoomSettings: 2316
+LobbyList: 2318
+ChatMessage: 2320
+UpdateSettings: 2901
+UdpCheck: 3001

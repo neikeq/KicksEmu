@@ -1,0 +1,19 @@
+// CreateRoom
+// Tcp
+
+Id: 2201
+Size: 8
+
+Data:
+int packet_id
+byte reason
+/*
+ * Success: 0
+ * Term of validity expired, buy new KASH pack: 251
+ * Level settings does not match your current level: 252
+ * Wrong level settings: 253
+ * Match rooms limit: 254
+ * System problem: 255
+ */
+byte response
+short room_id // Readed but never used

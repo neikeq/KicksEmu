@@ -1,0 +1,9 @@
+// RoomList
+// Tcp
+
+Id: 2200
+Size: 6
+
+Data:
+int packet_id
+short page_index // There are 5 rooms per page

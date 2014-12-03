@@ -1,0 +1,9 @@
+// ChoiceCharacter
+// Tcp
+
+Id: 1102
+Size: 8
+
+Data:
+int packet_id
+int character_id

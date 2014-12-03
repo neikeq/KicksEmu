@@ -1,0 +1,10 @@
+// InstantExit
+// Tcp
+
+Id: 1003
+Size: 8
+
+Data:
+int packet_id
+short unknown
+short unknown

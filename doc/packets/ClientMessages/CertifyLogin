@@ -1,0 +1,12 @@
+// CertifyLogin
+// Tcp
+
+Id: 1001
+Size: 58
+
+Data:
+int packet_id
+// Client allows typing just 15 characters for both username and password
+char[30] username
+char[20] password
+int client_version // HK Client Version: 3071500

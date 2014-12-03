@@ -1,0 +1,12 @@
+// ServerInfo
+// Tcp
+
+Id: 1201
+Size: 16
+
+Data:
+int packet_id
+short server_id
+short level
+int unknown
+int unknown

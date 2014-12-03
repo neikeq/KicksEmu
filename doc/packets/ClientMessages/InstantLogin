@@ -1,0 +1,9 @@
+// InstantLogin
+// Tcp
+
+Id: 1002
+Size: 8
+
+Data:
+int packet_id
+int account_id

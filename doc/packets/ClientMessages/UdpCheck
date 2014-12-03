@@ -1,0 +1,11 @@
+// UdpCheck
+// Udp
+
+Id: 3001
+Size: 4
+
+Data:
+int packet_id
+
+Notes:
+// The character_id in the header must be the same as the character in use by the client

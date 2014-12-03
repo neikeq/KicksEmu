@@ -1,0 +1,10 @@
+// UdpConfirm
+// Tcp
+
+Id: 2002
+Size: 6
+
+Data:
+int packet_id
+byte reason // Udp authentication failed: 253
+byte response

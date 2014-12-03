@@ -1,0 +1,9 @@
+// LobbyList
+// Tcp
+
+Id: 2318
+Size: 5
+
+Data:
+int packet_id
+byte page_index // There are 10 columns per page

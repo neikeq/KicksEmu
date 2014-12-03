@@ -1,0 +1,12 @@
+// RemoveCharacter
+// Tcp
+
+Id: 1103
+Size: 30
+
+Data:
+int packet_id
+byte reason // Time didn't expire: 253, Wrong password: 254
+byte response // Success: 0, Rejected: 255
+int character_id
+char[20] last_deletion_date

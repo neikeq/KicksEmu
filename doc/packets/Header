@@ -1,0 +1,8 @@
+// Header
+
+Size: 12
+
+short connection_flag // Ignore: 0, Close connection: -1
+int character_id
+int unknown
+short packet_size // Does not include the header size

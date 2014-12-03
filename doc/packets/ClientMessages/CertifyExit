@@ -1,0 +1,8 @@
+// Logout
+// Tcp
+
+Id: 1004
+Size: 4
+
+Data:
+int packet_id

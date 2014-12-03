@@ -1,0 +1,10 @@
+// RemoveCharacter
+// Tcp
+
+Id: 1103
+Size: 28
+
+Data:
+int packet_id
+int character_id
+char[20] password // Client allows typing just 13 characters

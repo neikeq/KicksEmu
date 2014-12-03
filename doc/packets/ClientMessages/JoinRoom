@@ -1,0 +1,11 @@
+// JoinRoom
+// Tcp
+
+Id: 2202
+Size: 11
+
+Data:
+int packet_id
+short room_id
+char[4] password
+byte unknown

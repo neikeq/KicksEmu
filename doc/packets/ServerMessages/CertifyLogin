@@ -1,0 +1,42 @@
+// CertifyLogin
+// Send
+
+Id: 1001
+Size: 161
+
+Data:
+int packet_id
+byte reason
+/*
+ * Success: 0
+ * Term of validity expired, buy new KASH pack: 246
+ * Account blocked: 247
+ * Wrong client version: 248
+ * Server is full: 249
+ * Authentication server failure: 250
+ * Access server failure: 251
+ * Already connected: 252
+ * Wrong password: 253
+ * Invalid account: 254
+ * System has found a problem: 255
+ */
+byte response // Rejected: 255, Success: 0
+// The following data is ignored if response equals 'rejected'
+int account_id
+byte camera // Side1: 0, Front1: 9, Front2: 5, Front3: 7
+bool shadows
+byte names // Hide: 0, Position: 1, All: 2
+byte sound_effects // 0 to 10
+byte music // 0 to 10
+bool invits
+bool whispers
+/*
+ * Country codes:
+ * None: 0
+ * Kicks: 1
+ * HongKong: 104
+ * Others: 
+ */
+int country // 0 to 104 ?
+char[20] last_deletion_date
+char[120] unknown // Ignored

@@ -1,0 +1,15 @@
+// ChoiceCharacter
+// Tcp
+
+Id: 1102
+Size: 10
+
+Data:
+int packet_id
+byte reason
+/*
+ * Character does not exist: 254
+ * System has found a problem: 255
+ */
+byte response // Rejected: 255, Success: 0
+int character_id

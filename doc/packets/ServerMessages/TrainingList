@@ -1,0 +1,31 @@
+// TrainingList
+// Tcp
+
+Id: 2102
+Size: 8 + 23 per training
+
+Data:
+int packet_id
+byte reason // Invalid information: 254, System problem: 255
+byte response // Success: 0, Rejected: 255
+short amount
+// Apply the following for each training
+int inventory_id
+/*
+ * Stat Index:
+ * running: 1, endurance: 2, agility: 3, ball_control: 4, dribbling: 5, stealing: 6,
+ * tackling: 7, heading: 8, short_shots: 9, long_shots: 10, crossing: 11,
+ * short_passes: 12, long_passes: 13, marking: 14, goalkeeping: 15, punching: 16, defense: 17
+ *
+ * Training valid numbers: 1 to 6
+ *
+ * Making:
+ * stat_index * 100 + training_number
+ * example: 601 -> Steal 1, 803 -> Heading 3
+ */
+int training_id
+int unknown // Ignored
+int unknown // Ignored
+short unknown // Ignored
+int timestamp_expire
+bool visible // Still usable even if not visible

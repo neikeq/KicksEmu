@@ -1,0 +1,9 @@
+// PlayerInfo
+// Tcp
+
+Id: 2100
+Size: 6
+
+Data:
+int packet_id
+short unknown

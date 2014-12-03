@@ -1,0 +1,23 @@
+// JoinRoom
+// Tcp
+
+Id: 2202
+Size: 10
+
+Data:
+int packet_id
+byte reason
+/*
+ * Success: 0
+ * You are not in player list: 247
+ * Invalid level: 248
+ * Room problem: 249
+ * Match already started: 250
+ * Wrong password: 251
+ * Room is full: 252
+ * Room does not exist: 253/254
+ * System problem: 255
+ */
+byte response
+short room_id
+short team // Red: 0, Blue: 1

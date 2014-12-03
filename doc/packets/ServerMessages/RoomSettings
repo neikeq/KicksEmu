@@ -1,0 +1,35 @@
+// RoomSettings
+// Tcp
+
+Id: 2316
+Size: 62
+
+Data:
+int packet_id
+byte reason
+/*
+ * Cannot decrease level limit: 248
+ * Cannot increase level limit: 249
+ * Invalid level: 250
+ * Wrong level settings: 251
+ * Cannot decrease players number: 252
+ * You are not room master: 253
+ * Room does not exist: 254
+ * System problem: 255
+ */
+byte response
+short type // Free: 1, Password: 2
+char[45] name // Client allows to type just 30 digits
+char[4] password
+byte unknown
+/*
+ * Goalkeeper mode codes:
+ * AI: 0, Player: 1, Training 1: 2, Training 2: 3, Training 3: 4
+ * Strangeness:
+ * Higher values are the same as AI mode, but GK's ball clearing is way shorter
+ * Player mode is not supported by the client, so there won't be any gk during the match
+ */
+byte goalkeeper_mode
+byte min_level
+byte max_level
+byte max_size // 3v3: 6, 4v4: 8, 5v5: 10

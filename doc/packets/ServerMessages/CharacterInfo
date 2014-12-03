@@ -1,0 +1,114 @@
+// CharacterInfo
+// Tcp
+
+Id: 1100
+Size: 586
+
+Data:
+int packet_id
+byte reason
+/*
+ * Problem with the character: 252
+ * Banned: 254
+ */
+byte response // Rejected: 255 // Success: 0
+int account_id
+int character_id
+short slot // 0, 1, 2
+char[15] name
+short quest_current // 1 to 4 (where 4 equals finished)
+short quest_matches_remain
+byte tutorial_dribbling
+byte tutorial_passing
+byte tutorial_shooting
+byte tutorial_defense
+char[3] unknown
+short level
+int experience
+short stats_points
+int kash
+int points
+char[8] unknown
+short tickets_kash
+short tickets_points
+short unknown
+short animation // Boy: 1, Girl: 2
+short face
+int default_head
+int default_shirts
+int default_pants
+int default_shoes
+/*
+ * Position codes:
+ * FW: 10, ST: 11, CF: 12, WF: 13,
+ * MF: 20, AMF: 21, SMF: 22, CMF: 23, DMF: 24,
+ * DF: 30, SB: 31, CB: 32, SW: 33
+ */
+short position
+char[6] unknown
+// Stats
+short running
+short endurance
+short agility
+short ball_control
+short dribbling
+short stealing
+short tackling
+short heading
+short short_shots
+short long_shots
+short crossing
+short short_passes
+short long_passes
+short marking
+short goalkeeping
+short punching
+short defense
+int unknown
+// Items
+// If <item>_on is: 0 the item will be ignored
+int head
+int head_on
+char[20] unknown
+int glasses
+int glasses_on
+char[20] unknown
+int shirts
+int shirts_on
+char[20] unknown
+int pants
+int pants_on
+char[20] unknown
+int glove
+int glove_on
+char[20] unknown
+int shoes
+int shoes_on
+char[20] unknown
+int socks
+int socks_on
+char[20] unknown
+int wrist
+int wrist_on
+char[20] unknown
+int arm
+int arm_on
+char[20] unknown
+int knee
+int knee_on
+char[20] unknown
+int ear
+int ear_on
+char[20] unknown
+int neck
+int neck_on
+char[20] unknown
+int mask
+int mask_on
+char[20] unknown
+int muffler
+int muffler_on
+char[20] unknown
+int package
+int package_on
+char[48] unknown
