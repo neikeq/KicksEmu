@@ -137,6 +137,11 @@ public class RoomManager {
                     name = name.substring(0, MAX_ROOM_NAME_LENGTH);
                 }
 
+                // If password is blank, disable password usage
+                if (type == RoomType.PASSWORD && password.isEmpty()) {
+                    type = RoomType.FREE;
+                }
+
                 // Set room information from received data
                 room.setName(name);
                 room.setPassword(password);
