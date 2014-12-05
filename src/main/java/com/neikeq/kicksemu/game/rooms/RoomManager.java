@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;

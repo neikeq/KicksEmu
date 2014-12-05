@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.rooms;
+package com.neikeq.kicksemu.game.rooms.enums;
 
 public enum RoomTeam {
     RED,
