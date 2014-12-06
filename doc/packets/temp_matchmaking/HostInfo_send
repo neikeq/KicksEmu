@@ -1,0 +1,9 @@
+// HostInfo
+// Send
+
+Id: 2400
+Size: 6
+
+Data:
+int packet_id
+short room_id
