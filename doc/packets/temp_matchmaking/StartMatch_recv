@@ -1,0 +1,11 @@
+// StartMatch
+// Recv
+
+Id: 2399
+Size: 7
+
+Data:
+int packet_id
+byte reason
+byte response
+byte type // Start match: -1, Confirm success?: 1, ???: 0 (Recvd when 1 or more players didn't send confirm)

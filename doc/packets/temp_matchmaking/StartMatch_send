@@ -1,0 +1,10 @@
+// StartMatch
+// Send
+
+Id: 2399
+Size: 7
+
+Data:
+int packet_id
+short room_id
+byte type // Start match: -1, Confirm (each player in room): 1, ???: 0

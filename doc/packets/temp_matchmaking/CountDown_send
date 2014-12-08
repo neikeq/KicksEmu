@@ -1,0 +1,10 @@
+// CountDown
+// Send
+
+Id: 2401
+Size: 8
+
+Data:
+int packet_id
+short room_id
+short count // 5 to 0 (where 0 means starting match)
