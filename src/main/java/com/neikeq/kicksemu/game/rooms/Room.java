@@ -149,7 +149,7 @@ public abstract class Room {
     }
 
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
-        // Notify players in room about the new player
+        // Notify players in room about player leaving
         ServerMessage msgPlayerLeaved = MessageBuilder.leaveRoom(playerId, reason);
         sendBroadcast(msgPlayerLeaved);
     }
