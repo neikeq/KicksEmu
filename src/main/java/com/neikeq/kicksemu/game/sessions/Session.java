@@ -33,7 +33,9 @@ public class Session {
      * This increases the performance when writing multiple messages during a single reading.
      */
     public synchronized void send(ServerMessage msg) {
-        getChannel().write(msg.getByteBuf());
+        if (getChannel().isActive()) {
+            getChannel().write(msg.getByteBuf());
+        }
     }
 
     /**
@@ -41,7 +43,9 @@ public class Session {
      * Useful for chat messages and non-response messages.
      */
     public synchronized void sendAndFlush(ServerMessage msg)  {
-        getChannel().writeAndFlush(msg.getByteBuf());
+        if (getChannel().isActive()) {
+            getChannel().writeAndFlush(msg.getByteBuf());
+        }
     }
 
     /** Called when the session leaved a room */
