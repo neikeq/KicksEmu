@@ -89,14 +89,15 @@ public class Session {
             // Update user status on database
             userInfo.setOnline(false);
 
-            // Remove session from the list of connected clients
-            ServerManager.removePlayer(playerInfo.getId());
+            if (playerInfo != null) {
+                // Remove session from the list of connected clients
+                ServerManager.removePlayer(playerInfo.getId());
+                // If session is in the main lobby, leave it
+                LobbyManager.removePlayer(playerInfo.getId());
+            }
 
-            // If session is in a room, leave it
+            // If session is inside a room, leave it
             leaveRoom(RoomLeaveReason.DISCONNECTED);
-
-            // If session is in the main lobby, remove from it
-            LobbyManager.removePlayer(playerInfo.getId());
         }
     }
     
