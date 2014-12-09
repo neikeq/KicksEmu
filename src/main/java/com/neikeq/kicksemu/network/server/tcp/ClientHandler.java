@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.network.server.tcp;
 
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.game.sessions.SessionManager;
 
@@ -49,5 +51,8 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         SessionManager.removeSession(ctx.channel());
+
+        Output.println("Client handler caught an exception: " + cause.getMessage(),
+                Level.DEBUG);
     }
 }
