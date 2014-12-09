@@ -23,7 +23,9 @@ public class KicksEmu {
 
     /** @param args command line arguments */
     public static void main(String[] args) {
-        String configFile = args.length > 0 ? args[0] : "config.properties";
+        String configFile = args.length > 0 && !args[0].isEmpty() ?
+                args[0] : "config.properties";
+
         KicksEmu.getInstance().start(configFile);
     }
 
