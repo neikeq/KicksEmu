@@ -190,7 +190,9 @@ public abstract class Room {
             ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
             byteBuf.writeBytes(msg.getByteBuf());
 
-            s.getChannel().writeAndFlush(byteBuf);
+            if (s.getChannel().isOpen()) {
+                s.getChannel().writeAndFlush(byteBuf);
+            }
         }
 
         msg.getByteBuf().release();
