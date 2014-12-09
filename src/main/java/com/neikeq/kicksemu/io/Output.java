@@ -32,22 +32,19 @@ public class Output {
     }
     
     public void printHeader() {
-        System.out.println("# KicksEmulator Server" + System.lineSeparator() +
-                "# github.com/neikeq/com.neikeq.kicksemu" + System.lineSeparator());
+        System.out.println("# KicksEmu Server");
+        System.out.println("# github.com/neikeq/KicksEmu" + System.lineSeparator());
 
         // License
         System.out.println("KicksEmu is available under the GNU GPL v3 license.");
-        System.out.println(
-                "This program comes with ABSOLUTELY NO WARRANTY. " +
-                "This is free software, and you are welcome to redistribute it " +
-                "under certain conditions; please review the included LICENSE file." +
-                        System.lineSeparator());
-        
-        if (level.toInt() < Level.INFO.toInt()) {
-            System.out.println(
-                    "WARNING: Debug logging level is active. " +
-                    "This may cause a decrease in performance." +
-                            System.lineSeparator());
+        System.out.println("This program comes with ABSOLUTELY NO WARRANTY.");
+        System.out.println("This is free software, and you are welcome to " +
+                "redistribute it under certain conditions." + System.lineSeparator());
+
+        // Show a warning if the emulator is running in debug mode
+        if (level == Level.DEBUG) {
+            System.out.println("WARNING: Debug logging level is active. " +
+                    "This may cause a decrease in performance." + System.lineSeparator());
         }
     }
 
