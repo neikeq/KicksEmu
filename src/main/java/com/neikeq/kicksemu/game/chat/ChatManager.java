@@ -8,6 +8,9 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ChatManager {
 
     public static void chatMessage(Session session, ClientMessage msg) {
@@ -61,30 +64,35 @@ public class ChatManager {
 
     public static void onMessageWhisper(Session session, String name, String message) {
         if (session.getPlayerInfo().getName().equals(name)) {
-            boolean result = false;
+            ChatMessageType result = ChatMessageType.WHISPER_TO;
 
-            StringBuilder whisper = new StringBuilder ();
-            String target = extractTargetFromWhisper(message, whisper);
+            String target = retrieveTargetFromWhisper(message);
+            String whisper = retrieveMessageFromWhisper(message);
 
-            if (!target.isEmpty()) {
+            if (target.isEmpty()) {
+                result = ChatMessageType.INVALID_PLAYER;
+            } else if (target.equals(name)) {
+                result = ChatMessageType.CANNOT_SELF_WHISPER;
+            }
+
+            if (result == ChatMessageType.WHISPER_TO) {
                 int targetId = CharacterUtils.getCharacterIdByName(target);
                 Session targetSession = ServerManager.getSessionById(targetId);
 
                 if (targetSession != null) {
                     // TODO Check if the target player muted the whisperer
-                    ServerMessage msg = MessageBuilder.chatMessage(targetId, name,
-                            ChatMessageType.WHISPER_FROM, whisper.toString());
-                    targetSession.sendAndFlush(msg);
-
-                    result = true;
+                    ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
+                            ChatMessageType.WHISPER_FROM, whisper);
+                    targetSession.sendAndFlush(msgWhisper);
+                } else {
+                    result = ChatMessageType.INVALID_PLAYER;
                 }
             }
 
             int playerId = session.getPlayerInfo().getId();
 
-            ServerMessage response = MessageBuilder.chatMessage(playerId, name,
-                    result ? ChatMessageType.WHISPER_TO : ChatMessageType.INVALID_PLAYER,
-                    whisper.toString());
+            ServerMessage response = MessageBuilder.chatMessage(playerId, target,
+                    result, whisper);
             session.sendAndFlush(response);
         }
     }
@@ -117,21 +125,23 @@ public class ChatManager {
         return message.startsWith("//");
     }
 
-    public static String extractTargetFromWhisper(String message, StringBuilder whisper) {
-        try {
-            String target = message.substring(message.indexOf("/") + 1);
+    public static String retrieveTargetFromWhisper(String message) {
+        Pattern pattern = Pattern.compile("/(.*?) ");
+        Matcher matcher = pattern.matcher(message);
 
-            int endIndex = target.length();
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return message.substring(1);
+        }
+    }
 
-            if (message.contains(" ")) {
-                endIndex = target.indexOf(" ");
-                target = target.substring(0, endIndex);
-            }
+    public static String retrieveMessageFromWhisper(String message) {
+        int index = message.indexOf(" ");
 
-            whisper.append(message.substring(++endIndex, message.length()));
-
-            return target;
-        } catch (IndexOutOfBoundsException ex) {
+        if (index >= 0) {
+            return message.substring(++index);
+        } else {
             return "";
         }
     }
