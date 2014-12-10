@@ -186,16 +186,39 @@ public abstract class Room {
     }
 
     public void sendBroadcast(ServerMessage msg) {
-        for (Session s : getPlayers().values()) {
-            ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
-            byteBuf.writeBytes(msg.getByteBuf());
+        try {
+            for (Session s : getPlayers().values()) {
+                ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
+                byteBuf.writeBytes(msg.getByteBuf());
 
-            if (s.getChannel().isOpen()) {
-                s.getChannel().writeAndFlush(byteBuf);
+                if (s.getChannel().isOpen()) {
+                    s.getChannel().writeAndFlush(byteBuf);
+                }
             }
+        } finally {
+            msg.getByteBuf().release();
         }
+    }
 
-        msg.getByteBuf().release();
+    public void sendTeamBroadcast(ServerMessage msg, RoomTeam team) {
+        try {
+            if (team != null) {
+                List<Integer> teamPlayers = team == RoomTeam.RED ? getRedTeam() : getBlueTeam();
+
+                for (Integer playerId : teamPlayers){
+                    Session s = getPlayers().get(playerId);
+
+                    ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
+                    byteBuf.writeBytes(msg.getByteBuf());
+
+                    if (s.getChannel().isOpen()) {
+                        s.getChannel().writeAndFlush(byteBuf);
+                    }
+                }
+            }
+        } finally {
+            msg.getByteBuf().release();
+        }
     }
 
     public boolean isPlayerIn(int playerId) {
