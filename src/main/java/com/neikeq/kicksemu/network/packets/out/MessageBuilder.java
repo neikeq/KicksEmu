@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.network.packets.out;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.chat.ChatMessageType;
+import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
@@ -331,8 +332,8 @@ public class MessageBuilder {
 
             msg.append(player.getName(), 15);
 
-            // TODO Send club name instead of id string
-            msg.append(String.valueOf(player.getClubId()), 15);
+            ClubInfo club = new ClubInfo(player.getClubId());
+            msg.append(club.getName(), 15);
 
             msg.append(player.getStatusMessage(), 35);
 
@@ -531,15 +532,21 @@ public class MessageBuilder {
             msg.append(true, 2);
             msg.append(player.getId());
             msg.append(player.getName(), 15);
-            // TODO Send club name instead of id string
-            msg.append(String.valueOf(player.getClubId()), 15);
+
+            ClubInfo club = new ClubInfo(player.getClubId());
+            msg.append(club.getName(), 15);
+
             msg.append((short)(room.getRedTeam().contains(player.getId()) ? 0 : 1));
+
             msg.append(room.isObserver(player.getId()));
             msg.appendZeros(2);
+
             msg.append(owner.getSettings().getCountry());
             msg.appendZeros(2);
+
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.appendZeros(2);
+
             MessageUtils.appendCharacterInfo(player, owner, msg);
             msg.appendZeros(2);
 
