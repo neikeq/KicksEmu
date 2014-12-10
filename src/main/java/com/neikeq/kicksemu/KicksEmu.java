@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu;
 
 import com.neikeq.kicksemu.config.Configuration;
+import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.config.Location;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Input;
@@ -26,6 +27,14 @@ public class KicksEmu {
         String configFile = args.length > 0 && !args[0].isEmpty() ?
                 args[0] : "config.properties";
 
+        if (!configFile.endsWith(".properties")) {
+            configFile += ".properties";
+        }
+
+        if (configFile.startsWith(Constants.DATA_DIR)) {
+            configFile = configFile.replaceFirst(Constants.DATA_DIR, "");
+        }
+
         KicksEmu.getInstance().start(configFile);
     }
 
@@ -36,10 +45,8 @@ public class KicksEmu {
         Configuration.getInstance().init(configFile);
 
         // Initialize Output Stream
-        output = new Output(
-                Configuration.getBoolean("output.logging"),
-                Configuration.getLevel("output.verbosity")
-        );
+        output = new Output(Configuration.getBoolean("output.logging"),
+                Configuration.getLevel("output.verbosity"));
 
         output.printHeader();
 
