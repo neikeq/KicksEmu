@@ -90,11 +90,11 @@ public class SqlUtils {
                 if (rs.next()) {
                     return rs.getString(row);
                 } else {
-                    return null;
+                    return "";
                 }
             }
         } catch (SQLException e) {
-            return null;
+            return "";
         }
     }
 
