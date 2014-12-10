@@ -17,13 +17,13 @@ Requires **JDK 8**.
 
 ##### Ant
 
-Compile:
+Build sources:
 
 ```
 ant build.modules
 ```
 
-Build jars:
+Build jar artifacts:
 
 ```
 ant build.all.artifacts
@@ -32,10 +32,12 @@ ant build.all.artifacts
 ##### Intellij IDEA
 
 * Project file: `KicksEmu.iml`.<br>
-* The project was tested with version 14.0 of the IDE.<br>
+* The project was created using version 14.0 of the IDE.<br>
 * Make sure the `Project language level` in `Project Structure > Project Settings > Project` is set to 8 or higher.
 
 ### Running
+
+Run `run.sh` for unix or `run.bat` for windows.
 
 The first argument may point to an alternative configuration file. Otherwise, the default one will be used.
 
