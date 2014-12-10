@@ -2,6 +2,8 @@ package com.neikeq.kicksemu.game.chat;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.lobby.Lobby;
+import com.neikeq.kicksemu.game.rooms.Room;
+import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -19,15 +21,16 @@ public class ChatManager {
         int characterId = msg.readInt();
 
         if (session.getPlayerInfo().getId() == characterId) {
-            String characterName = msg.readString(15);
+            String name = msg.readString(15);
             ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
             String message = msg.readString(55);
 
             switch (type) {
                 case NORMAL:
-                    handleNormalMessage(session, characterName, message);
+                    handleNormalMessage(session, name, message);
                     break;
                 case TEAM:
+                    onMessageTeam(session, name, message);
                     break;
                 case CLUB:
                     break;
@@ -38,44 +41,60 @@ public class ChatManager {
 
     public static void onMessageNormal(Session session, String name, String message) {
         if (session.getPlayerInfo().getName().equals(name)) {
-            Lobby lobby = session.getCurrentLobby();
+            if (!message.isEmpty()) {
+                Lobby lobby = session.getCurrentLobby();
 
-            ChatMessageType type = session.getPlayerInfo().isModerator() ?
-                    ChatMessageType.MODERATOR : ChatMessageType.NORMAL;
+                ChatMessageType type = session.getPlayerInfo().isModerator() ?
+                        ChatMessageType.MODERATOR : ChatMessageType.NORMAL;
 
-            int playerId = session.getPlayerInfo().getId();
+                int playerId = session.getPlayerInfo().getId();
 
-            lobby.getPlayers().stream().forEach(targetId -> {
-                // TODO Check if the current target muted the player who writes this message
-                ServerMessage msg = MessageBuilder.chatMessage(playerId, name,
-                        type, message);
-                Session targetSession = ServerManager.getSessionById(targetId);
+                lobby.getPlayers().stream().forEach(targetId -> {
+                    // TODO Check if the current target muted the player who writes this message
+                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
+                    Session targetSession = ServerManager.getSessionById(targetId);
 
-                if (targetSession != null) {
-                    targetSession.sendAndFlush(msg);
-                }
-            });
+                    if (targetSession != null) {
+                        targetSession.sendAndFlush(msg);
+                    }
+                });
+            }
         }
     }
 
     public static void onMessageTeam(Session session, String name, String message) {
+        if (session.getPlayerInfo().getName().equals(name)) {
+            if (!message.isEmpty()) {
+                ChatMessageType type = ChatMessageType.TEAM;
 
+                int playerId = session.getPlayerInfo().getId();
+
+                Room room = RoomManager.getRoomById(session.getRoomId());
+
+                if (room.isPlayerIn(playerId)) {
+                    // TODO Check if some target muted the player who writes this message
+                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
+
+                    room.sendTeamBroadcast(msg, room.getPlayerTeam(playerId));
+                }
+            }
+        }
     }
 
     public static void onMessageWhisper(Session session, String name, String message) {
         if (session.getPlayerInfo().getName().equals(name)) {
-            ChatMessageType result = ChatMessageType.WHISPER_TO;
+            ChatMessageType type = ChatMessageType.WHISPER_TO;
 
             String target = retrieveTargetFromWhisper(message);
             String whisper = retrieveMessageFromWhisper(message);
 
             if (target.isEmpty()) {
-                result = ChatMessageType.INVALID_PLAYER;
+                type = ChatMessageType.INVALID_PLAYER;
             } else if (target.equals(name)) {
-                result = ChatMessageType.CANNOT_SELF_WHISPER;
+                type = ChatMessageType.CANNOT_SELF_WHISPER;
             }
 
-            if (result == ChatMessageType.WHISPER_TO) {
+            if (type == ChatMessageType.WHISPER_TO) {
                 int targetId = CharacterUtils.getCharacterIdByName(target);
                 Session targetSession = ServerManager.getSessionById(targetId);
 
@@ -85,14 +104,14 @@ public class ChatManager {
                             ChatMessageType.WHISPER_FROM, whisper);
                     targetSession.sendAndFlush(msgWhisper);
                 } else {
-                    result = ChatMessageType.INVALID_PLAYER;
+                    type = ChatMessageType.INVALID_PLAYER;
                 }
             }
 
             int playerId = session.getPlayerInfo().getId();
 
             ServerMessage response = MessageBuilder.chatMessage(playerId, target,
-                    result, whisper);
+                    type, whisper);
             session.sendAndFlush(response);
         }
     }
@@ -107,7 +126,7 @@ public class ChatManager {
         } else if (isWhisperMessage(message)) {
             onMessageWhisper(session, name, message);
         } else if (isTeamMessage(message)) {
-            onMessageTeam(session, name, message);
+            onMessageTeam(session, name, message.substring(1));
         } else {
             onMessageNormal(session, name, message);
         }
@@ -118,7 +137,7 @@ public class ChatManager {
     }
 
     public static boolean isTeamMessage(String message) {
-        return message.startsWith(";");
+        return message.startsWith("\'");
     }
 
     public static boolean isClubMessage(String message) {
