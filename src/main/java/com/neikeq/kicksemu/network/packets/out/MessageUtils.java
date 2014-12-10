@@ -12,6 +12,11 @@ import java.util.Map;
 
 public class MessageUtils {
 
+    public static void appendResult(byte result, ServerMessage msg) {
+        msg.append(result);
+        msg.append(result == 0 ? result : (byte)255);
+    }
+
     public static void appendQuestInfo(PlayerInfo player, ServerMessage msg) {
         msg.append(player.getCurrentQuest());
         msg.append(player.getRemainingQuestMatches());

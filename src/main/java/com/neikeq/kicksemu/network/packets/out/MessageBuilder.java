@@ -22,14 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 public class MessageBuilder {
-
-    // TODO move all reason/response appends to a single method
     
     public static ServerMessage certifyLogin(UserInfo user, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_LOGIN);
 
-        msg.append(result);
-        msg.append((byte)(result == AuthenticationResult.SUCCESS ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == AuthenticationResult.SUCCESS) {
             msg.append(user.getId());
@@ -57,8 +54,8 @@ public class MessageBuilder {
     public static ServerMessage instantLogin(int accountId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_LOGIN);
 
-        msg.append(result);
-        msg.append((byte)(result == AuthenticationResult.SUCCESS ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
+
         msg.append(accountId);
 
         return msg;
@@ -67,8 +64,7 @@ public class MessageBuilder {
     public static ServerMessage certifyExit(boolean result) {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_EXIT);
 
-        msg.append((byte) 0);
-        msg.append((byte) (result ? 0 : 255));
+        MessageUtils.appendResult((byte)(result ? 0 : 255), msg);
 
         if (result) {
             // Request the client to close the connection
@@ -81,7 +77,9 @@ public class MessageBuilder {
     public static ServerMessage instantExit() {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_EXIT);
 
-        msg.appendZeros(4);
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.appendZeros(2);
 
         // Request the client to close the connection
         msg.write(0, (short)-1);
@@ -94,8 +92,7 @@ public class MessageBuilder {
 
         boolean blocked = player.isBlocked();
 
-        msg.append((byte) (blocked ? 254 : 0));
-        msg.append((byte) (blocked ? 255 : 0));
+        MessageUtils.appendResult((byte) (blocked ? 254 : 0), msg);
 
         if (!blocked) {
             msg.append(owner.getId());
@@ -133,53 +130,49 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage createCharacter(byte response) {
+    public static ServerMessage createCharacter(byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CREATE_CHARACTER);
 
-        msg.append(response);
-        msg.append((byte)(response == 0 ? response : 255));
+        MessageUtils.appendResult(result, msg);
 
         return msg;
     }
 
-    public static ServerMessage updateSettings(byte response) {
+    public static ServerMessage updateSettings(byte result) {
         ServerMessage msg = new ServerMessage(MessageId.UPDATE_SETTINGS);
 
-        msg.append(response);
-        msg.append((byte)(response == 0 ? response : 255));
+        MessageUtils.appendResult(result, msg);
 
         return msg;
     }
 
-    public static ServerMessage removeCharacter(int characterId, String date, byte response) {
+    public static ServerMessage removeCharacter(int characterId, String date, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.REMOVE_CHARACTER);
 
-        msg.append(response);
-        msg.append((byte)(response == 0 ? response : 255));
+        MessageUtils.appendResult(result, msg);
+
         msg.append(characterId);
         msg.append(date, 20);
 
         return msg;
     }
 
-    public static ServerMessage choiceCharacter(int characterId, byte response) {
+    public static ServerMessage choiceCharacter(int characterId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CHOICE_CHARACTER);
 
-        msg.append(response);
-        msg.append((byte)(response == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
-        if (response == 0) {
+        if (result == 0) {
             msg.append(characterId);
         }
 
         return msg;
     }
 
-    public static ServerMessage serverList(List<ServerInfo> servers, byte response) {
+    public static ServerMessage serverList(List<ServerInfo> servers, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SERVER_LIST);
 
-        msg.append(response);
-        msg.append((byte)(response == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         msg.append((short)servers.size());
 
@@ -198,13 +191,12 @@ public class MessageBuilder {
     }
 
     public static ServerMessage updateTutorial(byte dribbling, byte passing, byte shooting,
-                                               byte defense, int reward, byte response) {
+                                               byte defense, int reward, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.UPDATE_TUTORIAL);
 
-        msg.append(response);
-        msg.append((byte)(response == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
-        if (response == 0) {
+        if (result == 0) {
             msg.append(dribbling);
             msg.append(passing);
             msg.append(shooting);
@@ -215,13 +207,12 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage serverInfo(ServerInfo server, byte response) {
+    public static ServerMessage serverInfo(ServerInfo server, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SERVER_INFO);
 
-        msg.append(response);
-        msg.append((byte)(response == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
-        if (response == 0) {
+        if (result == 0) {
             msg.append(server.getId());
             msg.appendZeros(2);
             msg.append(server.getMinLevel());
@@ -236,8 +227,7 @@ public class MessageBuilder {
     public static ServerMessage gameLogin(byte result) {
         ServerMessage msg = new ServerMessage(MessageId.GAME_LOGIN);
 
-        msg.append(result);
-        msg.append((byte)(result == AuthenticationResult.SUCCESS ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         return msg;
     }
@@ -245,7 +235,8 @@ public class MessageBuilder {
     public static ServerMessage gameExit(InetSocketAddress clientIp, int characterId) {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_EXIT);
 
-        msg.appendZeros(2);
+        MessageUtils.appendResult((byte)0, msg);
+
         msg.append(characterId);
         msg.append(clientIp.getAddress().getHostAddress(), 16);
         msg.appendZeros(2);
@@ -259,8 +250,7 @@ public class MessageBuilder {
     public static ServerMessage udpConfirm(boolean result) {
         ServerMessage msg = new ServerMessage(MessageId.UDP_CONFIRM);
 
-        msg.append((byte)(result ? 0 : 253));
-        msg.append((byte)(result ? 0 : 255));
+        MessageUtils.appendResult((byte)(result ? 0 : 253), msg);
 
         return msg;
     }
@@ -268,8 +258,7 @@ public class MessageBuilder {
     public static ServerMessage itemList(Map<Integer, Item> items, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ITEM_LIST);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append((short)items.size());
@@ -285,8 +274,7 @@ public class MessageBuilder {
     public static ServerMessage trainingList(Map<Integer, Training> trainings, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.TRAINING_LIST);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append((short)trainings.size());
@@ -302,8 +290,7 @@ public class MessageBuilder {
     public static ServerMessage skillList(Map<Integer, Skill> skills, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SKILL_LIST);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append((short)skills.size());
@@ -319,8 +306,7 @@ public class MessageBuilder {
     public static ServerMessage celebrationList(Map<Integer, Celebration> celebs, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CELEBRATION_LIST);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append((short)celebs.size());
@@ -336,8 +322,7 @@ public class MessageBuilder {
     public static ServerMessage playerInfo(PlayerInfo player, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_INFO);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append(player.getId());
@@ -393,8 +378,7 @@ public class MessageBuilder {
     public static ServerMessage lobbyList(List<Integer> players, byte page, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.LOBBY_LIST);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append(page);
@@ -418,8 +402,7 @@ public class MessageBuilder {
     public static ServerMessage roomList(Map<Integer, Room> rooms, short page, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_LIST);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append(page);
@@ -454,8 +437,7 @@ public class MessageBuilder {
     public static ServerMessage nextTip(String tip, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.NEXT_TIP);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.appendZeros(2);
@@ -469,7 +451,7 @@ public class MessageBuilder {
                                             ChatMessageType messageType, String message) {
         ServerMessage msg = new ServerMessage(MessageId.CHAT_MESSAGE);
 
-        msg.appendZeros(2);
+        MessageUtils.appendResult((byte)0, msg);
 
         msg.append(playerId);
         msg.append(name, 15);
@@ -482,8 +464,7 @@ public class MessageBuilder {
     public static ServerMessage changeStatusMessage(String statusMessage, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.STATUS_MESSAGE);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append(statusMessage, statusMessage.length());
@@ -495,8 +476,7 @@ public class MessageBuilder {
     public static ServerMessage createRoom(short roomId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CREATE_ROOM);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append(roomId);
@@ -508,8 +488,7 @@ public class MessageBuilder {
     public static ServerMessage joinRoom(int roomId, RoomTeam team, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.JOIN_ROOM);
 
-        msg.append(result);
-        msg.append((byte)(result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
             msg.append((short)roomId);
@@ -522,7 +501,7 @@ public class MessageBuilder {
     public static ServerMessage roomInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_INFO);
 
-        msg.appendZeros(2);
+        MessageUtils.appendResult((byte)0, msg);
 
         if (room != null) {
             msg.append((byte)room.getType().toInt());
@@ -607,7 +586,7 @@ public class MessageBuilder {
     public static ServerMessage roomMap(short map) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_MAP);
 
-        msg.appendZeros(2);
+        MessageUtils.appendResult((byte)0, msg);
 
         msg.append(map);
 
@@ -617,7 +596,7 @@ public class MessageBuilder {
     public static ServerMessage roomBall(short ball) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_BALL);
 
-        msg.appendZeros(2);
+        MessageUtils.appendResult((byte)0, msg);
 
         msg.append(ball);
 
@@ -627,8 +606,7 @@ public class MessageBuilder {
     public static ServerMessage roomSettings(Room room, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_SETTINGS);
 
-        msg.append(result);
-        msg.append((byte) (result == 0 ? 0 : 255));
+        MessageUtils.appendResult(result, msg);
 
         if (room != null) {
             msg.append((short)room.getType().toInt());
