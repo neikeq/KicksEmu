@@ -44,6 +44,7 @@ public class Configuration {
         config.put("mysql.database", "kicksdb");
         
         // Networking Settings
+        config.put("net.type", "main");
         config.put("net.backlog", String.valueOf(50));
         config.put("net.bind.port", String.valueOf(1299));
         
