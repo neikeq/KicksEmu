@@ -628,4 +628,16 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage swapTeam(int playerId, RoomTeam newTeam) {
+        ServerMessage msg = new ServerMessage(MessageId.SWAP_TEAM);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(playerId);
+        msg.appendZeros(2);
+        msg.append((short)newTeam.toInt());
+
+        return msg;
+    }
 }
