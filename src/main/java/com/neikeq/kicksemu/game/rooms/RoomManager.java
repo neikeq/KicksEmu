@@ -87,6 +87,13 @@ public class RoomManager {
         return pageRooms;
     }
 
+    private static void sendRoomPlayersInfo(Session session, Room room) {
+        for (Session s : room.getPlayers().values()) {
+            ServerMessage roomPlayerInfo = MessageBuilder.roomPlayerInfo(s, room);
+            session.send(roomPlayerInfo);
+        }
+    }
+
     public static void createRoom(Session session, ClientMessage msg) {
         if (session.getRoomId() <= 0) {
             // Read data from message
@@ -177,13 +184,6 @@ public class RoomManager {
                 // Send to the client information about players inside the room
                 sendRoomPlayersInfo(session, room);
             }
-        }
-    }
-
-    private static void sendRoomPlayersInfo(Session session, Room room) {
-        for (Session s : room.getPlayers().values()) {
-            ServerMessage roomPlayerInfo = MessageBuilder.roomPlayerInfo(s, room);
-            session.send(roomPlayerInfo);
         }
     }
 
@@ -371,6 +371,26 @@ public class RoomManager {
         if (result != 0) {
             ServerMessage msgRoomSettings = MessageBuilder.roomSettings(room, result);
             session.send(msgRoomSettings);
+        }
+    }
+
+    public static void swapTeam(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+        int playerId = session.getPlayerInfo().getId();
+
+        Room room = getRoomById(roomId);
+
+        if (room != null && room.isPlayerIn(playerId)) {
+            RoomTeam currentTeam = room.getPlayerTeam(playerId);
+            RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
+
+            ServerMessage msgSwapTeam = MessageBuilder.swapTeam(playerId, newTeam);
+
+            if (newTeam != currentTeam) {
+                room.sendBroadcast(msgSwapTeam);
+            } else {
+                session.send(msgSwapTeam);
+            }
         }
     }
 }

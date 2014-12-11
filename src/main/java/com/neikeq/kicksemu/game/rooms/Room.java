@@ -86,9 +86,7 @@ public abstract class Room {
             getRoomLobby().removePlayer(playerId);
 
             // Remove player from his team list
-            if (removePlayerFromTeam(playerId, getRedTeam()) < 0) {
-                removePlayerFromTeam(playerId, getBlueTeam());
-            }
+            removePlayerFromTeam(playerId);
 
             // If room is empty, remove it
             if (getPlayers().size() < 1) {
@@ -126,14 +124,67 @@ public abstract class Room {
         }
     }
 
-    private int removePlayerFromTeam(int playerId, List<Integer> team) {
-        int index = team.indexOf(playerId);
+    private void addPlayerToTeam(int playerId, RoomTeam team) {
+        switch (team) {
+            case RED:
+                getRedTeam().add(playerId);
+                break;
+            case BLUE:
+                getBlueTeam().add(playerId);
+                break;
+            default:
+        }
+    }
+
+    private void removePlayerFromTeam(int playerId) {
+        int index = getRedTeam().indexOf(playerId);
 
         if (index >= 0) {
-            team.remove(index);
-        }
+            getRedTeam().remove(index);
+        } else {
+            index = getBlueTeam().indexOf(playerId);
 
-        return index;
+            if (index >= 0) {
+                getBlueTeam().remove(index);
+            }
+        }
+    }
+
+    private void removePlayerFromTeam(int playerId, RoomTeam team) {
+        int index;
+
+        switch (team) {
+            case RED:
+                index = getRedTeam().indexOf(playerId);
+
+                if (index >= 0) {
+                    getRedTeam().remove(index);
+                }
+
+                break;
+            case BLUE:
+                index = getBlueTeam().indexOf(playerId);
+
+                if (index >= 0) {
+                    getBlueTeam().remove(index);
+                }
+
+                break;
+            default:
+        }
+    }
+
+    public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {
+        RoomTeam targetTeam = currentTeam == RoomTeam.RED ? RoomTeam.BLUE :  RoomTeam.RED;
+
+        if (!isTeamFull(targetTeam)) {
+            removePlayerFromTeam(playerId, currentTeam);
+            addPlayerToTeam(playerId, targetTeam);
+
+            return targetTeam;
+        } else {
+            return currentTeam;
+        }
     }
 
     private void onPlayerJoined(Session session) {
@@ -188,12 +239,8 @@ public abstract class Room {
     public void sendBroadcast(ServerMessage msg) {
         try {
             for (Session s : getPlayers().values()) {
-                ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
-                byteBuf.writeBytes(msg.getByteBuf());
-
-                if (s.getChannel().isOpen()) {
-                    s.getChannel().writeAndFlush(byteBuf);
-                }
+                msg.getByteBuf().retain();
+                s.sendAndFlush(msg);
             }
         } finally {
             msg.getByteBuf().release();
@@ -208,12 +255,8 @@ public abstract class Room {
                 for (Integer playerId : teamPlayers){
                     Session s = getPlayers().get(playerId);
 
-                    ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
-                    byteBuf.writeBytes(msg.getByteBuf());
-
-                    if (s.getChannel().isOpen()) {
-                        s.getChannel().writeAndFlush(byteBuf);
-                    }
+                    msg.getByteBuf().retain();
+                    s.sendAndFlush(msg);
                 }
             }
         } finally {
@@ -228,6 +271,17 @@ public abstract class Room {
     public boolean isFull() {
         synchronized (locker) {
             return players.size() >= maxSize.toInt();
+        }
+    }
+
+    private boolean isTeamFull(RoomTeam team) {
+        switch (team) {
+            case RED:
+                return getRedTeam().size() >= 5;
+            case BLUE:
+                return getBlueTeam().size() >= 5;
+            default:
+                return true;
         }
     }
 

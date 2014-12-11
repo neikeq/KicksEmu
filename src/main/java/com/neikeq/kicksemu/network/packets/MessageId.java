@@ -30,6 +30,7 @@ public class MessageId {
     public static final int ROOM_PLAYER_INFO = 2301;
     public static final int LEAVE_ROOM = 2310;
     public static final int ROOM_MASTER = 2311;
+    public static final int SWAP_TEAM = 2313;
     public static final int ROOM_MAP = 2314;
     public static final int ROOM_BALL = 2315;
     public static final int ROOM_SETTINGS = 2316;
