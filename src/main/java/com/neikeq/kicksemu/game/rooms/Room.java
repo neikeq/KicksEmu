@@ -6,14 +6,11 @@ import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class Room {
 
@@ -41,9 +38,10 @@ public abstract class Room {
     private List<Integer> redTeam;
     private List<Integer> blueTeam;
 
-    private List<Integer> observers;
+    private List<Short> redTeamPositions;
+    private List<Short> blueTeamPositions;
 
-    private List<Short> positions;
+    private List<Integer> observers;
 
     private RoomLobby roomLobby;
 
@@ -68,8 +66,6 @@ public abstract class Room {
 
             // Add player to the correct team
             addPlayerToTeam(playerId);
-
-            updatePositions();
         }
 
         session.setRoomId(id);
@@ -102,8 +98,6 @@ public abstract class Room {
                     updateHost();
                 }
             }
-
-            updatePositions();
         }
 
         // Notify the session
@@ -115,11 +109,11 @@ public abstract class Room {
     private void addPlayerToTeam(int playerId) {
         if (getRedTeam().size() > getBlueTeam().size()) {
             if (!getBlueTeam().contains(playerId)) {
-                getBlueTeam().add(playerId);
+                addPlayerToBlueTeam(playerId);
             }
         } else {
             if (!getRedTeam().contains(playerId)) {
-                getRedTeam().add(playerId);
+                addPlayerToRedTeam(playerId);
             }
         }
     }
@@ -127,50 +121,64 @@ public abstract class Room {
     private void addPlayerToTeam(int playerId, RoomTeam team) {
         switch (team) {
             case RED:
-                getRedTeam().add(playerId);
+                addPlayerToRedTeam(playerId);
                 break;
             case BLUE:
-                getBlueTeam().add(playerId);
+                addPlayerToBlueTeam(playerId);
                 break;
             default:
         }
     }
 
+    private void addPlayerToRedTeam(int playerId) {
+        getRedTeam().add(playerId);
+
+        short position = getPlayers().get(playerId).getPlayerInfo().getPosition();
+        getRedTeamPositions().add(position);
+    }
+
+    private void addPlayerToBlueTeam(int playerId) {
+        getBlueTeam().add(playerId);
+
+        short position = getPlayers().get(playerId).getPlayerInfo().getPosition();
+        getBlueTeamPositions().add(position);
+    }
+
     private void removePlayerFromTeam(int playerId) {
-        int index = getRedTeam().indexOf(playerId);
-
-        if (index >= 0) {
-            getRedTeam().remove(index);
+        if (getRedTeam().contains(playerId)) {
+            removePlayerFromRedTeam(playerId);
         } else {
-            index = getBlueTeam().indexOf(playerId);
-
-            if (index >= 0) {
-                getBlueTeam().remove(index);
-            }
+            removePlayerFromBlueTeam(playerId);
         }
     }
 
     private void removePlayerFromTeam(int playerId, RoomTeam team) {
-        int index;
-
         switch (team) {
             case RED:
-                index = getRedTeam().indexOf(playerId);
-
-                if (index >= 0) {
-                    getRedTeam().remove(index);
-                }
-
+                removePlayerFromRedTeam(playerId);
                 break;
             case BLUE:
-                index = getBlueTeam().indexOf(playerId);
-
-                if (index >= 0) {
-                    getBlueTeam().remove(index);
-                }
-
+                removePlayerFromBlueTeam(playerId);
                 break;
             default:
+        }
+    }
+
+    private void removePlayerFromRedTeam(int playerId) {
+        int index = getRedTeam().indexOf(playerId);
+
+        if (index >= 0) {
+            getRedTeam().remove(index);
+            getRedTeamPositions().remove(index);
+        }
+    }
+
+    private void removePlayerFromBlueTeam(int playerId) {
+        int index = getBlueTeam().indexOf(playerId);
+
+        if (index >= 0) {
+            getBlueTeam().remove(index);
+            getBlueTeamPositions().remove(index);
         }
     }
 
@@ -214,16 +222,6 @@ public abstract class Room {
 
     private void updateHost() {
         host = (Integer)getPlayers().keySet().toArray()[0];
-    }
-
-    /** Update the list players positions in the room.
-     * This is required for sending in room list message
-     */
-    private void updatePositions() {
-        getPositions().clear();
-        getPositions().addAll(getPlayers().values().stream().map(
-                session -> session.getPlayerInfo().getPosition()
-        ).collect(Collectors.toList()));
     }
 
     public RoomTeam getPlayerTeam(int playerId) {
@@ -314,8 +312,11 @@ public abstract class Room {
 
         redTeam = new ArrayList<>();
         blueTeam = new ArrayList<>();
+
+        redTeamPositions = new ArrayList<>();
+        blueTeamPositions = new ArrayList<>();
+
         observers = new ArrayList<>();
-        positions = new ArrayList<>();
 
         roomLobby = new RoomLobby();
     }
@@ -424,8 +425,12 @@ public abstract class Room {
         return players;
     }
 
-    public List<Short> getPositions() {
-        return positions;
+    public List<Short> getRedTeamPositions() {
+        return redTeamPositions;
+    }
+
+    public List<Short> getBlueTeamPositions() {
+        return blueTeamPositions;
     }
 
     public List<Integer> getRedTeam() {

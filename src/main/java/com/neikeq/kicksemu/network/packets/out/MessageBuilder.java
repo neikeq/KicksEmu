@@ -419,16 +419,29 @@ public class MessageBuilder {
                 msg.append((byte)room.getMaxSize().toInt());
                 msg.append(room.getCurrentSize());
 
+                // Red team positions
+
                 int i = 0;
 
-                for (short position : room.getPositions()) {
+                for (short position : room.getRedTeamPositions()) {
                     msg.append((byte)position);
                     i++;
                 }
 
-                // Fill the remain spaces if room is not full
-                // 10 is the number of bytes needed to be filled
-                msg.appendZeros(10 - i);
+                // Fill the remain spaces if red team is not full
+                msg.appendZeros(5 - i);
+
+                // Blue team positions
+
+                i = 0;
+
+                for (short position : room.getBlueTeamPositions()) {
+                    msg.append((byte)position);
+                    i++;
+                }
+
+                // Fill the remain spaces if blue team is not full
+                msg.appendZeros(5 - i);
             }
         }
 
