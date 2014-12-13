@@ -14,7 +14,8 @@ public enum ChatMessageType {
     TOURNAMENT_WINNER,
     TOURNAMENT_MATCH_MESSAGE,
     TOURNAMENT_MATCH_WINNER_DEFAULT,
-    CANNOT_SELF_WHISPER,;
+    CANNOT_SELF_WHISPER,
+    WHISPERS_DISABLED;
 
     public static ChatMessageType fromInt(int value) {
         switch (value) {
@@ -47,6 +48,8 @@ public enum ChatMessageType {
                 return TOURNAMENT_MATCH_WINNER_DEFAULT;
             case 250:
                 return CANNOT_SELF_WHISPER;
+            case 251:
+                return WHISPERS_DISABLED;
             default:
                 return null;
         }
@@ -82,6 +85,8 @@ public enum ChatMessageType {
                 return 14;
             case CANNOT_SELF_WHISPER:
                 return 250;
+            case WHISPERS_DISABLED:
+                return 251;
             default:
                 return 0;
         }

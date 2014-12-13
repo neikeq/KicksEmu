@@ -98,11 +98,17 @@ public class ChatManager {
                 int targetId = CharacterUtils.getCharacterIdByName(target);
                 Session targetSession = ServerManager.getSessionById(targetId);
 
+                // If target player was found
                 if (targetSession != null) {
-                    // TODO Check if the target player muted the whisperer
-                    ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
-                            ChatMessageType.WHISPER_FROM, whisper);
-                    targetSession.sendAndFlush(msgWhisper);
+                    // If the target player accepts whispers
+                    if (targetSession.getUserInfo().getSettings().getWhispers()) {
+                        // TODO Check if the target player muted the whisperer
+                        ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
+                                ChatMessageType.WHISPER_FROM, whisper);
+                        targetSession.sendAndFlush(msgWhisper);
+                    } else {
+                        type = ChatMessageType.WHISPERS_DISABLED;
+                    }
                 } else {
                     type = ChatMessageType.INVALID_PLAYER;
                 }
