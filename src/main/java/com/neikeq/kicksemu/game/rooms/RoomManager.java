@@ -138,7 +138,7 @@ public class RoomManager {
 
             // If everything is correct, create the room
             if (result == 0) {
-                Room room = new NormalRoom();
+                Room room = new Room();
 
                 // Limit the length of the name
                 if (name.length() > MAX_ROOM_NAME_LENGTH) {
