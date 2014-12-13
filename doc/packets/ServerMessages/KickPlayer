@@ -1,0 +1,18 @@
+// KickPlayer
+// Tcp
+
+Id: 2317
+Size: 6
+
+Data:
+int packet_id
+byte reason
+/*
+ * Player not found: 252
+ * You are not the room master: 253
+ * Room does not exist: 254
+ */
+byte response
+
+Note:
+// This packet is sent to the client only if something went wrong, so response is always 255

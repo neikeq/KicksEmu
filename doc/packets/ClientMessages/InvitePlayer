@@ -1,0 +1,9 @@
+// InvitePlayer
+// Tcp
+
+Id: 2319
+Size: 8
+
+Data:
+int packet_id
+int character_id
