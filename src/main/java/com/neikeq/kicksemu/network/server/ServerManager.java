@@ -84,7 +84,10 @@ public class ServerManager {
     }
 
     public static void updateConnectedUsers() {
-        serverInfo.setConnectedUsers((short) getPlayers().size());
+        // serverInfo is null on main server
+        if (serverInfo != null) {
+            serverInfo.setConnectedUsers((short) getPlayers().size());
+        }
     }
 
     public static Session getSessionById(int id) {
