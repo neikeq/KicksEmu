@@ -4,130 +4,119 @@ import com.neikeq.kicksemu.storage.SqlUtils;
 
 public class ServerInfo {
 
-    private short id;
-
-    private SqlUtils sqlUtils;
+    private static final String table = "servers";
 
     // Sql getters and setters
 
-    public short getId() {
-        return id;
+    public static short getFilter(int id) {
+        return SqlUtils.getShort("filter", table, id);
     }
 
-    public short getFilter() {
-        return sqlUtils.getShort("filter");
+    public static void setFilter(short filter, int id) {
+        SqlUtils.setShort("filter", filter, table, id);
     }
 
-    public void setFilter(short filter) {
-        sqlUtils.setShort("filter", filter);
+    public static String getName(int id) {
+        return SqlUtils.getString("name", table, id);
     }
 
-    public String getName() {
-        return sqlUtils.getString("name");
+    public static void setName(String name, int id) {
+        SqlUtils.setString("name", name, table, id);
     }
 
-    public void setName(String name) {
-        sqlUtils.getString("name");
+    public static String getAddress(int id) {
+        return SqlUtils.getString("address", table, id);
     }
 
-    public String getAddress() {
-        return sqlUtils.getString("address");
+    public static void setAddress(String ip, int id) {
+        SqlUtils.setString("address", ip, table, id);
     }
 
-    public void setAddress(String ip) {
-        sqlUtils.setString("address", ip);
+    public static short getPort(int id) {
+        return SqlUtils.getShort("port", table, id);
     }
 
-    public short getPort() {
-        return sqlUtils.getShort("port");
+    public static void setPort(short port, int id) {
+        SqlUtils.setShort("port", port, table, id);
     }
 
-    public void setPort(short port) {
-        sqlUtils.setShort("port", port);
+    public static short getMinLevel(int id) {
+        return SqlUtils.getShort("min_level", table, id);
     }
 
-    public short getMinLevel() {
-        return sqlUtils.getShort("min_level");
+    public static void setMinLevel(short minLevel, int id) {
+        SqlUtils.setShort("min_level", minLevel, table, id);
     }
 
-    public void setMinLevel(short minLevel) {
-        sqlUtils.setShort("min_level", minLevel);
+    public static short getMaxLevel(int id) {
+        return SqlUtils.getShort("max_level", table, id);
     }
 
-    public short getMaxLevel() {
-        return sqlUtils.getShort("max_level");
+    public static void setMaxLevel(short maxLevel, int id) {
+        SqlUtils.setShort("max_level", maxLevel, table, id);
     }
 
-    public void setMaxLevel(short maxLevel) {
-        sqlUtils.setShort("max_level", maxLevel);
+    public static short getMaxUsers(int id) {
+        return SqlUtils.getShort("max_users", table, id);
     }
 
-    public short getMaxUsers() {
-        return sqlUtils.getShort("max_users");
+    public static void setMaxUsers(short maxConnectedUsers, int id) {
+        SqlUtils.setShort("max_users", maxConnectedUsers, table, id);
     }
 
-    public void setMaxUsers(short maxConnectedUsers) {
-        sqlUtils.setShort("max_users", maxConnectedUsers);
+    public static short getConnectedUsers(int id) {
+        return SqlUtils.getShort("connected_users", table, id);
     }
 
-    public short getConnectedUsers() {
-        return sqlUtils.getShort("connected_users");
+    public static void setConnectedUsers(short connectedUsers, int id) {
+        SqlUtils.setShort("connected_users", connectedUsers, table, id);
     }
 
-    public void setConnectedUsers(short connectedUsers) {
-        sqlUtils.setShort("connected_users", connectedUsers);
+    public static boolean isOnline(int id) {
+        return SqlUtils.getBoolean("online", table, id);
     }
 
-    public boolean isOnline() {
-        return sqlUtils.getBoolean("online");
+    public static void setOnline(boolean status, int id) {
+        SqlUtils.setBoolean("online", status, table, id);
     }
 
-    public void setOnline(boolean status) {
-        sqlUtils.setBoolean("online", status);
+    public static GameServerType getType(int id) {
+        return GameServerType.valueOf(SqlUtils.getString("type", table, id));
     }
 
-    public GameServerType getType() {
-        return GameServerType.valueOf(sqlUtils.getString("type"));
+    public static void setType(GameServerType type, int id) {
+        SqlUtils.setString("type", type.name(), table, id);
     }
 
-    public void setType(GameServerType type) {
-        sqlUtils.setString("type", type.name());
+    public static int getExpFactor(int id) {
+        return SqlUtils.getInt("exp_factor", table, id);
     }
 
-    public int getExpFactor() {
-        return sqlUtils.getInt("exp_factor");
+    public static void setExpFactor(int expFactor, int id) {
+        SqlUtils.setInt("exp_factor", expFactor, table, id);
     }
 
-    public void setExpFactor(int expFactor) {
-        sqlUtils.setInt("exp_factor", expFactor);
+    public static int getPointFactor(int id) {
+        return SqlUtils.getInt("point_factor", table, id);
     }
 
-    public int getPointFactor() {
-        return sqlUtils.getInt("point_factor");
+    public static void setPointFactor(int pointFactor, int id) {
+        SqlUtils.setInt("point_factor", pointFactor, table, id);
     }
 
-    public void setPointFactor(int pointFactor) {
-        sqlUtils.setInt("point_factor", pointFactor);
+    public static int getKashFactor(int id) {
+        return SqlUtils.getInt("kash_factor", table, id);
     }
 
-    public int getKashFactor() {
-        return sqlUtils.getInt("kash_factor");
+    public static void setKashFactor(int kashFactor, int id) {
+        SqlUtils.setInt("kash_factor", kashFactor, table, id);
     }
 
-    public void setKashFactor(int kashFactor) {
-        sqlUtils.setInt("kash_factor", kashFactor);
+    public static boolean getPracticeRewards(int id) {
+        return SqlUtils.getBoolean("practice_rewards", table, id);
     }
 
-    public boolean getPracticeRewards() {
-        return sqlUtils.getBoolean("practice_rewards");
-    }
-
-    public void setPracticeRewards(boolean practiceRewards) {
-        sqlUtils.setBoolean("practice_rewards", practiceRewards);
-    }
-
-    public ServerInfo(short id) {
-        this.id = id;
-        this.sqlUtils = new SqlUtils(id, "servers");
+    public static void setPracticeRewards(boolean practiceRewards, int id) {
+        SqlUtils.setBoolean("practice_rewards", practiceRewards, table, id);
     }
 }

@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.game.sessions;
 
-import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.Lobby;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -19,8 +18,8 @@ public class Session {
 
     private final Channel channel;
 
-    private UserInfo userInfo;
-    private PlayerInfo playerInfo;
+    private int userId;
+    private int playerId;
 
     private int roomId;
 
@@ -55,7 +54,7 @@ public class Session {
 
         // If session is still alive, add it to the main lobby
         if (authenticated) {
-            LobbyManager.addPlayer(playerInfo.getId());
+            LobbyManager.addPlayer(playerId);
         }
     }
 
@@ -64,9 +63,9 @@ public class Session {
         Room room = RoomManager.getRoomById(roomId);
 
         // If room exist and player is inside the room
-        if (room != null && room.isPlayerIn(playerInfo.getId())) {
+        if (room != null && room.isPlayerIn(playerId)) {
             room.removePlayer(this, reason);
-            sendAndFlush(MessageBuilder.leaveRoom(playerInfo.getId(), reason));
+            sendAndFlush(MessageBuilder.leaveRoom(playerId, reason));
         }
     }
 
@@ -89,17 +88,17 @@ public class Session {
 
         // If session information were not yet cleared
         if (authenticated) {
-            authenticated = false;
+            setAuthenticated(false);
             udpAuthenticated = false;
 
             // Update user status on database
-            userInfo.setOnline(false);
+            UserInfo.setOnline(false, userId);
 
-            if (playerInfo != null) {
+            if (playerId > 0) {
                 // Remove session from the list of connected clients
-                ServerManager.removePlayer(playerInfo.getId());
+                ServerManager.removePlayer(playerId);
                 // If session is in the main lobby, leave it
-                LobbyManager.removePlayer(playerInfo.getId());
+                LobbyManager.removePlayer(playerId);
             }
 
             // If session is inside a room, leave it
@@ -110,7 +109,7 @@ public class Session {
     public Session(Channel channel) {
         this.channel = channel;
 
-        authenticated = false;
+        setAuthenticated(false);
 
         // Ignore UDP authentication by setting it to 'true'
         udpAuthenticated = true;
@@ -128,20 +127,20 @@ public class Session {
         return channel;
     }
 
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserInfo(int id) {
-        userInfo = new UserInfo(id);
+    public void setUserId(int id) {
+        userId = id;
     }
 
-    public PlayerInfo getPlayerInfo() {
-        return playerInfo;
+    public int getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayerInfo(int id) {
-        playerInfo = new PlayerInfo(id);
+    public void setPlayerId(int id) {
+        playerId = id;
     }
 
     public boolean isUdpAuthenticated() {

@@ -10,960 +10,949 @@ import java.util.Map;
 
 public class PlayerInfo {
 
-    private final int id;
-
-    private final SqlUtils sqlUtils;
+    private static final String table = "characters";
 
     // Sql getters
 
-    public int getId() {
-        return id;
+    public static int getOwner(int id) {
+        return SqlUtils.getInt("owner", table, id);
     }
 
-    public int getOwner() {
-        return sqlUtils.getInt("owner");
+    public static String getName(int id) {
+        return SqlUtils.getString("name", table, id);
     }
 
-    public String getName() {
-        return sqlUtils.getString("name");
+    public static int getClubId(int id) {
+        return SqlUtils.getInt("club_id", table, id);
     }
 
-    public int getClubId() {
-        return sqlUtils.getInt("club_id");
+    public static boolean isBlocked(int id) {
+        return SqlUtils.getBoolean("blocked", table, id);
     }
 
-    public boolean isBlocked() {
-        return sqlUtils.getBoolean("blocked");
+    public static boolean isModerator(int id) {
+        return SqlUtils.getBoolean("moderator", table, id);
     }
 
-    public boolean isModerator() {
-        return sqlUtils.getBoolean("moderator");
+    public static short getLevel(int id) {
+        return SqlUtils.getShort("level", table, id);
     }
 
-    public short getLevel() {
-        return sqlUtils.getShort("level");
+    public static short getPosition(int id) {
+        return SqlUtils.getShort("position", table, id);
     }
 
-    public short getPosition() {
-        return sqlUtils.getShort("position");
+    public static short getCurrentQuest(int id) {
+        return SqlUtils.getShort("quest_current", table, id);
     }
 
-    public short getCurrentQuest() {
-        return sqlUtils.getShort("quest_current");
+    public static short getRemainingQuestMatches(int id) {
+        return SqlUtils.getShort("quest_matches_left", table, id);
     }
 
-    public short getRemainingQuestMatches() {
-        return sqlUtils.getShort("quest_matches_left");
+    public static byte getTutorialDribbling(int id) {
+        return SqlUtils.getByte("tutorial_dribbling", table, id);
     }
 
-    public byte getTutorialDribbling() {
-        return sqlUtils.getByte("tutorial_dribbling");
+    public static byte getTutorialPassing(int id) {
+        return SqlUtils.getByte("tutorial_passing", table, id);
     }
 
-    public byte getTutorialPassing() {
-        return sqlUtils.getByte("tutorial_passing");
+    public static byte getTutorialShooting(int id) {
+        return SqlUtils.getByte("tutorial_shooting", table, id);
     }
 
-    public byte getTutorialShooting() {
-        return sqlUtils.getByte("tutorial_shooting");
+    public static byte getTutorialDefense(int id) {
+        return SqlUtils.getByte("tutorial_defense", table, id);
     }
 
-    public byte getTutorialDefense() {
-        return sqlUtils.getByte("tutorial_defense");
+    public static boolean getReceivedReward(int id) {
+        return SqlUtils.getBoolean("received_reward", table, id);
     }
 
-    public boolean getReceivedReward() {
-        return sqlUtils.getBoolean("received_reward");
+    public static int getExperience(int id) {
+        return SqlUtils.getInt("experience", table, id);
     }
 
-    public int getExperience() {
-        return sqlUtils.getInt("experience");
+    public static int getPoints(int id) {
+        return SqlUtils.getInt("points", table, id);
     }
 
-    public int getPoints() {
-        return sqlUtils.getInt("points");
+    public static short getTicketsKash(int id) {
+        return SqlUtils.getShort("tickets_kash", table, id);
     }
 
-    public short getTicketsKash() {
-        return sqlUtils.getShort("tickets_kash");
+    public static short getTicketsPoints(int id) {
+        return SqlUtils.getShort("tickets_points", table, id);
     }
 
-    public short getTicketsPoints() {
-        return sqlUtils.getShort("tickets_points");
+    public static short getAnimation(int id) {
+        return SqlUtils.getShort("animation", table, id);
     }
 
-    public short getAnimation() {
-        return sqlUtils.getShort("animation");
+    public static short getFace(int id) {
+        return SqlUtils.getShort("face", table, id);
     }
 
-    public short getFace() {
-        return sqlUtils.getShort("face");
+    public static int getDefaultHead(int id) {
+        return SqlUtils.getInt("default_head", table, id);
     }
 
-    public int getDefaultHead() {
-        return sqlUtils.getInt("default_head");
+    public static int getDefaultShirts(int id) {
+        return SqlUtils.getInt("default_shirts", table, id);
     }
 
-    public int getDefaultShirts() {
-        return sqlUtils.getInt("default_shirts");
+    public static int getDefaultPants(int id) {
+        return SqlUtils.getInt("default_pants", table, id);
     }
 
-    public int getDefaultPants() {
-        return sqlUtils.getInt("default_pants");
+    public static int getDefaultShoes(int id) {
+        return SqlUtils.getInt("default_shoes", table, id);
     }
 
-    public int getDefaultShoes() {
-        return sqlUtils.getInt("default_shoes");
+    public static int getItemHead(int id) {
+        return SqlUtils.getInt("item_head", table, id);
     }
 
-    public int getItemHead() {
-        return sqlUtils.getInt("item_head");
+    public static int getItemGlasses(int id) {
+        return SqlUtils.getInt("item_glasses", table, id);
     }
 
-    public int getItemGlasses() {
-        return sqlUtils.getInt("item_glasses");
+    public static int getItemShirts(int id) {
+        return SqlUtils.getInt("item_shirts", table, id);
     }
 
-    public int getItemShirts() {
-        return sqlUtils.getInt("item_shirts");
+    public static int getItemPants(int id) {
+        return SqlUtils.getInt("item_pants", table, id);
     }
 
-    public int getItemPants() {
-        return sqlUtils.getInt("item_pants");
+    public static int getItemGlove(int id) {
+        return SqlUtils.getInt("item_glove", table, id);
     }
 
-    public int getItemGlove() {
-        return sqlUtils.getInt("item_glove");
+    public static int getItemShoes(int id) {
+        return SqlUtils.getInt("item_shoes", table, id);
     }
 
-    public int getItemShoes() {
-        return sqlUtils.getInt("item_shoes");
+    public static int getItemSocks(int id) {
+        return SqlUtils.getInt("item_socks", table, id);
     }
 
-    public int getItemSocks() {
-        return sqlUtils.getInt("item_socks");
+    public static int getItemWrist(int id) {
+        return SqlUtils.getInt("item_wrist", table, id);
     }
 
-    public int getItemWrist() {
-        return sqlUtils.getInt("item_wrist");
+    public static int getItemArm(int id) {
+        return SqlUtils.getInt("item_arm", table, id);
     }
 
-    public int getItemArm() {
-        return sqlUtils.getInt("item_arm");
+    public static int getItemKnee(int id) {
+        return SqlUtils.getInt("item_knee", table, id);
     }
 
-    public int getItemKnee() {
-        return sqlUtils.getInt("item_knee");
+    public static int getItemEar(int id) {
+        return SqlUtils.getInt("item_ear", table, id);
     }
 
-    public int getItemEar() {
-        return sqlUtils.getInt("item_ear");
+    public static int getItemNeck(int id) {
+        return SqlUtils.getInt("item_neck", table, id);
     }
 
-    public int getItemNeck() {
-        return sqlUtils.getInt("item_neck");
+    public static int getItemMask(int id) {
+        return SqlUtils.getInt("item_mask", table, id);
     }
 
-    public int getItemMask() {
-        return sqlUtils.getInt("item_mask");
+    public static int getItemMuffler(int id) {
+        return SqlUtils.getInt("item_muffler", table, id);
     }
 
-    public int getItemMuffler() {
-        return sqlUtils.getInt("item_muffler");
+    public static int getItemPackage(int id) {
+        return SqlUtils.getInt("item_package", table, id);
     }
 
-    public int getItemPackage() {
-        return sqlUtils.getInt("item_package");
-    }
-
-    public short getStatsPoints() {
-        return sqlUtils.getShort("stats_points");
+    public static short getStatsPoints(int id) {
+        return SqlUtils.getShort("stats_points", table, id);
     }
 
     // Stats
 
-    public short getStatsRunning() {
-        return sqlUtils.getShort("stats_running");
+    public static short getStatsRunning(int id) {
+        return SqlUtils.getShort("stats_running", table, id);
     }
 
-    public short getStatsEndurance() {
-        return sqlUtils.getShort("stats_endurance");
+    public static short getStatsEndurance(int id) {
+        return SqlUtils.getShort("stats_endurance", table, id);
     }
 
-    public short getStatsAgility() {
-        return sqlUtils.getShort("stats_agility");
+    public static short getStatsAgility(int id) {
+        return SqlUtils.getShort("stats_agility", table, id);
     }
 
-    public short getStatsBallControl() {
-        return sqlUtils.getShort("stats_ball_control");
+    public static short getStatsBallControl(int id) {
+        return SqlUtils.getShort("stats_ball_control", table, id);
     }
 
-    public short getStatsDribbling() {
-        return sqlUtils.getShort("stats_dribbling");
+    public static short getStatsDribbling(int id) {
+        return SqlUtils.getShort("stats_dribbling", table, id);
     }
 
-    public short getStatsStealing() {
-        return sqlUtils.getShort("stats_stealing");
+    public static short getStatsStealing(int id) {
+        return SqlUtils.getShort("stats_stealing", table, id);
     }
 
-    public short getStatsTackling() {
-        return sqlUtils.getShort("stats_tackling");
+    public static short getStatsTackling(int id) {
+        return SqlUtils.getShort("stats_tackling", table, id);
     }
 
-    public short getStatsHeading() {
-        return sqlUtils.getShort("stats_heading");
+    public static short getStatsHeading(int id) {
+        return SqlUtils.getShort("stats_heading", table, id);
     }
 
-    public short getStatsShortShots() {
-        return sqlUtils.getShort("stats_short_shots");
+    public static short getStatsShortShots(int id) {
+        return SqlUtils.getShort("stats_short_shots", table, id);
     }
 
-    public short getStatsLongShots() {
-        return sqlUtils.getShort("stats_long_shots");
+    public static short getStatsLongShots(int id) {
+        return SqlUtils.getShort("stats_long_shots", table, id);
     }
 
-    public short getStatsCrossing() {
-        return sqlUtils.getShort("stats_crossing");
+    public static short getStatsCrossing(int id) {
+        return SqlUtils.getShort("stats_crossing", table, id);
     }
 
-    public short getStatsShortPasses() {
-        return sqlUtils.getShort("stats_short_passes");
+    public static short getStatsShortPasses(int id) {
+        return SqlUtils.getShort("stats_short_passes", table, id);
     }
 
-    public short getStatsLongPasses() {
-        return sqlUtils.getShort("stats_long_passes");
+    public static short getStatsLongPasses(int id) {
+        return SqlUtils.getShort("stats_long_passes", table, id);
     }
 
-    public short getStatsMarking() {
-        return sqlUtils.getShort("stats_marking");
+    public static short getStatsMarking(int id) {
+        return SqlUtils.getShort("stats_marking", table, id);
     }
 
-    public short getStatsGoalkeeping() {
-        return sqlUtils.getShort("stats_goalkeeping");
+    public static short getStatsGoalkeeping(int id) {
+        return SqlUtils.getShort("stats_goalkeeping", table, id);
     }
 
-    public short getStatsPunching() {
-        return sqlUtils.getShort("stats_punching");
+    public static short getStatsPunching(int id) {
+        return SqlUtils.getShort("stats_punching", table, id);
     }
 
-    public short getStatsDefense() {
-        return sqlUtils.getShort("stats_defense");
+    public static short getStatsDefense(int id) {
+        return SqlUtils.getShort("stats_defense", table, id);
     }
 
     // Stats Training
 
-    public short getTrainingStatsRunning() {
-        return sqlUtils.getShort("training_running");
+    public static short getTrainingStatsRunning(int id) {
+        return SqlUtils.getShort("training_running", table, id);
     }
 
-    public short getTrainingStatsEndurance() {
-        return sqlUtils.getShort("training_endurance");
+    public static short getTrainingStatsEndurance(int id) {
+        return SqlUtils.getShort("training_endurance", table, id);
     }
 
-    public short getTrainingStatsAgility() {
-        return sqlUtils.getShort("training_agility");
+    public static short getTrainingStatsAgility(int id) {
+        return SqlUtils.getShort("training_agility", table, id);
     }
 
-    public short getTrainingStatsBallControl() {
-        return sqlUtils.getShort("training_ball_control");
+    public static short getTrainingStatsBallControl(int id) {
+        return SqlUtils.getShort("training_ball_control", table, id);
     }
 
-    public short getTrainingStatsDribbling() {
-        return sqlUtils.getShort("training_dribbling");
+    public static short getTrainingStatsDribbling(int id) {
+        return SqlUtils.getShort("training_dribbling", table, id);
     }
 
-    public short getTrainingStatsStealing() {
-        return sqlUtils.getShort("training_stealing");
+    public static short getTrainingStatsStealing(int id) {
+        return SqlUtils.getShort("training_stealing", table, id);
     }
 
-    public short getTrainingStatsTackling() {
-        return sqlUtils.getShort("training_tackling");
+    public static short getTrainingStatsTackling(int id) {
+        return SqlUtils.getShort("training_tackling", table, id);
     }
 
-    public short getTrainingStatsHeading() {
-        return sqlUtils.getShort("training_heading");
+    public static short getTrainingStatsHeading(int id) {
+        return SqlUtils.getShort("training_heading", table, id);
     }
 
-    public short getTrainingStatsShortShots() {
-        return sqlUtils.getShort("training_short_shots");
+    public static short getTrainingStatsShortShots(int id) {
+        return SqlUtils.getShort("training_short_shots", table, id);
     }
 
-    public short getTrainingStatsLongShots() {
-        return sqlUtils.getShort("training_long_shots");
+    public static short getTrainingStatsLongShots(int id) {
+        return SqlUtils.getShort("training_long_shots", table, id);
     }
 
-    public short getTrainingStatsCrossing() {
-        return sqlUtils.getShort("training_crossing");
+    public static short getTrainingStatsCrossing(int id) {
+        return SqlUtils.getShort("training_crossing", table, id);
     }
 
-    public short getTrainingStatsShortPasses() {
-        return sqlUtils.getShort("training_short_passes");
+    public static short getTrainingStatsShortPasses(int id) {
+        return SqlUtils.getShort("training_short_passes", table, id);
     }
 
-    public short getTrainingStatsLongPasses() {
-        return sqlUtils.getShort("training_long_passes");
+    public static short getTrainingStatsLongPasses(int id) {
+        return SqlUtils.getShort("training_long_passes", table, id);
     }
 
-    public short getTrainingStatsMarking() {
-        return sqlUtils.getShort("training_marking");
+    public static short getTrainingStatsMarking(int id) {
+        return SqlUtils.getShort("training_marking", table, id);
     }
 
-    public short getTrainingStatsGoalkeeping() {
-        return sqlUtils.getShort("training_goalkeeping");
+    public static short getTrainingStatsGoalkeeping(int id) {
+        return SqlUtils.getShort("training_goalkeeping", table, id);
     }
 
-    public short getTrainingStatsPunching() {
-        return sqlUtils.getShort("training_punching");
+    public static short getTrainingStatsPunching(int id) {
+        return SqlUtils.getShort("training_punching", table, id);
     }
 
-    public short getTrainingStatsDefense() {
-        return sqlUtils.getShort("training_defense");
+    public static short getTrainingStatsDefense(int id) {
+        return SqlUtils.getShort("training_defense", table, id);
     }
 
     // Stats Bonus
 
-    public short getBonusStatsRunning() {
-        return sqlUtils.getShort("bonus_running");
+    public static short getBonusStatsRunning(int id) {
+        return SqlUtils.getShort("bonus_running", table, id);
     }
 
-    public short getBonusStatsEndurance() {
-        return sqlUtils.getShort("bonus_endurance");
+    public static short getBonusStatsEndurance(int id) {
+        return SqlUtils.getShort("bonus_endurance", table, id);
     }
 
-    public short getBonusStatsAgility() {
-        return sqlUtils.getShort("bonus_agility");
+    public static short getBonusStatsAgility(int id) {
+        return SqlUtils.getShort("bonus_agility", table, id);
     }
 
-    public short getBonusStatsBallControl() {
-        return sqlUtils.getShort("bonus_ball_control");
+    public static short getBonusStatsBallControl(int id) {
+        return SqlUtils.getShort("bonus_ball_control", table, id);
     }
 
-    public short getBonusStatsDribbling() {
-        return sqlUtils.getShort("bonus_dribbling");
+    public static short getBonusStatsDribbling(int id) {
+        return SqlUtils.getShort("bonus_dribbling", table, id);
     }
 
-    public short getBonusStatsStealing() {
-        return sqlUtils.getShort("bonus_stealing");
+    public static short getBonusStatsStealing(int id) {
+        return SqlUtils.getShort("bonus_stealing", table, id);
     }
 
-    public short getBonusStatsTackling() {
-        return sqlUtils.getShort("bonus_tackling");
+    public static short getBonusStatsTackling(int id) {
+        return SqlUtils.getShort("bonus_tackling", table, id);
     }
 
-    public short getBonusStatsHeading() {
-        return sqlUtils.getShort("bonus_heading");
+    public static short getBonusStatsHeading(int id) {
+        return SqlUtils.getShort("bonus_heading", table, id);
     }
 
-    public short getBonusStatsShortShots() {
-        return sqlUtils.getShort("bonus_short_shots");
+    public static short getBonusStatsShortShots(int id) {
+        return SqlUtils.getShort("bonus_short_shots", table, id);
     }
 
-    public short getBonusStatsLongShots() {
-        return sqlUtils.getShort("bonus_long_shots");
+    public static short getBonusStatsLongShots(int id) {
+        return SqlUtils.getShort("bonus_long_shots", table, id);
     }
 
-    public short getBonusStatsCrossing() {
-        return sqlUtils.getShort("bonus_crossing");
+    public static short getBonusStatsCrossing(int id) {
+        return SqlUtils.getShort("bonus_crossing", table, id);
     }
 
-    public short getBonusStatsShortPasses() {
-        return sqlUtils.getShort("bonus_short_passes");
+    public static short getBonusStatsShortPasses(int id) {
+        return SqlUtils.getShort("bonus_short_passes", table, id);
     }
 
-    public short getBonusStatsLongPasses() {
-        return sqlUtils.getShort("bonus_long_passes");
+    public static short getBonusStatsLongPasses(int id) {
+        return SqlUtils.getShort("bonus_long_passes", table, id);
     }
 
-    public short getBonusStatsMarking() {
-        return sqlUtils.getShort("bonus_marking");
+    public static short getBonusStatsMarking(int id) {
+        return SqlUtils.getShort("bonus_marking", table, id);
     }
 
-    public short getBonusStatsGoalkeeping() {
-        return sqlUtils.getShort("bonus_goalkeeping");
+    public static short getBonusStatsGoalkeeping(int id) {
+        return SqlUtils.getShort("bonus_goalkeeping", table, id);
     }
 
-    public short getBonusStatsPunching() {
-        return sqlUtils.getShort("bonus_punching");
+    public static short getBonusStatsPunching(int id) {
+        return SqlUtils.getShort("bonus_punching", table, id);
     }
 
-    public short getBonusStatsDefense() {
-        return sqlUtils.getShort("bonus_defense");
+    public static short getBonusStatsDefense(int id) {
+        return SqlUtils.getShort("bonus_defense", table, id);
     }
 
     // History
 
-    public int getHistoryMatches() {
-        return sqlUtils.getInt("history_matches");
+    public static int getHistoryMatches(int id) {
+        return SqlUtils.getInt("history_matches", table, id);
     }
 
-    public int getHistoryWins() {
-        return sqlUtils.getInt("history_wins");
+    public static int getHistoryWins(int id) {
+        return SqlUtils.getInt("history_wins", table, id);
     }
 
-    public int getHistoryDraws() {
-        return sqlUtils.getInt("history_draws");
+    public static int getHistoryDraws(int id) {
+        return SqlUtils.getInt("history_draws", table, id);
     }
 
-    public int getHistoryMom() {
-        return sqlUtils.getInt("history_MOM");
+    public static int getHistoryMom(int id) {
+        return SqlUtils.getInt("history_MOM", table, id);
     }
 
-    public int getHistoryValidGoals() {
-        return sqlUtils.getInt("history_valid_goals");
+    public static int getHistoryValidGoals(int id) {
+        return SqlUtils.getInt("history_valid_goals", table, id);
     }
 
-    public int getHistoryValidAssists() {
-        return sqlUtils.getInt("history_valid_assists");
+    public static int getHistoryValidAssists(int id) {
+        return SqlUtils.getInt("history_valid_assists", table, id);
     }
 
-    public int getHistoryValidInterception() {
-        return sqlUtils.getInt("history_valid_interception");
+    public static int getHistoryValidInterception(int id) {
+        return SqlUtils.getInt("history_valid_interception", table, id);
     }
 
-    public int getHistoryValidShooting() {
-        return sqlUtils.getInt("history_valid_shooting");
+    public static int getHistoryValidShooting(int id) {
+        return SqlUtils.getInt("history_valid_shooting", table, id);
     }
 
-    public int getHistoryValidStealing() {
-        return sqlUtils.getInt("history_valid_stealing");
+    public static int getHistoryValidStealing(int id) {
+        return SqlUtils.getInt("history_valid_stealing", table, id);
     }
 
-    public int getHistoryValidTackling() {
-        return sqlUtils.getInt("history_valid_tackling");
+    public static int getHistoryValidTackling(int id) {
+        return SqlUtils.getInt("history_valid_tackling", table, id);
     }
 
-    public int getHistoryShooting() {
-        return sqlUtils.getInt("history_shooting");
+    public static int getHistoryShooting(int id) {
+        return SqlUtils.getInt("history_shooting", table, id);
     }
 
-    public int getHistoryStealing() {
-        return sqlUtils.getInt("history_stealing");
+    public static int getHistoryStealing(int id) {
+        return SqlUtils.getInt("history_stealing", table, id);
     }
 
-    public int getHistoryTackling() {
-        return sqlUtils.getInt("history_tackling");
+    public static int getHistoryTackling(int id) {
+        return SqlUtils.getInt("history_tackling", table, id);
     }
 
-    public int getHistoryTotalPoints() {
-        return sqlUtils.getInt("history_total_points");
+    public static int getHistoryTotalPoints(int id) {
+        return SqlUtils.getInt("history_total_points", table, id);
     }
 
     // History Last Month
 
-    public int getHistoryMonthMatches() {
-        return sqlUtils.getInt("history_month_matches");
+    public static int getHistoryMonthMatches(int id) {
+        return SqlUtils.getInt("history_month_matches", table, id);
     }
 
-    public int getHistoryMonthWins() {
-        return sqlUtils.getInt("history_month_wins");
+    public static int getHistoryMonthWins(int id) {
+        return SqlUtils.getInt("history_month_wins", table, id);
     }
 
-    public int getHistoryMonthDraws() {
-        return sqlUtils.getInt("history_month_draws");
+    public static int getHistoryMonthDraws(int id) {
+        return SqlUtils.getInt("history_month_draws", table, id);
     }
 
-    public int getHistoryMonthMom() {
-        return sqlUtils.getInt("history_month_MOM");
+    public static int getHistoryMonthMom(int id) {
+        return SqlUtils.getInt("history_month_MOM", table, id);
     }
 
-    public int getHistoryMonthValidGoals() {
-        return sqlUtils.getInt("history_month_valid_goals");
+    public static int getHistoryMonthValidGoals(int id) {
+        return SqlUtils.getInt("history_month_valid_goals", table, id);
     }
 
-    public int getHistoryMonthValidAssists() {
-        return sqlUtils.getInt("history_month_valid_assists");
+    public static int getHistoryMonthValidAssists(int id) {
+        return SqlUtils.getInt("history_month_valid_assists", table, id);
     }
 
-    public int getHistoryMonthValidInterception() {
-        return sqlUtils.getInt("history_month_valid_interception");
+    public static int getHistoryMonthValidInterception(int id) {
+        return SqlUtils.getInt("history_month_valid_interception", table, id);
     }
 
-    public int getHistoryMonthValidShooting() {
-        return sqlUtils.getInt("history_month_valid_shooting");
+    public static int getHistoryMonthValidShooting(int id) {
+        return SqlUtils.getInt("history_month_valid_shooting", table, id);
     }
 
-    public int getHistoryMonthValidStealing() {
-        return sqlUtils.getInt("history_month_valid_stealing");
+    public static int getHistoryMonthValidStealing(int id) {
+        return SqlUtils.getInt("history_month_valid_stealing", table, id);
     }
 
-    public int getHistoryMonthValidTackling() {
-        return sqlUtils.getInt("history_month_valid_tackling");
+    public static int getHistoryMonthValidTackling(int id) {
+        return SqlUtils.getInt("history_month_valid_tackling", table, id);
     }
 
-    public int getHistoryMonthShooting() {
-        return sqlUtils.getInt("history_month_shooting");
+    public static int getHistoryMonthShooting(int id) {
+        return SqlUtils.getInt("history_month_shooting", table, id);
     }
 
-    public int getHistoryMonthStealing() {
-        return sqlUtils.getInt("history_month_stealing");
+    public static int getHistoryMonthStealing(int id) {
+        return SqlUtils.getInt("history_month_stealing", table, id);
     }
 
-    public int getHistoryMonthTackling() {
-        return sqlUtils.getInt("history_month_tackling");
+    public static int getHistoryMonthTackling(int id) {
+        return SqlUtils.getInt("history_month_tackling", table, id);
     }
 
-    public int getHistoryMonthTotalPoints() {
-        return sqlUtils.getInt("history_month_total_points");
+    public static int getHistoryMonthTotalPoints(int id) {
+        return SqlUtils.getInt("history_month_total_points", table, id);
     }
 
     // Ranking
 
-    public short getRankingMatches() {
-        return sqlUtils.getShort("ranking_matches");
+    public static short getRankingMatches(int id) {
+        return SqlUtils.getShort("ranking_matches", table, id);
     }
 
-    public short getRankingWins() {
-        return sqlUtils.getShort("ranking_wins");
+    public static short getRankingWins(int id) {
+        return SqlUtils.getShort("ranking_wins", table, id);
     }
 
-    public short getRankingPoints() {
-        return sqlUtils.getShort("ranking_points");
+    public static short getRankingPoints(int id) {
+        return SqlUtils.getShort("ranking_points", table, id);
     }
 
-    public short getRankingMom() {
-        return sqlUtils.getShort("ranking_MOM");
+    public static short getRankingMom(int id) {
+        return SqlUtils.getShort("ranking_MOM", table, id);
     }
 
-    public short getRankingValidGoals() {
-        return sqlUtils.getShort("ranking_valid_goals");
+    public static short getRankingValidGoals(int id) {
+        return SqlUtils.getShort("ranking_valid_goals", table, id);
     }
 
-    public short getRankingValidAssists() {
-        return sqlUtils.getShort("ranking_valid_assists");
+    public static short getRankingValidAssists(int id) {
+        return SqlUtils.getShort("ranking_valid_assists", table, id);
     }
 
-    public short getRankingValidInterception() {
-        return sqlUtils.getShort("ranking_valid_interception");
+    public static short getRankingValidInterception(int id) {
+        return SqlUtils.getShort("ranking_valid_interception", table, id);
     }
 
-    public short getRankingValidShooting() {
-        return sqlUtils.getShort("ranking_valid_shooting");
+    public static short getRankingValidShooting(int id) {
+        return SqlUtils.getShort("ranking_valid_shooting", table, id);
     }
 
-    public short getRankingValidStealing() {
-        return sqlUtils.getShort("ranking_valid_stealing");
+    public static short getRankingValidStealing(int id) {
+        return SqlUtils.getShort("ranking_valid_stealing", table, id);
     }
 
-    public short getRankingValidTackling() {
-        return sqlUtils.getShort("ranking_valid_tackling");
+    public static short getRankingValidTackling(int id) {
+        return SqlUtils.getShort("ranking_valid_tackling", table, id);
     }
 
-    public short getRankingAvgGoals() {
-        return sqlUtils.getShort("ranking_avg_goals");
+    public static short getRankingAvgGoals(int id) {
+        return SqlUtils.getShort("ranking_avg_goals", table, id);
     }
 
-    public short getRankingAvgAssists() {
-        return sqlUtils.getShort("ranking_avg_assists");
+    public static short getRankingAvgAssists(int id) {
+        return SqlUtils.getShort("ranking_avg_assists", table, id);
     }
 
-    public short getRankingAvgInterception() {
-        return sqlUtils.getShort("ranking_avg_interception");
+    public static short getRankingAvgInterception(int id) {
+        return SqlUtils.getShort("ranking_avg_interception", table, id);
     }
 
-    public short getRankingAvgShooting() {
-        return sqlUtils.getShort("ranking_avg_shooting");
+    public static short getRankingAvgShooting(int id) {
+        return SqlUtils.getShort("ranking_avg_shooting", table, id);
     }
 
-    public short getRankingAvgStealing() {
-        return sqlUtils.getShort("ranking_avg_stealing");
+    public static short getRankingAvgStealing(int id) {
+        return SqlUtils.getShort("ranking_avg_stealing", table, id);
     }
 
-    public short getRankingAvgTackling() {
-        return sqlUtils.getShort("ranking_avg_tackling");
+    public static short getRankingAvgTackling(int id) {
+        return SqlUtils.getShort("ranking_avg_tackling", table, id);
     }
 
-    public short getRankingAvgVotePoints() {
-        return sqlUtils.getShort("ranking_avg_vote_points");
+    public static short getRankingAvgVotePoints(int id) {
+        return SqlUtils.getShort("ranking_avg_vote_points", table, id);
     }
 
-    public short getRankingShooting() {
-        return sqlUtils.getShort("ranking_shooting");
+    public static short getRankingShooting(int id) {
+        return SqlUtils.getShort("ranking_shooting", table, id);
     }
 
-    public short getRankingStealing() {
-        return sqlUtils.getShort("ranking_stealing");
+    public static short getRankingStealing(int id) {
+        return SqlUtils.getShort("ranking_stealing", table, id);
     }
 
-    public short getRankingTackling() {
-        return sqlUtils.getShort("ranking_tackling");
+    public static short getRankingTackling(int id) {
+        return SqlUtils.getShort("ranking_tackling", table, id);
     }
 
-    public short getRankingTotalPoints() {
-        return sqlUtils.getShort("ranking_total_points");
+    public static short getRankingTotalPoints(int id) {
+        return SqlUtils.getShort("ranking_total_points", table, id);
     }
 
     // Ranking Last Month
 
-    public short getRankingMonthMatches() {
-        return sqlUtils.getShort("ranking_month_matches");
+    public static short getRankingMonthMatches(int id) {
+        return SqlUtils.getShort("ranking_month_matches", table, id);
     }
 
-    public short getRankingMonthWins() {
-        return sqlUtils.getShort("ranking_month_wins");
+    public static short getRankingMonthWins(int id) {
+        return SqlUtils.getShort("ranking_month_wins", table, id);
     }
 
-    public short getRankingMonthPoints() {
-        return sqlUtils.getShort("ranking_month_points");
+    public static short getRankingMonthPoints(int id) {
+        return SqlUtils.getShort("ranking_month_points", table, id);
     }
 
-    public short getRankingMonthMom() {
-        return sqlUtils.getShort("ranking_month_MOM");
+    public static short getRankingMonthMom(int id) {
+        return SqlUtils.getShort("ranking_month_MOM", table, id);
     }
 
-    public short getRankingMonthValidGoals() {
-        return sqlUtils.getShort("ranking_month_valid_goals");
+    public static short getRankingMonthValidGoals(int id) {
+        return SqlUtils.getShort("ranking_month_valid_goals", table, id);
     }
 
-    public short getRankingMonthValidAssists() {
-        return sqlUtils.getShort("ranking_month_valid_assists");
+    public static short getRankingMonthValidAssists(int id) {
+        return SqlUtils.getShort("ranking_month_valid_assists", table, id);
     }
 
-    public short getRankingMonthValidInterception() {
-        return sqlUtils.getShort("ranking_month_valid_interception");
+    public static short getRankingMonthValidInterception(int id) {
+        return SqlUtils.getShort("ranking_month_valid_interception", table, id);
     }
 
-    public short getRankingMonthValidShooting() {
-        return sqlUtils.getShort("ranking_month_valid_shooting");
+    public static short getRankingMonthValidShooting(int id) {
+        return SqlUtils.getShort("ranking_month_valid_shooting", table, id);
     }
 
-    public short getRankingMonthValidStealing() {
-        return sqlUtils.getShort("ranking_month_valid_stealing");
+    public static short getRankingMonthValidStealing(int id) {
+        return SqlUtils.getShort("ranking_month_valid_stealing", table, id);
     }
 
-    public short getRankingMonthValidTackling() {
-        return sqlUtils.getShort("ranking_month_valid_tackling");
+    public static short getRankingMonthValidTackling(int id) {
+        return SqlUtils.getShort("ranking_month_valid_tackling", table, id);
     }
 
-    public short getRankingMonthAvgGoals() {
-        return sqlUtils.getShort("ranking_month_avg_goals");
+    public static short getRankingMonthAvgGoals(int id) {
+        return SqlUtils.getShort("ranking_month_avg_goals", table, id);
     }
 
-    public short getRankingMonthAvgAssists() {
-        return sqlUtils.getShort("ranking_month_avg_assists");
+    public static short getRankingMonthAvgAssists(int id) {
+        return SqlUtils.getShort("ranking_month_avg_assists", table, id);
     }
 
-    public short getRankingMonthAvgInterception() {
-        return sqlUtils.getShort("ranking_month_avg_interception");
+    public static short getRankingMonthAvgInterception(int id) {
+        return SqlUtils.getShort("ranking_month_avg_interception", table, id);
     }
 
-    public short getRankingMonthAvgShooting() {
-        return sqlUtils.getShort("ranking_month_avg_shooting");
+    public static short getRankingMonthAvgShooting(int id) {
+        return SqlUtils.getShort("ranking_month_avg_shooting", table, id);
     }
 
-    public short getRankingMonthAvgStealing() {
-        return sqlUtils.getShort("ranking_month_avg_stealing");
+    public static short getRankingMonthAvgStealing(int id) {
+        return SqlUtils.getShort("ranking_month_avg_stealing", table, id);
     }
 
-    public short getRankingMonthAvgTackling() {
-        return sqlUtils.getShort("ranking_month_avg_tackling");
+    public static short getRankingMonthAvgTackling(int id) {
+        return SqlUtils.getShort("ranking_month_avg_tackling", table, id);
     }
 
-    public short getRankingMonthAvgVotePoints() {
-        return sqlUtils.getShort("ranking_month_avg_vote_points");
+    public static short getRankingMonthAvgVotePoints(int id) {
+        return SqlUtils.getShort("ranking_month_avg_vote_points", table, id);
     }
 
-    public short getRankingMonthShooting() {
-        return sqlUtils.getShort("ranking_month_shooting");
+    public static short getRankingMonthShooting(int id) {
+        return SqlUtils.getShort("ranking_month_shooting", table, id);
     }
 
-    public short getRankingMonthStealing() {
-        return sqlUtils.getShort("ranking_month_stealing");
+    public static short getRankingMonthStealing(int id) {
+        return SqlUtils.getShort("ranking_month_stealing", table, id);
     }
 
-    public short getRankingMonthTackling() {
-        return sqlUtils.getShort("ranking_month_tackling");
+    public static short getRankingMonthTackling(int id) {
+        return SqlUtils.getShort("ranking_month_tackling", table, id);
     }
 
-    public short getRankingMonthTotalPoints() {
-        return sqlUtils.getShort("ranking_month_total_points");
+    public static short getRankingMonthTotalPoints(int id) {
+        return SqlUtils.getShort("ranking_month_total_points", table, id);
     }
 
     // Others
 
-    public String getStatusMessage() {
-        return sqlUtils.getString("status_message");
+    public static String getStatusMessage(int id) {
+        return SqlUtils.getString("status_message", table, id);
     }
 
-    public Map<Integer, Item> getInventoryItems() {
-        return Item.mapFromString(sqlUtils.getString("inventory_items"));
+    public static Map<Integer, Item> getInventoryItems(int id) {
+        return Item.mapFromString(SqlUtils.getString("inventory_items", table, id));
     }
 
-    public Map<Integer, Training> getInventoryTraining() {
-        return Training.mapFromString(sqlUtils.getString("inventory_training"));
+    public static Map<Integer, Training> getInventoryTraining(int id) {
+        return Training.mapFromString(SqlUtils.getString("inventory_training", table, id));
     }
 
-    public Map<Integer, Skill> getInventorySkills() {
-        return Skill.mapFromString(sqlUtils.getString("inventory_skills"));
+    public static Map<Integer, Skill> getInventorySkills(int id) {
+        return Skill.mapFromString(SqlUtils.getString("inventory_skills", table, id));
     }
 
-    public Map<Integer, Celebration> getInventoryCelebration() {
-        return Celebration.mapFromString(sqlUtils.getString("inventory_celebration"));
+    public static Map<Integer, Celebration> getInventoryCelebration(int id) {
+        return Celebration.mapFromString(SqlUtils.getString("inventory_celebration", table, id));
     }
 
-    public String getInventorySkillsString() {
-        return sqlUtils.getString("inventory_skills");
+    public static String getInventorySkillsString(int id) {
+        return SqlUtils.getString("inventory_skills", table, id);
     }
 
-    public String getInventoryCelebrationString() {
-        return sqlUtils.getString("inventory_celebration");
+    public static String getInventoryCelebrationString(int id) {
+        return SqlUtils.getString("inventory_celebration", table, id);
     }
 
-    public String getFriends() {
-        return sqlUtils.getString("friend");
+    public static String getFriends(int id) {
+        return SqlUtils.getString("friend", table, id);
     }
 
     // Sql setters
 
-    public boolean setOwner(int value) {
-        return sqlUtils.setInt("owner", value);
+    public static void setOwner(int value, int id) {
+        SqlUtils.setInt("owner", value, table, id);
     }
 
-    public boolean setName(String value) {
-        return sqlUtils.setString("name", value);
+    public static void setName(String value, int id) {
+        SqlUtils.setString("name", value, table, id);
     }
 
-    public boolean setBlocked(boolean value) {
-        return sqlUtils.setBoolean("blocked", value);
+    public static void setBlocked(boolean value, int id) {
+        SqlUtils.setBoolean("blocked", value, table, id);
     }
 
-    public boolean setLevel(short value) {
-        return sqlUtils.setShort("level", value);
+    public static void setLevel(short value, int id) {
+        SqlUtils.setShort("level", value, table, id);
     }
 
-    public boolean setPosition(short value) {
-        return sqlUtils.setShort("position", value);
+    public static void setPosition(short value, int id) {
+        SqlUtils.setShort("position", value, table, id);
     }
 
-    public boolean setClubId(int value) {
-        return sqlUtils.setInt("club_id", value);
+    public static void setClubId(int value, int id) {
+        SqlUtils.setInt("club_id", value, table, id);
     }
 
-    public boolean setCurrentQuest(short value) {
-        return sqlUtils.setShort("quest_current", value);
+    public static void setCurrentQuest(short value, int id) {
+        SqlUtils.setShort("quest_current", value, table, id);
     }
 
-    public boolean setRemainingQuestMatches(short value) {
-        return sqlUtils.setShort("quest_matches_left", value);
+    public static void setRemainingQuestMatches(short value, int id) {
+        SqlUtils.setShort("quest_matches_left", value, table, id);
     }
 
-    public boolean setTutorialDribbling(byte value) {
-        return sqlUtils.setByte("tutorial_dribbling", value);
+    public static void setTutorialDribbling(byte value, int id) {
+        SqlUtils.setByte("tutorial_dribbling", value, table, id);
     }
 
-    public boolean setTutorialPassing(byte value) {
-        return sqlUtils.setByte("tutorial_passing", value);
+    public static void setTutorialPassing(byte value, int id) {
+        SqlUtils.setByte("tutorial_passing", value, table, id);
     }
 
-    public boolean setTutorialShooting(byte value) {
-        return sqlUtils.setByte("tutorial_shooting", value);
+    public static void setTutorialShooting(byte value, int id) {
+        SqlUtils.setByte("tutorial_shooting", value, table, id);
     }
 
-    public boolean setTutorialDefense(byte value) {
-        return sqlUtils.setByte("tutorial_defense", value);
+    public static void setTutorialDefense(byte value, int id) {
+        SqlUtils.setByte("tutorial_defense", value, table, id);
     }
 
-    public boolean setReceivedReward(boolean value) {
-        return sqlUtils.setBoolean("received_reward", value);
+    public static void setReceivedReward(boolean value, int id) {
+        SqlUtils.setBoolean("received_reward", value, table, id);
     }
 
-    public boolean setExperience(int value) {
-        return sqlUtils.setInt("experience", value);
+    public static void setExperience(int value, int id) {
+        SqlUtils.setInt("experience", value, table, id);
     }
 
-    public boolean setPoints(int value) {
-        return sqlUtils.setInt("points", value);
+    public static void setPoints(int value, int id) {
+        SqlUtils.setInt("points", value, table, id);
     }
 
-    public boolean setTicketsKash(short value) {
-        return sqlUtils.setShort("tickets_kash", value);
+    public static void setTicketsKash(short value, int id) {
+        SqlUtils.setShort("tickets_kash", value, table, id);
     }
 
-    public boolean setTicketsPoints(short value) {
-        return sqlUtils.setShort("tickets_points", value);
+    public static void setTicketsPoints(short value, int id) {
+        SqlUtils.setShort("tickets_points", value, table, id);
     }
 
-    public boolean setAnimation(short value) {
-        return sqlUtils.setShort("animation", value);
+    public static void setAnimation(short value, int id) {
+        SqlUtils.setShort("animation", value, table, id);
     }
 
-    public boolean setFace(short value) {
-        return sqlUtils.setShort("face", value);
+    public static void setFace(short value, int id) {
+        SqlUtils.setShort("face", value, table, id);
     }
 
-    public boolean setDefaultHead(int value) {
-        return sqlUtils.setInt("default_head", value);
+    public static void setDefaultHead(int value, int id) {
+        SqlUtils.setInt("default_head", value, table, id);
     }
 
-    public boolean setDefaultShirts(int value) {
-        return sqlUtils.setInt("default_shirts", value);
+    public static void setDefaultShirts(int value, int id) {
+        SqlUtils.setInt("default_shirts", value, table, id);
     }
 
-    public boolean setDefaultPants(int value) {
-        return sqlUtils.setInt("default_pants", value);
+    public static void setDefaultPants(int value, int id) {
+        SqlUtils.setInt("default_pants", value, table, id);
     }
 
-    public boolean setDefaultShoes(int value) {
-        return sqlUtils.setInt("default_shoes", value);
+    public static void setDefaultShoes(int value, int id) {
+        SqlUtils.setInt("default_shoes", value, table, id);
     }
 
-    public boolean setItemHead(int value) {
-        return sqlUtils.setInt("item_head", value);
+    public static void setItemHead(int value, int id) {
+        SqlUtils.setInt("item_head", value, table, id);
     }
 
-    public boolean setItemGlasses(int value) {
-        return sqlUtils.setInt("item_glasses", value);
+    public static void setItemGlasses(int value, int id) {
+        SqlUtils.setInt("item_glasses", value, table, id);
     }
 
-    public boolean setItemShirts(int value) {
-        return sqlUtils.setInt("item_shirts", value);
+    public static void setItemShirts(int value, int id) {
+        SqlUtils.setInt("item_shirts", value, table, id);
     }
 
-    public boolean setItemPants(int value) {
-        return sqlUtils.setInt("item_pants", value);
+    public static void setItemPants(int value, int id) {
+        SqlUtils.setInt("item_pants", value, table, id);
     }
 
-    public boolean setItemGlove(int value) {
-        return sqlUtils.setInt("item_glove", value);
+    public static void setItemGlove(int value, int id) {
+        SqlUtils.setInt("item_glove", value, table, id);
     }
 
-    public boolean setItemShoes(int value) {
-        return sqlUtils.setInt("item_shoes", value);
+    public static void setItemShoes(int value, int id) {
+        SqlUtils.setInt("item_shoes", value, table, id);
     }
 
-    public boolean setItemSocks(int value) {
-        return sqlUtils.setInt("item_socks", value);
+    public static void setItemSocks(int value, int id) {
+        SqlUtils.setInt("item_socks", value, table, id);
     }
 
-    public boolean setItemWrist(int value) {
-        return sqlUtils.setInt("item_wrist", value);
+    public static void setItemWrist(int value, int id) {
+        SqlUtils.setInt("item_wrist", value, table, id);
     }
 
-    public boolean setItemArm(int value) {
-        return sqlUtils.setInt("item_arm", value);
+    public static void setItemArm(int value, int id) {
+        SqlUtils.setInt("item_arm", value, table, id);
     }
 
-    public boolean setItemKnee(int value) {
-        return sqlUtils.setInt("item_knee", value);
+    public static void setItemKnee(int value, int id) {
+        SqlUtils.setInt("item_knee", value, table, id);
     }
 
-    public boolean setItemEar(int value) {
-        return sqlUtils.setInt("item_ear", value);
+    public static void setItemEar(int value, int id) {
+        SqlUtils.setInt("item_ear", value, table, id);
     }
 
-    public boolean setItemNeck(int value) {
-        return sqlUtils.setInt("item_neck", value);
+    public static void setItemNeck(int value, int id) {
+        SqlUtils.setInt("item_neck", value, table, id);
     }
 
-    public boolean setItemMask(int value) {
-        return sqlUtils.setInt("item_mask", value);
+    public static void setItemMask(int value, int id) {
+        SqlUtils.setInt("item_mask", value, table, id);
     }
 
-    public boolean setItemMuffler(int value) {
-        return sqlUtils.setInt("item_muffler", value);
+    public static void setItemMuffler(int value, int id) {
+        SqlUtils.setInt("item_muffler", value, table, id);
     }
 
-    public boolean setItemPackage(int value) {
-        return sqlUtils.setInt("item_package", value);
+    public static void setItemPackage(int value, int id) {
+        SqlUtils.setInt("item_package", value, table, id);
     }
 
-    public boolean setStatsPoints(short value) {
-        return sqlUtils.setShort("stats_points", value);
+    public static void setStatsPoints(short value, int id) {
+        SqlUtils.setShort("stats_points", value, table, id);
     }
 
-    public boolean setStatsRunning(short value) {
-        return sqlUtils.setShort("stats_running", value);
+    public static void setStatsRunning(short value, int id) {
+        SqlUtils.setShort("stats_running", value, table, id);
     }
 
-    public boolean setStatsEndurance(short value) {
-        return sqlUtils.setShort("stats_endurance", value);
+    public static void setStatsEndurance(short value, int id) {
+        SqlUtils.setShort("stats_endurance", value, table, id);
     }
 
-    public boolean setStatsAgility(short value) {
-        return sqlUtils.setShort("stats_agility", value);
+    public static void setStatsAgility(short value, int id) {
+        SqlUtils.setShort("stats_agility", value, table, id);
     }
 
-    public boolean setStatsBallControl(short value) {
-        return sqlUtils.setShort("stats_ball_control", value);
+    public static void setStatsBallControl(short value, int id) {
+        SqlUtils.setShort("stats_ball_control", value, table, id);
     }
 
-    public boolean setStatsDribbling(short value) {
-        return sqlUtils.setShort("stats_dribbling", value);
+    public static void setStatsDribbling(short value, int id) {
+        SqlUtils.setShort("stats_dribbling", value, table, id);
     }
 
-    public boolean setStatsStealing(short value) {
-        return sqlUtils.setShort("stats_stealing", value);
+    public static void setStatsStealing(short value, int id) {
+        SqlUtils.setShort("stats_stealing", value, table, id);
     }
 
-    public boolean setStatsTackling(short value) {
-        return sqlUtils.setShort("stats_tackling", value);
+    public static void setStatsTackling(short value, int id) {
+        SqlUtils.setShort("stats_tackling", value, table, id);
     }
 
-    public boolean setStatsHeading(short value) {
-        return sqlUtils.setShort("stats_heading", value);
+    public static void setStatsHeading(short value, int id) {
+        SqlUtils.setShort("stats_heading", value, table, id);
     }
 
-    public boolean setStatsShortShots(short value) {
-        return sqlUtils.setShort("stats_short_shots", value);
+    public static void setStatsShortShots(short value, int id) {
+        SqlUtils.setShort("stats_short_shots", value, table, id);
     }
 
-    public boolean setStatsLongShots(short value) {
-        return sqlUtils.setShort("stats_long_shots", value);
+    public static void setStatsLongShots(short value, int id) {
+        SqlUtils.setShort("stats_long_shots", value, table, id);
     }
 
-    public boolean setStatsCrossing(short value) {
-        return sqlUtils.setShort("stats_crossing", value);
+    public static void setStatsCrossing(short value, int id) {
+        SqlUtils.setShort("stats_crossing", value, table, id);
     }
 
-    public boolean setStatsShortPasses(short value) {
-        return sqlUtils.setShort("stats_shorts_passes", value);
+    public static void setStatsShortPasses(short value, int id) {
+        SqlUtils.setShort("stats_shorts_passes", value, table, id);
     }
 
-    public boolean setStatsLongPasses(short value) {
-        return sqlUtils.setShort("stats_long_passes", value);
+    public static void setStatsLongPasses(short value, int id) {
+        SqlUtils.setShort("stats_long_passes", value, table, id);
     }
 
-    public boolean setStatsMarking(short value) {
-        return sqlUtils.setShort("stats_marking", value);
+    public static void setStatsMarking(short value, int id) {
+        SqlUtils.setShort("stats_marking", value, table, id);
     }
 
-    public boolean setStatsGoalkeeping(short value) {
-        return sqlUtils.setShort("stats_goalkeeping", value);
+    public static void setStatsGoalkeeping(short value, int id) {
+        SqlUtils.setShort("stats_goalkeeping", value, table, id);
     }
 
-    public boolean setStatsPunching(short value) {
-        return sqlUtils.setShort("stats_punching", value);
+    public static void setStatsPunching(short value, int id) {
+        SqlUtils.setShort("stats_punching", value, table, id);
     }
 
-    public boolean setStatsDefense(short value) {
-        return sqlUtils.setShort("stats_defense", value);
+    public static void setStatsDefense(short value, int id) {
+        SqlUtils.setShort("stats_defense", value, table, id);
     }
 
-    public boolean setStatusMessage(String value) {
-        return sqlUtils.setString("status_message", value);
+    public static void setStatusMessage(String value, int id) {
+        SqlUtils.setString("status_message", value, table, id);
     }
 
-    public boolean setInventoryItems(String value) {
-        return sqlUtils.setString("inventory_items", value);
+    public static void setInventoryItems(String value, int id) {
+        SqlUtils.setString("inventory_items", value, table, id);
     }
 
-    public boolean setInventoryTraining(String value) {
-        return sqlUtils.setString("inventory_training", value);
+    public static void setInventoryTraining(String value, int id) {
+        SqlUtils.setString("inventory_training", value, table, id);
     }
 
-    public boolean setInventorySkills(String value) {
-        return sqlUtils.setString("inventory_skills", value);
+    public static void setInventorySkills(String value, int id) {
+        SqlUtils.setString("inventory_skills", value, table, id);
     }
 
-    public boolean setInventoryCelebration(String value) {
-        return sqlUtils.setString("inventory_celebration", value);
+    public static void setInventoryCelebration(String value, int id) {
+        SqlUtils.setString("inventory_celebration", value, table, id);
     }
 
-    public boolean setFriends(String value) {
-        return sqlUtils.setString("friend", value);
-    }
-
-    public PlayerInfo(int id) {
-        this.id = id;
-        this.sqlUtils = new SqlUtils(id, "characters");
+    public static void setFriends(String value, int id) {
+        SqlUtils.setString("friend", value, table, id);
     }
 }

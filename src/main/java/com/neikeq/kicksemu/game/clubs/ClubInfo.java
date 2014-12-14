@@ -4,87 +4,77 @@ import com.neikeq.kicksemu.storage.SqlUtils;
 
 public class ClubInfo {
 
-    private final int id;
-    private final SqlUtils sqlUtils;
+    private static final String table = "clubs";
 
-    public int getId() {
-        return id;
+    public static String getName(int id) {
+        return SqlUtils.getString("name", table, id);
     }
 
-    public String getName() {
-        return sqlUtils.getString("name");
+    public static int getUniformHomeShirts(int id) {
+        return SqlUtils.getInt("uniform_home_shirts", table, id);
     }
 
-    public int getUniformHomeShirts() {
-        return sqlUtils.getInt("uniform_home_shirts");
+    public static int getUniformHomePants(int id) {
+        return SqlUtils.getInt("uniform_home_pants", table, id);
     }
 
-    public int getUniformHomePants() {
-        return sqlUtils.getInt("uniform_home_pants");
+    public static int getUniformHomeSocks(int id) {
+        return SqlUtils.getInt("uniform_home_socks", table, id);
     }
 
-    public int getUniformHomeSocks() {
-        return sqlUtils.getInt("uniform_home_socks");
+    public static int getUniformHomeWrist(int id) {
+        return SqlUtils.getInt("uniform_home_wrist", table, id);
     }
 
-    public int getUniformHomeWrist() {
-        return sqlUtils.getInt("uniform_home_wrist");
+    public static int getUniformAwayShirts(int id) {
+        return SqlUtils.getInt("uniform_away_shirts", table, id);
     }
 
-    public int getUniformAwayShirts() {
-        return sqlUtils.getInt("uniform_away_shirts");
+    public static int getUniformAwayPants(int id) {
+        return SqlUtils.getInt("uniform_away_pants", table, id);
     }
 
-    public int getUniformAwayPants() {
-        return sqlUtils.getInt("uniform_away_pants");
+    public static int getUniformAwaySocks(int id) {
+        return SqlUtils.getInt("uniform_away_socks", table, id);
     }
 
-    public int getUniformAwaySocks() {
-        return sqlUtils.getInt("uniform_away_socks");
+    public static int getUniformAwayWrist(int id) {
+        return SqlUtils.getInt("uniform_away_wrist", table, id);
     }
 
-    public int getUniformAwayWrist() {
-        return sqlUtils.getInt("uniform_away_wrist");
+    public static void setName(String value, int id) {
+        SqlUtils.setString("name", value, table, id);
     }
 
-    public void setName(String value) {
-        sqlUtils.setString("name", value);
+    public static void setUniformHomeShirts(int value, int id) {
+        SqlUtils.setInt("uniform_home_shirts", value, table, id);
     }
 
-    public void setUniformHomeShirts(int value) {
-        sqlUtils.setInt("uniform_home_shirts", value);
+    public static void setUniformHomePants(int value, int id) {
+        SqlUtils.setInt("uniform_home_pants", value, table, id);
     }
 
-    public void setUniformHomePants(int value) {
-        sqlUtils.setInt("uniform_home_pants", value);
+    public static void setUniformHomeSocks(int value, int id) {
+        SqlUtils.setInt("uniform_home_socks", value, table, id);
     }
 
-    public void setUniformHomeSocks(int value) {
-        sqlUtils.setInt("uniform_home_socks", value);
+    public static void setUniformHomeWrist(int value, int id) {
+        SqlUtils.setInt("uniform_home_wrist", value, table, id);
     }
 
-    public void setUniformHomeWrist(int value) {
-        sqlUtils.setInt("uniform_home_wrist", value);
+    public static void setUniformAwayShirts(int value, int id) {
+        SqlUtils.setInt("uniform_away_shirts", value, table, id);
     }
 
-    public void setUniformAwayShirts(int value) {
-        sqlUtils.setInt("uniform_away_shirts", value);
+    public static void setUniformAwayPants(int value, int id) {
+        SqlUtils.setInt("uniform_away_pants", value, table, id);
     }
 
-    public void setUniformAwayPants(int value) {
-        sqlUtils.setInt("uniform_away_pants", value);
+    public static void setUniformAwaySocks(int value, int id) {
+        SqlUtils.setInt("uniform_away_socks", value, table, id);
     }
 
-    public void setUniformAwaySocks(int value) {
-        sqlUtils.setInt("uniform_away_socks", value);
-    }
-
-    public void setUniformAwayWrist(int value) {
-        sqlUtils.setInt("uniform_away_wrist", value);
-    }
-
-    public ClubInfo(int id) {
-        this.id = id;
-        this.sqlUtils = SqlUtils.forId(id, "clubs");
+    public static void setUniformAwayWrist(int value, int id) {
+        SqlUtils.setInt("uniform_away_wrist", value, table, id);
     }
 }

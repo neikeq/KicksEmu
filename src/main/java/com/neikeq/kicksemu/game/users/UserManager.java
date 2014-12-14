@@ -23,19 +23,17 @@ public class UserManager {
     }
 
     public static void characterInfo(Session session) {
-        UserInfo user = session.getUserInfo();
+        int userId = session.getUserId();
 
         int[] slots = new int[] {
-                user.getSlotOne(),
-                user.getSlotTwo(),
-                user.getSlotThree()
+                UserInfo.getSlotOne(userId),
+                UserInfo.getSlotTwo(userId),
+                UserInfo.getSlotThree(userId)
         };
 
         for (short i = 0; i < slots.length; i++) {
             if (slots[i] > 0) {
-                PlayerInfo character = new PlayerInfo(slots[i]);
-
-                ServerMessage response = MessageBuilder.characterInfo(character, user, i);
+                ServerMessage response = MessageBuilder.characterInfo(slots[i], userId, i);
                 session.send(response);
             }
         }
@@ -47,7 +45,7 @@ public class UserManager {
         byte result = 0;
 
         if (settings.isValid()) {
-            session.getUserInfo().setSettings(settings);
+            UserInfo.setSettings(settings, session.getUserId());
         } else {
             result = (byte)255;
         }
@@ -57,16 +55,14 @@ public class UserManager {
     }
 
     public static void choiceCharacter(Session session, ClientMessage msg) {
-        int characterId = msg.readInt();
-        UserInfo user = session.getUserInfo();
+        int charId = msg.readInt();
+        int userId = session.getUserId();
 
         byte result = 0;
 
-        if (user.hasCharacter(characterId) && CharacterUtils.characterExist(characterId)) {
-            PlayerInfo character = new PlayerInfo(characterId);
-
-            if (!character.isBlocked()) {
-                session.setPlayerInfo(characterId);
+        if (UserInfo.hasCharacter(charId, userId) && CharacterUtils.characterExist(charId)) {
+            if (!PlayerInfo.isBlocked(charId)) {
+                session.setPlayerId(charId);
             } else {
                 result = (byte)255; // System problem
             }
@@ -74,7 +70,7 @@ public class UserManager {
             result = (byte)254; // Character does not exist
         }
 
-        ServerMessage response = MessageBuilder.choiceCharacter(characterId, result);
+        ServerMessage response = MessageBuilder.choiceCharacter(charId, result);
         session.send(response);
     }
 }

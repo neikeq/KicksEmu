@@ -24,15 +24,15 @@ import java.util.Map;
 
 public class MessageBuilder {
     
-    public static ServerMessage certifyLogin(UserInfo user, byte result) {
+    public static ServerMessage certifyLogin(int userId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_LOGIN);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == AuthenticationResult.SUCCESS) {
-            msg.append(user.getId());
+            msg.append(userId);
 
-            UserSettings settings = user.getSettings();
+            UserSettings settings = UserInfo.getSettings(userId);
 
             msg.append(settings.getCamera());
             msg.append(settings.getShadows());
@@ -43,7 +43,7 @@ public class MessageBuilder {
             msg.append(settings.getWhispers());
             msg.append(settings.getCountry());
 
-            msg.append(DateUtils.dateToString(user.getLastCharDeletion()), 19);
+            msg.append(DateUtils.dateToString(UserInfo.getLastCharDeletion(userId)), 19);
         } else {
             // Request the client to close the connection
             msg.write(0, (short)-1);
@@ -88,44 +88,44 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage characterInfo(PlayerInfo player, UserInfo owner, short slot) {
+    public static ServerMessage characterInfo(int playerId, int ownerId, short slot) {
         ServerMessage msg = new ServerMessage(MessageId.CHARACTER_INFO);
 
-        boolean blocked = player.isBlocked();
+        boolean blocked = PlayerInfo.isBlocked(playerId);
 
         MessageUtils.appendResult((byte) (blocked ? 254 : 0), msg);
 
         if (!blocked) {
-            msg.append(owner.getId());
-            msg.append(player.getId());
+            msg.append(ownerId);
+            msg.append(playerId);
 
             msg.append(slot);
 
-            msg.append(player.getName(), 15);
+            msg.append(PlayerInfo.getName(playerId), 15);
 
-            MessageUtils.appendQuestInfo(player, msg);
-            MessageUtils.appendTutorialInfo(player, msg);
+            MessageUtils.appendQuestInfo(playerId, msg);
+            MessageUtils.appendTutorialInfo(playerId, msg);
 
             msg.appendZeros(3);
 
-            MessageUtils.appendCharacterInfo(player, owner, msg);
+            MessageUtils.appendCharacterInfo(playerId, ownerId, msg);
 
             msg.appendZeros(2);
 
-            msg.append(player.getAnimation());
-            msg.append(player.getFace());
+            msg.append(PlayerInfo.getAnimation(playerId));
+            msg.append(PlayerInfo.getFace(playerId));
 
-            MessageUtils.appendDefaultClothes(player, msg);
+            MessageUtils.appendDefaultClothes(playerId, msg);
 
-            msg.append(player.getPosition());
+            msg.append(PlayerInfo.getPosition(playerId));
 
             msg.appendZeros(6);
 
-            MessageUtils.appendStats(player, msg);
+            MessageUtils.appendStats(playerId, msg);
 
             msg.appendZeros(4);
 
-            MessageUtils.appendItemsInUse(player, msg);
+            MessageUtils.appendItemsInUse(playerId, msg);
         }
 
         return msg;
@@ -170,21 +170,21 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage serverList(List<ServerInfo> servers, byte result) {
+    public static ServerMessage serverList(List<Short> servers, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SERVER_LIST);
 
         MessageUtils.appendResult(result, msg);
 
         msg.append((short)servers.size());
 
-        for (ServerInfo server : servers) {
-            msg.append(server.getId());
-            msg.append(server.getName(), 30);
-            msg.append(server.isOnline());
-            msg.append(server.getMaxUsers());
-            msg.append(server.getConnectedUsers());
-            msg.append(server.getAddress(), 16);
-            msg.append(server.getPort());
+        for (short serverId : servers) {
+            msg.append(serverId);
+            msg.append(ServerInfo.getName(serverId), 30);
+            msg.append(ServerInfo.isOnline(serverId));
+            msg.append(ServerInfo.getMaxUsers(serverId));
+            msg.append(ServerInfo.getConnectedUsers(serverId));
+            msg.append(ServerInfo.getAddress(serverId), 16);
+            msg.append(ServerInfo.getPort(serverId));
             msg.appendZeros(20);
         }
 
@@ -208,18 +208,18 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage serverInfo(ServerInfo server, byte result) {
+    public static ServerMessage serverInfo(short serverId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SERVER_INFO);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(server.getId());
+            msg.append(serverId);
             msg.appendZeros(2);
-            msg.append(server.getMinLevel());
-            msg.append(server.getMaxLevel());
-            msg.append(server.getAddress(), 16);
-            msg.append(server.getPort());
+            msg.append(ServerInfo.getMinLevel(serverId));
+            msg.append(ServerInfo.getMaxLevel(serverId));
+            msg.append(ServerInfo.getAddress(serverId), 16);
+            msg.append(ServerInfo.getPort(serverId));
         }
 
         return msg;
@@ -320,57 +320,55 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerInfo(PlayerInfo player, byte result) {
+    public static ServerMessage playerInfo(int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_INFO);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(player.getId());
+            msg.append(playerId);
 
             msg.appendZeros(54);
 
-            msg.append(player.getName(), 15);
+            msg.append(PlayerInfo.getName(playerId), 15);
 
-            ClubInfo club = new ClubInfo(player.getClubId());
-            msg.append(club.getName(), 15);
+            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId)), 15);
 
-            msg.append(player.getStatusMessage(), 35);
+            msg.append(PlayerInfo.getStatusMessage(playerId), 35);
 
-            MessageUtils.appendQuestInfo(player, msg);
-            MessageUtils.appendTutorialInfo(player, msg);
+            MessageUtils.appendQuestInfo(playerId, msg);
+            MessageUtils.appendTutorialInfo(playerId, msg);
 
             msg.appendZeros(24);
 
-            UserInfo owner = new UserInfo(player.getOwner());
-            MessageUtils.appendCharacterInfo(player, owner, msg);
+            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
 
             msg.appendZeros(2);
 
-            msg.append(player.getAnimation());
-            msg.append(player.getFace());
+            msg.append(PlayerInfo.getAnimation(playerId));
+            msg.append(PlayerInfo.getFace(playerId));
 
-            MessageUtils.appendDefaultClothes(player, msg);
+            MessageUtils.appendDefaultClothes(playerId, msg);
 
-            msg.append(player.getPosition());
+            msg.append(PlayerInfo.getPosition(playerId));
             msg.appendZeros(6);
 
             // Stats
-            MessageUtils.appendStats(player, msg);
-            MessageUtils.appendStatsTraining(player, msg);
-            MessageUtils.appendStatsBonus(player, msg);
+            MessageUtils.appendStats(playerId, msg);
+            MessageUtils.appendStatsTraining(playerId, msg);
+            MessageUtils.appendStatsBonus(playerId, msg);
 
             // History
-            MessageUtils.appendHistory(player, msg);
-            MessageUtils.appendHistoryLastMonth(player, msg);
+            MessageUtils.appendHistory(playerId, msg);
+            MessageUtils.appendHistoryLastMonth(playerId, msg);
 
             // Ranking
-            MessageUtils.appendRanking(player, msg);
-            MessageUtils.appendRankingLastMonth(player, msg);
+            MessageUtils.appendRanking(playerId, msg);
+            MessageUtils.appendRankingLastMonth(playerId, msg);
 
-            MessageUtils.appendInventoryItemsInUse(player, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg);
 
-            MessageUtils.appendClubUniform(player.getClubId(), msg);
+            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId), msg);
         }
 
         return msg;
@@ -384,16 +382,14 @@ public class MessageBuilder {
         if (result == 0) {
             msg.append(page);
 
-            for (Integer id : players) {
-                PlayerInfo player = new PlayerInfo(id);
-
+            for (Integer playerId : players) {
                 // Visibility. Hide if player is moderator.
-                msg.append(!player.isModerator());
-                msg.append(id);
-                msg.append(player.getName(), 15);
-                msg.append(player.getLevel());
-                msg.append((byte)player.getPosition());
-                msg.append(player.getStatusMessage(), 35);
+                msg.append(!PlayerInfo.isModerator(playerId));
+                msg.append(playerId);
+                msg.append(PlayerInfo.getName(playerId), 15);
+                msg.append(PlayerInfo.getLevel(playerId));
+                msg.append((byte)PlayerInfo.getPosition(playerId));
+                msg.append(PlayerInfo.getStatusMessage(playerId), 35);
             }
         }
 
@@ -539,47 +535,46 @@ public class MessageBuilder {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_PLAYER_INFO);
 
         if (session != null) {
-            PlayerInfo player = session.getPlayerInfo();
-            UserInfo owner = new UserInfo(player.getOwner());
+            int playerId = session.getPlayerId();
+            int ownerId = PlayerInfo.getOwner(playerId);
 
             msg.append(true, 2);
-            msg.append(player.getId());
-            msg.append(player.getName(), 15);
+            msg.append(playerId);
+            msg.append(PlayerInfo.getName(playerId), 15);
 
-            ClubInfo club = new ClubInfo(player.getClubId());
-            msg.append(club.getName(), 15);
+            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId)), 15);
 
-            msg.append((short)(room.getRedTeam().contains(player.getId()) ? 0 : 1));
+            msg.append((short)(room.getRedTeam().contains(playerId) ? 0 : 1));
 
-            msg.append(room.isObserver(player.getId()));
+            msg.append(room.isObserver(playerId));
             msg.appendZeros(2);
 
-            msg.append(owner.getSettings().getCountry());
+            msg.append(UserInfo.getSettings(ownerId).getCountry());
             msg.appendZeros(2);
 
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.appendZeros(2);
 
-            MessageUtils.appendCharacterInfo(player, owner, msg);
+            MessageUtils.appendCharacterInfo(playerId, ownerId, msg);
             msg.appendZeros(2);
 
-            msg.append(player.getAnimation());
-            msg.append(player.getFace());
+            msg.append(PlayerInfo.getAnimation(playerId));
+            msg.append(PlayerInfo.getFace(playerId));
 
-            MessageUtils.appendDefaultClothes(player, msg);
+            MessageUtils.appendDefaultClothes(playerId, msg);
 
-            msg.append(player.getPosition());
+            msg.append(PlayerInfo.getPosition(playerId));
             msg.appendZeros(9);
 
             // Stats
-            MessageUtils.appendStats(player, msg);
-            MessageUtils.appendStatsTraining(player, msg);
-            MessageUtils.appendStatsBonus(player, msg);
+            MessageUtils.appendStats(playerId, msg);
+            MessageUtils.appendStatsTraining(playerId, msg);
+            MessageUtils.appendStatsBonus(playerId, msg);
 
-            MessageUtils.appendInventoryItemsInUse(player, msg);
-            MessageUtils.appendClubUniform(player.getClubId(), msg);
-            MessageUtils.appendInventorySkillsInUse(player, msg);
-            MessageUtils.appendInventoryCelebrationsInUse(player, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg);
+            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId), msg);
+            MessageUtils.appendInventorySkillsInUse(playerId, msg);
+            MessageUtils.appendInventoryCelebrationsInUse(playerId, msg);
         }
 
         return msg;

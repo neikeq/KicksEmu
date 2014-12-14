@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.moderation.BanManager;
+import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserUtils;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -30,12 +31,12 @@ public class Authenticator {
         byte result = certifyAuthenticate(username, password, clientVersion);
 
         if (result == AuthenticationResult.SUCCESS) {
-            session.setUserInfo(UserUtils.getIdFromUsername(username));
+            session.setUserId(UserUtils.getIdFromUsername(username));
             session.setAuthenticated(true);
-            session.getUserInfo().setOnline(true);
+            UserInfo.setOnline(true, session.getUserId());
         }
 
-        ServerMessage response = MessageBuilder.certifyLogin(session.getUserInfo(), result);
+        ServerMessage response = MessageBuilder.certifyLogin(session.getUserId(), result);
         session.send(response);
 
         if (result != AuthenticationResult.SUCCESS) {
@@ -91,12 +92,12 @@ public class Authenticator {
         byte result = instantAuthenticate(accountId);
 
         if (result == AuthenticationResult.SUCCESS) {
-            session.setUserInfo(accountId);
+            session.setUserId(accountId);
 
-            if (session.getUserInfo().hasCharacter(characterId)) {
-                session.setPlayerInfo(characterId);
+            if (UserInfo.hasCharacter(characterId, session.getUserId())) {
+                session.setPlayerId(characterId);
                 session.setAuthenticated(true);
-                session.getUserInfo().setOnline(true);
+                UserInfo.setOnline(true, session.getUserId());
             } else {
                 // Account does not contain such character
                 result = AuthenticationResult.ACCESS_FAILURE;
@@ -149,10 +150,10 @@ public class Authenticator {
         byte result = gameAuthenticate(accountId, characterId);
 
         if (result == AuthenticationResult.SUCCESS) {
-            session.setUserInfo(accountId);
-            session.setPlayerInfo(characterId);
+            session.setUserId(accountId);
+            session.setPlayerId(characterId);
             session.setAuthenticated(true);
-            session.getUserInfo().setOnline(true);
+            UserInfo.setOnline(true, session.getUserId());
 
             ServerManager.addPlayer(characterId, session);
             LobbyManager.addPlayer(characterId);
@@ -171,9 +172,8 @@ public class Authenticator {
 
         if (!ServerManager.isServerFull()) {
             if (CharacterUtils.characterExist(characterId)) {
-                PlayerInfo character = new PlayerInfo(characterId);
 
-                if (character.getOwner() == accountId) {
+                if (PlayerInfo.getOwner(characterId) == accountId) {
                     if (!ServerManager.isPlayerConnected(characterId)) {
                         authResult = AuthenticationResult.SUCCESS;
                     } else {
@@ -196,7 +196,7 @@ public class Authenticator {
         return authResult;
     }
 
-    public static void udpConfirm(Session session, ClientMessage msg) {
+    public static void udpConfirm(Session session) {
         boolean result = session.isUdpAuthenticated();
 
         ServerMessage response = MessageBuilder.udpConfirm(result);

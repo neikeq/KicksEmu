@@ -33,11 +33,11 @@ public class GameMessageHandler extends MessageHandler {
 
         events.put(MessageId.GAME_LOGIN, Authenticator::gameLogin);
         events.put(MessageId.GAME_EXIT, (s, msg) -> CharacterManager.gameExit(s));
-        events.put(MessageId.UDP_CONFIRM, Authenticator::udpConfirm);
-        events.put(MessageId.PLAYER_INFO, CharacterManager::playerInfo);
+        events.put(MessageId.UDP_CONFIRM, (s, msg) -> Authenticator.udpConfirm(s));
+        events.put(MessageId.PLAYER_INFO, (s, msg) -> CharacterManager.playerInfo(s));
         events.put(MessageId.LOBBY_LIST, LobbyManager::lobbyList);
         events.put(MessageId.ROOM_LIST, RoomManager::roomList);
-        events.put(MessageId.NEXT_TIP, ServerUtils::nextTip);
+        events.put(MessageId.NEXT_TIP, (s, msg) -> ServerUtils.nextTip(s));
         events.put(MessageId.CHAT_MESSAGE, ChatManager::chatMessage);
         events.put(MessageId.STATUS_MESSAGE, StatusMessage::statusMessage);
         events.put(MessageId.CREATE_ROOM, RoomManager::createRoom);

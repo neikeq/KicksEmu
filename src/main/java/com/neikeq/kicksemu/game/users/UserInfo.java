@@ -13,32 +13,26 @@ import java.sql.Timestamp;
 
 public class UserInfo {
 
-    private final int id;
-
-    private final SqlUtils sqlUtils;
+    private static final String table = "users";
 
     // Sql getters
 
-    public int getId() {
-        return id;
+    public static String getUsername(int id) {
+        return SqlUtils.getString("username", table, id);
     }
 
-    public String getUsername() {
-        return sqlUtils.getString("username");
+    public static String getPassword(int id) {
+        return SqlUtils.getString("password", table, id);
     }
 
-    public String getPassword() {
-        return sqlUtils.getString("password");
+    public static int getKash(int id) {
+        return SqlUtils.getInt("kash", table, id);
     }
 
-    public int getKash() {
-        return sqlUtils.getInt("kash");
-    }
-
-    public UserSettings getSettings() {
+    public static UserSettings getSettings(int id) {
         String query = "SELECT settings_camera, settings_names, vol_effects, vol_music," +
                 " settings_invites, settings_shadows, settings_whispers, settings_country" +
-                " FROM users WHERE id = ?";
+                " FROM " + table + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -67,49 +61,49 @@ public class UserInfo {
         }
     }
 
-    public Timestamp getLastCharDeletion() {
-        return sqlUtils.getTimestamp("last_char_deletion");
+    public static Timestamp getLastCharDeletion(int id) {
+        return SqlUtils.getTimestamp("last_char_deletion", table, id);
     }
 
-    public int getSlotOne() {
-        return sqlUtils.getInt("slot_one");
+    public static int getSlotOne(int id) {
+        return SqlUtils.getInt("slot_one", table, id);
     }
 
-    public int getSlotTwo() {
-        return sqlUtils.getInt("slot_two");
+    public static int getSlotTwo(int id) {
+        return SqlUtils.getInt("slot_two", table, id);
     }
 
-    public int getSlotThree() {
-        return sqlUtils.getInt("slot_three");
+    public static int getSlotThree(int id) {
+        return SqlUtils.getInt("slot_three", table, id);
     }
 
     // Sql setters
 
-    public boolean setKash(int value) {
-        return sqlUtils.setInt("kash", value);
+    public static void setKash(int value, int id) {
+        SqlUtils.setInt("kash", value, table, id);
     }
 
-    public boolean setLastCharDeletion(Date value) {
-        return sqlUtils.setTimestamp("last_char_deletion", DateUtils.toTimestamp(value));
+    public static void setLastCharDeletion(Date value, int id) {
+        SqlUtils.setTimestamp("last_char_deletion", DateUtils.toTimestamp(value), table, id);
     }
 
-    public boolean setSlotOne(int value) {
-        return sqlUtils.setInt("slot_one", value);
+    public static void setSlotOne(int value, int id) {
+        SqlUtils.setInt("slot_one", value, table, id);
     }
 
-    public boolean setSlotTwo(int value) {
-        return sqlUtils.setInt("slot_two", value);
+    public static void setSlotTwo(int value, int id) {
+        SqlUtils.setInt("slot_two", value, table, id);
     }
 
-    public boolean setSlotThree(int value) {
-        return sqlUtils.setInt("slot_three", value);
+    public static void setSlotThree(int value, int id) {
+        SqlUtils.setInt("slot_three", value, table, id);
     }
 
-    public boolean setOnline(boolean value) {
-        return sqlUtils.setBoolean("online", value);
+    public static void setOnline(boolean value, int id) {
+        SqlUtils.setBoolean("online", value, table, id);
     }
 
-    public boolean setSettings(UserSettings settings) {
+    public static void setSettings(UserSettings settings, int id) {
         String query = "UPDATE users SET settings_camera = ?, settings_names = ?," +
                 " vol_effects = ?, vol_music = ?, settings_invites = ?," +
                 " settings_shadows = ?, settings_whispers = ?, settings_country = ?" +
@@ -127,64 +121,57 @@ public class UserInfo {
             stmt.setInt(8, settings.getCountry());
             stmt.setInt(9, id);
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
-            return false;
-        }
+        } catch (SQLException ignored) {}
     }
 
     // Method utils
 
-    public boolean hasEmptySlot() {
-        return getSlotOne() <= 0 || getSlotTwo() <= 0 || getSlotThree() <= 0;
+    public static boolean hasEmptySlot(int id) {
+        return getSlotOne(id) <= 0 || getSlotTwo(id) <= 0 || getSlotThree(id) <= 0;
     }
 
-    public int getFirstEmptySlot() {
-        if (getSlotOne() <= 0) {
+    public static int getFirstEmptySlot(int id) {
+        if (getSlotOne(id) <= 0) {
             return 0;
-        } else if (getSlotTwo() <= 0) {
+        } else if (getSlotTwo(id) <= 0) {
             return 1;
-        } else if (getSlotThree() <= 0) {
+        } else if (getSlotThree(id) <= 0) {
             return 2;
         } else {
             return -1;
         }
     }
 
-    public int characterSlot(int characterId) {
-        if (getSlotOne() == characterId) {
+    public static int characterSlot(int characterId, int id) {
+        if (getSlotOne(id) == characterId) {
             return 0;
-        } else if (getSlotTwo() == characterId) {
+        } else if (getSlotTwo(id) == characterId) {
             return 1;
-        } else if (getSlotThree() == characterId) {
+        } else if (getSlotThree(id) == characterId) {
             return 2;
         } else {
             return -1;
         }
     }
 
-    public boolean hasCharacter(int characterId) {
-        return characterSlot(characterId) >= 0;
+    public static boolean hasCharacter(int characterId, int id) {
+        return characterSlot(characterId, id) >= 0;
     }
 
-    public void setSlotWithIndex(int index, int value) {
+    public static void setSlotWithIndex(int index, int value, int id) {
         switch (index) {
             case 0:
-                setSlotOne(value);
+                setSlotOne(value, id);
                 break;
             case 1:
-                setSlotTwo(value);
+                setSlotTwo(value, id);
                 break;
             case 2:
-                setSlotThree(value);
+                setSlotThree(value, id);
                 break;
             default:
         }
-    }
-
-    public UserInfo(int id) {
-        this.id = id;
-        this.sqlUtils = new SqlUtils(id, "users");
     }
 }

@@ -30,7 +30,7 @@ public class StatusMessage {
         }
 
         if (result == 0) {
-            session.getPlayerInfo().setStatusMessage(statusMessage);
+            PlayerInfo.setStatusMessage(statusMessage, session.getPlayerId());
         }
 
         ServerMessage response = MessageBuilder.changeStatusMessage(statusMessage, result);

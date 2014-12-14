@@ -2,8 +2,6 @@ package com.neikeq.kicksemu.game.characters.creation;
 
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
-import com.neikeq.kicksemu.io.Output;
-import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
@@ -21,8 +19,8 @@ public class CharacterCreator {
 
         int accountId = msg.readInt();
 
-        if (session.getUserInfo().getId() == accountId) {
-            if (session.getUserInfo().hasEmptySlot()) {
+        if (session.getUserId() == accountId) {
+            if (UserInfo.hasEmptySlot(session.getUserId())) {
                 CharacterBase character = characterFromMessage(msg, accountId);
 
                 result = CharacterValidator.validation(character);
@@ -30,7 +28,9 @@ public class CharacterCreator {
                 if (result == CreationResult.SUCCESS) {
                     int resultId = create(character);
 
-                    if (resultId <= 0 || !setCharacterOwner(resultId, session.getUserInfo())) {
+                    if (resultId > 0) {
+                        setCharacterOwner(resultId, session.getUserId());
+                    } else {
                         result = CreationResult.SYSTEM_PROBLEM;
                     }
                 }
@@ -113,19 +113,15 @@ public class CharacterCreator {
         return characterId;
     }
 
-    private static boolean setCharacterOwner(int characterId, UserInfo owner) {
-        switch (owner.getFirstEmptySlot()) {
+    private static void setCharacterOwner(int characterId, int ownerId) {
+        switch (UserInfo.getFirstEmptySlot(ownerId)) {
             case 0:
-                return owner.setSlotOne(characterId);
+                UserInfo.setSlotOne(characterId, ownerId);
             case 1:
-                return owner.setSlotTwo(characterId);
+                UserInfo.setSlotTwo(characterId, ownerId);
             case 2:
-                return owner.setSlotThree(characterId);
+                UserInfo.setSlotThree(characterId, ownerId);
             default:
-                // Should not happen. We checked the owner has at least one empty slot.
-                Output.println("Problem to add character: " + characterId +
-                        "to owner:" + owner.getId(), Level.WARNING);
-                return false;
         }
     }
 

@@ -10,12 +10,10 @@ import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.Password;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.Timestamp;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Calendar;
 
 public class CharacterRemover {
 
@@ -27,20 +25,20 @@ public class CharacterRemover {
     }
 
     public static void removeCharacter(Session session, ClientMessage msg) {
+        int userId = session.getUserId();
         int charId = msg.readInt();
         String password = msg.readString(20);
 
-        UserInfo user = session.getUserInfo();
-        int slot = user.characterSlot(charId);
+        int slot = UserInfo.characterSlot(charId, userId);
 
         byte result = RemoverResult.SUCCESS;
 
         try {
-            if (slot >= 0 && Password.validate(password, user.getPassword())) {
-                if (limitTimeExpired(user)) {
+            if (slot >= 0 && Password.validate(password, UserInfo.getPassword(userId))) {
+                if (limitTimeExpired(userId)) {
                     if (remove(charId)) {
-                        clearOwnerSlot(user, slot);
-                        updateExpireTime(user);
+                        clearOwnerSlot(userId, slot);
+                        updateExpireTime(userId);
                     } else {
                         result = RemoverResult.SYSTEM_PROBLEM;
                     }
@@ -54,14 +52,14 @@ public class CharacterRemover {
             result = RemoverResult.SYSTEM_PROBLEM;
         }
 
-        String removalDate = DateUtils.dateToString(user.getLastCharDeletion());
+        String removalDate = DateUtils.dateToString(UserInfo.getLastCharDeletion(userId));
 
         ServerMessage response = MessageBuilder.removeCharacter(charId, removalDate, result);
         session.send(response);
     }
 
-    public static boolean limitTimeExpired(UserInfo user) {
-        java.sql.Timestamp lastDeletionDate = user.getLastCharDeletion();
+    public static boolean limitTimeExpired(int userId) {
+        java.sql.Timestamp lastDeletionDate = UserInfo.getLastCharDeletion(userId);
 
         return lastDeletionDate == null || DateUtils.getTimestamp().after(lastDeletionDate);
     }
@@ -79,13 +77,13 @@ public class CharacterRemover {
         }
     }
 
-    public static void clearOwnerSlot(UserInfo user, int slot) {
-        user.setSlotWithIndex(slot, 0);
+    public static void clearOwnerSlot(int userId, int slot) {
+        UserInfo.setSlotWithIndex(slot, 0, userId);
     }
 
-    public static void updateExpireTime(UserInfo user) {
+    public static void updateExpireTime(int userId) {
         java.sql.Date expireDate = DateUtils.addDays(DateUtils.getSqlDate(), 7);
 
-        user.setLastCharDeletion(expireDate);
+        UserInfo.setLastCharDeletion(expireDate, userId);
     }
 }

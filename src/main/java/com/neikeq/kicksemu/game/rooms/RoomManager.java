@@ -1,8 +1,10 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
@@ -127,7 +129,7 @@ public class RoomManager {
                     map == null || ball == null || goalkeeperMode == null) {
                 result = (byte) 255; // System problem
             } else {
-                short playerLevel = session.getPlayerInfo().getLevel();
+                short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
                 if (playerLevel < minLevel || playerLevel > maxLevel) {
                     result = (byte) 252; // Invalid level
@@ -176,7 +178,7 @@ public class RoomManager {
 
                 // Notify the client to join the room
                 ServerMessage msgJoinRoom = MessageBuilder.joinRoom(room.getId(),
-                        room.getPlayerTeam(session.getPlayerInfo().getId()), result);
+                        room.getPlayerTeam(session.getPlayerId()), result);
                 session.send(msgJoinRoom);
 
                 // Send the room info to the client
@@ -204,7 +206,7 @@ public class RoomManager {
                 // If room does not have a password, or typed password matches room's password
                 if (room.getType() != RoomType.PASSWORD || password.equals(room.getPassword())) {
                     if (!room.isPlaying()) {
-                        short level = session.getPlayerInfo().getLevel();
+                        short level = PlayerInfo.getLevel(session.getPlayerId());
 
                         // If player level is not allowed in room settings
                         if (level < room.getMinLevel() || level > room.getMaxLevel()) {
@@ -228,7 +230,7 @@ public class RoomManager {
 
             // Send the notification to the client
             ServerMessage response = MessageBuilder.joinRoom(roomId,
-                    room.getPlayerTeam(session.getPlayerInfo().getId()), result);
+                    room.getPlayerTeam(session.getPlayerId()), result);
             session.send(response);
 
             // Send the room info to the client
@@ -246,7 +248,7 @@ public class RoomManager {
 
     public static void leaveRoom(Session session, ClientMessage msg) {
         short roomId = msg.readShort();
-        int playerId = session.getPlayerInfo().getId();
+        int playerId = session.getPlayerId();
 
         Room room = getRoomById(roomId);
 
@@ -272,7 +274,7 @@ public class RoomManager {
 
         Room room = getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(session.getPlayerInfo().getId())) {
+        if (room != null && room.isPlayerIn(session.getPlayerId())) {
             RoomMap map = RoomMap.fromInt(mapId);
 
             if (map != null) {
@@ -291,7 +293,7 @@ public class RoomManager {
 
         Room room = getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(session.getPlayerInfo().getId())) {
+        if (room != null && room.isPlayerIn(session.getPlayerId())) {
             RoomBall ball = RoomBall.fromInt(ballId);
 
             if (ball != null) {
@@ -329,14 +331,14 @@ public class RoomManager {
 
         Room room = rooms.get(roomId);
 
-        short playerLevel = session.getPlayerInfo().getLevel();
+        short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
         // TODO check if the server allows this goalkeeperMode
         if (maxSize == null || type == null || goalkeeperMode == null) {
             result = (byte) 255; // System problem
         } else if (room == null) {
             result = (byte) 254; // Room does not exist
-        } else if (room.getMaster() != session.getPlayerInfo().getId()) {
+        } else if (room.getMaster() != session.getPlayerId()) {
             result = (byte) 253; // Player is not room's master
         } else if (maxSize.toInt() < room.getPlayers().size()) {
             result = (byte) 252; // Size is lower than players in room
@@ -375,7 +377,7 @@ public class RoomManager {
 
     public static void swapTeam(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        int playerId = session.getPlayerInfo().getId();
+        int playerId = session.getPlayerId();
 
         Room room = getRoomById(roomId);
 
@@ -404,7 +406,7 @@ public class RoomManager {
         // If the room exist and the player is inside it
         if (room != null && room.getId() == roomId) {
             // If the player is the room master
-            if (room.getMaster() == session.getPlayerInfo().getId()) {
+            if (room.getMaster() == session.getPlayerId()) {
                 // If the player is in the room
                 if (room.isPlayerIn(playerToKick)) {
                     room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
@@ -438,12 +440,13 @@ public class RoomManager {
             if (LobbyManager.getMainLobby().getPlayers().contains(playerToInvite)) {
                 Session sessionToInvite = ServerManager.getPlayers().get(playerToInvite);
 
-                if (sessionToInvite.getUserInfo().getSettings().getInvites()) {
-                    byte level = (byte)sessionToInvite.getPlayerInfo().getLevel();
+                if (UserInfo.getSettings(sessionToInvite.getUserId()).getInvites()) {
+                    byte level = (byte)PlayerInfo.getLevel(sessionToInvite.getPlayerId());
 
+                    // If player level meets the level requirement of the room
                     if (room.getMinLevel() <= level && room.getMaxLevel() >= level) {
                         ServerMessage invitation = MessageBuilder.invitePlayer(result,
-                                room.getId(), session.getPlayerInfo().getName());
+                                room.getId(), PlayerInfo.getName(session.getPlayerId()));
                         sessionToInvite.sendAndFlush(invitation);
                     } else {
                         result = (byte)251; // Player does not meet the level requirements

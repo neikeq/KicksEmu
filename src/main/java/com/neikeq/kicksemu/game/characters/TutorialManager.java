@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
@@ -24,32 +25,30 @@ public class TutorialManager {
         byte result = 0;
         int reward = 0;
 
-        if (session.getUserInfo().hasCharacter(characterId)) {
+        if (UserInfo.hasCharacter(characterId, session.getUserId())) {
             if (areValid(dribbling, passing, shooting, defense)) {
-                PlayerInfo character = new PlayerInfo(characterId);
-
-                byte storedDribbling = character.getTutorialDribbling();
-                byte storedPassing = character.getTutorialPassing();
-                byte storedShooting = character.getTutorialShooting();
-                byte storedDefense = character.getTutorialDefense();
+                byte storedDribbling = PlayerInfo.getTutorialDribbling(characterId);
+                byte storedPassing = PlayerInfo.getTutorialPassing(characterId);
+                byte storedShooting = PlayerInfo.getTutorialShooting(characterId);
+                byte storedDefense = PlayerInfo.getTutorialDefense(characterId);
 
                 if (!compare(dribbling, storedDribbling)) {
-                    character.setTutorialDribbling(dribbling);
+                    PlayerInfo.setTutorialDribbling(dribbling, characterId);
                 }
 
                 if (!compare(passing, storedPassing)) {
-                    character.setTutorialPassing(passing);
+                    PlayerInfo.setTutorialPassing(passing, characterId);
                 }
 
                 if (!compare(shooting, storedShooting)) {
-                    character.setTutorialShooting(shooting);
+                    PlayerInfo.setTutorialShooting(shooting, characterId);
                 }
 
                 if (!compare(defense, storedDefense)) {
-                    character.setTutorialDefense(defense);
+                    PlayerInfo.setTutorialDefense(defense, characterId);
                 }
 
-                if (checkForReward(character, dribbling, passing, shooting, defense)) {
+                if (checkForReward(characterId, dribbling, passing, shooting, defense)) {
                     reward = REWARD_POINTS;
                 }
             }
@@ -80,13 +79,13 @@ public class TutorialManager {
         return true;
     }
 
-    public static boolean checkForReward(PlayerInfo character, byte dribbling,
+    public static boolean checkForReward(int characterId, byte dribbling,
                                       byte passing, byte shooting, byte defense) {
         if (dribbling == 15 && passing == 15 &&
                 shooting == 15 && defense == 15) {
-            if (!character.getReceivedReward()) {
-                if (giveReward(character.getId())) {
-                    character.setReceivedReward(true);
+            if (PlayerInfo.getReceivedReward(characterId)) {
+                if (giveReward(characterId)) {
+                    PlayerInfo.setReceivedReward(true, characterId);
                     return true;
                 }
             }

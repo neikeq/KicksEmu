@@ -18,7 +18,7 @@ import java.util.List;
 public class ServerUtils {
 
     public static void serverList(Session session, ClientMessage msg) {
-        List<ServerInfo> servers = getServerList(msg.readShort());
+        List<Short> servers = getServerList(msg.readShort());
 
         byte result = (byte)(servers == null ? 255 : 0);
 
@@ -32,31 +32,32 @@ public class ServerUtils {
 
         byte result = 0;
 
-        ServerInfo server = new ServerInfo(serverId);
-        PlayerInfo character = session.getPlayerInfo();
+        int playerId = session.getPlayerId();
 
         /* TODO Check if character can access private server... Reject code is 251 */
-        if (level == session.getPlayerInfo().getLevel()) {
-            int clubId = character.getClubId();
+        if (level == PlayerInfo.getLevel(playerId)) {
+            int clubId = PlayerInfo.getClubId(playerId);
 
-            if (server.getType() == GameServerType.CLUB &&
+            if (ServerInfo.getType(serverId) == GameServerType.CLUB &&
                     (clubId <= 0 || !ClubManager.clubExist(clubId))) {
                 result = (byte)252; // Need to be a club member
-            } else if (level < server.getMinLevel() || level > server.getMaxLevel()) {
+            } else if (level < ServerInfo.getMinLevel(serverId) ||
+                    level > ServerInfo.getMaxLevel(serverId)) {
                 result = (byte)253; // Level not allowed
-            } else if (server.getConnectedUsers() >= server.getMaxUsers()) {
+            } else if (ServerInfo.getMaxUsers(serverId) <=
+                    ServerInfo.getConnectedUsers(serverId)) {
                 result = (byte)254; // Server is full
             }
         } else {
             result = (byte)255; // System problem
         }
 
-        ServerMessage response = MessageBuilder.serverInfo(server, result);
+        ServerMessage response = MessageBuilder.serverInfo(serverId, result);
         session.send(response);
     }
 
-    private static List<ServerInfo> getServerList(short filter) {
-        List<ServerInfo> servers = new ArrayList<>();
+    private static List<Short> getServerList(short filter) {
+        List<Short> servers = new ArrayList<>();
         String query = "SELECT id FROM servers WHERE filter = ?";
 
         try (Connection con = MySqlManager.getConnection();
@@ -65,7 +66,7 @@ public class ServerUtils {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    servers.add(new ServerInfo(rs.getShort("id")));
+                    servers.add(rs.getShort("id"));
                 }
 
                 return servers;
@@ -149,7 +150,7 @@ public class ServerUtils {
     }
 
     // TODO Add functionality to this method
-    public static void nextTip(Session session, ClientMessage msg) {
+    public static void nextTip(Session session) {
         String tip = "";
 
         ServerMessage response = MessageBuilder.nextTip(tip, (byte)0);

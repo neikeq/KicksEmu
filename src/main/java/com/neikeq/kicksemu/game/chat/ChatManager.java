@@ -1,10 +1,12 @@
 package com.neikeq.kicksemu.game.chat;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.Lobby;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
@@ -20,7 +22,7 @@ public class ChatManager {
 
         int characterId = msg.readInt();
 
-        if (session.getPlayerInfo().getId() == characterId) {
+        if (session.getPlayerId() == characterId) {
             String name = msg.readString(15);
             ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
             String message = msg.readString(55);
@@ -40,14 +42,14 @@ public class ChatManager {
     }
 
     public static void onMessageNormal(Session session, String name, String message) {
-        if (session.getPlayerInfo().getName().equals(name)) {
+        int playerId = session.getPlayerId();
+
+        if (PlayerInfo.getName(playerId).equals(name)) {
             if (!message.isEmpty()) {
                 Lobby lobby = session.getCurrentLobby();
 
-                ChatMessageType type = session.getPlayerInfo().isModerator() ?
+                ChatMessageType type = PlayerInfo.isModerator(playerId) ?
                         ChatMessageType.MODERATOR : ChatMessageType.NORMAL;
-
-                int playerId = session.getPlayerInfo().getId();
 
                 lobby.getPlayers().stream().forEach(targetId -> {
                     // TODO Check if the current target muted the player who writes this message
@@ -63,11 +65,11 @@ public class ChatManager {
     }
 
     public static void onMessageTeam(Session session, String name, String message) {
-        if (session.getPlayerInfo().getName().equals(name)) {
+        int playerId = session.getPlayerId();
+
+        if (PlayerInfo.getName(playerId).equals(name)) {
             if (!message.isEmpty()) {
                 ChatMessageType type = ChatMessageType.TEAM;
-
-                int playerId = session.getPlayerInfo().getId();
 
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
@@ -82,7 +84,7 @@ public class ChatManager {
     }
 
     public static void onMessageWhisper(Session session, String name, String message) {
-        if (session.getPlayerInfo().getName().equals(name)) {
+        if (PlayerInfo.getName(session.getPlayerId()).equals(name)) {
             ChatMessageType type = ChatMessageType.WHISPER_TO;
 
             String target = retrieveTargetFromWhisper(message);
@@ -101,7 +103,7 @@ public class ChatManager {
                 // If target player was found
                 if (targetSession != null) {
                     // If the target player accepts whispers
-                    if (targetSession.getUserInfo().getSettings().getWhispers()) {
+                    if (UserInfo.getSettings(targetSession.getUserId()).getWhispers()) {
                         // TODO Check if the target player muted the whisperer
                         ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
                                 ChatMessageType.WHISPER_FROM, whisper);
@@ -114,7 +116,7 @@ public class ChatManager {
                 }
             }
 
-            int playerId = session.getPlayerInfo().getId();
+            int playerId = session.getPlayerId();
 
             ServerMessage response = MessageBuilder.chatMessage(playerId, target,
                     type, whisper);

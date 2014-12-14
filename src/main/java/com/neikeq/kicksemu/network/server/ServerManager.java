@@ -22,7 +22,7 @@ public class ServerManager {
     private static MessageHandler messageHandler;
     private static Map<Integer, Session> players;
     private static ServerBase serverBase;
-    private static ServerInfo serverInfo;
+    private static short serverId;
 
     private static final Object locker = new Object();
 
@@ -57,7 +57,7 @@ public class ServerManager {
         messageHandler = new GameMessageHandler();
 
         serverBase = ServerBase.fromConfig();
-        serverInfo = new ServerInfo(serverBase.getId());
+        serverId = serverBase.getId();
 
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
             return ServerUtils.insertServer(serverBase);
@@ -84,9 +84,8 @@ public class ServerManager {
     }
 
     public static void updateConnectedUsers() {
-        // serverInfo is null on main server
-        if (serverInfo != null) {
-            serverInfo.setConnectedUsers((short) getPlayers().size());
+        if (serverId > 0) {
+            ServerInfo.setConnectedUsers((short) getPlayers().size(), serverId);
         }
     }
 

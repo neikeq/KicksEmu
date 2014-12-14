@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.lobby.RoomLobby;
 import com.neikeq.kicksemu.game.rooms.enums.*;
@@ -49,7 +50,7 @@ public class Room {
 
     public void addPlayer(Session session) {
         synchronized (locker) {
-            int playerId = session.getPlayerInfo().getId();
+            int playerId = session.getPlayerId();
 
             // Remove player from the main lobby
             LobbyManager.removePlayer(playerId);
@@ -74,7 +75,7 @@ public class Room {
     }
     
     public void removePlayer(Session session, RoomLeaveReason reason) {
-        int playerId = session.getPlayerInfo().getId();
+        int playerId = session.getPlayerId();
 
         synchronized (locker) {
             // Remove player from players list and room lobby
@@ -133,14 +134,14 @@ public class Room {
     private void addPlayerToRedTeam(int playerId) {
         getRedTeam().add(playerId);
 
-        short position = getPlayers().get(playerId).getPlayerInfo().getPosition();
+        short position = PlayerInfo.getPosition(playerId);
         getRedTeamPositions().add(position);
     }
 
     private void addPlayerToBlueTeam(int playerId) {
         getBlueTeam().add(playerId);
 
-        short position = getPlayers().get(playerId).getPlayerInfo().getPosition();
+        short position = PlayerInfo.getPosition(playerId);
         getBlueTeamPositions().add(position);
     }
 
@@ -196,11 +197,11 @@ public class Room {
     }
 
     private void onPlayerJoined(Session session) {
-        int playerId = session.getPlayerInfo().getId();
+        int playerId = session.getPlayerId();
 
         // Notify players in room about the new player
         getPlayers().values().stream()
-                .filter(s -> s.getPlayerInfo().getId() != playerId)
+                .filter(s -> s.getPlayerId() != playerId)
                 .forEach(s -> {
                     ServerMessage msgNewPlayer = MessageBuilder.roomPlayerInfo(session, this);
                     s.sendAndFlush(msgNewPlayer);
@@ -289,7 +290,7 @@ public class Room {
 
     public boolean isValidMinLevel(byte level) {
         for (Session s : getPlayers().values()) {
-            if (s.getPlayerInfo().getLevel()  < level) {
+            if (PlayerInfo.getLevel(s.getPlayerId()) < level) {
                 return false;
             }
         }
@@ -299,7 +300,7 @@ public class Room {
 
     public boolean isValidMaxLevel(byte level) {
         for (Session s : getPlayers().values()) {
-            if (s.getPlayerInfo().getLevel()  > level) {
+            if (PlayerInfo.getLevel(s.getPlayerId()) > level) {
                 return false;
             }
         }

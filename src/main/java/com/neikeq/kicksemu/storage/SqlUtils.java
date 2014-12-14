@@ -8,11 +8,7 @@ import java.sql.Timestamp;
 
 public class SqlUtils {
 
-    private final int id;
-
-    private final String table;
-
-    public byte getByte(String row) {
+    public static byte getByte(String row, String table, int id) {
         String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -30,7 +26,7 @@ public class SqlUtils {
         }
     }
 
-    public short getShort(String row) {
+    public static short getShort(String row, String table, int id) {
         String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -48,7 +44,7 @@ public class SqlUtils {
         }
     }
 
-    public int getInt(String row) {
+    public static int getInt(String row, String table, int id) {
         String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -66,7 +62,7 @@ public class SqlUtils {
         }
     }
 
-    public boolean getBoolean(String row) {
+    public static boolean getBoolean(String row, String table, int id) {
         String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -80,7 +76,7 @@ public class SqlUtils {
         }
     }
 
-    public String getString(String row) {
+    public static String getString(String row, String table, int id) {
         String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -98,7 +94,7 @@ public class SqlUtils {
         }
     }
 
-    public Timestamp getTimestamp(String row) {
+    public static Timestamp getTimestamp(String row, String table, int id) {
         String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -116,7 +112,7 @@ public class SqlUtils {
         }
     }
 
-    public boolean setByte(String row, byte value) {
+    public static void setByte(String row, byte value, String table, int id) {
         String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -124,14 +120,12 @@ public class SqlUtils {
             stmt.setByte(1, value);
             stmt.setInt(2, id);
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
-            return false;
-        }
+        } catch (SQLException ignored) {}
     }
 
-    public boolean setShort(String row, short value) {
+    public static void setShort(String row, short value, String table, int id) {
         String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -139,14 +133,12 @@ public class SqlUtils {
             stmt.setShort(1, value);
             stmt.setInt(2, id);
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
-            return false;
-        }
+        } catch (SQLException ignored) {}
     }
 
-    public boolean setInt(String row, int value) {
+    public static void setInt(String row, int value, String table, int id) {
         String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -154,14 +146,12 @@ public class SqlUtils {
             stmt.setInt(1, value);
             stmt.setInt(2, id);
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
-            return false;
-        }
+        } catch (SQLException ignored) {}
     }
 
-    public boolean setBoolean(String row, boolean value) {
+    public static void setBoolean(String row, boolean value, String table, int id) {
         String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -169,14 +159,12 @@ public class SqlUtils {
             stmt.setBoolean(1, value);
             stmt.setInt(2, id);
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
-            return false;
-        }
+        } catch (SQLException ignored) {}
     }
 
-    public boolean setString(String row, String value) {
+    public static void setString(String row, String value, String table, int id) {
         String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -184,14 +172,12 @@ public class SqlUtils {
             stmt.setString(1, value);
             stmt.setInt(2, id);
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
-            return false;
-        }
+        } catch (SQLException ignored) {}
     }
 
-    public boolean setTimestamp(String row, Timestamp value) {
+    public static void setTimestamp(String row, Timestamp value, String table, int id) {
         String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -199,19 +185,8 @@ public class SqlUtils {
             stmt.setTimestamp(1, value);
             stmt.setInt(2, id);
 
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-
-    public static SqlUtils forId(int id, String table) {
-        return new SqlUtils(id, table);
-    }
-
-    public SqlUtils(int id, String table) {
-        this.table = table;
-        this.id = id;
+        } catch (SQLException ignored) {}
     }
 }
