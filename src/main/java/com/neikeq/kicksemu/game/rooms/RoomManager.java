@@ -1,10 +1,12 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.network.server.ServerManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -420,6 +422,44 @@ public class RoomManager {
         if (result != 0) {
             ServerMessage response = MessageBuilder.kickPlayer(result);
             session.send(response);
+        }
+    }
+
+    public static void invitePlayer(Session session, ClientMessage msg) {
+        Room room = getRoomById(session.getRoomId());
+
+        // If the player is in a room
+        if (room != null) {
+            int playerToInvite = msg.readInt();
+
+            byte result = 0;
+
+            // If the player to invite is in the main lobby
+            if (LobbyManager.getMainLobby().getPlayers().contains(playerToInvite)) {
+                Session sessionToInvite = ServerManager.getPlayers().get(playerToInvite);
+
+                if (sessionToInvite.getUserInfo().getSettings().getInvites()) {
+                    byte level = (byte)sessionToInvite.getPlayerInfo().getLevel();
+
+                    if (room.getMinLevel() <= level && room.getMaxLevel() >= level) {
+                        ServerMessage invitation = MessageBuilder.invitePlayer(result,
+                                room.getId(), session.getPlayerInfo().getName());
+                        sessionToInvite.sendAndFlush(invitation);
+                    } else {
+                        result = (byte)251; // Player does not meet the level requirements
+                    }
+                } else {
+                    result = (byte)253; // Player does not accept invitations
+                }
+            } else {
+                result = (byte)254; // Player not found
+            }
+
+            // If there is something wrong, notify the client
+            if (result != 0) {
+                ServerMessage response = MessageBuilder.invitePlayer(result, 0, "");
+                session.sendAndFlush(response);
+            }
         }
     }
 }

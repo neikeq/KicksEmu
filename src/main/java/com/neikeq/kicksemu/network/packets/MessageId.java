@@ -36,6 +36,7 @@ public class MessageId {
     public static final int ROOM_SETTINGS = 2316;
     public static final int KICK_PLAYER = 2317;
     public static final int LOBBY_LIST = 2318;
+    public static final int INVITE_PLAYER = 2319;
     public static final int CHAT_MESSAGE = 2320;
     public static final int UPDATE_SETTINGS = 2901;
     public static final int UDP_CHECK = 3001;

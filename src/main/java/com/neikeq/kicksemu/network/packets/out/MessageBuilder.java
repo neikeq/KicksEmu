@@ -661,4 +661,17 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage invitePlayer(byte result, int roomId, String name) {
+        ServerMessage msg = new ServerMessage(MessageId.INVITE_PLAYER);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(name, 15);
+            msg.append((short) roomId);
+        }
+
+        return msg;
+    }
 }
