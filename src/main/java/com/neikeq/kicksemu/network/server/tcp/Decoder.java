@@ -4,7 +4,6 @@ import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.utils.Cryptography;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
@@ -15,7 +14,9 @@ import java.util.List;
 class Decoder extends ByteToMessageDecoder {
 
     @Override
-    protected void decode(ChannelHandlerContext chc, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext chc, ByteBuf in, List<Object> out)
+            throws Exception {
+
         int length = in.readableBytes();
 
         if (length >= Constants.HEADER_SIZE) {

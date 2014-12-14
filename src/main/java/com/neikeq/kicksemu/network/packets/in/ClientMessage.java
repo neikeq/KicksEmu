@@ -3,7 +3,6 @@ package com.neikeq.kicksemu.network.packets.in;
 import com.neikeq.kicksemu.config.Constants;
 import io.netty.buffer.ByteBuf;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class ClientMessage {
@@ -51,7 +50,7 @@ public class ClientMessage {
         body.readerIndex(body.readerIndex() + length);
     }
 
-    public short getSize(byte [] data) {
+    public short getSize() {
         return size;
     }
 

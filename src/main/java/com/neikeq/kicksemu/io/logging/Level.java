@@ -8,7 +8,8 @@ public enum Level {
     CRITICAL;
     
     /**
-     * Returns an {@code Verbosity} enumeration object holding the value of the specified {@code Integer}.
+     * Returns an {@code Verbosity} enumeration object
+     * holding the value of the specified {@code Integer}.
      * 
      * @param value the {@code Integer} to be parsed.
      */
@@ -44,7 +45,8 @@ public enum Level {
     }
 
     /**
-     * Returns an {@code Verbosity} enumeration object holding the value of the specified {@code String}.
+     * Returns an {@code Verbosity} enumeration object
+     * holding the value of the specified {@code String}.
      * 
      * @param value the {@code String} to be parsed.
      */
