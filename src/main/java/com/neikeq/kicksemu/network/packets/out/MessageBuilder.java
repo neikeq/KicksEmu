@@ -653,4 +653,12 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage kickPlayer(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.KICK_PLAYER);
+
+        MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
 }

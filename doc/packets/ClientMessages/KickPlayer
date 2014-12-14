@@ -6,5 +6,5 @@ Size: 10
 
 Data:
 int packet_id
-int character_id
 short room_id
+int character_id

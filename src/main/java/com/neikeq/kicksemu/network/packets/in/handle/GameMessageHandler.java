@@ -47,6 +47,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.ROOM_BALL, RoomManager::roomBall);
         events.put(MessageId.ROOM_SETTINGS, RoomManager::roomSettings);
         events.put(MessageId.SWAP_TEAM, RoomManager::swapTeam);
+        events.put(MessageId.KICK_PLAYER, RoomManager::kickPlayer);
     }
 
     private void defineCertifyEvents() {

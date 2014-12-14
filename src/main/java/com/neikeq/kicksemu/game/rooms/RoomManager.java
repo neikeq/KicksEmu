@@ -252,9 +252,6 @@ public class RoomManager {
             RoomLeaveReason reason = RoomLeaveReason.LEAVED;
 
             session.leaveRoom(reason);
-
-            ServerMessage msgLeaveRoom = MessageBuilder.leaveRoom(playerId, reason);
-            session.send(msgLeaveRoom);
         }
     }
 
@@ -391,6 +388,38 @@ public class RoomManager {
             } else {
                 session.send(msgSwapTeam);
             }
+        }
+    }
+
+    public static void kickPlayer(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+        int playerToKick = msg.readInt();
+
+        byte result = 0;
+
+        Room room = getRoomById(session.getRoomId());
+
+        // If the room exist and the player is inside it
+        if (room != null && room.getId() == roomId) {
+            // If the player is the room master
+            if (room.getMaster() == session.getPlayerInfo().getId()) {
+                // If the player is in the room
+                if (room.isPlayerIn(playerToKick)) {
+                    room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
+                } else {
+                    result = (byte)252; // Player not found
+                }
+            } else {
+                result = (byte)253; // Not the room master
+            }
+        } else {
+            result = (byte)254; // Invalid room
+        }
+
+        // If there is something wrong, notify the client
+        if (result != 0) {
+            ServerMessage response = MessageBuilder.kickPlayer(result);
+            session.send(response);
         }
     }
 }
