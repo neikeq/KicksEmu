@@ -67,11 +67,12 @@ public class GameMessageHandler extends MessageHandler {
 
                 if (event != null) {
                     event.handle(session, msg);
-                    return true;
+                } else {
+                    return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 }
