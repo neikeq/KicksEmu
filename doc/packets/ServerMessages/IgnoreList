@@ -1,0 +1,16 @@
+// IgnoreList
+// Tcp
+
+Id: 2116
+Size: 7 + 20 per column (max 10 columns)
+
+Data:
+int packet_id
+byte reason
+byte response
+// Index of the page, starting from zero
+byte page
+// Send the following for each ignored player in the page
+int character_id
+char[15] name
+byte position

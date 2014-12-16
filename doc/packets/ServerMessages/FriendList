@@ -1,0 +1,30 @@
+// FriendList
+// Tcp
+
+Id: 2110
+Size: 7 + 25 per column (max 10 columns)
+
+Data:
+int packet_id
+byte reason
+byte response
+// Index of the page, starting from zero
+byte page
+// Send the following for each friend in the page
+int character_id
+char[15] name
+short level
+byte position
+byte status // Offline: 0, Server: 1, Room: 2, Team: 3
+short id
+
+Notes:
+// The status value is 'Server' (1) when a friend is online in a different server,
+// and the id represents the id of that server.
+// This status was never used on the original game (atleast not in the HK version).
+
+// The status value is 'Room' (2) when a friend is online in this server,
+// and the id represents the id of the room where the friend is playing,
+// or zero if the friend is in the main lobby.
+
+// I do not currently know what the status 'Team' (3) stands for.

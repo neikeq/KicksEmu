@@ -1,0 +1,10 @@
+// UnblockPlayer
+// Tcp
+
+Id: 2119
+Size: 8
+
+Data:
+int packet_id
+// Id of the player to remove from the ignore list
+int character_id

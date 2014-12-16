@@ -1,0 +1,10 @@
+// FriendList
+// Tcp
+
+Id: 2110
+Size: 5
+
+Data:
+int packet_id
+// Index of the page, starting from zero
+byte page

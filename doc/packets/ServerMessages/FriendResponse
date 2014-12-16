@@ -1,0 +1,20 @@
+// FriendResponse
+// Tcp
+
+Id: 2112
+Size: 6
+
+Data:
+int packet_id
+byte reason
+/*
+ * 
+ * Player rejected the request: 253
+ * Account not found: 254
+ * System problem: 255
+ */
+byte response // Friend request... accepted: 0, rejected: 255
+
+Notes:
+// This message is sent to the player who sent the request after the target accepted or rejected it,
+// and to the target if the request is accepted.

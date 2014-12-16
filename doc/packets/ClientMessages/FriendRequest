@@ -1,0 +1,10 @@
+// FriendRequest
+// Tcp
+
+Id: 2111
+Size: 8
+
+Data:
+int packet_id
+// Id of the player to send the request
+int character_id

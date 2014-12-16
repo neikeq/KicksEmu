@@ -1,0 +1,20 @@
+// BlockPlayer
+// Tcp
+
+Id: 2117
+Size: 25
+
+Data:
+int packet_id
+byte reason
+/*
+ * Cannot ignore yourself: 251
+ * Already ignoring: 252
+ * Ignore list limit: 253
+ * Account not found: 254
+ * System problem: 255
+ */
+byte response
+// Info of the player to add to the ignore list
+int character_id
+char[15] name

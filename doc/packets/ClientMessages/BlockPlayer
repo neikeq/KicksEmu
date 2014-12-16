@@ -1,0 +1,10 @@
+// BlockPlayer
+// Tcp
+
+Id: 2117
+Size: 8
+
+Data:
+int packet_id
+// Id of the player to add to the ignore list
+int character_id

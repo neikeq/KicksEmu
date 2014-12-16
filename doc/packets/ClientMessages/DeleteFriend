@@ -1,0 +1,10 @@
+// DeleteFriend
+// Tcp
+
+Id: 2113
+Size: 8
+
+Data:
+int packet_id
+// Id of the friend to delete
+int character_id

@@ -1,0 +1,14 @@
+// UnblockPlayer
+// Tcp
+
+Id: 2119
+Size: 6
+
+Data:
+int packet_id
+byte reason
+/*
+ * Account not found: 254
+ * System problem: 255
+ */
+byte response

@@ -1,0 +1,11 @@
+// FriendResponse
+// Tcp
+
+Id: 2112
+Size: 9
+
+Data:
+int packet_id
+// Info of the player who sent the friend request
+int character_id
+bool result // Reject: 0, Accept: 1
