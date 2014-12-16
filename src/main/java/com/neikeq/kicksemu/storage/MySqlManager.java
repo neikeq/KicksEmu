@@ -47,15 +47,13 @@ public class MySqlManager {
 
         setupDataSource(url, Configuration.get("mysql.user"), Configuration.get("mysql.pass"));
         
-        // Check if connection works
-        getConnection();
+        // Check if the connection with the database is working, otherwise SQLException is thrown
+        getConnection().close();
     }
     
     private static void setupDataSource(String url, String user, String password) {
         PoolableConnectionFactory factory = new PoolableConnectionFactory(
-                new DriverManagerConnectionFactory(url, user, password),
-                null
-        );
+                new DriverManagerConnectionFactory(url, user, password), null);
         
         GenericObjectPoolConfig config = new GenericObjectPoolConfig();
         config.setMaxTotal(maxIdle);

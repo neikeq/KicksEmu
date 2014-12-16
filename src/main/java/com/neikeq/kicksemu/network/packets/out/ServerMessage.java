@@ -57,20 +57,12 @@ public class ServerMessage {
             body.writeZero(length);
     }
 
-    public void write(int index, byte value) {
-        body.setByte(index, value);
-    }
-
     public void write(int index, short value) {
         body.setShort(index, value);
     }
 
     public void write(int index, int value) {
         body.setInt(index, value);
-    }
-
-    public void setWriterIndex(int index) {
-        body.writerIndex(index);
     }
     
     public ByteBuf getByteBuf() {
