@@ -14,9 +14,9 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 /** Manages application translations. */
-public class Location {
+public class Localization {
 
-    private static Location location;
+    private static Localization localization;
 
     private String langPath;
     private Properties lang;
@@ -74,11 +74,11 @@ public class Location {
         }
     }
 
-    public synchronized static Location getInstance() {
-        if (location == null) {
-            location = new Location();
+    public synchronized static Localization getInstance() {
+        if (localization == null) {
+            localization = new Localization();
         }
 
-        return location;
+        return localization;
     }
 }

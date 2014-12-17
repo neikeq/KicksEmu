@@ -1,7 +1,7 @@
 package com.neikeq.kicksemu.network.server;
 
 import com.neikeq.kicksemu.config.Configuration;
-import com.neikeq.kicksemu.config.Location;
+import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.game.servers.ServerBase;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
@@ -52,7 +52,7 @@ public class ServerManager {
     }
 
     private boolean initializeGame() {
-        Output.println(Location.get("game.init"), Level.INFO);
+        Output.println(Localization.get("game.init"), Level.INFO);
 
         messageHandler = new GameMessageHandler();
 

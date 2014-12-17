@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.network.server.tcp;
 
-import com.neikeq.kicksemu.config.Location;
+import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.io.Output;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -40,7 +40,7 @@ public class NettyTcpServer {
     }
 
     public void start() throws InterruptedException {
-        Output.println(Location.get("net.bind.tcp", String.valueOf(port)));
+        Output.println(Localization.get("net.bind.tcp", String.valueOf(port)));
 
         channelFuture = bootstrap.bind(port).sync();
     }

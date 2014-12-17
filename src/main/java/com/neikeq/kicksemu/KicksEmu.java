@@ -2,7 +2,7 @@ package com.neikeq.kicksemu;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Constants;
-import com.neikeq.kicksemu.config.Location;
+import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Input;
 import com.neikeq.kicksemu.io.Output;
@@ -51,16 +51,16 @@ public class KicksEmu {
         output.printHeader();
 
         // Initialize Language Translations
-        Location.getInstance().init();
+        Localization.getInstance().init();
 
         try {
-            Output.println(Location.get("init"));
+            Output.println(Localization.get("init"));
 
             // Initialize MySQL Database
             MySqlManager.init();
 
             // Initialize Tcp and Udp Server
-            Output.println(Location.get("net.init"));
+            Output.println(Localization.get("net.init"));
             nettyTcpServer = new NettyTcpServer(Configuration.getInt("net.bind.port"));
 
             // Initialize ServerManager
@@ -77,13 +77,13 @@ public class KicksEmu {
 
         } catch (ClassNotFoundException e) {
             // MySql Driver not found
-            handleFatalError(Location.get("mysql.error.driver"), e.getMessage());
+            handleFatalError(Localization.get("mysql.error.driver"), e.getMessage());
         } catch (InterruptedException e) {
             // Bind was interrupted
-            handleFatalError(Location.get("net.bind.interrupt"), e.getMessage());
+            handleFatalError(Localization.get("net.bind.interrupt"), e.getMessage());
         } catch (SQLException e) {
             // Connection error
-            handleFatalError(Location.get("mysql.error.conn"), e.getMessage());
+            handleFatalError(Localization.get("mysql.error.conn"), e.getMessage());
         } catch (IllegalArgumentException e) {
             // e.x.: Pool size is less than zero
             handleFatalError(e.getMessage());
@@ -92,7 +92,7 @@ public class KicksEmu {
         long endTime = (System.nanoTime() - startTime) / 1000000;
 
         // Print success notification including elapsed time
-        Output.println(Location.get("init.success", Long.toString(endTime)), Level.INFO);
+        Output.println(Localization.get("init.success", Long.toString(endTime)), Level.INFO);
 
         // Start listening for user inputs
         Input input = new Input();
@@ -112,18 +112,18 @@ public class KicksEmu {
         }
 
         Output.println(message, Level.CRITICAL);
-        Output.println(Location.get("init.error.exit"), Level.CRITICAL);
+        Output.println(Localization.get("init.error.exit"), Level.CRITICAL);
         stop();
     }
     
     /** Performs required disposing operations */
     private void dispose() {
         // Dispose server sockets
-        Output.println(Location.get("net.close"));
+        Output.println(Localization.get("net.close"));
         cleanNetworking();
 
         // Update server online statics in database
-        Output.println(Location.get("mysql.clean"));
+        Output.println(Localization.get("mysql.clean"));
         cleanDatabase();
     }
 
@@ -140,7 +140,7 @@ public class KicksEmu {
     }
 
     public void stop() {
-        Output.println(Location.get("stop"));
+        Output.println(Localization.get("stop"));
 
         dispose();
 

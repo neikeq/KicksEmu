@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.io;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
-import com.neikeq.kicksemu.config.Location;
+import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.io.logging.Logger;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class Input {
         if (commands.containsKey(args[0])) {
             commands.get(args[0]).handle(args[1]);
         } else {
-            System.out.println(Location.get("input.error", input));
+            System.out.println(Localization.get("input.error", input));
         }
     }
 
@@ -52,10 +52,10 @@ public class Input {
                     Configuration.getInstance().save();
                     break;
                 case "lang":
-                    Location.getInstance().save();
+                    Localization.getInstance().save();
                     break;
                 default:
-                    System.out.println(Location.get("input.error", arg));
+                    System.out.println(Localization.get("input.error", arg));
             }
         } catch (IOException e) {
             Output.println("Cannot save " + arg + " file: " + e.getMessage(), Level.WARNING);
@@ -90,7 +90,7 @@ public class Input {
                 KicksEmu.getInstance().getOutput().setLevel(Level.CRITICAL);
                 break;
             default:
-                System.out.println(Location.get("input.error", arg));
+                System.out.println(Localization.get("input.error", arg));
         }
     }
 
