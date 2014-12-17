@@ -49,14 +49,14 @@ public class CharacterCreator {
         int characterId = -1;
 
         try (Connection con = MySqlManager.getConnection()) {
-            String creation_query = "INSERT INTO characters (owner, name, position," +
-                    " animation, face, default_head, default_shirts, default_pants," +
-                    " default_shoes, stats_points, stats_running, stats_endurance," +
-                    " stats_agility, stats_ball_control, stats_dribbling, stats_stealing," +
-                    " stats_tackling, stats_heading, stats_short_shots, stats_long_shots," +
-                    " stats_crossing, stats_short_passes, stats_long_passes, stats_marking," +
-                    " stats_goalkeeping, stats_punching, stats_defense, inventory_items," +
-                    " inventory_training, inventory_skills, inventory_celebration, friends)" +
+            String creation_query = "INSERT INTO characters (owner, name, position, animation," +
+                    " face, default_head, default_shirts, default_pants, default_shoes," +
+                    " stats_points, stats_running, stats_endurance, stats_agility," +
+                    " stats_ball_control, stats_dribbling, stats_stealing, stats_tackling," +
+                    " stats_heading, stats_short_shots, stats_long_shots, stats_crossing," +
+                    " stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping," +
+                    " stats_punching, stats_defense, inventory_items, inventory_training," +
+                    " inventory_skills, inventory_celebration, friends_list, ignored_list)" +
                     " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
             try (PreparedStatement stmt = con.prepareStatement(creation_query)) {
@@ -92,6 +92,7 @@ public class CharacterCreator {
                 stmt.setString(30, "");
                 stmt.setString(31, "");
                 stmt.setString(32, "");
+                stmt.setString(33, "");
 
                 stmt.executeUpdate();
             }

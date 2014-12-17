@@ -19,11 +19,11 @@ ItemList: 2101
 TrainingList: 2102
 SkillList: 2103
 CelebrationList: 2104
-FriendList: 2110
+FriendsList: 2110
 FriendRequest: 2111
 FriendResponse: 2112
 DeleteFriend: 2113
-IgnoreList: 2116
+IgnoredList: 2116
 BlockPlayer: 2117
 UnblockPlayer: 2119
 StatusMessage: 2150

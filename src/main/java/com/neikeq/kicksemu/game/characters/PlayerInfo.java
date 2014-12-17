@@ -4,6 +4,8 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.lists.friendship.FriendsList;
+import com.neikeq.kicksemu.game.lists.ignored.IgnoredList;
 import com.neikeq.kicksemu.storage.SqlUtils;
 
 import java.util.Map;
@@ -686,24 +688,28 @@ public class PlayerInfo {
         return Training.mapFromString(SqlUtils.getString("inventory_training", table, id));
     }
 
-    public static Map<Integer, Skill> getInventorySkills(int id) {
-        return Skill.mapFromString(SqlUtils.getString("inventory_skills", table, id));
-    }
-
-    public static Map<Integer, Celebration> getInventoryCelebration(int id) {
-        return Celebration.mapFromString(SqlUtils.getString("inventory_celebration", table, id));
-    }
-
     public static String getInventorySkillsString(int id) {
         return SqlUtils.getString("inventory_skills", table, id);
+    }
+
+    public static Map<Integer, Skill> getInventorySkills(int id) {
+        return Skill.mapFromString(SqlUtils.getString("inventory_skills", table, id));
     }
 
     public static String getInventoryCelebrationString(int id) {
         return SqlUtils.getString("inventory_celebration", table, id);
     }
 
-    public static String getFriends(int id) {
-        return SqlUtils.getString("friend", table, id);
+    public static Map<Integer, Celebration> getInventoryCelebration(int id) {
+        return Celebration.mapFromString(SqlUtils.getString("inventory_celebration", table, id));
+    }
+
+    public static FriendsList getFriendsList(int id) {
+        return FriendsList.fromString(SqlUtils.getString("friends_list", table, id));
+    }
+
+    public static IgnoredList getIgnoredList(int id) {
+        return IgnoredList.fromString(SqlUtils.getString("ignored_list", table, id));
     }
 
     // Sql setters
@@ -952,7 +958,11 @@ public class PlayerInfo {
         SqlUtils.setString("inventory_celebration", value, table, id);
     }
 
-    public static void setFriends(String value, int id) {
-        SqlUtils.setString("friend", value, table, id);
+    public static void setFriendsList(FriendsList value, int id) {
+        SqlUtils.setString("friends_list", value.toString(), table, id);
+    }
+
+    public static void setIgnoredList(IgnoredList value, int id) {
+        SqlUtils.setString("ignored_list", value.toString(), table, id);
     }
 }

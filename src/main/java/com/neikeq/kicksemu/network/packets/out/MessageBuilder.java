@@ -16,6 +16,7 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserSettings;
 import com.neikeq.kicksemu.network.packets.MessageId;
+import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.net.InetSocketAddress;
@@ -666,6 +667,94 @@ public class MessageBuilder {
             msg.append(name, 15);
             msg.append((short) roomId);
         }
+
+        return msg;
+    }
+
+    public static ServerMessage friendList(List<Integer> friends, byte page) {
+        ServerMessage msg = new ServerMessage(MessageId.FRIENDS_LIST);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(page);
+
+        for (int friendId : friends) {
+            msg.append(friendId);
+            msg.append(PlayerInfo.getName(friendId), 15);
+            msg.append(PlayerInfo.getLevel(friendId));
+            msg.append((byte)PlayerInfo.getPosition(friendId));
+
+            // TODO Add status functionality for SERVER and TEAM codes
+            boolean connected = ServerManager.isPlayerConnected(friendId);
+            msg.append((byte)(connected ? 2 : 0));
+            msg.append(connected ? (short)ServerManager.getSessionById(friendId).getRoomId() : 0);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage ignoredList(List<Integer> ignoredPlayers, byte page) {
+        ServerMessage msg = new ServerMessage(MessageId.IGNORED_LIST);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(page);
+
+        for (int playerId : ignoredPlayers) {
+            msg.append(playerId);
+            msg.append(PlayerInfo.getName(playerId), 15);
+            msg.append((byte)PlayerInfo.getPosition(playerId));
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage blockPlayer(int playerId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.BLOCK_PLAYER);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(playerId);
+            msg.append(PlayerInfo.getName(playerId), 15);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage unblockPlayer(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.UNBLOCK_PLAYER);
+
+        MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage deleteFriend(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.DELETE_FRIEND);
+
+        MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage friendRequest(int playerId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.FRIEND_REQUEST);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(playerId);
+            msg.append(PlayerInfo.getName(playerId), 15);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage friendResponse(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.FRIEND_RESPONSE);
+
+        MessageUtils.appendResult(result, msg);
 
         return msg;
     }

@@ -3,6 +3,8 @@ package com.neikeq.kicksemu.network.packets.in.handle;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.StatusMessage;
 import com.neikeq.kicksemu.game.chat.ChatManager;
+import com.neikeq.kicksemu.game.lists.friendship.FriendsManager;
+import com.neikeq.kicksemu.game.lists.ignored.IgnoredManager;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
@@ -49,6 +51,13 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.SWAP_TEAM, RoomManager::swapTeam);
         events.put(MessageId.KICK_PLAYER, RoomManager::kickPlayer);
         events.put(MessageId.INVITE_PLAYER, RoomManager::invitePlayer);
+        events.put(MessageId.FRIENDS_LIST, FriendsManager::friendsList);
+        events.put(MessageId.FRIEND_REQUEST, FriendsManager::friendRequest);
+        events.put(MessageId.FRIEND_RESPONSE, FriendsManager::friendResponse);
+        events.put(MessageId.DELETE_FRIEND, FriendsManager::deleteFriend);
+        events.put(MessageId.IGNORED_LIST, IgnoredManager::ignoreList);
+        events.put(MessageId.BLOCK_PLAYER, IgnoredManager::blockPlayer);
+        events.put(MessageId.UNBLOCK_PLAYER, IgnoredManager::unblockPlayer);
     }
 
     private void defineCertifyEvents() {

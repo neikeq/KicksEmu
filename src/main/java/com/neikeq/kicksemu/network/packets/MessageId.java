@@ -21,6 +21,13 @@ public class MessageId {
     public static final int TRAINING_LIST = 2102;
     public static final int SKILL_LIST = 2103;
     public static final int CELEBRATION_LIST = 2104;
+    public static final int FRIENDS_LIST = 2110;
+    public static final int FRIEND_REQUEST = 2111;
+    public static final int FRIEND_RESPONSE = 2112;
+    public static final int DELETE_FRIEND = 2113;
+    public static final int IGNORED_LIST = 2116;
+    public static final int BLOCK_PLAYER = 2117;
+    public static final int UNBLOCK_PLAYER = 2119;
     public static final int STATUS_MESSAGE = 2150;
     public static final int ROOM_LIST = 2200;
     public static final int CREATE_ROOM = 2201;
@@ -40,4 +47,5 @@ public class MessageId {
     public static final int CHAT_MESSAGE = 2320;
     public static final int UPDATE_SETTINGS = 2901;
     public static final int UDP_CHECK = 3001;
+
 }

@@ -8,7 +8,6 @@ Data:
 int packet_id
 byte reason
 /*
- * 
  * Player rejected the request: 253
  * Account not found: 254
  * System problem: 255
