@@ -123,7 +123,7 @@ public class Session {
         authenticated = value;
     }
 
-    public Channel getChannel() {
+    Channel getChannel() {
         return channel;
     }
 

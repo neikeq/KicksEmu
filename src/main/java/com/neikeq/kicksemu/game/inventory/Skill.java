@@ -24,7 +24,7 @@ public class Skill {
         visible = false;
     }
 
-    public Skill(String item) {
+    private Skill(String item) {
         String[] data = item.split(",");
 
         id = Integer.valueOf(data[0]);

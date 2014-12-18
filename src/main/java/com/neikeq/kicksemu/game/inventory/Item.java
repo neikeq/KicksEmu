@@ -30,7 +30,7 @@ public class Item {
         visible = false;
     }
 
-    public Item(String item) {
+    private Item(String item) {
         String[] data = item.split(",");
 
         id = Integer.valueOf(data[0]);

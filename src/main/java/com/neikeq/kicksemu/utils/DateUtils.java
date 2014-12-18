@@ -27,7 +27,7 @@ public class DateUtils {
         return dateTimeFormat.format(Calendar.getInstance().getTime());
     }
 
-    public static Date getDate() {
+    private static Date getDate() {
         return Calendar.getInstance().getTime();
     }
 

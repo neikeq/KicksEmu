@@ -41,7 +41,7 @@ public class ChatManager {
         }
     }
 
-    public static void onMessageNormal(Session session, String name, String message) {
+    private static void onMessageNormal(Session session, String name, String message) {
         int playerId = session.getPlayerId();
 
         if (PlayerInfo.getName(playerId).equals(name)) {
@@ -66,7 +66,7 @@ public class ChatManager {
         }
     }
 
-    public static void onMessageTeam(Session session, String name, String message) {
+    private static void onMessageTeam(Session session, String name, String message) {
         int playerId = session.getPlayerId();
 
         if (PlayerInfo.getName(playerId).equals(name)) {
@@ -84,7 +84,7 @@ public class ChatManager {
         }
     }
 
-    public static void onMessageWhisper(Session session, String name, String message) {
+    private static void onMessageWhisper(Session session, String name, String message) {
         int playerId = session.getPlayerId();
 
         if (PlayerInfo.getName(playerId).equals(name)) {
@@ -125,11 +125,11 @@ public class ChatManager {
         }
     }
 
-    public static void onMessageClub(Session session, String name, String message) {
+    private static void onMessageClub(Session session, String name, String message) {
 
     }
 
-    public static void handleNormalMessage(Session session, String name, String message) {
+    private static void handleNormalMessage(Session session, String name, String message) {
         if (isClubMessage(message)) {
             onMessageClub(session, name, message);
         } else if (isWhisperMessage(message)) {
@@ -141,19 +141,19 @@ public class ChatManager {
         }
     }
 
-    public static boolean isWhisperMessage(String message) {
+    private static boolean isWhisperMessage(String message) {
         return message.startsWith("/") && !isClubMessage(message);
     }
 
-    public static boolean isTeamMessage(String message) {
+    private static boolean isTeamMessage(String message) {
         return message.startsWith("\'");
     }
 
-    public static boolean isClubMessage(String message) {
+    private static boolean isClubMessage(String message) {
         return message.startsWith("//");
     }
 
-    public static String retrieveTargetFromWhisper(String message) {
+    private static String retrieveTargetFromWhisper(String message) {
         Pattern pattern = Pattern.compile("/(.*?) ");
         Matcher matcher = pattern.matcher(message);
 
@@ -164,7 +164,7 @@ public class ChatManager {
         }
     }
 
-    public static String retrieveMessageFromWhisper(String message) {
+    private static String retrieveMessageFromWhisper(String message) {
         int index = message.indexOf(" ");
 
         if (index >= 0) {

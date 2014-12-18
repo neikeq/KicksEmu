@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class CharacterValidator {
+class CharacterValidator {
 
     private static final String validSpecialChars = "()[]-_.,:;";
 

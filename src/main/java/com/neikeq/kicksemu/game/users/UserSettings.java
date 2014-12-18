@@ -16,10 +16,10 @@ public class UserSettings {
     // TODO List<Integer> validCountries;
 
     private static class CameraValues {
-        private static byte side1 = 0;
-        private static byte front1 = 9;
-        private static byte front2 = 5;
-        private static byte front3 = 7;
+        private static final byte side1 = 0;
+        private static final byte front1 = 9;
+        private static final byte front2 = 5;
+        private static final byte front3 = 7;
     }
 
     public static UserSettings fromMessage(ClientMessage msg) {

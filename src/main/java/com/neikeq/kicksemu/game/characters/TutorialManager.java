@@ -61,12 +61,12 @@ public class TutorialManager {
         session.send(response);
     }
 
-    public static boolean areValid(byte dribbling, byte passing, byte shooting, byte defense) {
+    private static boolean areValid(byte dribbling, byte passing, byte shooting, byte defense) {
         return dribbling <= 15 && passing <= 15 && shooting <= 15 && defense <= 15;
 
     }
 
-    public static boolean compare(byte tutorial, byte storedTutorial) {
+    private static boolean compare(byte tutorial, byte storedTutorial) {
         for (byte i = 0; i < 4; i++) {
             byte tutorialBit = (byte) ((tutorial >> i) & 1);
             byte storedBit = (byte) ((storedTutorial >> i) & 1);
@@ -79,8 +79,8 @@ public class TutorialManager {
         return true;
     }
 
-    public static boolean checkForReward(int characterId, byte dribbling,
-                                      byte passing, byte shooting, byte defense) {
+    private static boolean checkForReward(int characterId, byte dribbling,
+                                          byte passing, byte shooting, byte defense) {
         if (dribbling == 15 && passing == 15 &&
                 shooting == 15 && defense == 15) {
             if (PlayerInfo.getReceivedReward(characterId)) {
@@ -94,7 +94,7 @@ public class TutorialManager {
         return false;
     }
 
-    public static boolean giveReward(int characterId) {
+    private static boolean giveReward(int characterId) {
         String query = "UPDATE characters SET points = points + ? WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();

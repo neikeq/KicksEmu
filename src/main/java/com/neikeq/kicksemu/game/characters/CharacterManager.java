@@ -21,33 +21,33 @@ public class CharacterManager {
         sendPlayerInfo(session);
     }
 
-    public static void sendPlayerInfo(Session session) {
+    private static void sendPlayerInfo(Session session) {
         ServerMessage msg = MessageBuilder.playerInfo(session.getPlayerId(), (byte)0);
         session.send(msg);
     }
 
-    public static void sendItemList(Session session) {
+    private static void sendItemList(Session session) {
         Map<Integer, Item> items = PlayerInfo.getInventoryItems(session.getPlayerId());
 
         ServerMessage msg = MessageBuilder.itemList(items, (byte)0);
         session.send(msg);
     }
 
-    public static void sendTrainingList(Session session) {
+    private static void sendTrainingList(Session session) {
         Map<Integer, Training> trainings = PlayerInfo.getInventoryTraining(session.getPlayerId());
 
         ServerMessage msg = MessageBuilder.trainingList(trainings, (byte) 0);
         session.send(msg);
     }
 
-    public static void sendSkillList(Session session) {
+    private static void sendSkillList(Session session) {
         Map<Integer, Skill> items = PlayerInfo.getInventorySkills(session.getPlayerId());
 
         ServerMessage msg = MessageBuilder.skillList(items, (byte) 0);
         session.send(msg);
     }
 
-    public static void sendCelebrationList(Session session) {
+    private static void sendCelebrationList(Session session) {
         Map<Integer, Celebration> items =
                 PlayerInfo.getInventoryCelebration(session.getPlayerId());
 

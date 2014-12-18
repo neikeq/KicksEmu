@@ -38,7 +38,7 @@ public class KicksEmu {
         KicksEmu.getInstance().start(configFile);
     }
 
-    public void start(String configFile) {
+    void start(String configFile) {
         long startTime = System.nanoTime();
 
         // Initialize Configurations
@@ -104,7 +104,7 @@ public class KicksEmu {
      * 
      * @param messages error message/s
      */
-    public void handleFatalError(String ... messages) {
+    void handleFatalError(String... messages) {
         String message = messages[0];
 
         for (int i = 1; i < messages.length; i++) {
@@ -151,7 +151,7 @@ public class KicksEmu {
         return output;
     }
 
-    public ServerManager getServerManager() {
+    ServerManager getServerManager() {
         return serverManager;
     }
 

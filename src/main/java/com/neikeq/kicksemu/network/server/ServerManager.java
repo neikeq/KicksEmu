@@ -30,7 +30,7 @@ public class ServerManager {
         this(ServerType.valueOf(serverTypeId.toUpperCase()));
     }
 
-    public ServerManager(ServerType type) {
+    private ServerManager(ServerType type) {
         serverType = type;
         players = new HashMap<>();
     }
@@ -47,7 +47,7 @@ public class ServerManager {
         }
     }
 
-    public void initializeMain() {
+    void initializeMain() {
         messageHandler = new MainMessageHandler();
     }
 
@@ -83,7 +83,7 @@ public class ServerManager {
         }
     }
 
-    public static void updateConnectedUsers() {
+    private static void updateConnectedUsers() {
         if (serverId > 0) {
             ServerInfo.setConnectedUsers((short) getPlayers().size(), serverId);
         }

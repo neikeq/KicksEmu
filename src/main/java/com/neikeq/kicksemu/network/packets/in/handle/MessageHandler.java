@@ -11,7 +11,7 @@ import java.util.Map;
 public abstract class MessageHandler {
     private static Map<Integer, MessageEventHandler> events;
 
-    public MessageHandler() {
+    MessageHandler() {
         defineEvents();
     }
 

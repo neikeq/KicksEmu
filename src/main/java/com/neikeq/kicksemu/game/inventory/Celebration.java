@@ -24,7 +24,7 @@ public class Celebration {
         visible = false;
     }
 
-    public Celebration(String item) {
+    private Celebration(String item) {
         String[] data = item.split(",");
 
         id = Integer.valueOf(data[0]);

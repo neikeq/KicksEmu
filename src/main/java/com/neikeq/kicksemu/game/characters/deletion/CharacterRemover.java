@@ -18,10 +18,10 @@ import java.sql.SQLException;
 public class CharacterRemover {
 
     private static class RemoverResult {
-        protected static byte SUCCESS = 0;
-        protected static byte TIME_LIMIT = (byte)253;
-        protected static byte WRONG_PASSWORD = (byte)254;
-        protected static byte SYSTEM_PROBLEM = (byte)255;
+        static final byte SUCCESS = 0;
+        static final byte TIME_LIMIT = (byte)253;
+        static final byte WRONG_PASSWORD = (byte)254;
+        static final byte SYSTEM_PROBLEM = (byte)255;
     }
 
     public static void removeCharacter(Session session, ClientMessage msg) {
@@ -58,13 +58,13 @@ public class CharacterRemover {
         session.send(response);
     }
 
-    public static boolean limitTimeExpired(int userId) {
+    private static boolean limitTimeExpired(int userId) {
         java.sql.Timestamp lastDeletionDate = UserInfo.getLastCharDeletion(userId);
 
         return lastDeletionDate == null || DateUtils.getTimestamp().after(lastDeletionDate);
     }
 
-    public static boolean remove(int characterId) {
+    private static boolean remove(int characterId) {
         String query = "DELETE FROM characters WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
@@ -77,11 +77,11 @@ public class CharacterRemover {
         }
     }
 
-    public static void clearOwnerSlot(int userId, int slot) {
+    private static void clearOwnerSlot(int userId, int slot) {
         UserInfo.setSlotWithIndex(slot, 0, userId);
     }
 
-    public static void updateExpireTime(int userId) {
+    private static void updateExpireTime(int userId) {
         java.sql.Date expireDate = DateUtils.addDays(DateUtils.getSqlDate(), 7);
 
         UserInfo.setLastCharDeletion(expireDate, userId);

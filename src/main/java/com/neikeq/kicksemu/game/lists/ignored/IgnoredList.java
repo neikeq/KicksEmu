@@ -5,7 +5,7 @@ import java.util.List;
 
 public class IgnoredList {
 
-    private List<Integer> ignoredPlayers;
+    private final List<Integer> ignoredPlayers;
 
     public void addPlayer(int playerId) {
         ignoredPlayers.add(playerId);
@@ -65,7 +65,7 @@ public class IgnoredList {
         return strPlayers;
     }
 
-    public IgnoredList() {
+    private IgnoredList() {
         ignoredPlayers = new ArrayList<>();
     }
 }

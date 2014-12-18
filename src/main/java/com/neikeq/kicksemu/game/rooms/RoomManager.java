@@ -31,7 +31,7 @@ public class RoomManager {
         }
     }
 
-    public static void addRoom(Room room) {
+    private static void addRoom(Room room) {
         synchronized (roomsLocker) {
             if (!rooms.containsKey(room.getId())) {
                 rooms.put(room.getId(), room);

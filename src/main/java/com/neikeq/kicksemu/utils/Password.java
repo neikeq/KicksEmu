@@ -34,11 +34,11 @@ public class Password {
         return compare(correctHash, hash);
     }
 
-    public static byte[] fromBase64(String str) {
+    private static byte[] fromBase64(String str) {
         return Base64.getDecoder().decode(str.getBytes());
     }
 
-    public static boolean compare(byte[] a, byte[] b) {
+    private static boolean compare(byte[] a, byte[] b) {
         int result = a.length ^ b.length;
 
         for (int i = 0; i < a.length && i < b.length; i++) {

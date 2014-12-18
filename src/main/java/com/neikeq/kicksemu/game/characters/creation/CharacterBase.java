@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
-public class CharacterBase {
+class CharacterBase {
 
     private int owner;
 

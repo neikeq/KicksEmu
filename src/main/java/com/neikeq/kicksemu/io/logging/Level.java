@@ -13,7 +13,7 @@ public enum Level {
      * 
      * @param value the {@code Integer} to be parsed.
      */
-    public static Level fromInt(int value) {
+    private static Level fromInt(int value) {
         switch (value) {
             case 0:
                 return DEBUG;

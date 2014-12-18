@@ -10,7 +10,7 @@ import com.neikeq.kicksemu.game.users.UserInfo;
 
 import java.util.Map;
 
-public class MessageUtils {
+class MessageUtils {
 
     public static void appendResult(byte result, ServerMessage msg) {
         msg.append(result);
@@ -261,7 +261,7 @@ public class MessageUtils {
         msg.append(PlayerInfo.getRankingMonthTotalPoints(playerId));
     }
 
-    public static void appendItemInUse(Item item, ServerMessage msg) {
+    private static void appendItemInUse(Item item, ServerMessage msg) {
         msg.append(item != null ? item.getId() : 0);
         msg.append(item != null, 4);
         msg.appendZeros(20);

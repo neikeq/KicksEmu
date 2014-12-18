@@ -5,7 +5,7 @@ import java.util.List;
 
 public class FriendsList {
 
-    private List<Integer> friends;
+    private final List<Integer> friends;
 
     public void addFriend(int friendId) {
         friends.add(friendId);
@@ -65,7 +65,7 @@ public class FriendsList {
         return strFriends;
     }
 
-    public FriendsList() {
+    private FriendsList() {
         friends = new ArrayList<>();
     }
 }

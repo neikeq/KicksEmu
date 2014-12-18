@@ -34,17 +34,17 @@ public class Room {
     private RoomSize maxSize;
     private GoalkeeperMode goalkeeperMode;
 
-    private Map<Integer, Session> players;
+    private final Map<Integer, Session> players;
 
-    private List<Integer> redTeam;
-    private List<Integer> blueTeam;
+    private final List<Integer> redTeam;
+    private final List<Integer> blueTeam;
 
-    private List<Short> redTeamPositions;
-    private List<Short> blueTeamPositions;
+    private final List<Short> redTeamPositions;
+    private final List<Short> blueTeamPositions;
 
-    private List<Integer> observers;
+    private final List<Integer> observers;
 
-    private RoomLobby roomLobby;
+    private final RoomLobby roomLobby;
 
     private final Object locker = new Object();
 

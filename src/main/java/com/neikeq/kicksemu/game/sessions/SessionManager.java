@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
 
 public class SessionManager {
 
-    public static final AttributeKey<Session> SESSIONS_KEY = AttributeKey.valueOf("sessions");
+    private static final AttributeKey<Session> SESSIONS_KEY = AttributeKey.valueOf("sessions");
 
     public static void handleConnection(Channel channel) {
         if (!BanManager.isRemoteAddressBanned((InetSocketAddress)channel.remoteAddress())) {

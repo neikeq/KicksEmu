@@ -19,7 +19,7 @@ public class Training {
         visible = false;
     }
 
-    public Training(String item) {
+    private Training(String item) {
         String[] data = item.split(",");
 
         id = Integer.valueOf(data[0]);
