@@ -237,26 +237,28 @@ public class Room {
 
     public void sendBroadcast(ServerMessage msg) {
         try {
-            for (Session s : getPlayers().values()) {
+            getPlayers().values().stream().forEach(s -> {
                 msg.getByteBuf().retain();
                 s.sendAndFlush(msg);
-            }
+            });
         } finally {
             msg.getByteBuf().release();
         }
     }
 
-    public void sendTeamBroadcast(ServerMessage msg, RoomTeam team) {
+    public void sendTeamBroadcast(ServerMessage msg, RoomTeam team, int broadcaster) {
         try {
             if (team != null) {
                 List<Integer> teamPlayers = team == RoomTeam.RED ? getRedTeam() : getBlueTeam();
 
-                for (Integer playerId : teamPlayers){
-                    Session s = getPlayers().get(playerId);
+                teamPlayers.stream()
+                        .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(broadcaster))
+                        .forEach(playerId -> {
+                            Session s = getPlayers().get(playerId);
 
-                    msg.getByteBuf().retain();
-                    s.sendAndFlush(msg);
-                }
+                            msg.getByteBuf().retain();
+                            s.sendAndFlush(msg);
+                        });
             }
         } finally {
             msg.getByteBuf().release();

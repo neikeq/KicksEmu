@@ -51,15 +51,17 @@ public class ChatManager {
                 ChatMessageType type = PlayerInfo.isModerator(playerId) ?
                         ChatMessageType.MODERATOR : ChatMessageType.NORMAL;
 
-                lobby.getPlayers().stream().forEach(targetId -> {
-                    // TODO Check if the current target muted the player who writes this message
-                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
-                    Session targetSession = ServerManager.getSessionById(targetId);
+                lobby.getPlayers().stream()
+                        .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(playerId))
+                        .forEach(targetId -> {
+                            ServerMessage msg = MessageBuilder.chatMessage(playerId,
+                                    name, type, message);
+                            Session targetSession = ServerManager.getSessionById(targetId);
 
-                    if (targetSession != null) {
-                        targetSession.sendAndFlush(msg);
-                    }
-                });
+                            if (targetSession != null) {
+                                targetSession.sendAndFlush(msg);
+                            }
+                        });
             }
         }
     }
@@ -74,17 +76,18 @@ public class ChatManager {
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
                 if (room.isPlayerIn(playerId)) {
-                    // TODO Check if some target muted the player who writes this message
                     ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
 
-                    room.sendTeamBroadcast(msg, room.getPlayerTeam(playerId));
+                    room.sendTeamBroadcast(msg, room.getPlayerTeam(playerId), playerId);
                 }
             }
         }
     }
 
     public static void onMessageWhisper(Session session, String name, String message) {
-        if (PlayerInfo.getName(session.getPlayerId()).equals(name)) {
+        int playerId = session.getPlayerId();
+
+        if (PlayerInfo.getName(playerId).equals(name)) {
             ChatMessageType type = ChatMessageType.WHISPER_TO;
 
             String target = retrieveTargetFromWhisper(message);
@@ -102,9 +105,9 @@ public class ChatManager {
 
                 // If target player was found
                 if (targetSession != null) {
-                    // If the target player accepts whispers
-                    if (UserInfo.getSettings(targetSession.getUserId()).getWhispers()) {
-                        // TODO Check if the target player muted the whisperer
+                    // If the target player accepts whispers and is not ignoring this player
+                    if (UserInfo.getSettings(targetSession.getUserId()).getWhispers() &&
+                            !PlayerInfo.getIgnoredList(targetId) .containsPlayer(playerId)) {
                         ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
                                 ChatMessageType.WHISPER_FROM, whisper);
                         targetSession.sendAndFlush(msgWhisper);
@@ -115,8 +118,6 @@ public class ChatManager {
                     type = ChatMessageType.INVALID_PLAYER;
                 }
             }
-
-            int playerId = session.getPlayerId();
 
             ServerMessage response = MessageBuilder.chatMessage(playerId, target,
                     type, whisper);
