@@ -22,9 +22,10 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
 
             MessageHandler messageHandler = ServerManager.getMessageHandler();
 
-            // Handle the incoming message. If we cannot handle this message, remove the session.
+            // Handle the incoming message
             if (!messageHandler.handle(SessionManager.getSession(ctx.channel()), message)) {
-                SessionManager.removeSession(ctx.channel());
+                Output.println("Received unknown message (id: " + message.getMessageId() +
+                        ") from: " + ctx.channel().remoteAddress().toString(), Level.DEBUG);
             }
         } finally {
             buf.release();
