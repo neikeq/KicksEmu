@@ -57,7 +57,7 @@ public class CharacterCreator {
                     " stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping," +
                     " stats_punching, stats_defense, inventory_items, inventory_training," +
                     " inventory_skills, inventory_celebration, friends_list, ignored_list)" +
-                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
             try (PreparedStatement stmt = con.prepareStatement(creation_query)) {
                 stmt.setInt(1, character.getOwner());
@@ -118,10 +118,13 @@ public class CharacterCreator {
         switch (UserInfo.getFirstEmptySlot(ownerId)) {
             case 0:
                 UserInfo.setSlotOne(characterId, ownerId);
+                break;
             case 1:
                 UserInfo.setSlotTwo(characterId, ownerId);
+                break;
             case 2:
                 UserInfo.setSlotThree(characterId, ownerId);
+                break;
             default:
         }
     }
