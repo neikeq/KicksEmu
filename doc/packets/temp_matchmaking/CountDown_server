@@ -1,0 +1,10 @@
+// CountDown
+// Tcp
+
+Id: 2401
+Size: 6
+
+Data:
+int packet_id
+//5 to 0 (where 0 means starting match loading)
+short count

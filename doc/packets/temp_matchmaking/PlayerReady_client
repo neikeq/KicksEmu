@@ -1,0 +1,12 @@
+// PlayerReady
+// Tcp
+
+Id: 2404
+Size: 6
+
+Data:
+int packet_id
+short room_id
+
+Notes:
+// Send by the client after loading finished (after l9ading progress is 5)

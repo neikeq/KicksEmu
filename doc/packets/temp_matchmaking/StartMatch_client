@@ -1,0 +1,9 @@
+// StartMatch
+// Tcp
+
+Id: 2406
+Size: 6
+
+Data:
+int packet_id
+short room_id

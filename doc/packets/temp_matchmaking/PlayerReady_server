@@ -1,0 +1,13 @@
+// PlayerReady
+// Tcp
+
+Id: 2404
+Size: 6
+
+Data:
+int packet_id
+byte reason
+byte response
+
+Notes:
+// Sent to the client... after all clients loaded?? or after this client loaded?

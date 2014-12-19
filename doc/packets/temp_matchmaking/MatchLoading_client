@@ -1,0 +1,11 @@
+// MatchLoading
+// Tcp
+
+Id: 2403
+Size: 12
+
+Data:
+int packet_id
+int character_id
+short room_id
+short status // 1 to 5

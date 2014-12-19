@@ -1,0 +1,13 @@
+// StartMatch
+// Tcp
+
+Id: 2406
+Size: 6
+
+Data:
+int packet_id
+byte reason
+byte response // Success: 0, Rejected: 255
+
+Notes:
+// If response equals rejected match won't start
