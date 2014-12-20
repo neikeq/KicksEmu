@@ -10,8 +10,9 @@ byte reason
 byte response
 int host_id
 char[16] host_ip
-int host_port // 43770
+short host_port // 43770
 byte unknown
+short unknown
 short unknown
 // Send the following for each player in the room (host first?)
 int character_id
