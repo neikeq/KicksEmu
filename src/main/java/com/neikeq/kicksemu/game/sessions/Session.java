@@ -26,6 +26,8 @@ public class Session {
     private boolean authenticated;
     private boolean udpAuthenticated;
 
+    private final Object locker = new Object();
+
     /**
      * Write a message to the channel without flushing.<br>
      * Client handler will flush the channel after reading is complete as seen in method:
@@ -110,9 +112,6 @@ public class Session {
         this.channel = channel;
 
         setAuthenticated(false);
-
-        // Ignore UDP authentication by setting it to 'true'
-        udpAuthenticated = true;
     }
 
     public boolean isAuthenticated() {
@@ -161,5 +160,9 @@ public class Session {
 
     public void setRoomId(int roomId) {
         this.roomId = roomId;
+    }
+
+    public Object getLocker() {
+        return locker;
     }
 }

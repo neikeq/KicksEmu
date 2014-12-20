@@ -8,7 +8,9 @@ import com.neikeq.kicksemu.io.Input;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.network.server.ServerType;
 import com.neikeq.kicksemu.network.server.tcp.NettyTcpServer;
+import com.neikeq.kicksemu.network.server.udp.NettyUdpServer;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.SQLException;
@@ -18,7 +20,9 @@ public class KicksEmu {
     private Output output;
 
     private ServerManager serverManager;
+
     private NettyTcpServer nettyTcpServer;
+    private NettyUdpServer nettyUdpServer;
 
     private static KicksEmu instance;
 
@@ -59,10 +63,6 @@ public class KicksEmu {
             // Initialize MySQL Database
             MySqlManager.init();
 
-            // Initialize Tcp and Udp Server
-            Output.println(Localization.get("net.init"));
-            nettyTcpServer = new NettyTcpServer(Configuration.getInt("net.bind.port"));
-
             // Initialize ServerManager
             serverManager = new ServerManager(Configuration.get("net.type"));
 
@@ -72,8 +72,27 @@ public class KicksEmu {
                 handleFatalError("Could not initialize Server Manager.");
             }
 
-            // Start listening
+            // Initialize Tcp Server
+            Output.println(Localization.get("net.init"));
+
+            // Port for game servers must be relative to the port id
+            int portTcp = serverManager.getServerType() == ServerType.MAIN ?
+                    Configuration.getInt("net.tcp.bind.port") :
+                    Configuration.getShort("game.tcp.port.factor") +
+                            Configuration.getShort("game.id");
+
+            nettyTcpServer = new NettyTcpServer(portTcp);
             nettyTcpServer.start();
+
+            // If this is a game server, initialize Udp Server
+            if (serverManager.getServerType() == ServerType.GAME) {
+                // Port for game servers must be relative to the port id
+                int portUdp = Configuration.getShort("game.udp.port.factor") +
+                        Configuration.getShort("game.id");
+
+                nettyUdpServer = new NettyUdpServer(portUdp);
+                nettyUdpServer.start();
+            }
 
         } catch (ClassNotFoundException e) {
             // MySql Driver not found
@@ -136,6 +155,10 @@ public class KicksEmu {
     private void cleanNetworking() {
         if (nettyTcpServer != null) {
             nettyTcpServer.close();
+        }
+
+        if (nettyUdpServer != null) {
+            nettyUdpServer.close();
         }
     }
 

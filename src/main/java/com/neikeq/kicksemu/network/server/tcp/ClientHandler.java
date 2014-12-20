@@ -34,9 +34,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
-        if (ctx.channel().isOpen()) {
-            ctx.flush();
-        }
+        ctx.flush();
     }
     
     @Override

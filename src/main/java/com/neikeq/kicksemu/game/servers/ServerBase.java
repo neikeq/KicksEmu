@@ -25,7 +25,7 @@ public class ServerBase {
         base.setFilter(Configuration.getShort("game.filter"));
         base.setName(Configuration.get("game.name"));
         base.setAddress(Configuration.get("game.address"));
-        base.setPort(Configuration.getShort("net.bind.port"));
+        base.setPort((short)(Configuration.getShort("game.tcp.port.factor") + base.getId()));
         base.setMinLevel(Configuration.getByte("game.level.min"));
         base.setMaxLevel(Configuration.getByte("game.level.max"));
         base.setMaxUsers(Configuration.getShort("game.users.max"));

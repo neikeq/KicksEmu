@@ -197,6 +197,14 @@ public class Authenticator {
     }
 
     public static void udpConfirm(Session session) {
+        synchronized (session.getLocker()) {
+            if (!session.isUdpAuthenticated()) {
+                try {
+                    session.getLocker().wait(5000);
+                } catch (InterruptedException ignored) {}
+            }
+        }
+
         boolean result = session.isUdpAuthenticated();
 
         ServerMessage response = MessageBuilder.udpConfirm(result);
@@ -207,15 +215,12 @@ public class Authenticator {
         }
     }
 
-    public static void udpAuthentication(ClientMessage msg) {
-        int characterId = msg.readInt(2);
-
-        System.out.println(characterId);
-
-        Session session = ServerManager.getSessionById(characterId);
-
+    public static void udpAuthentication(Session session) {
         if (session != null) {
-            session.setUdpAuthenticated(true);
+            synchronized (session.getLocker()) {
+                session.setUdpAuthenticated(true);
+                session.getLocker().notify();
+            }
         }
     }
 }

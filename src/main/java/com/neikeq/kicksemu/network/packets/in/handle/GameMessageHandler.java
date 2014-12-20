@@ -34,6 +34,7 @@ public class GameMessageHandler extends MessageHandler {
         events = new HashMap<>();
 
         events.put(MessageId.GAME_LOGIN, Authenticator::gameLogin);
+        events.put(MessageId.UDP_CHECK, (s, msg) -> Authenticator.udpAuthentication(s));
         events.put(MessageId.GAME_EXIT, (s, msg) -> CharacterManager.gameExit(s));
         events.put(MessageId.UDP_CONFIRM, (s, msg) -> Authenticator.udpConfirm(s));
         events.put(MessageId.PLAYER_INFO, (s, msg) -> CharacterManager.playerInfo(s));

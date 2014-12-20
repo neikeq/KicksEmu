@@ -46,7 +46,7 @@ public class Configuration {
         // Networking Settings
         config.put("net.type", "main");
         config.put("net.backlog", String.valueOf(50));
-        config.put("net.bind.port", String.valueOf(1299));
+        config.put("net.tcp.bind.port", String.valueOf(1299));
         
         // Language Settings
         config.put("lang", "en");
