@@ -1,0 +1,9 @@
+// Unknown2
+// Tcp
+
+Id: 2411
+Size: 6
+
+Data:
+int packet_id
+short room_id

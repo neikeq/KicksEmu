@@ -1,0 +1,12 @@
+// PlayerProgress
+// Tcp
+
+Id: 2904
+Size: 14
+
+Data:
+int packet_id
+short quest_current
+short level
+short quest_matches_remain
+int points

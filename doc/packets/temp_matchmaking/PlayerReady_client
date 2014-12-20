@@ -9,4 +9,4 @@ int packet_id
 short room_id
 
 Notes:
-// Send by the client after loading finished (after l9ading progress is 5)
+// Send by the client after loading finished (after loading progress is 5)

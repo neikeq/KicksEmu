@@ -1,0 +1,10 @@
+// Unknown1
+// Tcp
+
+Id: 2409
+Size: 6
+
+Data:
+int packet_id
+byte reason
+byte response
