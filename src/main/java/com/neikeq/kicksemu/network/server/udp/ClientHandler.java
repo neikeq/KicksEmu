@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.network.server.udp;
 
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -19,9 +20,12 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
         int playerId = message.readInt(2);
 
         MessageHandler messageHandler = ServerManager.getMessageHandler();
+        Session session = ServerManager.getSessionById(playerId);
+
+        session.setUdpPort(packet.sender().getPort());
 
         // Handle the incoming message
-        if (!messageHandler.handle(ServerManager.getSessionById(playerId), message)) {
+        if (!messageHandler.handle(session, message)) {
             Output.println("Received unknown datagram packet (id: " + message.getMessageId() +
                     ") from: " + ctx.channel().remoteAddress().toString(), Level.DEBUG);
         }

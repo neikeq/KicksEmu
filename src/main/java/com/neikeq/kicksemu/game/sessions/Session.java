@@ -26,6 +26,8 @@ public class Session {
     private boolean authenticated;
     private boolean udpAuthenticated;
 
+    private int udpPort;
+
     private final Object locker = new Object();
 
     /**
@@ -122,7 +124,7 @@ public class Session {
         authenticated = value;
     }
 
-    Channel getChannel() {
+    public Channel getChannel() {
         return channel;
     }
 
@@ -164,5 +166,13 @@ public class Session {
 
     public Object getLocker() {
         return locker;
+    }
+
+    public int getUdpPort() {
+        return udpPort;
+    }
+
+    public void setUdpPort(int udpPort) {
+        this.udpPort = udpPort;
     }
 }
