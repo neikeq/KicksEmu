@@ -16,7 +16,7 @@ short unknown
 int country // flag
 short unknown
 char[16] player_ip
-short unknown
+short player_port
 short level
 int experience
 short stats_points

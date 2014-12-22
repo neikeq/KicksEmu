@@ -554,7 +554,7 @@ public class MessageBuilder {
             msg.appendZeros(2);
 
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-            msg.appendZeros(2);
+            msg.append((short)session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, ownerId, msg);
             msg.appendZeros(2);
@@ -755,6 +755,93 @@ public class MessageBuilder {
         ServerMessage msg = new ServerMessage(MessageId.FRIEND_RESPONSE);
 
         MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage startCountDown(byte type) {
+        ServerMessage msg = new ServerMessage(MessageId.START_COUNT_DOWN);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(type);
+
+        return msg;
+    }
+
+    public static ServerMessage hostInfo(Room room) {
+        ServerMessage msg = new ServerMessage(MessageId.HOST_INFO);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        Session session = ServerManager.getSessionById(room.getHost());
+
+        msg.append(room.getHost());
+        msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
+        msg.append((short)session.getUdpPort());
+        msg.append((byte)1);
+        msg.append((byte)4);
+        msg.appendZeros(3);
+
+        msg.append(room.getHost());
+        msg.append(true);
+
+        room.getPlayers().keySet().stream()
+                .filter(playerId -> playerId != room.getHost())
+                .forEach(playerId -> {
+                    msg.append(playerId);
+                    msg.append(true);
+                });
+
+        return msg;
+    }
+
+    public static ServerMessage countDown(short count) {
+        ServerMessage msg = new ServerMessage(MessageId.COUNT_DOWN);
+
+        msg.append(count);
+
+        return msg;
+    }
+
+    public static ServerMessage matchLoading(int playerId, int roomId, short status) {
+        ServerMessage msg = new ServerMessage(MessageId.MATCH_LOADING);
+
+        msg.append(playerId);
+        msg.append((short)roomId);
+        msg.append(status);
+
+        return msg;
+    }
+
+    public static ServerMessage playerReady(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.PLAYER_READY);
+
+        MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage startMatch(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.START_MATCH);
+
+        MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage unknown1() {
+        ServerMessage msg = new ServerMessage(MessageId.UNKNOWN1);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage unknown2() {
+        ServerMessage msg = new ServerMessage(MessageId.UNKNOWN2);
+
+        MessageUtils.appendResult((byte)0, msg);
 
         return msg;
     }
