@@ -45,6 +45,15 @@ public class MessageId {
     public static final int LOBBY_LIST = 2318;
     public static final int INVITE_PLAYER = 2319;
     public static final int CHAT_MESSAGE = 2320;
+    public static final int START_COUNT_DOWN = 2399;
+    public static final int HOST_INFO = 2400;
+    public static final int COUNT_DOWN = 2401;
+    public static final int MATCH_LOADING = 2403;
+    public static final int PLAYER_READY = 2404;
+    public static final int START_MATCH = 2406;
+    public static final int MATCH_RESULT = 2407;
+    public static final int UNKNOWN1 = 2409;
+    public static final int UNKNOWN2 = 2411;
     public static final int UPDATE_SETTINGS = 2901;
     public static final int UDP_CHECK = 3001;
 
