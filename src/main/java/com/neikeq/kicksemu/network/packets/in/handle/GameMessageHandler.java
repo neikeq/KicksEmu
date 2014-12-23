@@ -59,6 +59,15 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.IGNORED_LIST, IgnoredManager::ignoreList);
         events.put(MessageId.BLOCK_PLAYER, IgnoredManager::blockPlayer);
         events.put(MessageId.UNBLOCK_PLAYER, IgnoredManager::unblockPlayer);
+        events.put(MessageId.START_COUNT_DOWN, RoomManager::startCountDown);
+        events.put(MessageId.HOST_INFO, RoomManager::hostInfo);
+        events.put(MessageId.COUNT_DOWN, RoomManager::countDown);
+        events.put(MessageId.MATCH_LOADING, RoomManager::matchLoading);
+        events.put(MessageId.PLAYER_READY, RoomManager::playerReady);
+        events.put(MessageId.START_MATCH, RoomManager::startMatch);
+        events.put(MessageId.MATCH_RESULT, RoomManager::matchResult);
+        events.put(MessageId.UNKNOWN1, RoomManager::unknown1);
+        events.put(MessageId.UNKNOWN2, RoomManager::unknown2);
     }
 
     private void defineCertifyEvents() {

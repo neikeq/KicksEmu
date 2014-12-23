@@ -24,6 +24,9 @@ public class Room {
     private int master;
 
     private boolean playing;
+    private boolean loaded;
+
+    private List<Integer> confirmedPlayers;
 
     private String name;
     private String password;
@@ -196,6 +199,14 @@ public class Room {
         }
     }
 
+    public void startCountDown() {
+        playing = true;
+        getConfirmedPlayers().clear();
+
+        ServerMessage msgStartCountDown = MessageBuilder.startCountDown((byte)-1);
+        sendBroadcast(msgStartCountDown);
+    }
+
     private void onPlayerJoined(Session session) {
         int playerId = session.getPlayerId();
 
@@ -312,6 +323,8 @@ public class Room {
 
     public Room() {
         players = new HashMap<>();
+
+        confirmedPlayers = new ArrayList<>();
 
         redTeam = new ArrayList<>();
         blueTeam = new ArrayList<>();
@@ -458,5 +471,17 @@ public class Room {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Integer> getConfirmedPlayers() {
+        return confirmedPlayers;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 }

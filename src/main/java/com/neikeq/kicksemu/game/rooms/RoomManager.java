@@ -5,11 +5,15 @@ import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
+import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -463,6 +467,170 @@ public class RoomManager {
                 ServerMessage response = MessageBuilder.invitePlayer(result, 0, "");
                 session.sendAndFlush(response);
             }
+        }
+    }
+
+    public static void startCountDown(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+        byte type = msg.readByte();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+            int playerId = session.getPlayerId();
+
+            switch (type) {
+                case 1:
+                    if (!room.getConfirmedPlayers().contains(playerId)) {
+                        room.getConfirmedPlayers().add(playerId);
+                    }
+
+                    if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
+                        room.getConfirmedPlayers().clear();
+                        ServerMessage msgAllConfirmed = MessageBuilder.startCountDown((byte)1);
+                        room.sendBroadcast(msgAllConfirmed);
+                    }
+                    break;
+                case -1:
+                    if (!room.isPlaying() && room.getMaster() == playerId) {
+                        room.startCountDown();
+                    }
+                    break;
+                default:
+            }
+        }
+    }
+
+    public static void hostInfo(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            ServerMessage msgHostInfo = MessageBuilder.hostInfo(room);
+            room.sendBroadcast(msgHostInfo);
+        }
+    }
+
+    public static void countDown(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+        short count = msg.readShort();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            ServerMessage msgCountDown = MessageBuilder.countDown(count);
+            room.sendBroadcast(msgCountDown);
+        }
+    }
+
+    public static void matchLoading(Session session, ClientMessage msg) {
+        int playerId = msg.readInt();
+        int roomId = msg.readShort();
+        short status = msg.readShort();
+
+        if (session.getPlayerId() == playerId && session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            ServerMessage msgMatchLoading = MessageBuilder.matchLoading(playerId, roomId, status);
+            room.sendBroadcast(msgMatchLoading);
+        }
+    }
+
+    public static void playerReady(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+        int playerId = session.getPlayerId();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            if (!room.getConfirmedPlayers().contains(playerId)) {
+                room.getConfirmedPlayers().add(playerId);
+            }
+
+            if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
+                room.setLoaded(true);
+                room.sendBroadcast(MessageBuilder.playerReady((byte)0));
+            }
+        }
+    }
+
+    public static void startMatch(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            byte result = 0;
+
+            if (room.getConfirmedPlayers().size() < room.getPlayers().size()) {
+                result = -1;
+            }
+
+            session.send(MessageBuilder.startMatch(result));
+        }
+    }
+
+
+    /**
+     * Currently, since match making packets are not yet analyzed, we are just copying
+     * the message and broadcasting it to the room (with little modifications).
+     */
+    public static void matchResult(Session session, ClientMessage msg) {
+        int roomId = msg.readInt();
+        msg.readShort();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            // If match started
+            if (room.isLoaded()) {
+                ByteBuf response = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
+
+                try {
+                    response.writeBytes(new byte[10]);
+                    response.writeShort(609);
+                    response.writeInt(MessageId.MATCH_RESULT);
+                    response.writeShort(0);
+
+                    for (int i = 0; i < msg.getSize() - 10; i++) {
+                        response.writeByte(msg.readByte());
+                    }
+
+                    response.writeBytes(new byte[135]);
+
+                    for (Session s : room.getPlayers().values()) {
+                        response.retain();
+                        s.getChannel().writeAndFlush(response);
+                    }
+                } finally {
+                    response.release();
+                }
+
+                room.setLoaded(false);
+                room.getConfirmedPlayers().clear();
+            }
+        }
+    }
+
+    public static void unknown1(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            room.setPlaying(false);
+
+            room.sendBroadcast(MessageBuilder.unknown1());
+        }
+    }
+
+    public static void unknown2(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            room.sendBroadcast(MessageBuilder.unknown2());
         }
     }
 }
