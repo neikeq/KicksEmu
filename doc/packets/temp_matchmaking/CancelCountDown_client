@@ -1,0 +1,9 @@
+// CancelCountDown
+// Tcp
+
+Id: 2402
+Size: 6
+
+Data:
+int packet_id
+short room_id
