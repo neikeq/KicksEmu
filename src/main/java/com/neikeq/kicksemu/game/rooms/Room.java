@@ -23,8 +23,7 @@ public class Room {
     private int host;
     private int master;
 
-    private boolean playing;
-    private boolean loaded;
+    private RoomState state;
 
     private List<Integer> confirmedPlayers;
 
@@ -60,8 +59,8 @@ public class Room {
 
             // If this is the first player in the room, make it room master and host
             if (getPlayers().size() < 1) {
-                master = playerId;
-                host = playerId;
+                setMaster(playerId);
+                setHost(playerId);
             }
 
             // Add player to players list and room lobby
@@ -72,7 +71,7 @@ public class Room {
             addPlayerToTeam(playerId);
         }
 
-        session.setRoomId(id);
+        session.setRoomId(getId());
 
         onPlayerJoined(session);
     }
@@ -90,15 +89,15 @@ public class Room {
 
             // If room is empty, remove it
             if (getPlayers().size() < 1) {
-                RoomManager.removeRoom(id);
+                RoomManager.removeRoom(getId());
             } else {
                 // If the leaver was room master, set a new one
-                if (playerId == master) {
+                if (playerId == getMaster()) {
                     updateMaster();
                 }
 
                 // If the leaver was room host, set a new one
-                if (playerId == host) {
+                if (playerId == getHost()) {
                     updateHost();
                 }
             }
@@ -200,7 +199,7 @@ public class Room {
     }
 
     public void startCountDown() {
-        playing = true;
+        setState(RoomState.COUNT_DOWN);
         getConfirmedPlayers().clear();
 
         ServerMessage msgStartCountDown = MessageBuilder.startCountDown((byte)-1);
@@ -226,14 +225,14 @@ public class Room {
     }
 
     private void updateMaster() {
-        master = (Integer)getPlayers().keySet().toArray()[0];
+        setMaster((Integer)getPlayers().keySet().toArray()[0]);
 
-        ServerMessage msgRoomMaster = MessageBuilder.roomMaster(master);
+        ServerMessage msgRoomMaster = MessageBuilder.roomMaster(getMaster());
         sendBroadcast(msgRoomMaster);
     }
 
     private void updateHost() {
-        host = (Integer)getPlayers().keySet().toArray()[0];
+        setHost((Integer)getPlayers().keySet().toArray()[0]);
     }
 
     public RoomTeam getPlayerTeam(int playerId) {
@@ -282,7 +281,7 @@ public class Room {
 
     public boolean isFull() {
         synchronized (locker) {
-            return players.size() >= maxSize.toInt();
+            return getPlayers().size() >= getMaxSize().toInt();
         }
     }
 
@@ -335,6 +334,8 @@ public class Room {
         observers = new ArrayList<>();
 
         roomLobby = new RoomLobby();
+
+        state = RoomState.WAITING;
     }
 
     public int getId() {
@@ -422,11 +423,7 @@ public class Room {
     }
 
     public boolean isPlaying() {
-        return playing;
-    }
-
-    public void setPlaying(boolean playing) {
-        this.playing = playing;
+        return getState() != RoomState.WAITING;
     }
 
     public String getName() {
@@ -477,11 +474,11 @@ public class Room {
         return confirmedPlayers;
     }
 
-    public boolean isLoaded() {
-        return loaded;
+    public RoomState getState() {
+        return state;
     }
 
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
+    public void setState(RoomState state) {
+        this.state = state;
     }
 }

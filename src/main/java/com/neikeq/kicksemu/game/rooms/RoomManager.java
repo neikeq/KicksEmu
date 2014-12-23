@@ -548,7 +548,7 @@ public class RoomManager {
             }
 
             if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
-                room.setLoaded(true);
+                room.setState(RoomState.PLAYING);
                 room.sendBroadcast(MessageBuilder.playerReady((byte)0));
             }
         }
@@ -583,7 +583,7 @@ public class RoomManager {
             Room room = getRoomById(roomId);
 
             // If match started
-            if (room.isLoaded()) {
+            if (room.getState() == RoomState.PLAYING) {
                 ByteBuf response = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
                 try {
@@ -606,7 +606,7 @@ public class RoomManager {
                     response.release();
                 }
 
-                room.setLoaded(false);
+                room.setState(RoomState.RESULT);
                 room.getConfirmedPlayers().clear();
             }
         }
@@ -618,7 +618,7 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            room.setPlaying(false);
+            room.setState(RoomState.WAITING);
 
             room.sendBroadcast(MessageBuilder.unknown1());
         }
