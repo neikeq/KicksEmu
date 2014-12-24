@@ -12,6 +12,7 @@ public class MessageId {
     public static final int REMOVE_CHARACTER = 1103;
     public static final int SERVER_LIST = 1200;
     public static final int SERVER_INFO = 1201;
+    public static final int UPGRADE_CHARACTER = 1300;
     public static final int UPDATE_TUTORIAL = 1301;
     public static final int GAME_LOGIN = 2000;
     public static final int GAME_EXIT = 2001;

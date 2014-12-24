@@ -15,4 +15,17 @@ public class PositionCodes {
     public static final short SB = 31;
     public static final short CB = 32;
     public static final short SW = 33;
+
+    public static boolean isValidNewPosition(short currentPos, short newPos) {
+        switch (currentPos) {
+            case FW:
+                return newPos == ST || newPos == CF || newPos == WF;
+            case MF:
+                return newPos == AMF || newPos == SMF || newPos == CMF || newPos == DMF;
+            case DF:
+                return newPos == SB || newPos == CB || newPos == SW;
+            default:
+                return false;
+        }
+    }
 }

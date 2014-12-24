@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.users;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
+import com.neikeq.kicksemu.game.characters.PositionCodes;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -72,5 +73,25 @@ public class UserManager {
 
         ServerMessage response = MessageBuilder.choiceCharacter(charId, result);
         session.send(response);
+    }
+
+    /**
+     * Handles character upgrading when a player reaches level 18.
+     * TODO: Keep ignoring the stats sent by the client, but calculate them manually
+     * and apply these changes to the character.
+     */
+    public static void upgradeCharacter(Session session, ClientMessage msg) {
+        int characterId = msg.readInt();
+        int userId = msg.readInt();
+        short position = msg.readShort();
+        // Ignores new stats sent by client
+
+        if (session.getUserId() == userId && session.getPlayerId() == characterId) {
+            short currentPosition = PlayerInfo.getPosition(characterId);
+
+            if (PositionCodes.isValidNewPosition(currentPosition, position)) {
+                PlayerInfo.setPosition(position, characterId);
+            }
+        }
     }
 }

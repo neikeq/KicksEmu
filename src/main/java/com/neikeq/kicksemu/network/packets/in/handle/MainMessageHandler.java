@@ -42,6 +42,7 @@ public class MainMessageHandler extends MessageHandler {
         events.put(MessageId.REMOVE_CHARACTER, CharacterRemover::removeCharacter);
         events.put(MessageId.SERVER_LIST, ServerUtils::serverList);
         events.put(MessageId.SERVER_INFO, ServerUtils::serverInfo);
+        events.put(MessageId.UPGRADE_CHARACTER, UserManager::upgradeCharacter);
         events.put(MessageId.UPDATE_TUTORIAL, TutorialManager::updateTutorial);
     }
 
