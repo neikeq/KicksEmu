@@ -6,4 +6,44 @@ Size: 611
 
 Data:
 int packet_id
+byte reason
+byte response
+// Id of 'the man of the match' player or -1 for no player
+int MOM_id
+// Team stats
+// Append the following two times (red and blue team)
+/*
+ * No game: -1
+ * Draw: 0
+ * Victory: 1
+ * Loss: 2
+ */
+short win
+short goals
+short assists
+short blocks
+short shots
+short steals
+short tackles
+char[10] unknown
+short vote_points // 0 to 100
+short unknown
+short ball_control_percentage // 0 to 100
+// Players stats
+// Append the following for each player (length: 40)
+int player_id
+int unknown
+short unknown
+short unknown
+short goals
+short assists
+short blocks
+short shots
+short steals
+short tackles
+char[10] unknown
+short vote_points // 0 to 100
+short unknown
+short ball_control_percentage // 0 to 100
 // ...
+char[141] unknown
