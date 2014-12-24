@@ -62,6 +62,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.START_COUNT_DOWN, RoomManager::startCountDown);
         events.put(MessageId.HOST_INFO, RoomManager::hostInfo);
         events.put(MessageId.COUNT_DOWN, RoomManager::countDown);
+        events.put(MessageId.CANCEL_COUNT_DOWN, RoomManager::cancelCountDown);
         events.put(MessageId.MATCH_LOADING, RoomManager::matchLoading);
         events.put(MessageId.PLAYER_READY, RoomManager::playerReady);
         events.put(MessageId.START_MATCH, RoomManager::startMatch);

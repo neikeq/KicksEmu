@@ -48,6 +48,7 @@ public class MessageId {
     public static final int START_COUNT_DOWN = 2399;
     public static final int HOST_INFO = 2400;
     public static final int COUNT_DOWN = 2401;
+    public static final int CANCEL_COUNT_DOWN = 2402;
     public static final int MATCH_LOADING = 2403;
     public static final int PLAYER_READY = 2404;
     public static final int START_MATCH = 2406;

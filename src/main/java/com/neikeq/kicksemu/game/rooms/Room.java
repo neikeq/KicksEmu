@@ -206,6 +206,13 @@ public class Room {
         sendBroadcast(msgStartCountDown);
     }
 
+    public void cancelCountDown() {
+        setState(RoomState.WAITING);
+
+        ServerMessage msgStopCountDown = MessageBuilder.cancelCountDown();
+        sendBroadcast(msgStopCountDown);
+    }
+
     private void onPlayerJoined(Session session) {
         int playerId = session.getPlayerId();
 

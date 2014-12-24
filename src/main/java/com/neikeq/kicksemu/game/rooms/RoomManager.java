@@ -523,6 +523,18 @@ public class RoomManager {
         }
     }
 
+    public static void cancelCountDown(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        if (session.getRoomId() == roomId) {
+            Room room = getRoomById(roomId);
+
+            if (room.getState() == RoomState.COUNT_DOWN) {
+                room.cancelCountDown();
+            }
+        }
+    }
+
     public static void matchLoading(Session session, ClientMessage msg) {
         int playerId = msg.readInt();
         int roomId = msg.readShort();

@@ -804,6 +804,14 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage cancelCountDown() {
+        ServerMessage msg = new ServerMessage(MessageId.CANCEL_COUNT_DOWN);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        return msg;
+    }
+
     public static ServerMessage matchLoading(int playerId, int roomId, short status) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_LOADING);
 
