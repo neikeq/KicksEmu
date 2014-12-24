@@ -229,6 +229,11 @@ public class Room {
         // Notify players in room about player leaving
         ServerMessage msgPlayerLeaved = MessageBuilder.leaveRoom(playerId, reason);
         sendBroadcast(msgPlayerLeaved);
+
+        // If the countdown started, cancel it
+        if (getState() == RoomState.COUNT_DOWN) {
+            cancelCountDown();
+        }
     }
 
     private void updateMaster() {
