@@ -15,7 +15,14 @@ byte reason
  */
 byte response // Rejected: 255, Success: 0
 short server_id
-short unknown
+/*
+ * Server type codes:
+ * Normal: 1
+ * Practice: 8
+ * Club: 769
+ * Tournament: 1025
+ */
+short server_type
 short min_level
 short max_level
 char[16] server_ip

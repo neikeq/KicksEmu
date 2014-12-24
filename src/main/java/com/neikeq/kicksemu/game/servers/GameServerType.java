@@ -5,5 +5,21 @@ public enum GameServerType {
     PRACTICE,
     CLUB,
     TOURNAMENT,
-    PRIVATE
+    PRIVATE;
+
+    public short toShort() {
+        switch (this) {
+            case NORMAL:
+                return 1;
+            case PRACTICE:
+                return 8;
+            case CLUB:
+                return 769;
+            case TOURNAMENT:
+                return 1025;
+            case PRIVATE:
+            default:
+                return -1;
+        }
+    }
 }

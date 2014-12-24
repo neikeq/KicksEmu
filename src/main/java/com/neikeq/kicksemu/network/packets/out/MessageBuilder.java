@@ -216,7 +216,7 @@ public class MessageBuilder {
 
         if (result == 0) {
             msg.append(serverId);
-            msg.appendZeros(2);
+            msg.append(ServerInfo.getType(serverId).toShort());
             msg.append(ServerInfo.getMinLevel(serverId));
             msg.append(ServerInfo.getMaxLevel(serverId));
             msg.append(ServerInfo.getAddress(serverId), 16);
