@@ -8,7 +8,6 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 
-import java.net.InetSocketAddress;
 import java.util.Map;
 
 public class CharacterManager {
@@ -56,10 +55,9 @@ public class CharacterManager {
     }
 
     public static void gameExit(Session session) {
-        InetSocketAddress clientIp = session.getRemoteAddress();
-        int characterId = session.getPlayerId();
+        int playerId = session.getPlayerId();
 
-        ServerMessage response = MessageBuilder.gameExit(clientIp, characterId);
+        ServerMessage response = MessageBuilder.gameExit(session.getRemoteAddress(), playerId);
         session.send(response);
 
         session.close();
