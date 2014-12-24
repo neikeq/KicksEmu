@@ -1,0 +1,28 @@
+// UpgradeCharacter
+// Tcp
+
+Id: 1300
+Size: 48
+
+Data:
+int packet_id
+int character_id
+int account_id
+short position // new position
+short running
+short endurance
+short agility
+short ball_control
+short dribbling
+short stealing
+short tackling
+short heading
+short short_shots
+short long_shots
+short crossing
+short short_passes
+short long_passes
+short marking
+short goalkeeping
+short punching
+short defense

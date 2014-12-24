@@ -1,0 +1,14 @@
+// UpgradeCharacter
+// Tcp
+
+Id: 1300
+Size: 48
+
+Data:
+int packet_id
+byte reason
+/*
+ * Name already in use: 254
+ * System problem: 255
+ */
+byte response
