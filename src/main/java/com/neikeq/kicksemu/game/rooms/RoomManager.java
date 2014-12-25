@@ -385,7 +385,8 @@ public class RoomManager {
 
         Room room = getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(playerId)) {
+        // If the room is valid, the player is inside it and it is in waiting state
+        if (room != null && room.isPlayerIn(playerId) && room.getState() == RoomState.WAITING) {
             RoomTeam currentTeam = room.getPlayerTeam(playerId);
             RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
 
