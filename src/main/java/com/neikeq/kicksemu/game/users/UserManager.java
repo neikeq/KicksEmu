@@ -81,17 +81,24 @@ public class UserManager {
      * and apply these changes to the character.
      */
     public static void upgradeCharacter(Session session, ClientMessage msg) {
-        int characterId = msg.readInt();
         int userId = msg.readInt();
+        int characterId = msg.readInt();
         short position = msg.readShort();
         // Ignores new stats sent by client
 
-        if (session.getUserId() == userId && session.getPlayerId() == characterId) {
+        if (session.getUserId() == userId && UserInfo.hasCharacter(characterId, userId)) {
+            byte result = 0;
+
             short currentPosition = PlayerInfo.getPosition(characterId);
 
             if (PositionCodes.isValidNewPosition(currentPosition, position)) {
                 PlayerInfo.setPosition(position, characterId);
+            } else {
+                result = -1;
             }
+
+            ServerMessage response = MessageBuilder.upgradeCharacter(result);
+            session.send(response);
         }
     }
 }

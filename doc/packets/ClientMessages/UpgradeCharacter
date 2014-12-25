@@ -6,8 +6,8 @@ Size: 48
 
 Data:
 int packet_id
-int character_id
 int account_id
+int character_id
 short position // new position
 short running
 short endurance

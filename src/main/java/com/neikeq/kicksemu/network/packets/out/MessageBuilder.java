@@ -853,4 +853,12 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage upgradeCharacter(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.UPGRADE_CHARACTER);
+
+        MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
 }
