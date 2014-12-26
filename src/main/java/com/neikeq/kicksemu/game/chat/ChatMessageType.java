@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.chat;
 public enum ChatMessageType {
     NORMAL,
     TEAM,
+    WHISPER,
     MODERATOR,
     WHISPER_FROM,
     WHISPER_TO,
@@ -23,6 +24,8 @@ public enum ChatMessageType {
                 return NORMAL;
             case 1:
                 return TEAM;
+            case 2:
+                return WHISPER;
             case 4:
                 return MODERATOR;
             case 5:
@@ -61,6 +64,8 @@ public enum ChatMessageType {
                 return 0;
             case TEAM:
                 return 1;
+            case WHISPER:
+                return 2;
             case MODERATOR:
                 return 4;
             case WHISPER_FROM:

@@ -27,16 +27,23 @@ public class ChatManager {
             ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
             String message = msg.readString(55);
 
-            switch (type) {
-                case NORMAL:
-                    handleNormalMessage(session, name, message);
-                    break;
-                case TEAM:
-                    onMessageTeam(session, name, message);
-                    break;
-                case CLUB:
-                    break;
-                default:
+            if (type != null) {
+                switch (type) {
+                    case NORMAL:
+                        handleNormalMessage(session, name, message);
+                        break;
+                    case TEAM:
+                        handleTeamMessage(session, name, message);
+                        break;
+                    case CLUB:
+                        break;
+                    case WHISPER:
+                        if (isWhisperMessage(message)) {
+                            onMessageWhisper(session, name, message);
+                        }
+                        break;
+                    default:
+                }
             }
         }
     }
@@ -54,12 +61,11 @@ public class ChatManager {
                 lobby.getPlayers().stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(playerId))
                         .forEach(targetId -> {
-                            ServerMessage msg = MessageBuilder.chatMessage(playerId,
-                                    name, type, message);
                             Session targetSession = ServerManager.getSessionById(targetId);
 
                             if (targetSession != null) {
-                                targetSession.sendAndFlush(msg);
+                                targetSession.sendAndFlush(MessageBuilder.chatMessage(playerId,
+                                        name, type, message));
                             }
                         });
             }
@@ -75,7 +81,7 @@ public class ChatManager {
 
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
-                if (room.isPlayerIn(playerId)) {
+                if (room != null && room.isPlayerIn(playerId)) {
                     ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
 
                     room.sendTeamBroadcast(msg, room.getPlayerTeam(playerId), playerId);
@@ -126,18 +132,40 @@ public class ChatManager {
     }
 
     private static void onMessageClub(Session session, String name, String message) {
+        int playerId = session.getPlayerId();
+        int clubId = PlayerInfo.getClubId(playerId);
 
+        if (clubId > 0 && PlayerInfo.getName(playerId).equals(name)) {
+            if (!message.isEmpty()) {
+                ChatMessageType type = ChatMessageType.CLUB;
+
+                ServerManager.getPlayers().values().stream()
+                        .filter(s -> PlayerInfo.getClubId(s.getPlayerId()) == clubId)
+                        .forEach(s -> s.sendAndFlush(MessageBuilder.chatMessage(playerId,
+                                name, type, message)));
+            }
+        }
     }
 
     private static void handleNormalMessage(Session session, String name, String message) {
         if (isClubMessage(message)) {
-            onMessageClub(session, name, message);
+            onMessageClub(session, name, message.substring(2));
         } else if (isWhisperMessage(message)) {
             onMessageWhisper(session, name, message);
         } else if (isTeamMessage(message)) {
             onMessageTeam(session, name, message.substring(1));
         } else {
             onMessageNormal(session, name, message);
+        }
+    }
+
+    private static void handleTeamMessage(Session session, String name, String message) {
+        if (isClubMessage(message)) {
+            onMessageClub(session, name, message.substring(2));
+        } else if (isWhisperMessage(message)) {
+            onMessageWhisper(session, name, message);
+        } else {
+            onMessageTeam(session, name, message);
         }
     }
 
