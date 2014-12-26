@@ -4,7 +4,7 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PositionCodes;
 import com.neikeq.kicksemu.game.characters.upgrade.CharacterUpgrade;
-import com.neikeq.kicksemu.game.characters.upgrade.StatsFactor;
+import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -90,7 +90,7 @@ public class UserManager {
             if (PositionCodes.isValidNewPosition(currentPosition, position)) {
                 PlayerInfo.setPosition(position, characterId);
 
-                StatsFactor stats = CharacterUpgrade.getInstance().getStats().get(position);
+                PlayerStats stats = CharacterUpgrade.getInstance().getStats().get(position);
 
                 PlayerInfo.setStatsRunning(stats.getRunning(), characterId);
                 PlayerInfo.setStatsEndurance(stats.getEndurance(), characterId);

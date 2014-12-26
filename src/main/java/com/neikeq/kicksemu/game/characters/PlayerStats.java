@@ -1,6 +1,6 @@
-package com.neikeq.kicksemu.game.characters.upgrade;
+package com.neikeq.kicksemu.game.characters;
 
-public class StatsFactor {
+public class PlayerStats {
 
     private final short running;
     private final short endurance;
@@ -20,7 +20,7 @@ public class StatsFactor {
     private final short punching;
     private final short defense;
 
-    public StatsFactor(int running, int endurance, int agility, int ballControl,
+    public PlayerStats(int running, int endurance, int agility, int ballControl,
                        int dribbling, int stealing, int tackling, int heading,
                        int shortShots, int longShots, int crossing,
                        int shortPasses, int longPasses, int marking,
