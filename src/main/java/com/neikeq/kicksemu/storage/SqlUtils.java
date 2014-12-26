@@ -189,4 +189,30 @@ public class SqlUtils {
 
         } catch (SQLException ignored) {}
     }
+
+    public static void sumShort(String row, short value, String table, int id) {
+        String query = "UPDATE " + table + " SET " + row + " = " + row + " + ? WHERE id = ?";
+
+        try (Connection connection = MySqlManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setShort(1, value);
+            stmt.setInt(2, id);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException ignored) {}
+    }
+
+    public static void sumInt(String row, int value, String table, int id) {
+        String query = "UPDATE " + table + " SET " + row + " = " + row + " + ? WHERE id = ?";
+
+        try (Connection connection = MySqlManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, value);
+            stmt.setInt(2, id);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException ignored) {}
+    }
 }
