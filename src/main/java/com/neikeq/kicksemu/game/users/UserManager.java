@@ -3,6 +3,8 @@ package com.neikeq.kicksemu.game.users;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PositionCodes;
+import com.neikeq.kicksemu.game.characters.upgrade.CharacterUpgrade;
+import com.neikeq.kicksemu.game.characters.upgrade.StatsFactor;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -75,16 +77,10 @@ public class UserManager {
         session.send(response);
     }
 
-    /**
-     * Handles character upgrading when a player reaches level 18.
-     * TODO: Keep ignoring the stats sent by the client, but calculate them manually
-     * and apply these changes to the character.
-     */
     public static void upgradeCharacter(Session session, ClientMessage msg) {
         int userId = msg.readInt();
         int characterId = msg.readInt();
         short position = msg.readShort();
-        // Ignores new stats sent by client
 
         if (session.getUserId() == userId && UserInfo.hasCharacter(characterId, userId)) {
             byte result = 0;
@@ -93,6 +89,27 @@ public class UserManager {
 
             if (PositionCodes.isValidNewPosition(currentPosition, position)) {
                 PlayerInfo.setPosition(position, characterId);
+
+                StatsFactor stats = CharacterUpgrade.getInstance().getStats().get(position);
+
+                PlayerInfo.setStatsRunning(stats.getRunning(), characterId);
+                PlayerInfo.setStatsEndurance(stats.getEndurance(), characterId);
+                PlayerInfo.setStatsAgility(stats.getAgility(), characterId);
+                PlayerInfo.setStatsBallControl(stats.getBallControl(), characterId);
+                PlayerInfo.setStatsDribbling(stats.getDribbling(), characterId);
+                PlayerInfo.setStatsStealing(stats.getStealing(), characterId);
+                PlayerInfo.setStatsTackling(stats.getTackling(), characterId);
+                PlayerInfo.setStatsHeading(stats.getHeading(), characterId);
+                PlayerInfo.setStatsShortShots(stats.getShortShots(), characterId);
+                PlayerInfo.setStatsLongShots(stats.getLongShots(), characterId);
+                PlayerInfo.setStatsCrossing(stats.getCrossing(), characterId);
+                PlayerInfo.setStatsShortPasses(stats.getShortPasses(), characterId);
+                PlayerInfo.setStatsLongPasses(stats.getLongPasses(), characterId);
+                PlayerInfo.setStatsMarking(stats.getMarking(), characterId);
+                PlayerInfo.setStatsGoalkeeping(stats.getGoalkeeping(), characterId);
+                PlayerInfo.setStatsPunching(stats.getPunching(), characterId);
+                PlayerInfo.setStatsDefense(stats.getDefense(), characterId);
+
             } else {
                 result = -1;
             }

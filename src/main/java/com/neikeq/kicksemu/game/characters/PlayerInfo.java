@@ -871,71 +871,71 @@ public class PlayerInfo {
     }
 
     public static void setStatsRunning(short value, int id) {
-        SqlUtils.setShort("stats_running", value, table, id);
+        SqlUtils.sumShort("stats_running", value, table, id);
     }
 
     public static void setStatsEndurance(short value, int id) {
-        SqlUtils.setShort("stats_endurance", value, table, id);
+        SqlUtils.sumShort("stats_endurance", value, table, id);
     }
 
     public static void setStatsAgility(short value, int id) {
-        SqlUtils.setShort("stats_agility", value, table, id);
+        SqlUtils.sumShort("stats_agility", value, table, id);
     }
 
     public static void setStatsBallControl(short value, int id) {
-        SqlUtils.setShort("stats_ball_control", value, table, id);
+        SqlUtils.sumShort("stats_ball_control", value, table, id);
     }
 
     public static void setStatsDribbling(short value, int id) {
-        SqlUtils.setShort("stats_dribbling", value, table, id);
+        SqlUtils.sumShort("stats_dribbling", value, table, id);
     }
 
     public static void setStatsStealing(short value, int id) {
-        SqlUtils.setShort("stats_stealing", value, table, id);
+        SqlUtils.sumShort("stats_stealing", value, table, id);
     }
 
     public static void setStatsTackling(short value, int id) {
-        SqlUtils.setShort("stats_tackling", value, table, id);
+        SqlUtils.sumShort("stats_tackling", value, table, id);
     }
 
     public static void setStatsHeading(short value, int id) {
-        SqlUtils.setShort("stats_heading", value, table, id);
+        SqlUtils.sumShort("stats_heading", value, table, id);
     }
 
     public static void setStatsShortShots(short value, int id) {
-        SqlUtils.setShort("stats_short_shots", value, table, id);
+        SqlUtils.sumShort("stats_short_shots", value, table, id);
     }
 
     public static void setStatsLongShots(short value, int id) {
-        SqlUtils.setShort("stats_long_shots", value, table, id);
+        SqlUtils.sumShort("stats_long_shots", value, table, id);
     }
 
     public static void setStatsCrossing(short value, int id) {
-        SqlUtils.setShort("stats_crossing", value, table, id);
+        SqlUtils.sumShort("stats_crossing", value, table, id);
     }
 
     public static void setStatsShortPasses(short value, int id) {
-        SqlUtils.setShort("stats_shorts_passes", value, table, id);
+        SqlUtils.sumShort("stats_shorts_passes", value, table, id);
     }
 
     public static void setStatsLongPasses(short value, int id) {
-        SqlUtils.setShort("stats_long_passes", value, table, id);
+        SqlUtils.sumShort("stats_long_passes", value, table, id);
     }
 
     public static void setStatsMarking(short value, int id) {
-        SqlUtils.setShort("stats_marking", value, table, id);
+        SqlUtils.sumShort("stats_marking", value, table, id);
     }
 
     public static void setStatsGoalkeeping(short value, int id) {
-        SqlUtils.setShort("stats_goalkeeping", value, table, id);
+        SqlUtils.sumShort("stats_goalkeeping", value, table, id);
     }
 
     public static void setStatsPunching(short value, int id) {
-        SqlUtils.setShort("stats_punching", value, table, id);
+        SqlUtils.sumShort("stats_punching", value, table, id);
     }
 
     public static void setStatsDefense(short value, int id) {
-        SqlUtils.setShort("stats_defense", value, table, id);
+        SqlUtils.sumShort("stats_defense", value, table, id);
     }
 
     public static void setStatusMessage(String value, int id) {

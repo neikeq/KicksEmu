@@ -31,7 +31,6 @@ public class MainMessageHandler extends MessageHandler {
     private void defineEvents() {
         events = new HashMap<>();
 
-        // TODO Add 'Character position upgrade' handler
         events.put(MessageId.CERTIFY_LOGIN, Authenticator::certifyLogin);
         events.put(MessageId.INSTANT_LOGIN, Authenticator::instantLogin);
         events.put(MessageId.INSTANT_EXIT, (s, msg) -> UserManager.instantExit(s));
