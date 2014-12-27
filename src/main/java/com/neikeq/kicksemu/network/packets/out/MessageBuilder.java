@@ -838,6 +838,19 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage playerProgress(int playerId) {
+        ServerMessage msg = new ServerMessage(MessageId.PLAYER_PROGRESS);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(PlayerInfo.getCurrentQuest(playerId));
+        msg.append(PlayerInfo.getLevel(playerId));
+        msg.append(PlayerInfo.getRemainingQuestMatches(playerId));
+        msg.append(PlayerInfo.getPoints(playerId));
+
+        return msg;
+    }
+
     public static ServerMessage unknown1() {
         ServerMessage msg = new ServerMessage(MessageId.UNKNOWN1);
 

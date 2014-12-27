@@ -80,7 +80,7 @@ public class UserInfo {
     // Sql setters
 
     public static void setKash(int value, int id) {
-        SqlUtils.setInt("kash", value, table, id);
+        SqlUtils.sumInt("kash", value, table, id);
     }
 
     public static void setLastCharDeletion(Date value, int id) {

@@ -7,7 +7,12 @@ import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 public class CharacterManager {
@@ -61,5 +66,24 @@ public class CharacterManager {
         session.send(response);
 
         session.close();
+    }
+
+    public static void checkExperience(int playerId) {
+        String query = "SELECT experience FROM levels WHERE level=?";
+        short curLevel = PlayerInfo.getLevel(playerId);
+
+        try (Connection con = MySqlManager.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, curLevel + 1);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int experience = rs.getInt("experience");
+
+                    if (PlayerInfo.getExperience(playerId) >= experience) {
+                        PlayerInfo.setLevel((short)(curLevel + 1), playerId);
+                    }
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 }

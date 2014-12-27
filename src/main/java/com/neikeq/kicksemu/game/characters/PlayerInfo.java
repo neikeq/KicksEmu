@@ -767,11 +767,11 @@ public class PlayerInfo {
     }
 
     public static void setExperience(int value, int id) {
-        SqlUtils.setInt("experience", value, table, id);
+        SqlUtils.sumInt("experience", value, table, id);
     }
 
     public static void setPoints(int value, int id) {
-        SqlUtils.setInt("points", value, table, id);
+        SqlUtils.sumInt("points", value, table, id);
     }
 
     public static void setTicketsKash(short value, int id) {

@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.config.Configuration;
+import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
@@ -591,21 +593,45 @@ public class RoomManager {
     public static void matchResult(Session session, ClientMessage msg) {
         int roomId = msg.readInt();
         msg.readShort();
+        int mom = msg.readInt();
+        short result = msg.readShort();
 
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
             // If match started
             if (room.getState() == RoomState.PLAYING) {
+                // TODO Temporary rewards. Must be removed/replaced in the future.
+                int minPlayers = 6;
+
+                if (room.getRedTeam().size() == room.getBlueTeam().size() &&
+                        room.getPlayers().size() >= minPlayers ||
+                        Configuration.getBoolean("game.rewards.practice")) {
+                    room.getPlayers().values().stream()
+                            .forEach(s -> {
+                                PlayerInfo.setPoints(Configuration.getInt("game.rewards.point"),
+                                        s.getPlayerId());
+                                PlayerInfo.setExperience(Configuration.getInt("game.rewards.exp"),
+                                        s.getPlayerId());
+                                UserInfo.setKash(Configuration.getInt("game.rewards.kash"),
+                                        s.getUserId());
+
+                                CharacterManager.checkExperience(s.getPlayerId());
+                            });
+                }
+                // -----------------
+
                 ByteBuf response = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
                 try {
                     response.writeBytes(new byte[10]);
-                    response.writeShort(609);
+                    response.writeShort(611);
                     response.writeInt(MessageId.MATCH_RESULT);
                     response.writeShort(0);
+                    response.writeInt(mom);
+                    response.writeInt(result);
 
-                    for (int i = 0; i < msg.getSize() - 10; i++) {
+                    for (int i = 0; i < msg.getSize() - 16; i++) {
                         response.writeByte(msg.readByte());
                     }
 
@@ -614,6 +640,7 @@ public class RoomManager {
                     for (Session s : room.getPlayers().values()) {
                         response.retain();
                         s.getChannel().writeAndFlush(response);
+                        s.sendAndFlush(MessageBuilder.playerProgress(s.getPlayerId()));
                     }
                 } finally {
                     response.release();
