@@ -130,43 +130,43 @@ class MessageUtils {
     }
 
     public static void appendStatsTraining(int playerId, ServerMessage msg) {
-        msg.append(PlayerInfo.getStatsRunning(playerId));
-        msg.append(PlayerInfo.getStatsEndurance(playerId));
-        msg.append(PlayerInfo.getStatsAgility(playerId));
-        msg.append(PlayerInfo.getStatsBallControl(playerId));
-        msg.append(PlayerInfo.getStatsDribbling(playerId));
-        msg.append(PlayerInfo.getStatsStealing(playerId));
-        msg.append(PlayerInfo.getStatsTackling(playerId));
-        msg.append(PlayerInfo.getStatsHeading(playerId));
-        msg.append(PlayerInfo.getStatsShortShots(playerId));
-        msg.append(PlayerInfo.getStatsLongShots(playerId));
-        msg.append(PlayerInfo.getStatsCrossing(playerId));
-        msg.append(PlayerInfo.getStatsShortPasses(playerId));
-        msg.append(PlayerInfo.getStatsLongPasses(playerId));
-        msg.append(PlayerInfo.getStatsMarking(playerId));
-        msg.append(PlayerInfo.getStatsGoalkeeping(playerId));
-        msg.append(PlayerInfo.getStatsPunching(playerId));
-        msg.append(PlayerInfo.getStatsDefense(playerId));
+        msg.append(PlayerInfo.getTrainingStatsRunning(playerId));
+        msg.append(PlayerInfo.getTrainingStatsEndurance(playerId));
+        msg.append(PlayerInfo.getTrainingStatsAgility(playerId));
+        msg.append(PlayerInfo.getTrainingStatsBallControl(playerId));
+        msg.append(PlayerInfo.getTrainingStatsDribbling(playerId));
+        msg.append(PlayerInfo.getTrainingStatsStealing(playerId));
+        msg.append(PlayerInfo.getTrainingStatsTackling(playerId));
+        msg.append(PlayerInfo.getTrainingStatsHeading(playerId));
+        msg.append(PlayerInfo.getTrainingStatsShortShots(playerId));
+        msg.append(PlayerInfo.getTrainingStatsLongShots(playerId));
+        msg.append(PlayerInfo.getTrainingStatsCrossing(playerId));
+        msg.append(PlayerInfo.getTrainingStatsShortPasses(playerId));
+        msg.append(PlayerInfo.getTrainingStatsLongPasses(playerId));
+        msg.append(PlayerInfo.getTrainingStatsMarking(playerId));
+        msg.append(PlayerInfo.getTrainingStatsGoalkeeping(playerId));
+        msg.append(PlayerInfo.getTrainingStatsPunching(playerId));
+        msg.append(PlayerInfo.getTrainingStatsDefense(playerId));
     }
 
     public static void appendStatsBonus(int playerId, ServerMessage msg) {
-        msg.append(PlayerInfo.getStatsRunning(playerId));
-        msg.append(PlayerInfo.getStatsEndurance(playerId));
-        msg.append(PlayerInfo.getStatsAgility(playerId));
-        msg.append(PlayerInfo.getStatsBallControl(playerId));
-        msg.append(PlayerInfo.getStatsDribbling(playerId));
-        msg.append(PlayerInfo.getStatsStealing(playerId));
-        msg.append(PlayerInfo.getStatsTackling(playerId));
-        msg.append(PlayerInfo.getStatsHeading(playerId));
-        msg.append(PlayerInfo.getStatsShortShots(playerId));
-        msg.append(PlayerInfo.getStatsLongShots(playerId));
-        msg.append(PlayerInfo.getStatsCrossing(playerId));
-        msg.append(PlayerInfo.getStatsShortPasses(playerId));
-        msg.append(PlayerInfo.getStatsLongPasses(playerId));
-        msg.append(PlayerInfo.getStatsMarking(playerId));
-        msg.append(PlayerInfo.getStatsGoalkeeping(playerId));
-        msg.append(PlayerInfo.getStatsPunching(playerId));
-        msg.append(PlayerInfo.getStatsDefense(playerId));
+        msg.append(PlayerInfo.getBonusStatsRunning(playerId));
+        msg.append(PlayerInfo.getBonusStatsEndurance(playerId));
+        msg.append(PlayerInfo.getBonusStatsAgility(playerId));
+        msg.append(PlayerInfo.getBonusStatsBallControl(playerId));
+        msg.append(PlayerInfo.getBonusStatsDribbling(playerId));
+        msg.append(PlayerInfo.getBonusStatsStealing(playerId));
+        msg.append(PlayerInfo.getBonusStatsTackling(playerId));
+        msg.append(PlayerInfo.getBonusStatsHeading(playerId));
+        msg.append(PlayerInfo.getBonusStatsShortShots(playerId));
+        msg.append(PlayerInfo.getBonusStatsLongShots(playerId));
+        msg.append(PlayerInfo.getBonusStatsCrossing(playerId));
+        msg.append(PlayerInfo.getBonusStatsShortPasses(playerId));
+        msg.append(PlayerInfo.getBonusStatsLongPasses(playerId));
+        msg.append(PlayerInfo.getBonusStatsMarking(playerId));
+        msg.append(PlayerInfo.getBonusStatsGoalkeeping(playerId));
+        msg.append(PlayerInfo.getBonusStatsPunching(playerId));
+        msg.append(PlayerInfo.getBonusStatsDefense(playerId));
     }
 
     public static void appendHistory(int playerId, ServerMessage msg) {
