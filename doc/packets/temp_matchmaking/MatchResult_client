@@ -6,6 +6,7 @@ Size: 478
 
 Data:
 int packet_id
+short room_id
 short unknown
 // Id of 'the man of the match' player or -1 for no player
 int MOM_id

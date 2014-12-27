@@ -35,8 +35,6 @@ public class ChatManager {
                     case TEAM:
                         handleTeamMessage(session, name, message);
                         break;
-                    case CLUB:
-                        break;
                     case WHISPER:
                         if (isWhisperMessage(message)) {
                             onMessageWhisper(session, name, message);

@@ -57,6 +57,7 @@ public class MessageId {
     public static final int UNKNOWN1 = 2409;
     public static final int UNKNOWN2 = 2411;
     public static final int UPDATE_SETTINGS = 2901;
+    public static final int PLAYER_PROGRESS = 2904;
     public static final int UDP_CHECK = 3001;
 
 }
