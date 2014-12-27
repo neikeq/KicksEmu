@@ -779,9 +779,8 @@ public class MessageBuilder {
         msg.append(room.getHost());
         msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
         msg.append((short)session.getUdpPort());
-        msg.append((byte)1);
-        msg.append((byte)4);
-        msg.appendZeros(3);
+        msg.append(room.isTraining());
+        msg.appendZeros(4);
 
         msg.append(room.getHost());
         msg.append(true);

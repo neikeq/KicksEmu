@@ -11,9 +11,8 @@ byte response
 int host_id
 char[16] host_ip
 short host_port // 43770
-byte unknown
-short unknown
-short unknown
+bool training
+int unknown
 // Send the following for each player in the room (host first?)
 int character_id
 bool unknown // in my team?

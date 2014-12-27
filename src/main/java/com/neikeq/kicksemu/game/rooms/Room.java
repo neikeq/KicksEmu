@@ -332,6 +332,11 @@ public class Room {
         return true;
     }
 
+    /** Returns true if there are not enough players to play a real match */
+    public boolean isTraining() {
+        return getPlayers().size() < 6 || getBlueTeam().size() != getRedTeam().size();
+    }
+
     public Room() {
         players = new HashMap<>();
 
