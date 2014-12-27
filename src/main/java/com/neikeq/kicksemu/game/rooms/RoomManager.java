@@ -603,10 +603,12 @@ public class RoomManager {
             if (room.getState() == RoomState.PLAYING) {
                 // TODO Temporary rewards. Must be removed/replaced in the future.
                 int minPlayers = 6;
+                boolean reward = false;
 
                 if (room.getRedTeam().size() == room.getBlueTeam().size() &&
                         room.getPlayers().size() >= minPlayers ||
                         Configuration.getBoolean("game.rewards.practice")) {
+                    reward = true;
                     room.getPlayers().values().stream()
                             .forEach(s -> {
                                 PlayerInfo.setPoints(Configuration.getInt("game.rewards.point"),
@@ -625,17 +627,19 @@ public class RoomManager {
 
                 try {
                     response.writeBytes(new byte[10]);
-                    response.writeShort(611);
+                    response.writeShort(610);
                     response.writeInt(MessageId.MATCH_RESULT);
                     response.writeShort(0);
                     response.writeInt(mom);
                     response.writeInt(result);
 
-                    for (int i = 0; i < msg.getSize() - 16; i++) {
+                    for (int i = 0; i < msg.getSize() - 17; i++) {
                         response.writeByte(msg.readByte());
                     }
 
-                    response.writeBytes(new byte[135]);
+                    response.writeInt(reward ? Configuration.getInt("game.rewards.exp") : 0);
+                    response.writeInt(reward ? Configuration.getInt("game.rewards.point") : 0);
+                    response.writeBytes(new byte[127]);
 
                     for (Session s : room.getPlayers().values()) {
                         response.retain();
