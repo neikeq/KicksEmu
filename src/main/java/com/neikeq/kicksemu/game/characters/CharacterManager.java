@@ -99,21 +99,21 @@ public class CharacterManager {
         PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
 
         PlayerInfo.setStatsRunning(autoStats.getRunning(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getEndurance(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getAgility(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getBallControl(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getDribbling(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getStealing(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getTackling(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getHeading(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getShortShots(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getLongShots(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getCrossing(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getShortPasses(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getLongPasses(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getMarking(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getGoalkeeping(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getPunching(), playerId);
-        PlayerInfo.setStatsRunning(autoStats.getDefense(), playerId);
+        PlayerInfo.setStatsEndurance(autoStats.getEndurance(), playerId);
+        PlayerInfo.setStatsAgility(autoStats.getAgility(), playerId);
+        PlayerInfo.setStatsBallControl(autoStats.getBallControl(), playerId);
+        PlayerInfo.setStatsDribbling(autoStats.getDribbling(), playerId);
+        PlayerInfo.setStatsStealing(autoStats.getStealing(), playerId);
+        PlayerInfo.setStatsTackling(autoStats.getTackling(), playerId);
+        PlayerInfo.setStatsHeading(autoStats.getHeading(), playerId);
+        PlayerInfo.setStatsShortShots(autoStats.getShortShots(), playerId);
+        PlayerInfo.setStatsLongShots(autoStats.getLongShots(), playerId);
+        PlayerInfo.setStatsCrossing(autoStats.getCrossing(), playerId);
+        PlayerInfo.setStatsShortPasses(autoStats.getShortPasses(), playerId);
+        PlayerInfo.setStatsLongPasses(autoStats.getLongPasses(), playerId);
+        PlayerInfo.setStatsMarking(autoStats.getMarking(), playerId);
+        PlayerInfo.setStatsGoalkeeping(autoStats.getGoalkeeping(), playerId);
+        PlayerInfo.setStatsPunching(autoStats.getPunching(), playerId);
+        PlayerInfo.setStatsDefense(autoStats.getDefense(), playerId);
     }
 }
