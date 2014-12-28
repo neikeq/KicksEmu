@@ -1,5 +1,8 @@
 package com.neikeq.kicksemu.game.lists.ignored;
 
+import com.neikeq.kicksemu.game.characters.CharacterUtils;
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,15 +42,27 @@ public class IgnoredList {
         return players;
     }
 
-    public static IgnoredList fromString(String strPlayers) {
+    public static IgnoredList fromString(String strPlayers, int id) {
         IgnoredList ignoredList = new IgnoredList();
+
+        boolean containsInvalidPlayer = false;
 
         for (String playerId : strPlayers.split(",")) {
             if (playerId.isEmpty()) {
                 break;
             }
 
-            ignoredList.addPlayer(Integer.parseInt(playerId));
+            int player = Integer.valueOf(playerId);
+
+            if (CharacterUtils.characterExist(player)) {
+                ignoredList.addPlayer(player);
+            } else {
+                containsInvalidPlayer = true;
+            }
+        }
+
+        if (containsInvalidPlayer) {
+            PlayerInfo.setIgnoredList(ignoredList, id);
         }
 
         return ignoredList;

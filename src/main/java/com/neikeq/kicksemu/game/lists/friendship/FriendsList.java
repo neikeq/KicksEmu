@@ -1,5 +1,8 @@
 package com.neikeq.kicksemu.game.lists.friendship;
 
+import com.neikeq.kicksemu.game.characters.CharacterUtils;
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,15 +42,27 @@ public class FriendsList {
         return players;
     }
 
-    public static FriendsList fromString(String strFriends) {
+    public static FriendsList fromString(String strFriends, int id) {
         FriendsList friendsList = new FriendsList();
+
+        boolean containsInvalidPlayer = false;
 
         for (String friendId : strFriends.split(",")) {
             if (friendId.isEmpty()) {
                 break;
             }
 
-            friendsList.addFriend(Integer.valueOf(friendId));
+            int friend = Integer.valueOf(friendId);
+
+            if (CharacterUtils.characterExist(friend)) {
+                friendsList.addFriend(friend);
+            } else {
+                containsInvalidPlayer = true;
+            }
+        }
+
+        if (containsInvalidPlayer) {
+            PlayerInfo.setFriendsList(friendsList, id);
         }
 
         return friendsList;

@@ -705,11 +705,11 @@ public class PlayerInfo {
     }
 
     public static FriendsList getFriendsList(int id) {
-        return FriendsList.fromString(SqlUtils.getString("friends_list", table, id));
+        return FriendsList.fromString(SqlUtils.getString("friends_list", table, id), id);
     }
 
     public static IgnoredList getIgnoredList(int id) {
-        return IgnoredList.fromString(SqlUtils.getString("ignored_list", table, id));
+        return IgnoredList.fromString(SqlUtils.getString("ignored_list", table, id), id);
     }
 
     // Sql setters
