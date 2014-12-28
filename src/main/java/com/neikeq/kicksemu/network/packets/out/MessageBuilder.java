@@ -873,4 +873,17 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage addStatsPoints(int playerId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.ADD_STATS_POINTS);
+
+        MessageUtils.appendResult(result, msg);
+
+        msg.append(playerId);
+
+        msg.append(PlayerInfo.getStatsPoints(playerId));
+        MessageUtils.appendStats(playerId, msg);
+
+        return msg;
+    }
 }

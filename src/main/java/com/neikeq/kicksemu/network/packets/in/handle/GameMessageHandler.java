@@ -69,6 +69,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.MATCH_RESULT, RoomManager::matchResult);
         events.put(MessageId.UNKNOWN1, RoomManager::unknown1);
         events.put(MessageId.UNKNOWN2, RoomManager::unknown2);
+        events.put(MessageId.ADD_STATS_POINTS, CharacterManager::addStatsPoints);
     }
 
     private void defineCertifyEvents() {
