@@ -1,0 +1,35 @@
+// AddStatsPoints
+// Tcp
+
+Id: 2903
+Size: 42
+
+Data:
+int packet_id
+byte reason
+/*
+ * Problem with character's values: 253
+ * Character problem: 254
+ * System problem: 255
+ */
+byte response
+int character_id
+// New stats
+short stats_points
+short running
+short endurance
+short agility
+short ball_control
+short dribbling
+short stealing
+short tackling
+short heading
+short short_shots
+short long_shots
+short crossing
+short short_passes
+short long_passes
+short marking
+short goalkeeping
+short punching
+short defense
