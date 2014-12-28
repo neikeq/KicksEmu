@@ -867,7 +867,7 @@ public class PlayerInfo {
     }
 
     public static void setStatsPoints(short value, int id) {
-        SqlUtils.setShort("stats_points", value, table, id);
+        SqlUtils.sumShort("stats_points", value, table, id);
     }
 
     public static void setStatsRunning(short value, int id) {

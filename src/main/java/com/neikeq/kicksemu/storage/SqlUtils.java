@@ -191,6 +191,8 @@ public class SqlUtils {
     }
 
     public static void sumShort(String row, short value, String table, int id) {
+        if (value == 0) return;
+
         String query = "UPDATE " + table + " SET " + row + " = " + row + " + ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -204,6 +206,8 @@ public class SqlUtils {
     }
 
     public static void sumInt(String row, int value, String table, int id) {
+        if (value == 0) return;
+
         String query = "UPDATE " + table + " SET " + row + " = " + row + " + ? WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();

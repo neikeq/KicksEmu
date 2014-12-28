@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.characters;
 
+import com.neikeq.kicksemu.game.characters.upgrade.CharacterUpgrade;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
@@ -81,9 +82,38 @@ public class CharacterManager {
 
                     if (PlayerInfo.getExperience(playerId) >= experience) {
                         PlayerInfo.setLevel((short)(curLevel + 1), playerId);
+                        onPlayerLevelUp(playerId);
                     }
                 }
             }
         } catch (SQLException ignored) {}
+    }
+
+    public static void onPlayerLevelUp(int playerId) {
+        short position = PlayerInfo.getPosition(playerId);
+
+        // Add a stat point
+        PlayerInfo.setStatsPoints((short)1, playerId);
+
+        // Add auto values
+        PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
+
+        PlayerInfo.setStatsRunning(autoStats.getRunning(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getEndurance(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getAgility(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getBallControl(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getDribbling(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getStealing(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getTackling(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getHeading(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getShortShots(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getLongShots(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getCrossing(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getShortPasses(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getLongPasses(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getMarking(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getGoalkeeping(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getPunching(), playerId);
+        PlayerInfo.setStatsRunning(autoStats.getDefense(), playerId);
     }
 }
