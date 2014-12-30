@@ -47,6 +47,10 @@ public class ClientMessage {
         body.readerIndex(body.readerIndex() + length);
     }
 
+    public ByteBuf getBody() {
+        return body;
+    }
+
     public short getSize() {
         return body.getShort(Constants.BODY_SIZE_INDEX);
     }

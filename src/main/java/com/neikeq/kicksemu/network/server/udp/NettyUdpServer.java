@@ -42,11 +42,15 @@ public class NettyUdpServer {
     }
     
     public void close() {
-        if (channelFuture != null) {
-            channelFuture.channel().close();
-            channelFuture.awaitUninterruptibly();
+        if (getChannelFuture() != null) {
+            getChannelFuture().channel().close();
+            getChannelFuture().awaitUninterruptibly();
         }
 
         group.shutdownGracefully();
+    }
+
+    public ChannelFuture getChannelFuture() {
+        return channelFuture;
     }
 }

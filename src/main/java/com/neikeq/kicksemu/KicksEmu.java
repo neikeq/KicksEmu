@@ -91,7 +91,7 @@ public class KicksEmu {
                         Configuration.getShort("game.id");
 
                 nettyUdpServer = new NettyUdpServer(portUdp);
-                nettyUdpServer.start();
+                getNettyUdpServer().start();
             }
 
         } catch (ClassNotFoundException e) {
@@ -157,8 +157,8 @@ public class KicksEmu {
             nettyTcpServer.close();
         }
 
-        if (nettyUdpServer != null) {
-            nettyUdpServer.close();
+        if (getNettyUdpServer() != null) {
+            getNettyUdpServer().close();
         }
     }
 
@@ -184,5 +184,9 @@ public class KicksEmu {
         }
 
         return instance;
+    }
+
+    public NettyUdpServer getNettyUdpServer() {
+        return nettyUdpServer;
     }
 }
