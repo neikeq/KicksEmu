@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.servers;
 
+import com.neikeq.kicksemu.config.Tips;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.ClubManager;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -149,11 +150,8 @@ public class ServerUtils {
         }
     }
 
-    // TODO Add functionality to this method
     public static void nextTip(Session session) {
-        String tip = "";
-
-        ServerMessage response = MessageBuilder.nextTip(tip, (byte)0);
+        ServerMessage response = MessageBuilder.nextTip(Tips.getNext(), (byte)0);
         session.send(response);
     }
 }

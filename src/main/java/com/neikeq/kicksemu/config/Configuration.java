@@ -25,8 +25,8 @@ public class Configuration {
      * Initializes the configuration properties with default values.
      * If a configuration file exist, tries to read it.
      */
-    public void init(String configFile) {
-        configPath = Constants.DATA_DIR + configFile;
+    public void init(String path) {
+        configPath = Constants.DATA_DIR + path;
         
         config = new Properties();
 
