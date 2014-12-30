@@ -63,4 +63,6 @@ public class MessageId {
     public static final int UDP_GAME_1 = 9001;
     public static final int UDP_GAME_2 = 9002;
     public static final int UDP_GAME_3 = 9003;
+    public static final int UDP_GAME_4 = 9004;
+    public static final int UDP_GAME_5 = 9005;
 }

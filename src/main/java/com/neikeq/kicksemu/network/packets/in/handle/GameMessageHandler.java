@@ -74,6 +74,8 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.UDP_GAME_1, MatchBroadcaster::udpGame);
         events.put(MessageId.UDP_GAME_2, MatchBroadcaster::udpGame);
         events.put(MessageId.UDP_GAME_3, MatchBroadcaster::udpGame);
+        events.put(MessageId.UDP_GAME_4, MatchBroadcaster::udpGame);
+        events.put(MessageId.UDP_GAME_5, MatchBroadcaster::udpGame);
     }
 
     private void defineCertifyEvents() {
