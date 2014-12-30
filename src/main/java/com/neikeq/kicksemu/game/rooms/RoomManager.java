@@ -591,8 +591,8 @@ public class RoomManager {
      * the message and broadcasting it to the room (with little modifications).
      */
     public static void matchResult(Session session, ClientMessage msg) {
-        int roomId = msg.readInt();
-        msg.readShort();
+        int roomId = msg.readShort();
+        msg.readInt();
         int mom = msg.readInt();
         short result = msg.readShort();
 
@@ -631,11 +631,13 @@ public class RoomManager {
                     response.writeInt(MessageId.MATCH_RESULT);
                     response.writeShort(0);
                     response.writeInt(mom);
-                    response.writeInt(result);
+                    response.writeShort(result);
 
                     for (int i = 0; i < msg.getSize() - 17; i++) {
                         response.writeByte(msg.readByte());
                     }
+
+                    response.writeShort(0);
 
                     response.writeInt(reward ? Configuration.getInt("game.rewards.exp") : 0);
                     response.writeInt(reward ? Configuration.getInt("game.rewards.point") : 0);
