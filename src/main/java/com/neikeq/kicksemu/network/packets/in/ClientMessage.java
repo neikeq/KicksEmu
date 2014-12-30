@@ -9,10 +9,7 @@ public class ClientMessage {
 
     private final ByteBuf body;
 
-    private final short size;
-
     private final int messageId;
-    private final int sessionId;
 
     public byte readByte() {
         return body.readByte();
@@ -51,7 +48,7 @@ public class ClientMessage {
     }
 
     public short getSize() {
-        return size;
+        return body.getShort(Constants.BODY_SIZE_INDEX);
     }
 
     public int getMessageId() {
@@ -59,14 +56,15 @@ public class ClientMessage {
     }
 
     public int getSessionId() {
-        return sessionId;
+        return body.getInt(Constants.SESSION_ID_INDEX);
+    }
+
+    public int getTargetId() {
+        return body.getInt(Constants.TARGET_ID_INDEX);
     }
 
     public ClientMessage(ByteBuf data) {
         body = data.order(ByteOrder.LITTLE_ENDIAN);
-
-        sessionId = body.getInt(Constants.SESSION_ID_INDEX);
-        size = body.getShort(Constants.BODY_SIZE_INDEX);
 
         body.readerIndex(Constants.HEADER_SIZE);
         messageId = body.readInt();

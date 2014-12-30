@@ -4,5 +4,5 @@ Size: 12
 
 short connection_flag // Ignore: 0, Close connection: -1
 int character_id
-int unknown
+int target_id // Used only for udp game packets
 short packet_size // Does not include the header size
