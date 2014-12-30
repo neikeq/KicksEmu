@@ -27,7 +27,7 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
         // Handle the incoming message
         if (!messageHandler.handle(session, message)) {
             Output.println("Received unknown datagram packet (id: " + message.getMessageId() +
-                    ") from: " + ctx.channel().remoteAddress().toString(), Level.DEBUG);
+                    ") from: " + packet.sender().getAddress().getHostAddress(), Level.DEBUG);
         }
     }
 
