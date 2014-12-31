@@ -1,0 +1,35 @@
+// PurchaseSkill
+// Tcp
+
+Id: 2620
+Size: 58
+
+Data:
+int packet_id
+byte reason
+/*
+ * System problem: -1
+ * Problem with kash: -2
+ * Problem with points: -3
+ * Not enough points: -5
+ * Not enough kash: -8
+ * Invalid level: -9
+ * Already purchased: -10
+ */
+byte response
+short level
+int experience
+short stats_points
+int kash
+int points
+char[8] unknown
+short tickets_kash
+short tickets_points
+int inventory_id
+int skills_id
+byte selection_index
+int expiration
+int stats_bonus_one // ignore
+int stats_bonus_two // ignore
+int timestamp_expire
+byte visible

@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.StatusMessage;
 import com.neikeq.kicksemu.game.chat.ChatManager;
 import com.neikeq.kicksemu.game.datagram.MatchBroadcaster;
+import com.neikeq.kicksemu.game.inventory.Shop;
 import com.neikeq.kicksemu.game.lists.friendship.FriendsManager;
 import com.neikeq.kicksemu.game.lists.ignored.IgnoredManager;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
@@ -72,6 +73,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.UNKNOWN1, RoomManager::unknown1);
         events.put(MessageId.UNKNOWN2, RoomManager::unknown2);
         events.put(MessageId.ADD_STATS_POINTS, CharacterManager::addStatsPoints);
+        events.put(MessageId.PURCHASE_SKILL, Shop::purchaseSkill);
         events.put(MessageId.UDP_GAME_1, MatchBroadcaster::udpGame);
         events.put(MessageId.UDP_GAME_2, MatchBroadcaster::udpGame);
         events.put(MessageId.UDP_GAME_3, MatchBroadcaster::udpGame);

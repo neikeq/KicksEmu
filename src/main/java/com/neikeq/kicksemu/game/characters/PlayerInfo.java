@@ -950,8 +950,8 @@ public class PlayerInfo {
         SqlUtils.setString("inventory_training", value, table, id);
     }
 
-    public static void setInventorySkills(String value, int id) {
-        SqlUtils.setString("inventory_skills", value, table, id);
+    public static void setInventorySkills(Map<Integer, Skill> value, int id) {
+        SqlUtils.setString("inventory_skills", Skill.mapToString(value), table, id);
     }
 
     public static void setInventoryCelebration(String value, int id) {

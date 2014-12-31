@@ -295,7 +295,9 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append((short)skills.size());
+            int amount = skills.size();
+            msg.append((byte)(amount + (6 - (amount % 6))));
+            msg.append((short)amount);
 
             for (Skill skill : skills.values()) {
                 MessageUtils.appendInventorySkill(skill, msg);
@@ -892,6 +894,19 @@ public class MessageBuilder {
         ServerMessage msg = new ServerMessage(MessageId.QUICK_JOIN_ROOM);
 
         MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage purchaseSkill(int playerId, Skill skill, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.PURCHASE_SKILL);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendInventorySkill(skill, msg);
+        }
 
         return msg;
     }

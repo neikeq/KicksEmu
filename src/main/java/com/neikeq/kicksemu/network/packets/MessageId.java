@@ -57,6 +57,7 @@ public class MessageId {
     public static final int MATCH_RESULT = 2407;
     public static final int UNKNOWN1 = 2409;
     public static final int UNKNOWN2 = 2411;
+    public static final int PURCHASE_SKILL = 2620;
     public static final int UPDATE_SETTINGS = 2901;
     public static final int ADD_STATS_POINTS = 2903;
     public static final int PLAYER_PROGRESS = 2904;

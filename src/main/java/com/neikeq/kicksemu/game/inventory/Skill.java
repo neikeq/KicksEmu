@@ -16,12 +16,17 @@ public class Skill {
     private boolean visible;
 
     public Skill() {
-        id = 0;
-        inventoryId = 0;
-        selectionIndex = 0;
-        expiration = 0;
-        timestampExpire = 0;
-        visible = false;
+        this(0, 0, 0, (byte)0, 0, false);
+    }
+
+    public Skill(int id, int inventoryId, int expiration,
+                 byte selectionIndex, long timestampExpire, boolean visible) {
+        this.id = id;
+        this.inventoryId = inventoryId;
+        this.expiration = expiration;
+        this.selectionIndex = selectionIndex;
+        this.timestampExpire = timestampExpire;
+        this.visible = visible;
     }
 
     private Skill(String item) {
@@ -45,6 +50,17 @@ public class Skill {
                 Skill skill = new Skill(row);
                 skills.put(skill.getInventoryId(), skill);
             }
+        }
+
+        return skills;
+    }
+
+    public static String mapToString(Map<Integer, Skill> map) {
+        String skills = "";
+
+        for (Skill s : map.values()) {
+            skills += s.getId() + "," + s.getInventoryId() + "," + s.getSelectionIndex() + "," +
+                    s.getExpiration() + "," + s.getTimestampExpire() + "," + s.isVisible() + ";";
         }
 
         return skills;

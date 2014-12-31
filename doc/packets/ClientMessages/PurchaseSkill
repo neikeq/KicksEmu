@@ -1,0 +1,14 @@
+// PurchaseSkill
+// Tcp
+
+Id: 2620
+Size: 25
+
+Data:
+int packet_id
+byte payment // Kash: 1, Points: 2
+int price
+int skill_id
+int expiration
+int stats_bonus_one // ignored
+int stats_bonus_two // ignored
