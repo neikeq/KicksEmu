@@ -46,8 +46,7 @@ public class ServerMessage {
         int lengthFlag = length > value.length ? value.length : length;
 
         for (int i = 0; i < lengthFlag; i++) {
-            byte cur = (byte)value[i];
-            append(cur);
+            append((byte)value[i]);
         }
 
         if (lengthFlag < length) {
@@ -56,10 +55,11 @@ public class ServerMessage {
     }
 
     public void append(String value, int length) {
-        if (value != null)
+        if (value != null) {
             append(value.toCharArray(), length);
-        else
+        } else {
             appendZeros(length);
+        }
     }
 
     public void appendZeros(int length) {

@@ -37,8 +37,9 @@ public class ClientMessage {
         body.readBytes(bytes);
 
         for (int s = 0; s < length; s++) {
-            if (bytes[s] == 0)
+            if (bytes[s] == 0) {
                 return new String(bytes, 0, s, Charset.forName("windows-1252"));
+            }
         }
 
         return new String(bytes, Charset.forName("windows-1252"));
