@@ -65,7 +65,7 @@ public class Shop {
         indexes.addAll(skills.stream().map(Skill::getSelectionIndex)
                 .collect(Collectors.toList()));
 
-        for (byte i = 1; i < skills.size() + 1; i++) {
+        for (byte i = 1; i <= skills.size() + 1; i++) {
             if (!indexes.contains(i)) {
                 return i;
             }
