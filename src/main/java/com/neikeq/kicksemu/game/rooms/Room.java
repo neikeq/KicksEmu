@@ -50,6 +50,37 @@ public class Room {
 
     private final Object locker = new Object();
 
+    public byte tryJoinRoom(Session session, String password) {
+        byte result = 0;
+
+        synchronized (locker) {
+            if (!isFull()) {
+                // If room does not have a password, or typed password matches room's password
+                if (getType() != RoomType.PASSWORD || password.equals(getPassword())) {
+                    if (!isPlaying()) {
+                        short level = PlayerInfo.getLevel(session.getPlayerId());
+
+                        // If player level is not allowed in room settings
+                        if (playerHasInvalidLevel(level)) {
+                            result = (byte) 248; // Invalid level
+                        } else {
+                            // Join the room
+                            addPlayer(session);
+                        }
+                    } else {
+                        result = (byte) 250; // Match already started
+                    }
+                } else {
+                    result = (byte) 251; // Wrong password
+                }
+            } else {
+                result = (byte) 252; // Room is full
+            }
+        }
+
+        return result;
+    }
+
     public void addPlayer(Session session) {
         synchronized (locker) {
             int playerId = session.getPlayerId();
@@ -202,7 +233,7 @@ public class Room {
         setState(RoomState.COUNT_DOWN);
         getConfirmedPlayers().clear();
 
-        ServerMessage msgStartCountDown = MessageBuilder.startCountDown((byte)-1);
+        ServerMessage msgStartCountDown = MessageBuilder.startCountDown((byte) -1);
         sendBroadcast(msgStartCountDown);
     }
 
@@ -215,6 +246,13 @@ public class Room {
 
     private void onPlayerJoined(Session session) {
         int playerId = session.getPlayerId();
+
+        // Send the room info to the client
+        ServerMessage msgRoomInfo = MessageBuilder.roomInfo(this);
+        session.send(msgRoomInfo);
+
+        // Send to the client information about players inside the room
+        sendRoomPlayersInfo(session);
 
         // Notify players in room about the new player
         getPlayers().values().stream()
@@ -234,6 +272,13 @@ public class Room {
         if (getState() == RoomState.COUNT_DOWN) {
             cancelCountDown();
         }
+    }
+
+    private void sendRoomPlayersInfo(Session session) {
+        getPlayers().values().stream().forEach(s -> {
+            ServerMessage roomPlayerInfo = MessageBuilder.roomPlayerInfo(s, this);
+            session.send(roomPlayerInfo);
+        });
     }
 
     private void updateMaster() {
@@ -295,6 +340,10 @@ public class Room {
         synchronized (locker) {
             return getPlayers().size() >= getMaxSize().toInt();
         }
+    }
+
+    public boolean playerHasInvalidLevel(short level) {
+        return level < getMinLevel() || level > getMaxLevel();
     }
 
     private boolean isTeamFull(RoomTeam team) {

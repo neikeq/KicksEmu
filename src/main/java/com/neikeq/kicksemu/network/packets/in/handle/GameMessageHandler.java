@@ -46,6 +46,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.STATUS_MESSAGE, StatusMessage::statusMessage);
         events.put(MessageId.CREATE_ROOM, RoomManager::createRoom);
         events.put(MessageId.JOIN_ROOM, RoomManager::joinRoom);
+        events.put(MessageId.QUICK_JOIN_ROOM, (s, msg) -> RoomManager.quickJoinRoom(s));
         events.put(MessageId.LEAVE_ROOM, RoomManager::leaveRoom);
         events.put(MessageId.ROOM_MAP, RoomManager::roomMap);
         events.put(MessageId.ROOM_BALL, RoomManager::roomBall);

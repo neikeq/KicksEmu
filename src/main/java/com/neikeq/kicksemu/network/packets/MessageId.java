@@ -33,6 +33,7 @@ public class MessageId {
     public static final int ROOM_LIST = 2200;
     public static final int CREATE_ROOM = 2201;
     public static final int JOIN_ROOM = 2202;
+    public static final int QUICK_JOIN_ROOM = 2203;
     public static final int NEXT_TIP = 2204;
     public static final int ROOM_INFO = 2300;
     public static final int ROOM_PLAYER_INFO = 2301;

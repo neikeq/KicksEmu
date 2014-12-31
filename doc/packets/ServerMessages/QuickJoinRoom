@@ -1,0 +1,14 @@
+// QuickJoinRoom
+// Tcp
+
+Id: 2203
+Size: 6
+
+Data:
+int packet_id
+byte reason
+/*
+ * Could not find a room: 254
+ * System problem: 255
+ */
+byte response

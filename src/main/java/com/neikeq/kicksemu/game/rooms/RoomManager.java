@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBufAllocator;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class RoomManager {
@@ -97,17 +98,8 @@ public class RoomManager {
         return pageRooms;
     }
 
-    private static void sendRoomPlayersInfo(Session session, Room room) {
-        for (Session s : room.getPlayers().values()) {
-            ServerMessage roomPlayerInfo = MessageBuilder.roomPlayerInfo(s, room);
-            session.send(roomPlayerInfo);
-        }
-    }
-
     public static void createRoom(Session session, ClientMessage msg) {
         if (session.getRoomId() <= 0) {
-            // Read data from message
-
             RoomType type = RoomType.fromInt(msg.readShort());
             String name = msg.readString(45);
             String password = msg.readString(4);
@@ -177,9 +169,6 @@ public class RoomManager {
 
                     // Add it to the rooms list
                     addRoom(room);
-
-                    // Add the player to the room
-                    room.addPlayer(session);
                 }
 
                 // Notify the client to join the room
@@ -187,68 +176,53 @@ public class RoomManager {
                         room.getPlayerTeam(session.getPlayerId()), result);
                 session.send(msgJoinRoom);
 
-                // Send the room info to the client
-                ServerMessage msgRoomInfo = MessageBuilder.roomInfo(room);
-                session.send(msgRoomInfo);
-
-                // Send to the client information about players inside the room
-                sendRoomPlayersInfo(session, room);
+                // Add the player to the room
+                room.addPlayer(session);
             }
         }
     }
 
     public static void joinRoom(Session session, ClientMessage msg) {
+        if (session.getRoomId() > 0) return;
+
         int roomId = msg.readShort();
         String password = msg.readString(4);
 
-        byte result = 0;
-
         Room room = getRoomById(roomId);
 
-        boolean roomExists = room != null;
+        // Try to join the room.
+        // Result -3 means that the room does not exists.
+        byte result = room != null ? room.tryJoinRoom(session, password) : -3;
 
-        if (roomExists) {
-            if (!room.isFull()) {
-                // If room does not have a password, or typed password matches room's password
-                if (room.getType() != RoomType.PASSWORD || password.equals(room.getPassword())) {
-                    if (!room.isPlaying()) {
-                        short level = PlayerInfo.getLevel(session.getPlayerId());
+        // Send the notification to the client
+        ServerMessage response = MessageBuilder.joinRoom(roomId,
+                room != null ? room.getPlayerTeam(session.getPlayerId()) : null, result);
+        session.send(response);
+    }
 
-                        // If player level is not allowed in room settings
-                        if (level < room.getMinLevel() || level > room.getMaxLevel()) {
-                            result = (byte)248; // Invalid level
-                        }
-                    } else {
-                        result = (byte)250; // Match already started
-                    }
-                } else {
-                    result = (byte)251; // Wrong password
-                }
-            } else {
-                result = (byte)252; // Room is full
-            }
-        } else {
-            result = (byte)253; // Room does not exist
-        }
+    public static void quickJoinRoom(Session session) {
+        if (session.getRoomId() > 0) return;
 
-        if (result == 0 && roomExists) {
-            room.addPlayer(session);
+        short level = PlayerInfo.getLevel(session.getPlayerId());
+
+        Optional<Room> optional = rooms.values().stream()
+                .filter(r -> !r.isPlaying() && r.getType() != RoomType.PASSWORD &&
+                        !r.isFull() && !r.playerHasInvalidLevel(level))
+                .findFirst();
+
+        // If a valid room was found
+        if (optional.isPresent()) {
+            Room room = optional.get();
+
+            byte result = room.tryJoinRoom(session, "");
 
             // Send the notification to the client
-            ServerMessage response = MessageBuilder.joinRoom(roomId,
+            ServerMessage response = MessageBuilder.joinRoom(room.getId(),
                     room.getPlayerTeam(session.getPlayerId()), result);
             session.send(response);
-
-            // Send the room info to the client
-            ServerMessage msgRoomInfo = MessageBuilder.roomInfo(room);
-            session.send(msgRoomInfo);
-
-            // Send to the client information about players inside the room
-            sendRoomPlayersInfo(session, room);
         } else {
-            // Send the validation result to the client
-            ServerMessage response = MessageBuilder.joinRoom(roomId, null, result);
-            session.send(response);
+            // Notify the player that no room were found
+            session.sendAndFlush(MessageBuilder.quickJoinRoom((byte) -2));
         }
     }
 
