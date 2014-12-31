@@ -41,15 +41,25 @@ public class ServerMessage {
     public void append(int value) {
         body.writeInt(value);
     }
-    
+
+    public void append(char[] value, int length) {
+        int lengthFlag = length > value.length ? value.length : length;
+
+        for (int i = 0; i < lengthFlag; i++) {
+            byte cur = (byte)value[i];
+            append(cur);
+        }
+
+        if (lengthFlag < length) {
+            appendZeros(length - lengthFlag);
+        }
+    }
+
     public void append(String value, int length) {
         if (value != null)
-            body.writeBytes(value.getBytes());
+            append(value.toCharArray(), length);
         else
-            value = "";
-
-        // Fill the remaining bytes with zeros
-        appendZeros(length - value.length());
+            appendZeros(length);
     }
 
     public void appendZeros(int length) {

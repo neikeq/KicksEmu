@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.config.Constants;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 
 public class ClientMessage {
 
@@ -37,10 +38,10 @@ public class ClientMessage {
 
         for (int s = 0; s < length; s++) {
             if (bytes[s] == 0)
-                return new String(bytes, 0, s);
+                return new String(bytes, 0, s, Charset.forName("windows-1252"));
         }
 
-        return new String(bytes);
+        return new String(bytes, Charset.forName("windows-1252"));
     }
 
     public void ignoreBytes(int length) {
