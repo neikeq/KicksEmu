@@ -658,14 +658,15 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage invitePlayer(byte result, int roomId, String name) {
+    public static ServerMessage invitePlayer(byte result, Room room, String name) {
         ServerMessage msg = new ServerMessage(MessageId.INVITE_PLAYER);
 
         MessageUtils.appendResult(result, msg);
 
-        if (result == 0) {
+        if (result == 0 && room != null) {
             msg.append(name, 15);
-            msg.append((short) roomId);
+            msg.append((short) room.getId());
+            msg.append(room.getPassword(), 5);
         }
 
         return msg;

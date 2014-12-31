@@ -16,4 +16,4 @@ byte reason
 byte response
 char[15] name
 short room_id
-char[5] unknown
+char[5] password

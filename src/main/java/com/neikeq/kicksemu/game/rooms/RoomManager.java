@@ -453,7 +453,7 @@ public class RoomManager {
                     // If player level meets the level requirement of the room
                     if (room.getMinLevel() <= level && room.getMaxLevel() >= level) {
                         ServerMessage invitation = MessageBuilder.invitePlayer(result,
-                                room.getId(), PlayerInfo.getName(session.getPlayerId()));
+                                room, PlayerInfo.getName(session.getPlayerId()));
                         sessionToInvite.sendAndFlush(invitation);
                     } else {
                         result = (byte)251; // Player does not meet the level requirements
@@ -467,7 +467,7 @@ public class RoomManager {
 
             // If there is something wrong, notify the client
             if (result != 0) {
-                ServerMessage response = MessageBuilder.invitePlayer(result, 0, "");
+                ServerMessage response = MessageBuilder.invitePlayer(result, null, "");
                 session.sendAndFlush(response);
             }
         }

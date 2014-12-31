@@ -101,7 +101,7 @@ public class CharacterManager {
         short position = PlayerInfo.getPosition(playerId);
 
         // Add a stat point
-        PlayerInfo.setStatsPoints((short)levels, playerId);
+        PlayerInfo.setStatsPoints(levels, playerId);
 
         // Add auto values
         PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
