@@ -27,27 +27,31 @@ public class Shop {
             byte result = 0;
             Skill skill = null;
 
-            if (price <= money) {
-                Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
+            if ((payment == Payment.KASH && price > 50) || (payment == Payment.POINTS && price > 1000)) {
+                if (price <= money) {
+                    Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
 
-                if (alreadyPurchasedSkill(skillId, skills.values())) {
-                    result = -10; // Already purchased
+                    if (alreadyPurchasedSkill(skillId, skills.values())) {
+                        result = -10; // Already purchased
+                    } else {
+                        int inventoryId = getSmallestMissingId(skills.values());
+                        byte selectionIndex = getSmallestMissingIndex(skills.values());
+                        Timestamp timestamp = InventoryUtils.expirationToTimestamp(expiration);
+
+                        skill = new Skill(skillId, inventoryId, expiration, selectionIndex,
+                                timestamp.getTime() / 1000, true);
+
+                        skills.put(inventoryId, skill);
+
+                        PlayerInfo.setInventorySkills(skills, playerId);
+
+                        sumMoneyToPaymentMode(payment, playerId, -price);
+                    }
                 } else {
-                    int inventoryId = getSmallestMissingId(skills.values());
-                    byte selectionIndex = getSmallestMissingIndex(skills.values());
-                    Timestamp timestamp = InventoryUtils.expirationToTimestamp(expiration);
-
-                    skill = new Skill(skillId, inventoryId, expiration, selectionIndex,
-                            timestamp.getTime() / 1000, true);
-
-                    skills.put(inventoryId, skill);
-
-                    PlayerInfo.setInventorySkills(skills, playerId);
-
-                    sumMoneyToPaymentMode(payment, playerId, -price);
+                    result = (byte) (payment == Payment.KASH ? -8 : -5);
                 }
             } else {
-                result = (byte)(payment == Payment.KASH ? -8 : -5);
+                result = -1;
             }
 
             ServerMessage response = MessageBuilder.purchaseSkill(playerId, skill, result);
