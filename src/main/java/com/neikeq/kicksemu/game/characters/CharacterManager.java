@@ -28,14 +28,14 @@ public class CharacterManager {
     }
 
     private static void sendPlayerInfo(Session session) {
-        ServerMessage msg = MessageBuilder.playerInfo(session.getPlayerId(), (byte)0);
+        ServerMessage msg = MessageBuilder.playerInfo(session.getPlayerId(), (byte) 0);
         session.send(msg);
     }
 
     private static void sendItemList(Session session) {
         Map<Integer, Item> items = PlayerInfo.getInventoryItems(session.getPlayerId());
 
-        ServerMessage msg = MessageBuilder.itemList(items, (byte)0);
+        ServerMessage msg = MessageBuilder.itemList(items, (byte) 0);
         session.send(msg);
     }
 
@@ -71,51 +71,58 @@ public class CharacterManager {
     }
 
     public static void checkExperience(int playerId) {
-        String query = "SELECT experience FROM levels WHERE level=?";
-        short curLevel = PlayerInfo.getLevel(playerId);
+        short level = PlayerInfo.getLevel(playerId);
+        short levels = 0;
+
+        String query = "SELECT level FROM levels WHERE experience <= ? AND level > ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1, curLevel + 1);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    int experience = rs.getInt("experience");
+            stmt.setInt(1, PlayerInfo.getExperience(playerId));
+            stmt.setShort(2, level);
 
-                    if (PlayerInfo.getExperience(playerId) >= experience) {
-                        PlayerInfo.setLevel((short)(curLevel + 1), playerId);
-                        onPlayerLevelUp(playerId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    short newLevel = rs.getShort("level");
+
+                    if (newLevel > level) {
+                        levels += newLevel - level;
+                        level = newLevel;
                     }
                 }
             }
         } catch (SQLException ignored) {}
+
+        PlayerInfo.setLevel(level, playerId);
+        onPlayerLevelUp(playerId, levels);
     }
 
-    public static void onPlayerLevelUp(int playerId) {
+    public static void onPlayerLevelUp(int playerId, short levels) {
         short position = PlayerInfo.getPosition(playerId);
 
         // Add a stat point
-        PlayerInfo.setStatsPoints((short)1, playerId);
+        PlayerInfo.setStatsPoints((short)levels, playerId);
 
         // Add auto values
         PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
 
-        PlayerInfo.setStatsRunning(autoStats.getRunning(), playerId);
-        PlayerInfo.setStatsEndurance(autoStats.getEndurance(), playerId);
-        PlayerInfo.setStatsAgility(autoStats.getAgility(), playerId);
-        PlayerInfo.setStatsBallControl(autoStats.getBallControl(), playerId);
-        PlayerInfo.setStatsDribbling(autoStats.getDribbling(), playerId);
-        PlayerInfo.setStatsStealing(autoStats.getStealing(), playerId);
-        PlayerInfo.setStatsTackling(autoStats.getTackling(), playerId);
-        PlayerInfo.setStatsHeading(autoStats.getHeading(), playerId);
-        PlayerInfo.setStatsShortShots(autoStats.getShortShots(), playerId);
-        PlayerInfo.setStatsLongShots(autoStats.getLongShots(), playerId);
-        PlayerInfo.setStatsCrossing(autoStats.getCrossing(), playerId);
-        PlayerInfo.setStatsShortPasses(autoStats.getShortPasses(), playerId);
-        PlayerInfo.setStatsLongPasses(autoStats.getLongPasses(), playerId);
-        PlayerInfo.setStatsMarking(autoStats.getMarking(), playerId);
-        PlayerInfo.setStatsGoalkeeping(autoStats.getGoalkeeping(), playerId);
-        PlayerInfo.setStatsPunching(autoStats.getPunching(), playerId);
-        PlayerInfo.setStatsDefense(autoStats.getDefense(), playerId);
+        PlayerInfo.setStatsRunning((short)(autoStats.getRunning() * levels), playerId);
+        PlayerInfo.setStatsEndurance((short)(autoStats.getEndurance() * levels), playerId);
+        PlayerInfo.setStatsAgility((short)(autoStats.getAgility() * levels), playerId);
+        PlayerInfo.setStatsBallControl((short)(autoStats.getBallControl() * levels), playerId);
+        PlayerInfo.setStatsDribbling((short)(autoStats.getDribbling() * levels), playerId);
+        PlayerInfo.setStatsStealing((short)(autoStats.getStealing() * levels), playerId);
+        PlayerInfo.setStatsTackling((short)(autoStats.getTackling() * levels), playerId);
+        PlayerInfo.setStatsHeading((short)(autoStats.getHeading() * levels), playerId);
+        PlayerInfo.setStatsShortShots((short)(autoStats.getShortShots() * levels), playerId);
+        PlayerInfo.setStatsLongShots((short)(autoStats.getLongShots() * levels), playerId);
+        PlayerInfo.setStatsCrossing((short)(autoStats.getCrossing() * levels), playerId);
+        PlayerInfo.setStatsShortPasses((short)(autoStats.getShortPasses() * levels), playerId);
+        PlayerInfo.setStatsLongPasses((short)(autoStats.getLongPasses() * levels), playerId);
+        PlayerInfo.setStatsMarking((short)(autoStats.getMarking() * levels), playerId);
+        PlayerInfo.setStatsGoalkeeping((short)(autoStats.getGoalkeeping() * levels), playerId);
+        PlayerInfo.setStatsPunching((short)(autoStats.getPunching() * levels), playerId);
+        PlayerInfo.setStatsDefense((short)(autoStats.getDefense() * levels), playerId);
     }
 
     public static void addStatsPoints(Session session, ClientMessage msg) {
