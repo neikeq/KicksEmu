@@ -36,11 +36,12 @@ public class ClientMessage {
         char[] chars = new char[length];
 
         for (int i = 0; i < length; i++) {
-            char cur = body.readChar();
+            byte cur = body.readByte();
 
-            if ((byte)cur != 0) {
-                chars[i] = cur;
+            if (cur != 0) {
+                chars[i] = (char)cur;
             } else {
+                body.readBytes(length - ++i);
                 break;
             }
         }
