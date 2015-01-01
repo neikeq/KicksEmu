@@ -1,0 +1,10 @@
+// DeactivateSkill
+// Tcp
+
+Id: 2622
+Size: 10
+
+int packet_id
+byte reason
+byte response
+int inventory_id

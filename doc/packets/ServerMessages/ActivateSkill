@@ -1,0 +1,11 @@
+// ActivateSkill
+// Tcp
+
+Id: 2621
+Size: 11
+
+int packet_id
+byte reason
+byte response
+int inventory_id
+byte selection_index
