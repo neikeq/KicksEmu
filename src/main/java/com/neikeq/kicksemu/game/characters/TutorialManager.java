@@ -83,7 +83,7 @@ public class TutorialManager {
                                           byte passing, byte shooting, byte defense) {
         if (dribbling == 15 && passing == 15 &&
                 shooting == 15 && defense == 15) {
-            if (PlayerInfo.getReceivedReward(characterId)) {
+            if (!PlayerInfo.getReceivedReward(characterId)) {
                 if (giveReward(characterId)) {
                     PlayerInfo.setReceivedReward(true, characterId);
                     return true;
