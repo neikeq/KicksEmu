@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 
 public class ServerMessage {
 
@@ -42,11 +43,11 @@ public class ServerMessage {
         body.writeInt(value);
     }
 
-    public void append(char[] value, int length) {
+    public void append(byte[] value, int length) {
         int lengthFlag = length > value.length ? value.length : length;
 
         for (int i = 0; i < lengthFlag; i++) {
-            append((byte)value[i]);
+            append(value[i]);
         }
 
         if (lengthFlag < length) {
@@ -56,7 +57,7 @@ public class ServerMessage {
 
     public void append(String value, int length) {
         if (value != null) {
-            append(value.toCharArray(), length);
+            append(value.getBytes(Charset.forName("windows-1252")), length);
         } else {
             appendZeros(length);
         }
