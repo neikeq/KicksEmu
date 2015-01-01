@@ -6,6 +6,10 @@ Size: 11
 
 int packet_id
 byte reason
+/*
+ * System problem: -1
+ * Skill does not exists: -2
+ */
 byte response
-int inventory_id
+int skill_id
 byte selection_index

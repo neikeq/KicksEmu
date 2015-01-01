@@ -1,7 +1,7 @@
-// ActivateSkill
+// DeactivateSkill
 // Tcp
 
-Id: 2621
+Id: 2622
 Size: 8
 
 int packet_id

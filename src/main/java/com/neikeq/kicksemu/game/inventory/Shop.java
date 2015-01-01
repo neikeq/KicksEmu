@@ -8,8 +8,8 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 
 import java.sql.Timestamp;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Map;
 
 public class Shop {
 
@@ -27,15 +27,16 @@ public class Shop {
             byte result = 0;
             Skill skill = null;
 
-            if ((payment == Payment.KASH && price > 50) || (payment == Payment.POINTS && price > 1000)) {
+            if ((payment == Payment.KASH && price > 50) ||
+                    (payment == Payment.POINTS && price > 1000)) {
                 if (price <= money) {
                     Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
 
                     if (alreadyPurchasedSkill(skillId, skills.values())) {
                         result = -10; // Already purchased
                     } else {
-                        int inventoryId = getSmallestMissingId(skills.values());
-                        byte selectionIndex = getSmallestMissingIndex(skills.values());
+                        int inventoryId = InventoryUtils.getSmallestMissingId(skills.values());
+                        byte selectionIndex = InventoryUtils.getSmallestMissingIndex(skills.values());
                         Timestamp timestamp = InventoryUtils.expirationToTimestamp(expiration);
 
                         skill = new Skill(skillId, inventoryId, expiration, selectionIndex,
@@ -59,40 +60,11 @@ public class Shop {
         }
     }
 
-    private static byte getSmallestMissingIndex(Collection<Skill> skills) {
-        List<Byte> indexes = new ArrayList<>();
-
-        indexes.addAll(skills.stream().map(Skill::getSelectionIndex)
-                .collect(Collectors.toList()));
-
-        for (byte i = 1; i <= skills.size() + 1; i++) {
-            if (!indexes.contains(i)) {
-                return i;
-            }
-        }
-
-        return 1;
-    }
-
-    private static int getSmallestMissingId(Collection<Skill> skills) {
-        List<Integer> ids = new ArrayList<>();
-
-        ids.addAll(skills.stream().map(Skill::getInventoryId).collect(Collectors.toList()));
-
-        for (int i = 0; i < skills.size() + 1; i++) {
-            if (!ids.contains(i)) {
-                return i;
-            }
-        }
-
-        return 1;
-    }
-
-    public static boolean alreadyPurchasedSkill(int skillId, Collection<Skill> skills) {
+    private static boolean alreadyPurchasedSkill(int skillId, Collection<Skill> skills) {
         return skills.stream().filter(s -> s.getId() == skillId).findFirst().isPresent();
     }
 
-    public static int getMoneyFromPaymentMode(Payment payment, int playerId) {
+    private static int getMoneyFromPaymentMode(Payment payment, int playerId) {
         switch (payment) {
             case KASH:
                 return UserInfo.getKash(PlayerInfo.getOwner(playerId));
@@ -103,7 +75,7 @@ public class Shop {
         }
     }
 
-    public static void sumMoneyToPaymentMode(Payment payment, int playerId, int value) {
+    private static void sumMoneyToPaymentMode(Payment payment, int playerId, int value) {
         switch (payment) {
             case KASH:
                 UserInfo.setKash(value, PlayerInfo.getOwner(playerId));

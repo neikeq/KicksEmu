@@ -910,4 +910,29 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage activateSkill(int inventoryId, byte index, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.ACTIVATE_SKILL);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(inventoryId);
+            msg.append(index);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage deactivateSkill(int inventoryId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_SKILL);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(inventoryId);
+        }
+
+        return msg;
+    }
 }
