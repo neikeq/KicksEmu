@@ -40,7 +40,7 @@ public class Shop {
                         Timestamp timestamp = InventoryUtils.expirationToTimestamp(expiration);
 
                         skill = new Skill(skillId, inventoryId, expiration, selectionIndex,
-                                timestamp.getTime() / 1000, true);
+                                timestamp.getTime(), true);
 
                         skills.put(inventoryId, skill);
 

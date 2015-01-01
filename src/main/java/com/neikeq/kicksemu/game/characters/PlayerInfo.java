@@ -693,7 +693,7 @@ public class PlayerInfo {
     }
 
     public static Map<Integer, Skill> getInventorySkills(int id) {
-        return Skill.mapFromString(SqlUtils.getString("inventory_skills", table, id));
+        return Skill.mapFromString(SqlUtils.getString("inventory_skills", table, id), id);
     }
 
     public static String getInventoryCelebrationString(int id) {

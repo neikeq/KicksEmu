@@ -90,7 +90,7 @@ class MessageUtils {
         msg.append(skill.getSelectionIndex());
         msg.append(skill.getExpiration());
         msg.appendZeros(8);
-        msg.append((int) skill.getTimestampExpire());
+        msg.append((int) (skill.getTimestampExpire().getTime() / 1000));
         msg.append(skill.isVisible());
     }
 
@@ -309,7 +309,7 @@ class MessageUtils {
 
     public static void appendInventorySkillsInUse(int playerId, ServerMessage msg) {
         String strSkills = PlayerInfo.getInventorySkillsString(playerId);
-        Map<Integer, Skill> skills = Skill.inUseFromString(strSkills);
+        Map<Integer, Skill> skills = Skill.getSkillsInUseFromString(strSkills);
 
         for (int i = 1; i <= 30; i++) {
             appendInventorySkill(skills.get(i), msg);
