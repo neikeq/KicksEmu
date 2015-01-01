@@ -57,7 +57,7 @@ public class CharacterCreator {
                     " stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping," +
                     " stats_punching, stats_defense, inventory_items, inventory_training," +
                     " inventory_skills, inventory_celebration, friends_list, ignored_list)" +
-                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             try (PreparedStatement stmt = con.prepareStatement(creation_query)) {
                 stmt.setInt(1, character.getOwner());

@@ -26,7 +26,7 @@ public class Skill {
         this.inventoryId = inventoryId;
         this.expiration = expiration;
         this.setSelectionIndex(selectionIndex);
-        this.timestampExpire = new Timestamp(timestampExpire);
+        this.setTimestampExpire(timestampExpire);
         this.visible = visible;
     }
 
@@ -37,7 +37,7 @@ public class Skill {
         inventoryId = Integer.valueOf(data[1]);
         setSelectionIndex(Byte.valueOf(data[2]));
         expiration = Integer.valueOf(data[3]);
-        timestampExpire = new Timestamp(Long.valueOf(data[4]));
+        setTimestampExpire(Long.valueOf(data[4]));
         visible = Boolean.valueOf(data[5]);
     }
 
@@ -122,5 +122,9 @@ public class Skill {
 
     public void setSelectionIndex(byte selectionIndex) {
         this.selectionIndex = selectionIndex;
+    }
+
+    public void setTimestampExpire(long timestampExpire) {
+        this.timestampExpire = new Timestamp(timestampExpire);
     }
 }

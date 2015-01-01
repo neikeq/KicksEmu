@@ -559,7 +559,6 @@ public class RoomManager {
         }
     }
 
-
     /**
      * Currently, since match making packets are not yet analyzed, we are just copying
      * the message and broadcasting it to the room (with little modifications).
@@ -597,33 +596,33 @@ public class RoomManager {
                 }
                 // -----------------
 
-                ByteBuf response = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
+                ByteBuf resp = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
                 try {
-                    response.writeBytes(new byte[10]);
-                    response.writeShort(610);
-                    response.writeInt(MessageId.MATCH_RESULT);
-                    response.writeShort(0);
-                    response.writeInt(mom);
-                    response.writeShort(result);
+                    resp.writeBytes(new byte[10]);
+                    resp.writeShort(610);
+                    resp.writeInt(MessageId.MATCH_RESULT);
+                    resp.writeShort(0);
+                    resp.writeInt(mom);
+                    resp.writeShort(result);
 
                     for (int i = 0; i < msg.getSize() - 17; i++) {
-                        response.writeByte(msg.readByte());
+                        resp.writeByte(msg.readByte());
                     }
 
-                    response.writeShort(0);
+                    resp.writeShort(0);
 
-                    response.writeInt(reward ? Configuration.getInt("game.rewards.exp") : 0);
-                    response.writeInt(reward ? Configuration.getInt("game.rewards.point") : 0);
-                    response.writeBytes(new byte[127]);
+                    resp.writeInt(reward ? Configuration.getInt("game.rewards.exp") : 0);
+                    resp.writeInt(reward ? Configuration.getInt("game.rewards.point") : 0);
+                    resp.writeBytes(new byte[127]);
 
                     for (Session s : room.getPlayers().values()) {
-                        response.retain();
-                        s.getChannel().writeAndFlush(response);
+                        resp.retain();
+                        s.getChannel().writeAndFlush(resp);
                         s.sendAndFlush(MessageBuilder.playerProgress(s.getPlayerId()));
                     }
                 } finally {
-                    response.release();
+                    resp.release();
                 }
 
                 room.setState(RoomState.RESULT);

@@ -36,10 +36,10 @@ public class Shop {
                         result = -10; // Already purchased
                     } else {
                         int inventoryId = InventoryUtils.getSmallestMissingId(skills.values());
-                        byte selectionIndex = InventoryUtils.getSmallestMissingIndex(skills.values());
+                        byte index = InventoryUtils.getSmallestMissingIndex(skills.values());
                         Timestamp timestamp = InventoryUtils.expirationToTimestamp(expiration);
 
-                        skill = new Skill(skillId, inventoryId, expiration, selectionIndex,
+                        skill = new Skill(skillId, inventoryId, expiration, index,
                                 timestamp.getTime(), true);
 
                         skills.put(inventoryId, skill);
