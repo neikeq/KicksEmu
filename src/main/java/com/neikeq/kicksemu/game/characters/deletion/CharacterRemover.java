@@ -14,6 +14,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class CharacterRemover {
 
@@ -27,7 +28,7 @@ public class CharacterRemover {
     public static void removeCharacter(Session session, ClientMessage msg) {
         int userId = session.getUserId();
         int charId = msg.readInt();
-        String password = msg.readString(20);
+        char[] password = msg.readChars(20);
 
         int slot = UserInfo.characterSlot(charId, userId);
 
@@ -35,6 +36,9 @@ public class CharacterRemover {
 
         try {
             if (slot >= 0 && Password.validate(password, UserInfo.getPassword(userId))) {
+                // Overwrite password for security
+                Arrays.fill(password, '\0');
+
                 if (limitTimeExpired(userId)) {
                     if (remove(charId)) {
                         clearOwnerSlot(userId, slot);

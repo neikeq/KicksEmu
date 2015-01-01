@@ -12,15 +12,15 @@ public class Password {
     // SHA-256
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
 
-    private static byte[] hash(String password, byte[] salt, int iterations, int length)
+    private static byte[] hash(char[] password, byte[] salt, int iterations, int length)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-        PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, length * 8);
+        PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, length * 8);
         SecretKeyFactory skf = SecretKeyFactory.getInstance(ALGORITHM);
 
         return skf.generateSecret(spec).getEncoded();
     }
 
-    public static boolean validate(String password, String correctPassword)
+    public static boolean validate(char[] password, String correctPassword)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         String[] stored = correctPassword.split("\\$");
 

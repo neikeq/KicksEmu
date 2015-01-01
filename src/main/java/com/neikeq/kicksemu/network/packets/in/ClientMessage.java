@@ -32,6 +32,22 @@ public class ClientMessage {
         return body.getInt(index);
     }
 
+    public char[] readChars(int length) {
+        char[] chars = new char[length];
+
+        for (int i = 0; i < length; i++) {
+            char cur = body.readChar();
+
+            if ((byte)cur != 0) {
+                chars[i] = cur;
+            } else {
+                break;
+            }
+        }
+
+        return chars;
+    }
+
     public String readString(int length) {
         byte[] bytes = new byte[length];
         body.readBytes(bytes);

@@ -20,12 +20,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class Authenticator {
 
     public static void certifyLogin(Session session, ClientMessage msg) {
         String username = msg.readString(30).toLowerCase();
-        String password = msg.readString(20);
+        char[] password = msg.readChars(20);
         int clientVersion = msg.readInt();
 
         byte result = certifyAuthenticate(username, password, clientVersion);
@@ -44,7 +45,7 @@ public class Authenticator {
         }
     }
 
-    private static byte certifyAuthenticate(String username, String password, int clientVersion) {
+    private static byte certifyAuthenticate(String username, char[] password, int clientVersion) {
         byte authResult;
 
         if (clientVersion == Constants.REQUIRED_CLIENT_VERSION) {
@@ -57,6 +58,9 @@ public class Authenticator {
                 try (ResultSet result = stmt.executeQuery()) {
                     if (result.next()) {
                         if (Password.validate(password, result.getString("password"))) {
+                            // Overwrite password for security
+                            Arrays.fill(password, '\0');
+
                             int id = result.getInt("id");
 
                             if (!BanManager.isUserBanned(id)) {
