@@ -10,12 +10,6 @@ import java.util.List;
 
 public class StatusMessage {
 
-    private static final String validSpecialChars =
-            "ª!\"·$%&/()=?¿" +
-            "\\|@#~½¬{[]}" +
-            "*Çç_-:.;," +
-            "º¡\'";
-
     // List of censured words
     private static final List<String> censuredWords =
             Arrays.asList();
@@ -25,7 +19,7 @@ public class StatusMessage {
 
         byte result = 0;
 
-        if (containsInvalidChar(statusMessage) || containsCensuredWord(statusMessage)) {
+        if (containsCensuredWord(statusMessage)) {
             result = (byte)254;
         }
 
@@ -35,18 +29,6 @@ public class StatusMessage {
 
         ServerMessage response = MessageBuilder.changeStatusMessage(statusMessage, result);
         session.send(response);
-    }
-
-    private static boolean containsInvalidChar(String message) {
-        for (char current : message.toLowerCase().toCharArray()) {
-            if (!Character.isAlphabetic(current) && !Character.isDigit(current) &&
-                    !Character.isSpaceChar(current) &&
-                    !validSpecialChars.contains(String.valueOf(current))) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static boolean containsCensuredWord(String message) {

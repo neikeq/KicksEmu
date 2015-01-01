@@ -13,22 +13,6 @@ public class CharacterUpgrade {
 
     private static CharacterUpgrade instance;
 
-    public static CharacterUpgrade getInstance() {
-        if (instance == null) {
-            instance = new CharacterUpgrade();
-        }
-
-        return instance;
-    }
-
-    private CharacterUpgrade() {
-        stats = new HashMap<>();
-        autoStats = new HashMap<>();
-
-        defineStats();
-        defineAutoStats();
-    }
-
     public void defineStats() {
         getStats().put(PositionCodes.ST,
                 new PlayerStats(0, 0, 0, 7, 7, 0, -10, 7, 7, -10, 0, 0, 0, 0, 0, 0, 0));
@@ -79,6 +63,22 @@ public class CharacterUpgrade {
                 new PlayerStats(1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         getAutoStats().put(PositionCodes.SW,
                 new PlayerStats(1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+    }
+
+    private CharacterUpgrade() {
+        stats = new HashMap<>();
+        autoStats = new HashMap<>();
+
+        defineStats();
+        defineAutoStats();
+    }
+
+    public static CharacterUpgrade getInstance() {
+        if (instance == null) {
+            instance = new CharacterUpgrade();
+        }
+
+        return instance;
     }
 
     public Map<Short, PlayerStats> getStats() {

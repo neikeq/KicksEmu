@@ -10,11 +10,8 @@ public class Item {
     private int expiration;
     private int statsBonusOne;
     private int statsBonusTwo;
-
     private short remainUsages;
-
     private long timestampExpire;
-
     private boolean selected;
     private boolean visible;
 

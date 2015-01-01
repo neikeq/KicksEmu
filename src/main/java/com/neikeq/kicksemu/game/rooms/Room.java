@@ -23,30 +23,27 @@ public class Room {
     private int host;
     private int master;
 
-    private RoomState state;
-
-    private List<Integer> confirmedPlayers;
-
     private String name;
     private String password;
 
+    private RoomState state;
     private RoomMap map;
     private RoomBall ball;
     private RoomType type;
     private RoomSize maxSize;
     private GoalkeeperMode goalkeeperMode;
 
+    private final RoomLobby roomLobby;
+
     private final Map<Integer, Session> players;
 
+    private final List<Integer> confirmedPlayers;
     private final List<Integer> redTeam;
     private final List<Integer> blueTeam;
+    private final List<Integer> observers;
 
     private final List<Short> redTeamPositions;
     private final List<Short> blueTeamPositions;
-
-    private final List<Integer> observers;
-
-    private final RoomLobby roomLobby;
 
     private final Object locker = new Object();
 

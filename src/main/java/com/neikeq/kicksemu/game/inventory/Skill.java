@@ -8,11 +8,8 @@ public class Skill {
     private int id;
     private int inventoryId;
     private int expiration;
-
     private byte selectionIndex;
-
     private long timestampExpire;
-
     private boolean visible;
 
     public Skill() {

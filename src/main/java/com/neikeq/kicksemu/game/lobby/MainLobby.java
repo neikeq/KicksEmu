@@ -9,10 +9,6 @@ public class MainLobby implements Lobby {
 
     private final Object locker = new Object();
 
-    public List<Integer> getPlayers() {
-        return players;
-    }
-
     @Override
     public synchronized void addPlayer(int playerId) {
         synchronized (locker) {
@@ -31,5 +27,9 @@ public class MainLobby implements Lobby {
                 players.remove(index);
             }
         }
+    }
+
+    public List<Integer> getPlayers() {
+        return players;
     }
 }

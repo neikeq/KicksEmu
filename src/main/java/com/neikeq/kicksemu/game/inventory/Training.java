@@ -7,9 +7,7 @@ public class Training {
 
     private int id;
     private int inventoryId;
-
     private long timestampExpire;
-
     private boolean visible;
 
     public Training() {
