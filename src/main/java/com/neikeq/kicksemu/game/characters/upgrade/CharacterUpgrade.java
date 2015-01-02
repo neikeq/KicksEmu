@@ -4,12 +4,14 @@ import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.characters.PositionCodes;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CharacterUpgrade {
 
     private final Map<Short, PlayerStats> stats;
     private final Map<Short, PlayerStats> autoStats;
+    private final Map<Integer, Integer> levelStats;
 
     private static CharacterUpgrade instance;
 
@@ -65,12 +67,25 @@ public class CharacterUpgrade {
                 new PlayerStats(1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     }
 
+    public void defineLevelStats() {
+        getLevelStats().put(10, 2);
+        getLevelStats().put(18, 2);
+        getLevelStats().put(20, 2);
+        getLevelStats().put(30, 2);
+        getLevelStats().put(35, 2);
+        getLevelStats().put(40, 2);
+        getLevelStats().put(50, 2);
+        getLevelStats().put(55, 2);
+    }
+
     private CharacterUpgrade() {
         stats = new HashMap<>();
         autoStats = new HashMap<>();
+        levelStats = new HashMap<>();
 
         defineStats();
         defineAutoStats();
+        defineLevelStats();
     }
 
     public static CharacterUpgrade getInstance() {
@@ -87,5 +102,15 @@ public class CharacterUpgrade {
 
     public Map<Short, PlayerStats> getAutoStats() {
         return autoStats;
+    }
+
+    public Map<Integer, Integer> getLevelStats() {
+        return levelStats;
+    }
+
+    public short statsPointsForLevel(int level) {
+        Integer result = getLevelStats().get(level);
+
+        return result == null ? 1 : result.shortValue();
     }
 }

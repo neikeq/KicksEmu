@@ -94,16 +94,24 @@ public class CharacterManager {
         } catch (SQLException ignored) {}
 
         PlayerInfo.setLevel(level, playerId);
-        onPlayerLevelUp(playerId, levels);
+        onPlayerLevelUp(playerId, level, levels);
     }
 
-    public static void onPlayerLevelUp(int playerId, short levels) {
+    public static void onPlayerLevelUp(int playerId, short level, short levels) {
         short position = PlayerInfo.getPosition(playerId);
+        int from = level - levels;
 
-        // Add a stat point
-        PlayerInfo.setStatsPoints(levels, playerId);
+        // Calculate stats points to add
+        short statsPoints = 0;
 
-        // Add auto values
+        for (int i = from; i < level; ++i) {
+            statsPoints += CharacterUpgrade.getInstance().statsPointsForLevel(i);
+        }
+
+        // Add stats point
+        PlayerInfo.setStatsPoints(statsPoints, playerId);
+
+        // Add auto stats
         PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
 
         PlayerInfo.setStatsRunning((short)(autoStats.getRunning() * levels), playerId);
