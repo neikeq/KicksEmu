@@ -9,7 +9,7 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -384,7 +384,7 @@ public class Room {
     }
 
     public Room() {
-        players = new HashMap<>();
+        players = new LinkedHashMap<>();
 
         confirmedPlayers = new ArrayList<>();
 
