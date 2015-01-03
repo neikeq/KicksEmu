@@ -4,7 +4,6 @@ import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.characters.PositionCodes;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CharacterUpgrade {
@@ -69,7 +68,6 @@ public class CharacterUpgrade {
 
     public void defineLevelStats() {
         getLevelStats().put(10, 2);
-        getLevelStats().put(18, 2);
         getLevelStats().put(20, 2);
         getLevelStats().put(30, 2);
         getLevelStats().put(35, 2);

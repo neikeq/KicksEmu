@@ -79,36 +79,40 @@ public class UserManager {
 
     public static void upgradeCharacter(Session session, ClientMessage msg) {
         int userId = msg.readInt();
-        int characterId = msg.readInt();
+        int playerId = msg.readInt();
         short position = msg.readShort();
 
-        if (session.getUserId() == userId && UserInfo.hasCharacter(characterId, userId)) {
+        if (session.getUserId() == userId && UserInfo.hasCharacter(playerId, userId)) {
             byte result = 0;
 
-            short currentPosition = PlayerInfo.getPosition(characterId);
+            short currentPosition = PlayerInfo.getPosition(playerId);
 
             if (PositionCodes.isValidNewPosition(currentPosition, position)) {
-                PlayerInfo.setPosition(position, characterId);
+                PlayerInfo.setPosition(position, playerId);
 
                 PlayerStats stats = CharacterUpgrade.getInstance().getStats().get(position);
 
-                PlayerInfo.setStatsRunning(stats.getRunning(), characterId);
-                PlayerInfo.setStatsEndurance(stats.getEndurance(), characterId);
-                PlayerInfo.setStatsAgility(stats.getAgility(), characterId);
-                PlayerInfo.setStatsBallControl(stats.getBallControl(), characterId);
-                PlayerInfo.setStatsDribbling(stats.getDribbling(), characterId);
-                PlayerInfo.setStatsStealing(stats.getStealing(), characterId);
-                PlayerInfo.setStatsTackling(stats.getTackling(), characterId);
-                PlayerInfo.setStatsHeading(stats.getHeading(), characterId);
-                PlayerInfo.setStatsShortShots(stats.getShortShots(), characterId);
-                PlayerInfo.setStatsLongShots(stats.getLongShots(), characterId);
-                PlayerInfo.setStatsCrossing(stats.getCrossing(), characterId);
-                PlayerInfo.setStatsShortPasses(stats.getShortPasses(), characterId);
-                PlayerInfo.setStatsLongPasses(stats.getLongPasses(), characterId);
-                PlayerInfo.setStatsMarking(stats.getMarking(), characterId);
-                PlayerInfo.setStatsGoalkeeping(stats.getGoalkeeping(), characterId);
-                PlayerInfo.setStatsPunching(stats.getPunching(), characterId);
-                PlayerInfo.setStatsDefense(stats.getDefense(), characterId);
+                short remainStats = 0;
+
+                remainStats += PlayerInfo.setStatsRunning(stats.getRunning(), playerId);
+                remainStats += PlayerInfo.setStatsEndurance(stats.getEndurance(), playerId);
+                remainStats += PlayerInfo.setStatsAgility(stats.getAgility(), playerId);
+                remainStats += PlayerInfo.setStatsBallControl(stats.getBallControl(), playerId);
+                remainStats += PlayerInfo.setStatsDribbling(stats.getDribbling(), playerId);
+                remainStats += PlayerInfo.setStatsStealing(stats.getStealing(), playerId);
+                remainStats += PlayerInfo.setStatsTackling(stats.getTackling(), playerId);
+                remainStats += PlayerInfo.setStatsHeading(stats.getHeading(), playerId);
+                remainStats += PlayerInfo.setStatsShortShots(stats.getShortShots(), playerId);
+                remainStats += PlayerInfo.setStatsLongShots(stats.getLongShots(), playerId);
+                remainStats += PlayerInfo.setStatsCrossing(stats.getCrossing(), playerId);
+                remainStats += PlayerInfo.setStatsShortPasses(stats.getShortPasses(), playerId);
+                remainStats += PlayerInfo.setStatsLongPasses(stats.getLongPasses(), playerId);
+                remainStats += PlayerInfo.setStatsMarking(stats.getMarking(), playerId);
+                remainStats += PlayerInfo.setStatsGoalkeeping(stats.getGoalkeeping(), playerId);
+                remainStats += PlayerInfo.setStatsPunching(stats.getPunching(), playerId);
+                remainStats += PlayerInfo.setStatsDefense(stats.getDefense(), playerId);
+
+                PlayerInfo.setStatsPoints(remainStats, playerId);
 
             } else {
                 result = -1;

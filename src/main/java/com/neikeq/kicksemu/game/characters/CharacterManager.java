@@ -99,8 +99,8 @@ public class CharacterManager {
         }
     }
 
-    public static void onPlayerLevelUp(int playerId, short level, short levels) {
-        short position = PlayerInfo.getPosition(playerId);
+    public static void onPlayerLevelUp(int id, short level, short levels) {
+        short position = PlayerInfo.getPosition(id);
         int from = level - levels;
 
         // Calculate stats points to add
@@ -110,29 +110,29 @@ public class CharacterManager {
             statsPoints += CharacterUpgrade.getInstance().statsPointsForLevel(++i);
         }
 
-        // Add stats point
-        PlayerInfo.setStatsPoints(statsPoints, playerId);
-
         // Add auto stats
         PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
 
-        PlayerInfo.setStatsRunning((short)(autoStats.getRunning() * levels), playerId);
-        PlayerInfo.setStatsEndurance((short)(autoStats.getEndurance() * levels), playerId);
-        PlayerInfo.setStatsAgility((short)(autoStats.getAgility() * levels), playerId);
-        PlayerInfo.setStatsBallControl((short)(autoStats.getBallControl() * levels), playerId);
-        PlayerInfo.setStatsDribbling((short)(autoStats.getDribbling() * levels), playerId);
-        PlayerInfo.setStatsStealing((short)(autoStats.getStealing() * levels), playerId);
-        PlayerInfo.setStatsTackling((short)(autoStats.getTackling() * levels), playerId);
-        PlayerInfo.setStatsHeading((short)(autoStats.getHeading() * levels), playerId);
-        PlayerInfo.setStatsShortShots((short)(autoStats.getShortShots() * levels), playerId);
-        PlayerInfo.setStatsLongShots((short)(autoStats.getLongShots() * levels), playerId);
-        PlayerInfo.setStatsCrossing((short)(autoStats.getCrossing() * levels), playerId);
-        PlayerInfo.setStatsShortPasses((short)(autoStats.getShortPasses() * levels), playerId);
-        PlayerInfo.setStatsLongPasses((short)(autoStats.getLongPasses() * levels), playerId);
-        PlayerInfo.setStatsMarking((short)(autoStats.getMarking() * levels), playerId);
-        PlayerInfo.setStatsGoalkeeping((short)(autoStats.getGoalkeeping() * levels), playerId);
-        PlayerInfo.setStatsPunching((short)(autoStats.getPunching() * levels), playerId);
-        PlayerInfo.setStatsDefense((short)(autoStats.getDefense() * levels), playerId);
+        statsPoints += PlayerInfo.setStatsRunning(autoStats.getRunning() * levels, id);
+        statsPoints += PlayerInfo.setStatsEndurance(autoStats.getEndurance() * levels, id);
+        statsPoints += PlayerInfo.setStatsAgility(autoStats.getAgility() * levels, id);
+        statsPoints += PlayerInfo.setStatsBallControl(autoStats.getBallControl() * levels, id);
+        statsPoints += PlayerInfo.setStatsDribbling(autoStats.getDribbling() * levels, id);
+        statsPoints += PlayerInfo.setStatsStealing(autoStats.getStealing() * levels, id);
+        statsPoints += PlayerInfo.setStatsTackling(autoStats.getTackling() * levels, id);
+        statsPoints += PlayerInfo.setStatsHeading(autoStats.getHeading() * levels, id);
+        statsPoints += PlayerInfo.setStatsShortShots(autoStats.getShortShots() * levels, id);
+        statsPoints += PlayerInfo.setStatsLongShots(autoStats.getLongShots() * levels, id);
+        statsPoints += PlayerInfo.setStatsCrossing(autoStats.getCrossing() * levels, id);
+        statsPoints += PlayerInfo.setStatsShortPasses(autoStats.getShortPasses() * levels, id);
+        statsPoints += PlayerInfo.setStatsLongPasses(autoStats.getLongPasses() * levels, id);
+        statsPoints += PlayerInfo.setStatsMarking(autoStats.getMarking() * levels, id);
+        statsPoints += PlayerInfo.setStatsGoalkeeping(autoStats.getGoalkeeping() * levels, id);
+        statsPoints += PlayerInfo.setStatsPunching(autoStats.getPunching() * levels, id);
+        statsPoints += PlayerInfo.setStatsDefense(autoStats.getDefense() * levels, id);
+
+        // Add stats point
+        PlayerInfo.setStatsPoints(statsPoints, id);
     }
 
     public static void addStatsPoints(Session session, ClientMessage msg) {
@@ -158,29 +158,27 @@ public class CharacterManager {
             if (result == 0) {
                 short statsPoints = PlayerInfo.getStatsPoints(playerId);
 
-                // TODO Avoid adding stats on stats with 100 points or more
-
                 // If player have enough points
                 if (total <= statsPoints) {
-                    PlayerInfo.setStatsPoints((short) -total, playerId);
+                    total -= PlayerInfo.setStatsRunning(values[0], playerId);
+                    total -= PlayerInfo.setStatsEndurance(values[1], playerId);
+                    total -= PlayerInfo.setStatsAgility(values[2], playerId);
+                    total -= PlayerInfo.setStatsBallControl(values[3], playerId);
+                    total -= PlayerInfo.setStatsDribbling(values[4], playerId);
+                    total -= PlayerInfo.setStatsStealing(values[5], playerId);
+                    total -= PlayerInfo.setStatsTackling(values[6], playerId);
+                    total -= PlayerInfo.setStatsHeading(values[7], playerId);
+                    total -= PlayerInfo.setStatsShortShots(values[8], playerId);
+                    total -= PlayerInfo.setStatsLongShots(values[9], playerId);
+                    total -= PlayerInfo.setStatsCrossing(values[10], playerId);
+                    total -= PlayerInfo.setStatsShortPasses(values[11], playerId);
+                    total -= PlayerInfo.setStatsLongPasses(values[12], playerId);
+                    total -= PlayerInfo.setStatsMarking(values[13], playerId);
+                    total -= PlayerInfo.setStatsGoalkeeping(values[14], playerId);
+                    total -= PlayerInfo.setStatsPunching(values[15], playerId);
+                    total -= PlayerInfo.setStatsDefense(values[16], playerId);
 
-                    PlayerInfo.setStatsRunning(values[0], playerId);
-                    PlayerInfo.setStatsEndurance(values[1], playerId);
-                    PlayerInfo.setStatsAgility(values[2], playerId);
-                    PlayerInfo.setStatsBallControl(values[3], playerId);
-                    PlayerInfo.setStatsDribbling(values[4], playerId);
-                    PlayerInfo.setStatsStealing(values[5], playerId);
-                    PlayerInfo.setStatsTackling(values[6], playerId);
-                    PlayerInfo.setStatsHeading(values[7], playerId);
-                    PlayerInfo.setStatsShortShots(values[8], playerId);
-                    PlayerInfo.setStatsLongShots(values[9], playerId);
-                    PlayerInfo.setStatsCrossing(values[10], playerId);
-                    PlayerInfo.setStatsShortPasses(values[11], playerId);
-                    PlayerInfo.setStatsLongPasses(values[12], playerId);
-                    PlayerInfo.setStatsMarking(values[13], playerId);
-                    PlayerInfo.setStatsGoalkeeping(values[14], playerId);
-                    PlayerInfo.setStatsPunching(values[15], playerId);
-                    PlayerInfo.setStatsDefense(values[16], playerId);
+                    PlayerInfo.setStatsPoints((short) -total, playerId);
                 } else {
                     result = (byte) 253; // Not enough stats points
                 }
