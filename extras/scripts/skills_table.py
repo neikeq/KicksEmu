@@ -19,8 +19,9 @@ def read_bytes(path):
 
 def retrieve_data(name, index):
     list = [
-        name, bytes_to_int(dump, index - 94),
-        bytes_to_short(dump, index - 90), bytes_to_short(dump, index - 86),
+        name,
+        bytes_to_int(dump, index - 94), bytes_to_short(dump, index - 90),
+        bytes_to_short(dump, index - 88), bytes_to_short(dump, index - 86),
         bytes_to_int(dump, index - 82), bytes_to_int(dump, index - 78),
         bytes_to_int(dump, index - 74), bytes_to_int(dump, index - 62),
         bytes_to_int(dump, index - 58), bytes_to_int(dump, index - 54)
@@ -59,8 +60,8 @@ skills = [
 
 dump = read_bytes('skills.dump')
 
-print('Name,Id,Position,Level,Kash 7,Kash 30,Kash Perm,'
-      'Points 7,Points 30,Points Perm\n,')
+print('Name,Id,Position,Group,Level,Kash 7,Kash 30,Kash Perm,'
+      'Points 7,Points 30,Points Perm')
 
 missing = []
 
