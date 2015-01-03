@@ -26,7 +26,7 @@ public class Configuration {
      * If a configuration file exist, tries to read it.
      */
     public void init(String path) {
-        configPath = Constants.DATA_DIR + path;
+        configPath = Constants.CONFIG_DIR + path;
         
         config = new Properties();
 

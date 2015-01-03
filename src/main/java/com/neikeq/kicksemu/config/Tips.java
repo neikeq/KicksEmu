@@ -23,7 +23,7 @@ public class Tips {
         tipsList = new ArrayList<>();
         index = 0;
 
-        tipsPath = Constants.LANG_DIR + "tips_" + Configuration.get("lang");
+        tipsPath = Constants.TABLE_DIR + "tips_" + Configuration.get("lang");
 
         if (Files.exists(Paths.get(tipsPath))) {
             load();

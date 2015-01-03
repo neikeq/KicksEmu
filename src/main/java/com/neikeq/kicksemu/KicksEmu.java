@@ -35,8 +35,8 @@ public class KicksEmu {
             configFile += ".properties";
         }
 
-        if (configFile.startsWith(Constants.DATA_DIR)) {
-            configFile = configFile.replaceFirst(Constants.DATA_DIR, "");
+        if (configFile.startsWith(Constants.CONFIG_DIR)) {
+            configFile = configFile.replaceFirst(Constants.CONFIG_DIR, "");
         }
 
         KicksEmu.getInstance().start(configFile);
