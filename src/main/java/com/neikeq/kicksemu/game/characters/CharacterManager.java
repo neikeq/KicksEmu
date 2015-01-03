@@ -93,8 +93,10 @@ public class CharacterManager {
             }
         } catch (SQLException ignored) {}
 
-        PlayerInfo.setLevel(level, playerId);
-        onPlayerLevelUp(playerId, level, levels);
+        if (levels > 0) {
+            PlayerInfo.setLevel(level, playerId);
+            onPlayerLevelUp(playerId, level, levels);
+        }
     }
 
     public static void onPlayerLevelUp(int playerId, short level, short levels) {
@@ -104,8 +106,8 @@ public class CharacterManager {
         // Calculate stats points to add
         short statsPoints = 0;
 
-        for (int i = from; i < level; ++i) {
-            statsPoints += CharacterUpgrade.getInstance().statsPointsForLevel(i);
+        for (int i = from; i < level; i++) {
+            statsPoints += CharacterUpgrade.getInstance().statsPointsForLevel(++i);
         }
 
         // Add stats point
