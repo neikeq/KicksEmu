@@ -3,6 +3,7 @@ Retrieves information about skills from a memory dump
 and creates a table with it
 """
 
+
 def bytes_to_short(data, index=0):
     return (data[index+1] << 8) + data[index]
 
