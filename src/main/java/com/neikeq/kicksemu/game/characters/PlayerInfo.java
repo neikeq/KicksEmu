@@ -4,8 +4,8 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
-import com.neikeq.kicksemu.game.lists.friendship.FriendsList;
-import com.neikeq.kicksemu.game.lists.ignored.IgnoredList;
+import com.neikeq.kicksemu.game.misc.friendship.FriendsList;
+import com.neikeq.kicksemu.game.misc.ignored.IgnoredList;
 import com.neikeq.kicksemu.storage.SqlUtils;
 
 import java.util.Map;

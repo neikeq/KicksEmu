@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.network.server;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
+import com.neikeq.kicksemu.config.Table;
 import com.neikeq.kicksemu.game.servers.ServerBase;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
@@ -58,6 +59,8 @@ public class ServerManager {
 
         serverBase = ServerBase.fromConfig();
         serverId = serverBase.getId();
+
+        Table.initializeGameTables();
 
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
             return ServerUtils.insertServer(serverBase);

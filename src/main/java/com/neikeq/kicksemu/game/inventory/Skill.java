@@ -11,20 +11,20 @@ public class Skill {
 
     private int id;
     private int inventoryId;
-    private int expiration;
+    private Expiration expiration;
     private byte selectionIndex;
     private Timestamp timestampExpire;
     private boolean visible;
 
     public Skill() {
-        this(0, 0, 0, (byte)0, 0, false);
+        this(0, 0, 0, (byte)0, new Timestamp(0), false);
     }
 
     public Skill(int id, int inventoryId, int expiration,
-                 byte selectionIndex, long timestampExpire, boolean visible) {
+                 byte selectionIndex, Timestamp timestampExpire, boolean visible) {
         this.id = id;
         this.inventoryId = inventoryId;
-        this.expiration = expiration;
+        this.expiration = Expiration.fromInt(expiration);
         this.setSelectionIndex(selectionIndex);
         this.setTimestampExpire(timestampExpire);
         this.visible = visible;
@@ -36,7 +36,7 @@ public class Skill {
         id = Integer.valueOf(data[0]);
         inventoryId = Integer.valueOf(data[1]);
         setSelectionIndex(Byte.valueOf(data[2]));
-        expiration = Integer.valueOf(data[3]);
+        expiration = Expiration.fromInt(Integer.valueOf(data[3]));
         setTimestampExpire(Long.valueOf(data[4]));
         visible = Boolean.valueOf(data[5]);
     }
@@ -53,7 +53,8 @@ public class Skill {
                 if (!row.isEmpty()) {
                     Skill skill = new Skill(row);
 
-                    if (skill.getTimestampExpire().after(DateUtils.getTimestamp())) {
+                    if (skill.getTimestampExpire().after(DateUtils.getTimestamp()) &&
+                            !skill.getExpiration().isPermanent()) {
                         skills.put(skill.getInventoryId(), skill);
                     } else {
                         expired = true;
@@ -74,7 +75,7 @@ public class Skill {
 
         for (Skill s : map.values()) {
             skills += s.getId() + "," + s.getInventoryId() + "," + s.getSelectionIndex() + "," +
-                    s.getExpiration() + "," + s.getTimestampExpire().getTime() +
+                    s.getExpiration().toInt() + "," + s.getTimestampExpire().getTime() +
                     "," + s.isVisible() + ";";
         }
 
@@ -108,7 +109,7 @@ public class Skill {
         return selectionIndex;
     }
 
-    public int getExpiration() {
+    public Expiration getExpiration() {
         return expiration;
     }
 
@@ -122,6 +123,10 @@ public class Skill {
 
     public void setSelectionIndex(byte selectionIndex) {
         this.selectionIndex = selectionIndex;
+    }
+
+    public void setTimestampExpire(Timestamp timestampExpire) {
+        this.timestampExpire = timestampExpire;
     }
 
     public void setTimestampExpire(long timestampExpire) {

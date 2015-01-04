@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.lists.friendship;
+package com.neikeq.kicksemu.game.misc.friendship;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;

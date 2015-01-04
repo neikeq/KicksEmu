@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.lists.ignored;
+package com.neikeq.kicksemu.game.misc.ignored;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;

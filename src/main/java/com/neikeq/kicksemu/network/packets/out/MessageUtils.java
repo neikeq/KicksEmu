@@ -88,7 +88,7 @@ class MessageUtils {
         msg.append(skill.getInventoryId());
         msg.append(skill.getId());
         msg.append(skill.getSelectionIndex());
-        msg.append(skill.getExpiration());
+        msg.append(skill.getExpiration().toInt());
         msg.appendZeros(8);
         msg.append((int) (skill.getTimestampExpire().getTime() / 1000));
         msg.append(skill.isVisible());
