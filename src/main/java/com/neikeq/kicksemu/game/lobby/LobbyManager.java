@@ -30,7 +30,7 @@ public class LobbyManager {
 
         for (int i = index; i < index + 10; i++) {
             if (i < getMainLobby().getPlayers().size()) {
-                players.add(getMainLobby().getPlayers().get(index + i));
+                players.add(getMainLobby().getPlayers().get(i));
             } else {
                 break;
             }
