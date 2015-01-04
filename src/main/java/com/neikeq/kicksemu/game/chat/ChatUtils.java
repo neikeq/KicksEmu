@@ -11,6 +11,12 @@ public class ChatUtils {
         ServerManager.getPlayers().values().stream().forEach(s -> sendServerNotice(s, notice));
     }
 
+    public static void sendServerMessage(Session session, String message) {
+        ServerMessage response = MessageBuilder.chatMessage(0, "",
+                ChatMessageType.SERVER_MESSAGE, message);
+        session.sendAndFlush(response);
+    }
+
     public static void sendServerNotice(Session session, String notice) {
         ServerMessage response = MessageBuilder.chatMessage(0, "",
                 ChatMessageType.SERVER_MESSAGE, notice);

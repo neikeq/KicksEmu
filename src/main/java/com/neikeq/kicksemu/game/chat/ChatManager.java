@@ -152,6 +152,8 @@ public class ChatManager {
             onMessageWhisper(session, name, message);
         } else if (isTeamMessage(message)) {
             onMessageTeam(session, name, message.substring(1));
+        } else if (isCommandMessage(message)) {
+            CommandHandler.handle(session, message.substring(1));
         } else {
             onMessageNormal(session, name, message);
         }
@@ -162,6 +164,8 @@ public class ChatManager {
             onMessageClub(session, name, message.substring(2));
         } else if (isWhisperMessage(message)) {
             onMessageWhisper(session, name, message);
+        } else if (isCommandMessage(message)) {
+            CommandHandler.handle(session, message.substring(1));
         } else {
             onMessageTeam(session, name, message);
         }
@@ -177,6 +181,10 @@ public class ChatManager {
 
     private static boolean isClubMessage(String message) {
         return message.startsWith("//");
+    }
+
+    private static boolean isCommandMessage(String message) {
+        return message.startsWith("#");
     }
 
     private static String retrieveTargetFromWhisper(String message) {
