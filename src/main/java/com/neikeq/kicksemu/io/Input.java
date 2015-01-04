@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.io;
 
+import com.neikeq.kicksemu.game.chat.ChatUtils;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
@@ -100,6 +101,7 @@ public class Input {
         commands.put("logs", this::handleLogs);
         commands.put("verb", this::handleVerbosity);
         commands.put("stop", (String arg) -> KicksEmu.getInstance().stop());
+        commands.put("notice", ChatUtils::broadcastNotice);
     }
 
     public Input() {

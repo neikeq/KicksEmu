@@ -87,7 +87,7 @@ public class Room {
 
             // If this is the first player in the room, make it room master and host
             if (getPlayers().size() < 1) {
-                setMaster(playerId);
+                master = playerId;
                 setHost(playerId);
             }
 
@@ -280,9 +280,6 @@ public class Room {
 
     private void updateMaster() {
         setMaster((Integer)getPlayers().keySet().toArray()[0]);
-
-        ServerMessage msgRoomMaster = MessageBuilder.roomMaster(getMaster());
-        sendBroadcast(msgRoomMaster);
     }
 
     private void updateHost() {
@@ -483,6 +480,9 @@ public class Room {
 
     public void setMaster(int master) {
         this.master = master;
+
+        ServerMessage msgRoomMaster = MessageBuilder.roomMaster(master);
+        sendBroadcast(msgRoomMaster);
     }
 
     public boolean isPlaying() {

@@ -63,14 +63,18 @@ public class Session {
     }
 
     /** If the session is inside a room, leave it */
-    public void leaveRoom(RoomLeaveReason reason) {
+    public boolean leaveRoom(RoomLeaveReason reason) {
         Room room = RoomManager.getRoomById(roomId);
 
+        boolean isInsideRoom = room != null && room.isPlayerIn(playerId);
+
         // If room exist and player is inside the room
-        if (room != null && room.isPlayerIn(playerId)) {
+        if (isInsideRoom) {
             room.removePlayer(this, reason);
             sendAndFlush(MessageBuilder.leaveRoom(playerId, reason));
         }
+
+        return isInsideRoom;
     }
 
     /** Returns the room lobby if player is inside a room, otherwise return main lobby */
