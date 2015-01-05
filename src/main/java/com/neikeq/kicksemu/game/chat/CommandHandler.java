@@ -83,7 +83,7 @@ public class CommandHandler {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
                 Session target = room.getPlayers().get(targetId);
 
-                if (!target.leaveRoom(RoomLeaveReason.KICKED)) {
+                if (target != null && !target.leaveRoom(RoomLeaveReason.KICKED)) {
                     ChatUtils.sendServerMessage(session, "Player not found.");
                 }
             } else {
