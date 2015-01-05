@@ -81,8 +81,9 @@ public class CommandHandler {
         if (room != null) {
             if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
+                Session target = room.getPlayers().get(targetId);
 
-                if (!room.getPlayers().get(targetId).leaveRoom(RoomLeaveReason.KICKED)) {
+                if (!target.leaveRoom(RoomLeaveReason.KICKED)) {
                     ChatUtils.sendServerMessage(session, "Player not found.");
                 }
             } else {
