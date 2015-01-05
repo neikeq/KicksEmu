@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Room {
 
@@ -97,6 +98,11 @@ public class Room {
 
             // Add player to the correct team
             addPlayerToTeam(playerId);
+
+            // If player is in observer mode add it to the observers list
+            if (session.isObserver()) {
+                observers.add(playerId);
+            }
         }
 
         session.setRoomId(getId());
@@ -114,6 +120,9 @@ public class Room {
 
             // Remove player from his team list
             removePlayerFromTeam(playerId);
+
+            // Remove player from observers (if he is in)
+            observers.remove(Integer.valueOf(playerId));
 
             // If room is empty, remove it
             if (getPlayers().size() < 1) {
@@ -377,7 +386,8 @@ public class Room {
 
     /** Returns true if there are not enough players to play a real match */
     public boolean isTraining() {
-        return getPlayers().size() < 6 || getBlueTeam().size() != getRedTeam().size();
+        return getPlayers().values().stream().filter(s -> !observers.contains(s.getPlayerId()))
+                .collect(Collectors.toList()).size() < 6 || redTeamSize() != blueTeamSize();
     }
 
     public Room() {
@@ -515,6 +525,16 @@ public class Room {
 
     public List<Integer> getBlueTeam() {
         return blueTeam;
+    }
+
+    public int redTeamSize() {
+        return getRedTeam().stream().filter(id -> !observers.contains(id))
+                .collect(Collectors.toList()).size();
+    }
+
+    public int blueTeamSize() {
+        return getBlueTeam().stream().filter(id -> !observers.contains(id))
+                .collect(Collectors.toList()).size();
     }
 
     public RoomLobby getRoomLobby() {

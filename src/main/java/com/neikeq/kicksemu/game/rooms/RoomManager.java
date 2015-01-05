@@ -578,9 +578,7 @@ public class RoomManager {
                 int minPlayers = 6;
                 boolean reward = false;
 
-                if (room.getRedTeam().size() == room.getBlueTeam().size() &&
-                        room.getPlayers().size() >= minPlayers ||
-                        Configuration.getBoolean("game.rewards.practice")) {
+                if (!room.isTraining() || Configuration.getBoolean("game.rewards.practice")) {
                     reward = true;
                     room.getPlayers().values().stream()
                             .forEach(s -> {

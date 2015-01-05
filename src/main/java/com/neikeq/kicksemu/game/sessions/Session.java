@@ -25,6 +25,7 @@ public class Session {
 
     private boolean authenticated;
     private boolean udpAuthenticated;
+    private boolean observer;
 
     private int udpPort;
 
@@ -116,8 +117,12 @@ public class Session {
     
     public Session(Channel channel) {
         this.channel = channel;
+        setRoomId(-1);
+        setObserver(false);
+        setUdpPort(-1);
 
         setAuthenticated(false);
+        setUdpAuthenticated(false);
     }
 
     public boolean isAuthenticated() {
@@ -178,5 +183,13 @@ public class Session {
 
     public void setUdpPort(int udpPort) {
         this.udpPort = udpPort;
+    }
+
+    public boolean isObserver() {
+        return observer;
+    }
+
+    public void setObserver(boolean observer) {
+        this.observer = observer;
     }
 }

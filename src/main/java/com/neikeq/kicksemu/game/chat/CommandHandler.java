@@ -6,6 +6,7 @@ import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 
 import java.util.LinkedHashMap;
@@ -29,7 +30,7 @@ public class CommandHandler {
         }
     }
 
-    private static void setMaster(Session session, String ... args) {
+    private static void onMaster(Session session, String... args) {
         if (args.length < 2) return;
 
         int playerId = session.getPlayerId();
@@ -51,7 +52,7 @@ public class CommandHandler {
         }
     }
 
-    private static void who(Session session, String ... args) {
+    private static void onWho(Session session, String... args) {
         if (args.length < 2) return;
 
         Room room = RoomManager.getRoomById(session.getRoomId());
@@ -71,7 +72,7 @@ public class CommandHandler {
         }
     }
 
-    private static void kick(Session session, String ... args) {
+    private static void onKick(Session session, String... args) {
         if (args.length < 2) return;
 
         int playerId = session.getPlayerId();
@@ -90,7 +91,7 @@ public class CommandHandler {
         }
     }
 
-    private static void punish(Session session, String ... args) {
+    private static void onPunish(Session session, String ... args) {
         if (args.length < 2) return;
 
         if (PlayerInfo.isModerator(session.getPlayerId())) {
@@ -106,12 +107,35 @@ public class CommandHandler {
         }
     }
 
+    private static void onNotice(Session session, String ... args) {
+        int playerId = session.getPlayerId();
+
+        if (PlayerInfo.isModerator(playerId)) {
+            StringBuilder message = new StringBuilder();
+
+            for (int i = 1; i < args.length; i++) {
+                message.append(args[i]);
+                message.append(" ");
+            }
+
+            ChatUtils.broadcastNotice(message.toString());
+        }
+    }
+
+    private static void onObserver(Session session, String ... args) {
+        if (PlayerInfo.isModerator(session.getPlayerId())) {
+            session.setObserver(!session.isObserver());
+        }
+    }
+
     private static void defineCommands() {
         commands = new LinkedHashMap<>();
-        commands.put("host", CommandHandler::setMaster);
-        commands.put("who", CommandHandler::who);
-        commands.put("kick", CommandHandler::kick);
-        commands.put("punish", CommandHandler::punish);
+        commands.put("host", CommandHandler::onMaster);
+        commands.put("who", CommandHandler::onWho);
+        commands.put("kick", CommandHandler::onKick);
+        commands.put("punish", CommandHandler::onPunish);
+        commands.put("notice", CommandHandler::onNotice);
+        commands.put("observer", CommandHandler::onObserver);
     }
 
     @FunctionalInterface

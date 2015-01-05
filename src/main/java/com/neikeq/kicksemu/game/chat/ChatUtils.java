@@ -19,7 +19,7 @@ public class ChatUtils {
 
     public static void sendServerNotice(Session session, String notice) {
         ServerMessage response = MessageBuilder.chatMessage(0, "",
-                ChatMessageType.SERVER_MESSAGE, notice);
+                ChatMessageType.SERVER_NOTICE, notice);
         session.sendAndFlush(response);
     }
 }
