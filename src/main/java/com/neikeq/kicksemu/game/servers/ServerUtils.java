@@ -28,29 +28,28 @@ public class ServerUtils {
     }
 
     public static void serverInfo(Session session, ClientMessage msg) {
+        int playerId = session.getPlayerId();
+
         short serverId = msg.readShort();
-        short level = msg.readShort();
+        short level = PlayerInfo.getLevel(playerId);
 
         byte result = 0;
 
-        int playerId = session.getPlayerId();
+        // TODO Check if character can access private server... Reject code is 251
+        int clubId = PlayerInfo.getClubId(playerId);
 
-        /* TODO Check if character can access private server... Reject code is 251 */
-        if (level == PlayerInfo.getLevel(playerId)) {
-            int clubId = PlayerInfo.getClubId(playerId);
-
-            if (ServerInfo.getType(serverId) == GameServerType.CLUB &&
-                    (clubId <= 0 || !ClubManager.clubExist(clubId))) {
-                result = (byte)252; // Need to be a club member
-            } else if (level < ServerInfo.getMinLevel(serverId) ||
-                    level > ServerInfo.getMaxLevel(serverId)) {
-                result = (byte)253; // Level not allowed
-            } else if (ServerInfo.getMaxUsers(serverId) <=
-                    ServerInfo.getConnectedUsers(serverId)) {
-                result = (byte)254; // Server is full
-            }
-        } else {
-            result = (byte)255; // System problem
+        if (ServerInfo.getType(serverId) == GameServerType.CLUB &&
+                (clubId <= 0 || !ClubManager.clubExist(clubId))) {
+            // Cannot join a club server without being a club member
+            result = -4;
+        } else if (level < ServerInfo.getMinLevel(serverId) ||
+                level > ServerInfo.getMaxLevel(serverId)) {
+            // Player does not meet the level requirements
+            result = -3;
+        } else if (ServerInfo.getMaxUsers(serverId) <=
+                ServerInfo.getConnectedUsers(serverId)) {
+            // Server is full
+            result = -2;
         }
 
         ServerMessage response = MessageBuilder.serverInfo(serverId, result);
