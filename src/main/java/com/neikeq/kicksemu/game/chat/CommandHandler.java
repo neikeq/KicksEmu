@@ -108,9 +108,7 @@ public class CommandHandler {
     }
 
     private static void onNotice(Session session, String ... args) {
-        int playerId = session.getPlayerId();
-
-        if (PlayerInfo.isModerator(playerId)) {
+        if (PlayerInfo.isModerator(session.getPlayerId())) {
             StringBuilder message = new StringBuilder();
 
             for (int i = 1; i < args.length; i++) {
