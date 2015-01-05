@@ -28,9 +28,11 @@ public class LobbyManager {
         byte page = msg.readByte();
         int index = page * PLAYERS_PER_PAGE;
 
+        List<Integer> visiblePlayers = getMainLobby().getVisiblePlayers();
+
         for (int i = index; i < index + 10; i++) {
-            if (i < getMainLobby().getPlayers().size()) {
-                players.add(getMainLobby().getPlayers().get(i));
+            if (i < visiblePlayers.size()) {
+                players.add(visiblePlayers.get(i));
             } else {
                 break;
             }

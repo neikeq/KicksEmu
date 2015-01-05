@@ -386,8 +386,7 @@ public class MessageBuilder {
             msg.append(page);
 
             for (Integer playerId : players) {
-                // Visibility. Hide if player is moderator.
-                msg.append(!PlayerInfo.isModerator(playerId));
+                msg.append(true);
                 msg.append(playerId);
                 msg.append(PlayerInfo.getName(playerId), 15);
                 msg.append(PlayerInfo.getLevel(playerId));

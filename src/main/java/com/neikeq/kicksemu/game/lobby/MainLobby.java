@@ -1,7 +1,10 @@
 package com.neikeq.kicksemu.game.lobby;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainLobby implements Lobby {
 
@@ -31,5 +34,10 @@ public class MainLobby implements Lobby {
 
     public List<Integer> getPlayers() {
         return players;
+    }
+
+    public List<Integer> getVisiblePlayers() {
+        return players.stream().filter(id -> !PlayerInfo.isModerator(id))
+                .collect(Collectors.toList());
     }
 }
