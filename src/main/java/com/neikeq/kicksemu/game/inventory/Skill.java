@@ -53,8 +53,8 @@ public class Skill {
                 if (!row.isEmpty()) {
                     Skill skill = new Skill(row);
 
-                    if (skill.getTimestampExpire().after(DateUtils.getTimestamp()) &&
-                            !skill.getExpiration().isPermanent()) {
+                    if (skill.getTimestampExpire().after(DateUtils.getTimestamp()) ||
+                            skill.getExpiration().isPermanent()) {
                         skills.put(skill.getInventoryId(), skill);
                     } else {
                         expired = true;
