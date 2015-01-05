@@ -40,7 +40,7 @@ public class CommandHandler {
             if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
-                if (targetId != -1 && targetId != playerId && room.isPlayerIn(targetId)) {
+                if (targetId > 0 && targetId != room.getMaster() && room.isPlayerIn(targetId)) {
                     room.setMaster(targetId);
                     room.setHost(targetId);
                 } else {
