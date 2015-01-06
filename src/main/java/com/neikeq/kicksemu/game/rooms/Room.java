@@ -275,7 +275,7 @@ public class Room {
         sendBroadcast(msgPlayerLeaved);
 
         // If the countdown started, cancel it
-        if (getState() == RoomState.COUNT_DOWN) {
+        if (state() == RoomState.COUNT_DOWN) {
             cancelCountDown();
         }
     }
@@ -496,7 +496,7 @@ public class Room {
     }
 
     public boolean isPlaying() {
-        return getState() != RoomState.WAITING;
+        return state() != RoomState.WAITING;
     }
 
     public String getName() {
@@ -557,7 +557,7 @@ public class Room {
         return confirmedPlayers;
     }
 
-    public RoomState getState() {
+    public RoomState state() {
         return state;
     }
 

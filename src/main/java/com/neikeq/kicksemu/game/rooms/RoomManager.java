@@ -232,7 +232,8 @@ public class RoomManager {
 
         Room room = getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(playerId)) {
+        if (room != null && room.isPlayerIn(playerId) &&
+                (room.state() == RoomState.WAITING || room.state() == RoomState.COUNT_DOWN)) {
             RoomLeaveReason reason = RoomLeaveReason.LEAVED;
 
             session.leaveRoom(reason);
@@ -362,7 +363,7 @@ public class RoomManager {
         Room room = getRoomById(roomId);
 
         // If the room is valid, the player is inside it and it is in waiting state
-        if (room != null && room.isPlayerIn(playerId) && room.getState() == RoomState.WAITING) {
+        if (room != null && room.isPlayerIn(playerId) && room.state() == RoomState.WAITING) {
             RoomTeam currentTeam = room.getPlayerTeam(playerId);
             RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
 
@@ -506,7 +507,7 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            if (room.getState() == RoomState.COUNT_DOWN) {
+            if (room.state() == RoomState.COUNT_DOWN) {
                 room.cancelCountDown();
             }
         }
@@ -573,7 +574,7 @@ public class RoomManager {
             Room room = getRoomById(roomId);
 
             // If match started
-            if (room.getState() == RoomState.PLAYING) {
+            if (room.state() == RoomState.PLAYING) {
                 // TODO Temporary rewards. Must be removed/replaced in the future.
                 int minPlayers = 6;
                 boolean reward = false;

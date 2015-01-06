@@ -55,7 +55,7 @@ public class Session {
 
     /** Called when the session leaved a room */
     public void onLeavedRoom() {
-        roomId = 0;
+        roomId = -1;
 
         // If session is still alive, add it to the main lobby
         if (authenticated) {
@@ -98,7 +98,7 @@ public class Session {
         // If session information were not yet cleared
         if (authenticated) {
             setAuthenticated(false);
-            udpAuthenticated = false;
+            setUdpAuthenticated(false);
 
             // Update user status on database
             UserInfo.setOnline(false, userId);

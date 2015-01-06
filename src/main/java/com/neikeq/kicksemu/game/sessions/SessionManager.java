@@ -19,7 +19,7 @@ public class SessionManager {
     }
     
     public static void removeSession(Channel channel) {
-        Session session = channel.attr(SESSIONS_KEY).get();
+        Session session = getSession(channel);
 
         if (session != null) {
             session.close();

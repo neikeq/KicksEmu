@@ -5,8 +5,8 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
+import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.sessions.Session;
-import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 
 import java.util.LinkedHashMap;
@@ -36,7 +36,7 @@ public class CommandHandler {
         int playerId = session.getPlayerId();
         Room room = RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null) {
+        if (room != null && room.state() == RoomState.WAITING) {
             if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
@@ -78,7 +78,7 @@ public class CommandHandler {
         int playerId = session.getPlayerId();
         Room room = RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null) {
+        if (room != null && room.state() == RoomState.WAITING) {
             if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
                 Session target = room.getPlayers().get(targetId);
