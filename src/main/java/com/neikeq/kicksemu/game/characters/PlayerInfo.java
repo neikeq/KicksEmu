@@ -938,7 +938,7 @@ public class PlayerInfo {
 
     public static short setStatsShortPasses(int value, int id) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsShortPasses(id), value);
-        SqlUtils.sumShort("stats_shorts_passes", add, table, id);
+        SqlUtils.sumShort("stats_short_passes", add, table, id);
         return (short)(value - add);
     }
 
