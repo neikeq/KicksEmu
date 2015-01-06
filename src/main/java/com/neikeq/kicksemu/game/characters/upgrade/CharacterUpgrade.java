@@ -47,7 +47,7 @@ public class CharacterUpgrade {
         getAutoStats().put(PositionCodes.WF,
                 new PlayerStats(1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0));
         getAutoStats().put(PositionCodes.MF,
-                new PlayerStats(1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0));
+                new PlayerStats(1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
         getAutoStats().put(PositionCodes.AMF,
                 new PlayerStats(1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
         getAutoStats().put(PositionCodes.SMF,
