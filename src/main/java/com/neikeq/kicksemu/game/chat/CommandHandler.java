@@ -104,6 +104,8 @@ public class CommandHandler {
                 target.close();
 
                 ChatUtils.sendServerMessage(session, "Player punished: " + args[1]);
+            } else {
+                ChatUtils.sendServerMessage(session, "Player not found.");
             }
         }
     }
