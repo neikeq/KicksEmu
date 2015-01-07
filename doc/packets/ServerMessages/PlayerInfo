@@ -26,7 +26,7 @@ int experience
 short stats_points
 int kash
 int points
-char[8]
+char[8] unknown
 short tickets_kash
 short tickets_points
 short unknown

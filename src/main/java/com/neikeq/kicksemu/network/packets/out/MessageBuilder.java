@@ -549,10 +549,10 @@ public class MessageBuilder {
             msg.append((short)(room.getRedTeam().contains(playerId) ? 0 : 1));
 
             msg.append(room.isObserver(playerId));
-            msg.appendZeros(2);
+            msg.append(false, 2);
 
             msg.append(UserInfo.getSettings(ownerId).getCountry());
-            msg.appendZeros(2);
+            msg.append(true, 2);
 
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.append((short)session.getUdpPort());
@@ -566,7 +566,12 @@ public class MessageBuilder {
             MessageUtils.appendDefaultClothes(playerId, msg);
 
             msg.append(PlayerInfo.getPosition(playerId));
-            msg.appendZeros(9);
+            msg.appendZeros(1);
+            msg.append((short) 0);
+            msg.appendZeros(3);
+            msg.append((byte)0);
+            msg.append((byte)0);
+            msg.append((byte)0);
 
             // Stats
             MessageUtils.appendStats(playerId, msg);
