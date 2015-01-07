@@ -49,14 +49,17 @@ public class Room {
     private final Object locker = new Object();
 
     public byte tryJoinRoom(Session session, String password) {
+        int playerId = session.getPlayerId();
+
         byte result = 0;
 
         synchronized (locker) {
             if (!isFull()) {
                 // If room does not have a password, or typed password matches room's password
-                if (getType() != RoomType.PASSWORD || password.equals(getPassword())) {
+                if (getType() != RoomType.PASSWORD || password.equals(getPassword()) ||
+                        PlayerInfo.isModerator(playerId)) {
                     if (!isPlaying()) {
-                        short level = PlayerInfo.getLevel(session.getPlayerId());
+                        short level = PlayerInfo.getLevel(playerId);
 
                         // If player level is not allowed in room settings
                         if (playerHasInvalidLevel(level)) {
