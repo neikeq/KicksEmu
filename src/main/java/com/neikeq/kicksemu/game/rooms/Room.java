@@ -24,6 +24,8 @@ public class Room {
     private int host;
     private int master;
 
+    private long timeStart;
+
     private String name;
     private String password;
 
@@ -566,5 +568,13 @@ public class Room {
 
     public void setState(RoomState state) {
         this.state = state;
+    }
+
+    public long getTimeStart() {
+        return timeStart;
+    }
+
+    public void setTimeStart(long timeStart) {
+        this.timeStart = timeStart;
     }
 }

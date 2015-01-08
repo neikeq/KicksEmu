@@ -16,6 +16,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
 import java.nio.ByteOrder;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -556,6 +557,8 @@ public class RoomManager {
                 result = -1;
             }
 
+            room.setTimeStart(Calendar.getInstance().getTimeInMillis());
+
             session.send(MessageBuilder.startMatch(result));
         }
     }
@@ -573,13 +576,18 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
+            long timePlayed = (Calendar.getInstance().getTimeInMillis() / 1000)
+                    - (room.getTimeStart() / 1000);
+
             // If match started
             if (room.state() == RoomState.PLAYING) {
                 // TODO Temporary rewards. Must be removed/replaced in the future.
-                int minPlayers = 6;
                 boolean reward = false;
 
-                if (!room.isTraining() || Configuration.getBoolean("game.rewards.practice")) {
+                long stopWatch = 300 - msg.getBody().getShort(486);
+
+                if ((!room.isTraining() || Configuration.getBoolean("game.rewards.practice")) &&
+                        stopWatch < timePlayed || stopWatch - timePlayed < 30) {
                     reward = true;
                     room.getPlayers().values().stream()
                             .forEach(s -> {
