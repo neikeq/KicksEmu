@@ -5,7 +5,7 @@ from zlib import error
 
 
 def main(argv):
-    if argv > 1:
+    if len(argv) > 1:
         analyze_all(argv[1], argv[0] == 'c')
     else:
         analyze_all(argv[0])
@@ -35,7 +35,7 @@ def analyze_all(path, compress=False):
 
                     # compress/decompress the file and save the result
                     result = c.compress_file(file) if compress \
-                        else c.decompress(file)
+                        else c.decompress_file(file)
                     f = open(output, 'wb')
                     f.write(result)
                     f.close()
