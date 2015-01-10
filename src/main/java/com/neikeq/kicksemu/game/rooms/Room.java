@@ -502,6 +502,10 @@ public class Room {
         return state() != RoomState.WAITING;
     }
 
+    public boolean isLobbyScreen() {
+        return state() == RoomState.WAITING || state() == RoomState.COUNT_DOWN;
+    }
+
     public String getName() {
         return name;
     }

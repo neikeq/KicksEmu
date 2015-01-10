@@ -388,7 +388,7 @@ public class RoomManager {
         // If the room exist and the player is inside it
         if (room != null && room.getId() == roomId) {
             // If the player is the room master
-            if (room.getMaster() == session.getPlayerId()) {
+            if (room.getMaster() == session.getPlayerId() && room.isLobbyScreen()) {
                 // If the player is in the room
                 if (room.isPlayerIn(playerToKick)) {
                     room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
