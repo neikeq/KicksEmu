@@ -125,7 +125,23 @@ public class CommandHandler {
 
     private static void onObserver(Session session, String ... args) {
         if (PlayerInfo.isModerator(session.getPlayerId())) {
-            session.setObserver(!session.isObserver());
+            boolean observer = !session.isObserver();
+            session.setObserver(observer);
+
+            ChatUtils.sendServerMessage(session,
+                    "Observer mode " + (observer ? "enabled." : "disabled."));
+        }
+    }
+
+    private static void onVisible(Session session, String ... args) {
+        int playerId = session.getPlayerId();
+
+        if (PlayerInfo.isModerator(playerId)) {
+            boolean visible = !PlayerInfo.isVisible(playerId);
+            PlayerInfo.setVisible(visible, playerId);
+
+            ChatUtils.sendServerMessage(session,
+                    "Visible mode " + (visible ? "enabled." : "disabled."));
         }
     }
 
@@ -137,6 +153,7 @@ public class CommandHandler {
         commands.put("punish", CommandHandler::onPunish);
         commands.put("notice", CommandHandler::onNotice);
         commands.put("observer", CommandHandler::onObserver);
+        commands.put("visible", CommandHandler::onVisible);
     }
 
     @FunctionalInterface
