@@ -1,4 +1,5 @@
 import os
+import os.path
 import sys
 from compression import Compressor
 from zlib import error
@@ -6,7 +7,7 @@ from zlib import error
 
 def main(argv):
     if len(argv) > 1:
-        analyze_all(argv[1], argv[0] == 'c')
+        analyze_all(argv[1], argv[0] == '-c')
     else:
         analyze_all(argv[0])
 
@@ -14,6 +15,9 @@ def main(argv):
 def analyze_all(path, compress=False):
     if not path.endswith('/'):
         path += '/'
+
+    if not os.path.isdir(path):
+        print('Warning: The path given is not a valid directory.')
 
     c = Compressor()
 
@@ -30,17 +34,17 @@ def analyze_all(path, compress=False):
 
                 try:
                     # change the extension of the new file
-                    output = remove_extension(file).replace(path, '', 1)
-                    output += '.nif' if extension(file) != '.koc' else ''
+                    ext = '.nif' if extension(file) != '.koc' else ''
+                    out = replace_extension(file, ext).replace(path, '', 1)
 
                     # compress/decompress the file and save the result
                     result = c.compress_file(file) if compress \
                         else c.decompress_file(file)
-                    f = open(output, 'wb')
+                    f = open(out, 'wb')
                     f.write(result)
                     f.close()
 
-                    print('Decompressed:', output)
+                    print('Decompressed:', out)
                 except error as e:
                     print('zlib.error for file:', file)
                     print('Message:', e)
@@ -48,12 +52,17 @@ def analyze_all(path, compress=False):
                     print('IOError:', ioe)
 
 
-def remove_extension(name):
-    return name[0:len(name)-4]
+def replace_extension(name, ext):
+    return replace_last(name, extension(name), ext, 1)
 
 
 def extension(name):
-    return name[len(name)-4:len(name)]
+    return os.path.splitext(name)[1]
+
+
+def replace_last(s, old, new, count):
+    li = s.rsplit(old, count)
+    return new.join(li)
 
 
 def print_help():
