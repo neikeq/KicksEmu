@@ -28,4 +28,4 @@ class Compressor:
     def add_header(self, data):
         result = self.header
         result[len(self.header):len(data)+len(self.header)] = data
-        return result
+        return bytes(result)
