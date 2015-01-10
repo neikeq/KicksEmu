@@ -10,8 +10,12 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
+-- Dumping database structure for kicksdb
+CREATE DATABASE IF NOT EXISTS `kicksdb` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `kicksdb`;
+
+
 -- Dumping structure for table kicksdb.bans
-DROP TABLE IF EXISTS `bans`;
 CREATE TABLE IF NOT EXISTS `bans` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -25,7 +29,6 @@ CREATE TABLE IF NOT EXISTS `bans` (
 
 
 -- Dumping structure for table kicksdb.blacklist
-DROP TABLE IF EXISTS `blacklist`;
 CREATE TABLE IF NOT EXISTS `blacklist` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `remote_address` varchar(64) NOT NULL,
@@ -39,7 +42,6 @@ CREATE TABLE IF NOT EXISTS `blacklist` (
 
 
 -- Dumping structure for table kicksdb.ceres
-DROP TABLE IF EXISTS `ceres`;
 CREATE TABLE IF NOT EXISTS `ceres` (
   `id` int(10) unsigned NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -52,7 +54,6 @@ CREATE TABLE IF NOT EXISTS `ceres` (
 
 
 -- Dumping structure for table kicksdb.characters
-DROP TABLE IF EXISTS `characters`;
 CREATE TABLE IF NOT EXISTS `characters` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner` int(11) unsigned NOT NULL,
@@ -61,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `level` smallint(6) unsigned NOT NULL DEFAULT '1',
   `blocked` bit(1) NOT NULL DEFAULT b'0',
   `moderator` bit(1) NOT NULL DEFAULT b'0',
+  `visible` bit(1) NOT NULL DEFAULT b'0',
   `club_id` int(10) unsigned NOT NULL DEFAULT '0',
   `quest_current` smallint(6) unsigned NOT NULL DEFAULT '1',
   `quest_matches_left` smallint(6) unsigned NOT NULL DEFAULT '5',
@@ -110,42 +112,6 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `stats_goalkeeping` smallint(6) unsigned NOT NULL,
   `stats_punching` smallint(6) unsigned NOT NULL,
   `stats_defense` smallint(6) unsigned NOT NULL,
-  `training_points` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_running` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_endurance` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_agility` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_ball_control` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_dribbling` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_stealing` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_tackling` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_heading` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_short_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_long_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_crossing` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_short_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_long_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_marking` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_goalkeeping` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_punching` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `training_defense` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_points` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_running` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_endurance` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_agility` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_ball_control` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_dribbling` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_stealing` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_tackling` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_heading` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_short_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_long_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_crossing` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_short_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_long_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_marking` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_goalkeeping` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_punching` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `bonus_defense` smallint(6) unsigned NOT NULL DEFAULT '0',
   `inventory_items` text NOT NULL,
   `inventory_training` text NOT NULL,
   `inventory_skills` text NOT NULL,
@@ -183,6 +149,42 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `history_month_stealing` int(11) NOT NULL DEFAULT '0',
   `history_month_tackling` int(11) NOT NULL DEFAULT '0',
   `history_month_total_points` int(11) NOT NULL DEFAULT '0',
+  `training_points` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_running` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_endurance` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_agility` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_ball_control` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_dribbling` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_stealing` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_tackling` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_heading` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_short_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_long_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_crossing` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_short_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_long_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_marking` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_goalkeeping` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_punching` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `training_defense` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_points` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_running` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_endurance` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_agility` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_ball_control` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_dribbling` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_stealing` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_tackling` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_heading` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_short_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_long_shots` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_crossing` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_short_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_long_passes` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_marking` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_goalkeeping` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_punching` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `bonus_defense` smallint(6) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -190,7 +192,6 @@ CREATE TABLE IF NOT EXISTS `characters` (
 
 
 -- Dumping structure for table kicksdb.clubs
-DROP TABLE IF EXISTS `clubs`;
 CREATE TABLE IF NOT EXISTS `clubs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
@@ -209,7 +210,6 @@ CREATE TABLE IF NOT EXISTS `clubs` (
 
 
 -- Dumping structure for table kicksdb.items
-DROP TABLE IF EXISTS `items`;
 CREATE TABLE IF NOT EXISTS `items` (
   `id` smallint(6) unsigned NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -224,7 +224,6 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 
 -- Dumping structure for table kicksdb.levels
-DROP TABLE IF EXISTS `levels`;
 CREATE TABLE IF NOT EXISTS `levels` (
   `level` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `experience` int(11) unsigned NOT NULL,
@@ -235,7 +234,6 @@ CREATE TABLE IF NOT EXISTS `levels` (
 
 
 -- Dumping structure for table kicksdb.servers
-DROP TABLE IF EXISTS `servers`;
 CREATE TABLE IF NOT EXISTS `servers` (
   `id` smallint(6) unsigned NOT NULL,
   `filter` smallint(6) NOT NULL,
@@ -259,7 +257,6 @@ CREATE TABLE IF NOT EXISTS `servers` (
 
 
 -- Dumping structure for table kicksdb.skills
-DROP TABLE IF EXISTS `skills`;
 CREATE TABLE IF NOT EXISTS `skills` (
   `id` int(10) unsigned NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -273,7 +270,6 @@ CREATE TABLE IF NOT EXISTS `skills` (
 
 
 -- Dumping structure for table kicksdb.status
-DROP TABLE IF EXISTS `status`;
 CREATE TABLE IF NOT EXISTS `status` (
   `online_users` int(11) unsigned NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -282,7 +278,6 @@ CREATE TABLE IF NOT EXISTS `status` (
 
 
 -- Dumping structure for table kicksdb.users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(15) NOT NULL,

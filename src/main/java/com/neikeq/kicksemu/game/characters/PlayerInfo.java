@@ -36,6 +36,10 @@ public class PlayerInfo {
         return SqlUtils.getBoolean("moderator", table, id);
     }
 
+    public static boolean isVisible(int id) {
+        return SqlUtils.getBoolean("visible", table, id);
+    }
+
     public static short getLevel(int id) {
         return SqlUtils.getShort("level", table, id);
     }
@@ -724,6 +728,10 @@ public class PlayerInfo {
 
     public static void setBlocked(boolean value, int id) {
         SqlUtils.setBoolean("blocked", value, table, id);
+    }
+
+    public static void setVisible(boolean value, int id) {
+        SqlUtils.setBoolean("visible", value, table, id);
     }
 
     public static void setLevel(short value, int id) {
