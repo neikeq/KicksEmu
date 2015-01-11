@@ -2,12 +2,12 @@
 // Tcp
 
 Id: 2407
-Size: 478
+Size: 480
 
 Data:
 int packet_id
 short room_id
-short unknown
+int unknown
 // Id of 'the man of the match' player or -1 for no player
 int MOM_id
 // Team stats
@@ -30,11 +30,10 @@ short vote_points // 0 to 100
 short unknown
 short ball_control_percentage // 0 to 100
 // Players stats
-// Append the following for each player (length: 40)
+// Append the following 10 times, and leave NUL for empty slots (length: 40)
 int player_id
-int unknown
-short unknown
-short unknown
+int experience_reward
+int points_reward ??
 short goals
 short assists
 short blocks
@@ -45,7 +44,8 @@ char[10] unknown
 short vote_points // 0 to 100
 short unknown
 short ball_control_percentage // 0 to 100
-//
+// Time played
 short unknown
 short countdown_played // from 300 to 0
-short unknown
+bool golden_time
+bool exp
