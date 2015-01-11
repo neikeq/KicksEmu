@@ -493,11 +493,15 @@ public class RoomManager {
         int roomId = msg.readShort();
         short count = msg.readShort();
 
-        if (session.getRoomId() == roomId) {
-            Room room = getRoomById(roomId);
+        Room room = getRoomById(roomId);
 
-            ServerMessage msgCountDown = MessageBuilder.countDown(count);
-            room.sendBroadcast(msgCountDown);
+        if (room != null && room.getMaster() == session.getPlayerId() && room.isLobbyScreen()) {
+                if (count == 0) {
+                    room.setState(RoomState.LOADING);
+                }
+
+                ServerMessage msgCountDown = MessageBuilder.countDown(count);
+                room.sendBroadcast(msgCountDown);
         }
     }
 
@@ -655,7 +659,9 @@ public class RoomManager {
 
         Room room = getRoomById(roomId);
 
-        if (room != null && room.getHost() == session.getPlayerId()) {
+        if (room != null && room.state() == RoomState.LOADING &&
+                room.getHost() == session.getPlayerId()) {
+            room.setState(RoomState.WAITING);
             room.sendBroadcast(MessageBuilder.cancelLoading());
         }
     }
