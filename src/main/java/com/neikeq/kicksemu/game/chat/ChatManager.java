@@ -25,7 +25,7 @@ public class ChatManager {
         if (session.getPlayerId() == characterId) {
             String name = msg.readString(15);
             ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
-            String message = msg.readString(55);
+            String message = msg.readString(65);
 
             if (type != null) {
                 switch (type) {
