@@ -49,7 +49,7 @@ short countdown_played // from 300 to 0
 bool golden_time
 bool exp
 // ...
-byte point
+bool point
 int experience_reward
 int points_reward
 char[132] unknown

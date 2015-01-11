@@ -978,6 +978,7 @@ public class MessageBuilder {
 
         msg.append(prOptional.get().getExperience());
         msg.append(prOptional.get().getPoints());
+
         msg.appendZeros(132);
 
         return msg;

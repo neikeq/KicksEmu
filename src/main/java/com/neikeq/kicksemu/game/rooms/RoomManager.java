@@ -561,10 +561,6 @@ public class RoomManager {
         }
     }
 
-    /**
-     * Currently, since match making packets are not yet analyzed, we are just copying
-     * the message and broadcasting it to the room (with little modifications).
-     */
     public static void matchResult(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         msg.readInt();

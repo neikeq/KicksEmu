@@ -72,6 +72,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.CANCEL_LOADING, RoomManager::cancelLoading);
         events.put(MessageId.START_MATCH, RoomManager::startMatch);
         events.put(MessageId.MATCH_RESULT, RoomManager::matchResult);
+        events.put(MessageId.MATCH_FORCED_RESULT, RoomManager::matchResult);
         events.put(MessageId.UNKNOWN1, RoomManager::unknown1);
         events.put(MessageId.UNKNOWN2, RoomManager::unknown2);
         events.put(MessageId.ADD_STATS_POINTS, CharacterManager::addStatsPoints);
