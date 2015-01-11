@@ -2,8 +2,12 @@
 // Tcp
 
 Id: 2313
-Size: 6
+Size: 14
 
 Data:
 int packet_id
-short room_id
+byte reason
+byte response
+int character_id
+short unknown // same as team
+short team

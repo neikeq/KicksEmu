@@ -228,13 +228,15 @@ public class Room {
     public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {
         RoomTeam targetTeam = currentTeam == RoomTeam.RED ? RoomTeam.BLUE :  RoomTeam.RED;
 
-        if (!isTeamFull(targetTeam)) {
-            removePlayerFromTeam(playerId, currentTeam);
-            addPlayerToTeam(playerId, targetTeam);
+        synchronized (locker) {
+            if (!isTeamFull(targetTeam)) {
+                removePlayerFromTeam(playerId, currentTeam);
+                addPlayerToTeam(playerId, targetTeam);
 
-            return targetTeam;
-        } else {
-            return currentTeam;
+                return targetTeam;
+            } else {
+                return currentTeam;
+            }
         }
     }
 
