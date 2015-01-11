@@ -10,6 +10,8 @@ import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
+import com.neikeq.kicksemu.game.rooms.match.MatchResult;
+import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.AuthenticationResult;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -22,6 +24,7 @@ import com.neikeq.kicksemu.utils.DateUtils;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MessageBuilder {
     
@@ -252,7 +255,7 @@ public class MessageBuilder {
     public static ServerMessage udpConfirm(boolean result) {
         ServerMessage msg = new ServerMessage(MessageId.UDP_CONFIRM);
 
-        MessageUtils.appendResult((byte)(result ? 0 : 253), msg);
+        MessageUtils.appendResult((byte) (result ? 0 : 253), msg);
 
         return msg;
     }
@@ -608,7 +611,7 @@ public class MessageBuilder {
     public static ServerMessage roomMap(short map) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_MAP);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         msg.append(map);
 
@@ -860,7 +863,7 @@ public class MessageBuilder {
     public static ServerMessage unknown1() {
         ServerMessage msg = new ServerMessage(MessageId.UNKNOWN1);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         return msg;
     }
@@ -944,6 +947,38 @@ public class MessageBuilder {
         ServerMessage msg = new ServerMessage(MessageId.CANCEL_LOADING);
 
         MessageUtils.appendResult((byte)0, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage matchResult(int playerId, MatchResult result, RoomTeam team) {
+        ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(result.getMom());
+        result.getRedTeam().appendResult(msg);
+        result.getBlueTeam().appendResult(msg);
+        result.getRedPlayers().stream().forEach(pr -> pr.appendResult(msg));
+        msg.appendZeros(40 * (5 - result.getRedPlayers().size()));
+        result.getBluePlayers().stream().forEach(pr -> pr.appendResult(msg));
+        msg.appendZeros(40 * (5 - result.getBluePlayers().size()));
+        msg.append(result.getCountdown());
+        msg.append(result.isGoldenTime());
+        msg.append(result.isExperience());
+        msg.append(result.isExperience()); // Point
+
+        Optional<PlayerResult> prOptional = result.getRedPlayers().stream()
+                .filter(pr -> pr.getPlayerId() == playerId).findFirst();
+
+        if (!prOptional.isPresent()) {
+            prOptional = result.getBluePlayers().stream()
+                    .filter(pr -> pr.getPlayerId() == playerId).findFirst();
+        }
+
+        msg.append(prOptional.get().getExperience());
+        msg.append(prOptional.get().getPoints());
+        msg.appendZeros(132);
 
         return msg;
     }

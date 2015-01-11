@@ -1,21 +1,18 @@
 package com.neikeq.kicksemu.game.rooms;
 
 import com.neikeq.kicksemu.config.Configuration;
-import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
+import com.neikeq.kicksemu.game.rooms.match.MatchResult;
+import com.neikeq.kicksemu.game.rooms.match.RewardCalculator;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
-import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 
-import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -571,60 +568,48 @@ public class RoomManager {
     public static void matchResult(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         msg.readInt();
-        int mom = msg.readInt();
-        short result = msg.readShort();
 
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
             // If match started
             if (room.state() == RoomState.PLAYING) {
-                // TODO Temporary rewards. Must be removed/replaced in the future.
-                boolean reward = false;
+                MatchResult result = MatchResult.fromMessage(msg,
+                        room.getRedTeam().size(), room.getBlueTeam().size());
 
-                if (!room.isTraining() || Configuration.getBoolean("game.rewards.practice")) {
-                    reward = true;
-                    room.getPlayers().values().stream()
-                            .forEach(s -> {
-                                PlayerInfo.setPoints(Configuration.getInt("game.rewards.point"),
-                                        s.getPlayerId());
-                                PlayerInfo.setExperience(Configuration.getInt("game.rewards.exp"),
-                                        s.getPlayerId());
-                                UserInfo.setKash(Configuration.getInt("game.rewards.kash"),
-                                        s.getUserId());
+                // Reward red team players
+                result.getRedPlayers().stream().forEach(pr -> {
+                    int playerId = pr.getPlayerId();
+                    int reward = RewardCalculator.calculateReward(pr, room,
+                            result.getCountdown());
 
-                                CharacterManager.checkExperience(s.getPlayerId());
-                            });
-                }
+                    pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
+                    pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
 
-                ByteBuf resp = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
+                    PlayerInfo.setPoints(pr.getPoints(), playerId);
+                    PlayerInfo.setExperience(pr.getExperience(), playerId);
 
-                try {
-                    resp.writeBytes(new byte[10]);
-                    resp.writeShort(610);
-                    resp.writeInt(MessageId.MATCH_RESULT);
-                    resp.writeShort(0);
-                    resp.writeInt(mom);
-                    resp.writeShort(result);
+                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId,
+                            result, room.getPlayerTeam(playerId));
+                    room.getPlayers().get(playerId).sendAndFlush(resultMsg);
+                });
 
-                    for (int i = 0; i < msg.getSize() - 17; i++) {
-                        resp.writeByte(msg.readByte());
-                    }
+                // Reward blue team players
+                result.getBluePlayers().stream().forEach(pr -> {
+                    int playerId = pr.getPlayerId();
+                    int reward = RewardCalculator.calculateReward(pr, room,
+                            result.getCountdown());
 
-                    resp.writeShort(0);
+                    pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
+                    pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
 
-                    resp.writeInt(reward ? Configuration.getInt("game.rewards.exp") : 0);
-                    resp.writeInt(reward ? Configuration.getInt("game.rewards.point") : 0);
-                    resp.writeBytes(new byte[127]);
+                    PlayerInfo.setPoints(pr.getPoints(), playerId);
+                    PlayerInfo.setExperience(pr.getExperience(), playerId);
 
-                    for (Session s : room.getPlayers().values()) {
-                        resp.retain();
-                        s.getChannel().writeAndFlush(resp);
-                        s.sendAndFlush(MessageBuilder.playerProgress(s.getPlayerId()));
-                    }
-                } finally {
-                    resp.release();
-                }
+                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId,
+                            result, room.getPlayerTeam(playerId));
+                    room.getPlayers().get(playerId).sendAndFlush(resultMsg);
+                });
 
                 room.setState(RoomState.RESULT);
                 room.getConfirmedPlayers().clear();

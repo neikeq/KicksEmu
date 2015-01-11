@@ -45,7 +45,6 @@ short vote_points // 0 to 100
 short unknown
 short ball_control_percentage // 0 to 100
 // Time played
-short unknown
 short countdown_played // from 300 to 0
 bool golden_time
 bool exp
