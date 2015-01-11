@@ -583,6 +583,14 @@ public class RoomManager {
                     int reward = RewardCalculator.calculateReward(pr, room,
                             result.getCountdown());
 
+                    if (result.getMom() == playerId) {
+                        reward += (reward * 25) / 100;
+                    }
+
+                    if (result.getBlueTeam().getGoals() <= 1) {
+                        reward += (reward * 30) / 100;
+                    }
+
                     pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
 
@@ -599,6 +607,14 @@ public class RoomManager {
                     int playerId = pr.getPlayerId();
                     int reward = RewardCalculator.calculateReward(pr, room,
                             result.getCountdown());
+
+                    if (result.getMom() == playerId) {
+                        reward += (reward * 25) / 100;
+                    }
+
+                    if (result.getRedTeam().getGoals() <= 1) {
+                        reward += (reward * 30) / 100;
+                    }
 
                     pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(reward * Configuration.getInt("game.rewards.point"));

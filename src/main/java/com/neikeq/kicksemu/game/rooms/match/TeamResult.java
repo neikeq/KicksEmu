@@ -17,7 +17,7 @@ public class TeamResult {
 
     public void appendResult(ServerMessage msg) {
         msg.append(result);
-        msg.append(goals);
+        msg.append(getGoals());
         msg.append(assists);
         msg.append(blocks);
         msg.append(shots);
@@ -57,5 +57,9 @@ public class TeamResult {
         this.tackles = tackles;
         this.votePoints = votePoints;
         this.ballControl = ballControl;
+    }
+
+    public short getGoals() {
+        return goals;
     }
 }
