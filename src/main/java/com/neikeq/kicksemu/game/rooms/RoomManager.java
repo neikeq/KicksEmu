@@ -592,7 +592,6 @@ public class RoomManager {
                                 CharacterManager.checkExperience(s.getPlayerId());
                             });
                 }
-                // -----------------
 
                 ByteBuf resp = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
@@ -648,6 +647,16 @@ public class RoomManager {
             Room room = getRoomById(roomId);
 
             room.sendBroadcast(MessageBuilder.unknown2());
+        }
+    }
+
+    public static void cancelLoading(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        Room room = getRoomById(roomId);
+
+        if (room != null && room.getHost() == session.getPlayerId()) {
+            room.sendBroadcast(MessageBuilder.cancelLoading());
         }
     }
 }

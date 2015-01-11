@@ -244,7 +244,7 @@ public class MessageBuilder {
         msg.appendZeros(2);
 
         // Request the client to close the connection
-        msg.write(0, (short)-1);
+        msg.write(0, (short) -1);
 
         return msg;
     }
@@ -651,7 +651,7 @@ public class MessageBuilder {
 
         msg.append(playerId);
         msg.appendZeros(2);
-        msg.append((short)newTeam.toInt());
+        msg.append((short) newTeam.toInt());
 
         return msg;
     }
@@ -769,7 +769,7 @@ public class MessageBuilder {
     public static ServerMessage startCountDown(byte type) {
         ServerMessage msg = new ServerMessage(MessageId.START_COUNT_DOWN);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         msg.append(type);
 
@@ -813,7 +813,7 @@ public class MessageBuilder {
     public static ServerMessage cancelCountDown() {
         ServerMessage msg = new ServerMessage(MessageId.CANCEL_COUNT_DOWN);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         return msg;
     }
@@ -936,6 +936,14 @@ public class MessageBuilder {
         if (result == 0) {
             msg.append(inventoryId);
         }
+
+        return msg;
+    }
+
+    public static ServerMessage cancelLoading() {
+        ServerMessage msg = new ServerMessage(MessageId.CANCEL_LOADING);
+
+        MessageUtils.appendResult((byte)0, msg);
 
         return msg;
     }
