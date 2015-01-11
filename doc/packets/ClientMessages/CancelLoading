@@ -1,0 +1,9 @@
+// CancelLoading
+// Tcp
+
+Id: 2405
+Size: 6
+
+Data:
+int packet_id
+short room_id
