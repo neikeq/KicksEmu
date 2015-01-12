@@ -791,14 +791,20 @@ public class MessageBuilder {
         msg.append(room.isTraining());
         msg.appendZeros(4);
 
+        byte hostIndex = (byte)(room.getPlayerTeam(room.getHost()) == RoomTeam.RED ?
+                room.getRedTeam() : room.getBlueTeam()).indexOf(room.getHost());
+
         msg.append(room.getHost());
-        msg.append(true);
+        msg.append(hostIndex);
 
         room.getPlayers().keySet().stream()
                 .filter(playerId -> playerId != room.getHost())
                 .forEach(playerId -> {
+                    byte playerIndex = (byte)(room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                            room.getRedTeam() : room.getBlueTeam()).indexOf(playerId);
+
                     msg.append(playerId);
-                    msg.append(true);
+                    msg.append(playerIndex);
                 });
 
         return msg;
