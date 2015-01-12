@@ -31,13 +31,7 @@ public class KicksEmu {
         String configFile = args.length > 0 && !args[0].isEmpty() ?
                 args[0] : "config.properties";
 
-        if (!configFile.endsWith(".properties")) {
-            configFile += ".properties";
-        }
-
-        if (configFile.startsWith(Constants.CONFIG_DIR)) {
-            configFile = configFile.replaceFirst(Constants.CONFIG_DIR, "");
-        }
+        configFile += !configFile.endsWith(".properties") ? ".properties" : "";
 
         KicksEmu.getInstance().start(configFile);
     }
