@@ -2,10 +2,12 @@ package com.neikeq.kicksemu.game.rooms;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.PositionCodes;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.RewardCalculator;
+import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -571,17 +573,21 @@ public class RoomManager {
 
             // If match started
             if (room.state() == RoomState.PLAYING) {
-                MatchResult result = MatchResult.fromMessage(msg,
-                        room.getRedTeam().size(), room.getBlueTeam().size());
+                MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().size());
 
-                // Reward red team players
-                result.getRedPlayers().stream().forEach(pr -> {
+                // Reward players
+                result.getPlayers().stream().forEach(pr -> {
                     int playerId = pr.getPlayerId();
                     int reward = RewardCalculator.calculateReward(pr, room,
                             result.getCountdown());
 
+                    TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                            result.getRedTeam() : result.getBlueTeam();
+
                     reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
-                    reward += result.getBlueTeam().getGoals() <= 1 ? (reward * 30) / 100 : 0;
+                    reward += teamResult.getGoals() <= 1 &&
+                            PlayerInfo.getPosition(playerId) / 10 == PositionCodes.DF / 10 ?
+                            (reward * 30) / 100 : 0;
 
                     pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
@@ -589,26 +595,7 @@ public class RoomManager {
                     PlayerInfo.setPoints(pr.getPoints(), playerId);
                     PlayerInfo.setExperience(pr.getExperience(), playerId);
 
-                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId, result);
-                    room.getPlayers().get(playerId).sendAndFlush(resultMsg);
-                });
-
-                // Reward blue team players
-                result.getBluePlayers().stream().forEach(pr -> {
-                    int playerId = pr.getPlayerId();
-                    int reward = RewardCalculator.calculateReward(pr, room,
-                            result.getCountdown());
-
-                    reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
-                    reward += result.getRedTeam().getGoals() <= 1 ? (reward * 30) / 100 : 0;
-
-                    pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
-                    pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
-
-                    PlayerInfo.setPoints(pr.getPoints(), playerId);
-                    PlayerInfo.setExperience(pr.getExperience(), playerId);
-
-                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId, result);
+                    ServerMessage resultMsg = MessageBuilder.matchResult(result, pr);
                     room.getPlayers().get(playerId).sendAndFlush(resultMsg);
                 });
 

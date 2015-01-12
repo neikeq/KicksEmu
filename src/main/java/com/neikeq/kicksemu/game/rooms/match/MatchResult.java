@@ -13,47 +13,38 @@ public class MatchResult {
     private final boolean experience;
     private final TeamResult redTeam;
     private final TeamResult blueTeam;
-    private final List<PlayerResult> redPlayers;
-    private final List<PlayerResult> bluePlayers;
+    private final List<PlayerResult> players;
 
-    public static MatchResult fromMessage(ClientMessage msg, int redTeamSize, int blueTeamSize) {
+    public static MatchResult fromMessage(ClientMessage msg, int roomSize) {
         int mom = msg.readInt();
         TeamResult redTeam = TeamResult.fromMessage(msg);
         TeamResult blueTeam = TeamResult.fromMessage(msg);
         List<PlayerResult> redPlayers = new ArrayList<>();
-        List<PlayerResult> bluePlayers = new ArrayList<>();
 
-        for (int i = 0; i < redTeamSize; i++) {
+        for (int i = 0; i < roomSize; i++) {
             redPlayers.add(PlayerResult.fromMessage(msg));
         }
 
-        msg.ignoreBytes(40 * (5 - redTeamSize));
-
-        for (int i = 0; i < blueTeamSize; i++) {
-            bluePlayers.add(PlayerResult.fromMessage(msg));
-        }
-
-        msg.ignoreBytes(40 * (5 - blueTeamSize));
+        msg.ignoreBytes(40 * (10 - roomSize));
 
         short countdown = msg.readShort();
         boolean goldenTime = msg.readBoolean();
         boolean experience = msg.readBoolean();
 
         return new MatchResult(mom, countdown, goldenTime, experience, redTeam,
-                blueTeam, redPlayers, bluePlayers);
+                blueTeam, redPlayers);
     }
 
     public MatchResult(int mom, short countdown, boolean goldenTime,
                        boolean experience, TeamResult redTeam, TeamResult blueTeam,
-                       List<PlayerResult> redPlayers, List<PlayerResult> bluePlayers) {
+                       List<PlayerResult> players) {
         this.mom = mom;
         this.countdown = countdown;
         this.goldenTime = goldenTime;
         this.experience = experience;
         this.redTeam = redTeam;
         this.blueTeam = blueTeam;
-        this.redPlayers = redPlayers;
-        this.bluePlayers = bluePlayers;
+        this.players = players;
     }
 
     public int getMom() {
@@ -80,11 +71,7 @@ public class MatchResult {
         return blueTeam;
     }
 
-    public List<PlayerResult> getRedPlayers() {
-        return redPlayers;
-    }
-
-    public List<PlayerResult> getBluePlayers() {
-        return bluePlayers;
+    public List<PlayerResult> getPlayers() {
+        return players;
     }
 }

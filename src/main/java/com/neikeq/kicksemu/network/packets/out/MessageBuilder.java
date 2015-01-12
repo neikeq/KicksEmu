@@ -24,7 +24,6 @@ import com.neikeq.kicksemu.utils.DateUtils;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class MessageBuilder {
     
@@ -951,35 +950,30 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage matchResult(int playerId, MatchResult result) {
+    public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.append(result.getMom());
-        result.getRedTeam().appendResult(msg);
-        result.getBlueTeam().appendResult(msg);
-        result.getRedPlayers().stream().forEach(pr -> pr.appendResult(msg));
-        msg.appendZeros(40 * (5 - result.getRedPlayers().size()));
-        result.getBluePlayers().stream().forEach(pr -> pr.appendResult(msg));
-        msg.appendZeros(40 * (5 - result.getBluePlayers().size()));
-        msg.append(result.getCountdown());
-        msg.append(result.isGoldenTime());
-        msg.append(result.isExperience());
-        msg.append(result.isExperience()); // Point
+        if (result != null && playerResult != null) {
+            msg.append(result.getMom());
 
-        Optional<PlayerResult> prOptional = result.getRedPlayers().stream()
-                .filter(pr -> pr.getPlayerId() == playerId).findFirst();
+            result.getRedTeam().appendResult(msg);
+            result.getBlueTeam().appendResult(msg);
 
-        if (!prOptional.isPresent()) {
-            prOptional = result.getBluePlayers().stream()
-                    .filter(pr -> pr.getPlayerId() == playerId).findFirst();
+            result.getPlayers().stream().forEach(pr -> pr.appendResult(msg));
+            msg.appendZeros(40 * (10 - result.getPlayers().size()));
+
+            msg.append(result.getCountdown());
+            msg.append(result.isGoldenTime());
+            msg.append(result.isExperience());
+            msg.append(result.isExperience()); // Point
+
+            msg.append(playerResult.getExperience());
+            msg.append(playerResult.getPoints());
+
+            msg.appendZeros(132);
         }
-
-        msg.append(prOptional.get().getExperience());
-        msg.append(prOptional.get().getPoints());
-
-        msg.appendZeros(132);
 
         return msg;
     }

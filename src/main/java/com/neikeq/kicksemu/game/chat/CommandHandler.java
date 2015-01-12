@@ -123,7 +123,7 @@ public class CommandHandler {
         }
     }
 
-    private static void onObserver(Session session, String ... args) {
+    private static void onObserver(Session session) {
         if (PlayerInfo.isModerator(session.getPlayerId())) {
             boolean observer = !session.isObserver();
             session.setObserver(observer);
@@ -133,7 +133,7 @@ public class CommandHandler {
         }
     }
 
-    private static void onVisible(Session session, String ... args) {
+    private static void onVisible(Session session) {
         int playerId = session.getPlayerId();
 
         if (PlayerInfo.isModerator(playerId)) {
@@ -152,8 +152,8 @@ public class CommandHandler {
         commands.put("kick", CommandHandler::onKick);
         commands.put("punish", CommandHandler::onPunish);
         commands.put("notice", CommandHandler::onNotice);
-        commands.put("observer", CommandHandler::onObserver);
-        commands.put("visible", CommandHandler::onVisible);
+        commands.put("observer", (s, a) -> CommandHandler.onObserver(s));
+        commands.put("visible", (s, a) -> CommandHandler.onVisible(s));
     }
 
     @FunctionalInterface

@@ -140,6 +140,30 @@ public class Room {
                 // If the leaver was room host, set a new one
                 if (playerId == getHost()) {
                     updateHost();
+
+                    if (state() == RoomState.PLAYING) {
+                        setState(RoomState.RESULT);
+                        sendBroadcast(MessageBuilder.matchResult(null, null));
+
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ignored) {}
+
+                        setState(RoomState.WAITING);
+                        sendBroadcast(MessageBuilder.unknown1());
+                        sendBroadcast(MessageBuilder.unknown2());
+                    } else if (state() == RoomState.LOADING) {
+                        setState(RoomState.WAITING);
+                        sendBroadcast(MessageBuilder.cancelLoading());
+                    } else if (state() == RoomState.RESULT) {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ignored) {}
+
+                        setState(RoomState.WAITING);
+                        sendBroadcast(MessageBuilder.unknown1());
+                        sendBroadcast(MessageBuilder.unknown2());
+                    }
                 }
             }
         }
