@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms;
 
 import com.neikeq.kicksemu.config.Configuration;
+import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.PositionCodes;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
@@ -594,6 +595,8 @@ public class RoomManager {
 
                     PlayerInfo.setPoints(pr.getPoints(), playerId);
                     PlayerInfo.setExperience(pr.getExperience(), playerId);
+
+                    CharacterManager.checkExperience(playerId);
 
                     ServerMessage resultMsg = MessageBuilder.matchResult(result, pr);
                     room.getPlayers().get(playerId).sendAndFlush(resultMsg);
