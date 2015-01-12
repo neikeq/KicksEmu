@@ -17,12 +17,13 @@ import java.util.stream.Collectors;
 public class Room {
 
     private int id;
+    private int host;
+    private int master;
 
     private byte minLevel;
     private byte maxLevel;
 
-    private int host;
-    private int master;
+    private boolean wasTraining;
 
     private String name;
     private String password;
@@ -572,5 +573,13 @@ public class Room {
 
     public void setState(RoomState state) {
         this.state = state;
+    }
+
+    public boolean wasTraining() {
+        return wasTraining;
+    }
+
+    public void setWasTraining(boolean wasTraining) {
+        this.wasTraining = wasTraining;
     }
 }

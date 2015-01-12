@@ -6,7 +6,7 @@ import com.neikeq.kicksemu.game.rooms.Room;
 public class RewardCalculator {
 
     public static int calculateReward(PlayerResult result, Room room, short countdown) {
-        if (!room.isTraining()) {
+        if (!room.wasTraining()) {
             switch (room.getPlayers().size()) {
                 case 6:
                     return (int)(12 * (float)(result.getVotePoints() / 10));

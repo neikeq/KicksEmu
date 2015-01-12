@@ -495,6 +495,7 @@ public class RoomManager {
         if (room != null && room.getMaster() == session.getPlayerId() && room.isLobbyScreen()) {
                 if (count == 0) {
                     room.setState(RoomState.LOADING);
+                    room.setWasTraining(room.isTraining());
                 }
 
                 ServerMessage msgCountDown = MessageBuilder.countDown(count);
@@ -579,13 +580,8 @@ public class RoomManager {
                     int reward = RewardCalculator.calculateReward(pr, room,
                             result.getCountdown());
 
-                    if (result.getMom() == playerId) {
-                        reward += (reward * 25) / 100;
-                    }
-
-                    if (result.getBlueTeam().getGoals() <= 1) {
-                        reward += (reward * 30) / 100;
-                    }
+                    reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+                    reward += result.getBlueTeam().getGoals() <= 1 ? (reward * 30) / 100 : 0;
 
                     pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
@@ -593,8 +589,7 @@ public class RoomManager {
                     PlayerInfo.setPoints(pr.getPoints(), playerId);
                     PlayerInfo.setExperience(pr.getExperience(), playerId);
 
-                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId,
-                            result, room.getPlayerTeam(playerId));
+                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId, result);
                     room.getPlayers().get(playerId).sendAndFlush(resultMsg);
                 });
 
@@ -604,13 +599,8 @@ public class RoomManager {
                     int reward = RewardCalculator.calculateReward(pr, room,
                             result.getCountdown());
 
-                    if (result.getMom() == playerId) {
-                        reward += (reward * 25) / 100;
-                    }
-
-                    if (result.getRedTeam().getGoals() <= 1) {
-                        reward += (reward * 30) / 100;
-                    }
+                    reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+                    reward += result.getRedTeam().getGoals() <= 1 ? (reward * 30) / 100 : 0;
 
                     pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
@@ -618,8 +608,7 @@ public class RoomManager {
                     PlayerInfo.setPoints(pr.getPoints(), playerId);
                     PlayerInfo.setExperience(pr.getExperience(), playerId);
 
-                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId,
-                            result, room.getPlayerTeam(playerId));
+                    ServerMessage resultMsg = MessageBuilder.matchResult(playerId, result);
                     room.getPlayers().get(playerId).sendAndFlush(resultMsg);
                 });
 

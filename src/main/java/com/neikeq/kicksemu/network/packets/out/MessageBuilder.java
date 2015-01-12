@@ -951,7 +951,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage matchResult(int playerId, MatchResult result, RoomTeam team) {
+    public static ServerMessage matchResult(int playerId, MatchResult result) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
 
         MessageUtils.appendResult((byte)0, msg);
