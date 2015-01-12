@@ -597,10 +597,10 @@ public class RoomManager {
                     PlayerInfo.setExperience(pr.getExperience(), playerId);
 
                     CharacterManager.checkExperience(playerId);
-
-                    ServerMessage resultMsg = MessageBuilder.matchResult(result, pr);
-                    room.getPlayers().get(playerId).sendAndFlush(resultMsg);
                 });
+
+                result.getPlayers().stream().forEach(pr ->
+                        room.sendBroadcast(MessageBuilder.matchResult(result, pr)));
 
                 room.setState(RoomState.RESULT);
                 room.getConfirmedPlayers().clear();
