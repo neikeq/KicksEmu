@@ -600,7 +600,8 @@ public class RoomManager {
                 });
 
                 result.getPlayers().stream().forEach(pr ->
-                        room.sendBroadcast(MessageBuilder.matchResult(result, pr)));
+                        room.getPlayers().get(pr.getPlayerId())
+                                .sendAndFlush(MessageBuilder.matchResult(result, pr)));
 
                 room.setState(RoomState.RESULT);
                 room.getConfirmedPlayers().clear();
