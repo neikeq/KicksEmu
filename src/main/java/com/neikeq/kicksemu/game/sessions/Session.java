@@ -20,14 +20,13 @@ public class Session {
 
     private int userId;
     private int playerId;
-
     private int roomId;
+    private int udpPort;
+    private int ping;
 
     private boolean authenticated;
     private boolean udpAuthenticated;
     private boolean observer;
-
-    private int udpPort;
 
     private final Object locker = new Object();
 
@@ -191,5 +190,13 @@ public class Session {
 
     public void setObserver(boolean observer) {
         this.observer = observer;
+    }
+
+    public int getPing() {
+        return ping;
+    }
+
+    public void setPing(int ping) {
+        this.ping = ping;
     }
 }

@@ -11,6 +11,13 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 
 public class UserManager {
+
+    public static void tcpPing(Session session, ClientMessage msg) {
+        int ping = msg.readInt();
+
+        session.setPing(ping);
+    }
+
     public static void certifyExit(Session session) {
         ServerMessage response = MessageBuilder.certifyExit(true);
         session.send(response);

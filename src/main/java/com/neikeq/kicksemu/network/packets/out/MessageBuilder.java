@@ -554,7 +554,7 @@ public class MessageBuilder {
             msg.append(false, 2);
 
             msg.append(UserInfo.getSettings(ownerId).getCountry());
-            msg.append(true, 2);
+            msg.append(session.getPing() < 100, 2);
 
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.append((short)session.getUdpPort());

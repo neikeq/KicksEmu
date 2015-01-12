@@ -19,6 +19,7 @@ public abstract class MessageHandler {
         events = new HashMap<>();
 
         events.put(MessageId.UPDATE_SETTINGS, UserManager::updateSettings);
+        events.put(MessageId.TCP_PING, UserManager::tcpPing);
     }
 
     public boolean handle(Session session, ClientMessage msg) {

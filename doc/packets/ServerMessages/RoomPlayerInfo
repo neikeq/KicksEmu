@@ -14,7 +14,7 @@ short team // Red: 0, Blue: 1
 bool observer
 short pc_room // 2 bytes boolean
 int country // flag
-short ping_icon // 2 bytes boolean, Red: false, Green: true
+short ping_icon // Red: 0, Green: 1
 char[16] player_ip
 short player_port
 short level
