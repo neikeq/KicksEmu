@@ -983,4 +983,12 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage tcpPing() {
+        ServerMessage msg = new ServerMessage(MessageId.TCP_PING);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        return msg;
+    }
 }
