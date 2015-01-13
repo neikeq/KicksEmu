@@ -16,6 +16,7 @@ public class UserManager {
         int ping = msg.readInt();
 
         session.setPing(ping);
+        session.setPingState((byte)0);
     }
 
     public static void certifyExit(Session session) {

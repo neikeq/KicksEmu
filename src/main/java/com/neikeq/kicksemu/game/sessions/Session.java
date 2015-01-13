@@ -24,6 +24,8 @@ public class Session {
     private int udpPort;
     private int ping;
 
+    private byte pingState;
+
     private boolean authenticated;
     private boolean udpAuthenticated;
     private boolean observer;
@@ -198,5 +200,13 @@ public class Session {
 
     public void setPing(int ping) {
         this.ping = ping;
+    }
+
+    public byte getPingState() {
+        return pingState;
+    }
+
+    public void setPingState(byte pingState) {
+        this.pingState = pingState;
     }
 }
