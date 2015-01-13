@@ -46,6 +46,8 @@ public class CharacterUtils {
     }
 
     public static short statsUpToHundred(short stats, int add) {
+        if (add < 0) return (short)add;
+
         short i;
         for (i = 0; i < add; i++) {
             if (stats < 100) {
