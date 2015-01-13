@@ -274,18 +274,22 @@ public class Room {
     }
 
     public void startCountDown() {
-        setState(RoomState.COUNT_DOWN);
-        getConfirmedPlayers().clear();
+        synchronized (locker) {
+            setState(RoomState.COUNT_DOWN);
+            getConfirmedPlayers().clear();
 
-        ServerMessage msgStartCountDown = MessageBuilder.startCountDown((byte) -1);
-        sendBroadcast(msgStartCountDown);
+            ServerMessage msgStartCountDown = MessageBuilder.startCountDown((byte) -1);
+            sendBroadcast(msgStartCountDown);
+        }
     }
 
     public void cancelCountDown() {
-        setState(RoomState.WAITING);
+        synchronized (locker) {
+            setState(RoomState.WAITING);
 
-        ServerMessage msgStopCountDown = MessageBuilder.cancelCountDown();
-        sendBroadcast(msgStopCountDown);
+            ServerMessage msgStopCountDown = MessageBuilder.cancelCountDown();
+            sendBroadcast(msgStopCountDown);
+        }
     }
 
     private void onPlayerJoined(Session session) {
