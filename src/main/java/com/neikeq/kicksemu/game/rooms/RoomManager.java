@@ -583,11 +583,17 @@ public class RoomManager {
                             result.getCountdown());
 
                     short scoredGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                            result.getRedTeam().getGoals() : result.getBlueTeam().getGoals();
+                    short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
                             result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
 
+                    // If player is mvp increase his rewards by 25%
                     reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+                    // If player position is a DF branch, his team did not lose and conceded 1
+                    // or less goals, increase his rewards by 30%
                     reward += PlayerInfo.getPosition(playerId) / 10 == PositionCodes.DF / 10 &&
-                            scoredGoals <= 1 ? (reward * 30) / 100 : 0;
+                            concededGoals <= 1 && scoredGoals >= concededGoals ?
+                            (reward * 30) / 100 : 0;
 
                     pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
