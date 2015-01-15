@@ -25,13 +25,13 @@ public class InventoryTable {
     public static void initializeSkillsTable(String path) {
         TableReader reader = new TableReader(path);
 
-        // Ignore first line
-        reader.nextColumn();
+        // Ignore first row
+        reader.nextRow();
 
         Row line;
-        while ((line = reader.nextColumn()) != null) {
-            SkillInfo column = new SkillInfo(line);
-            skillsTable.put(column.getId(), column);
+        while ((line = reader.nextRow()) != null) {
+            SkillInfo row = new SkillInfo(line);
+            skillsTable.put(row.getId(), row);
         }
     }
 }

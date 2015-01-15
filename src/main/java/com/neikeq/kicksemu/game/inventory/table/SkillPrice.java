@@ -14,12 +14,12 @@ public class SkillPrice {
     private int pointsPerm;
 
     public SkillPrice(Row row) {
-        kash7 = Integer.valueOf(row.nextRow());
-        kash30 = Integer.valueOf(row.nextRow());
-        kashPerm = Integer.valueOf(row.nextRow());
-        points7 = Integer.valueOf(row.nextRow());
-        points30 = Integer.valueOf(row.nextRow());
-        pointsPerm = Integer.valueOf(row.nextRow());
+        kash7 = Integer.valueOf(row.nextColumn());
+        kash30 = Integer.valueOf(row.nextColumn());
+        kashPerm = Integer.valueOf(row.nextColumn());
+        points7 = Integer.valueOf(row.nextColumn());
+        points30 = Integer.valueOf(row.nextColumn());
+        pointsPerm = Integer.valueOf(row.nextColumn());
     }
 
     public int getPriceFor(Expiration expiration, Payment payment) {
