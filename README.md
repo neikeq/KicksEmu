@@ -43,7 +43,7 @@ Run `run.sh` for unix or `run.bat` for windows.
 The first argument is optional and must be the name of an alternative configuration file. If there is no argument, the default configuration file will be used.
 
 The execution directory must contain the following subdirectories:
-- data
+- data/config
   - Where the default configuration file (`config.properies`) is stored.
   - If this file cannot be found, the application will initialize its configuration with the default variables.
   - The application can initialize with a different config file if the first argument of the application represents a valid path.
