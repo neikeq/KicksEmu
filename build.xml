@@ -34,13 +34,13 @@
     <exclude name="**/*.rbc/**"/>
   </patternset>
   <patternset id="library.patterns">
-    <include name="*.zip"/>
-    <include name="*.apk"/>
     <include name="*.war"/>
-    <include name="*.egg"/>
     <include name="*.ear"/>
-    <include name="*.ane"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
     <include name="*.swc"/>
+    <include name="*.ane"/>
+    <include name="*.egg"/>
     <include name="*.jar"/>
   </patternset>
   <patternset id="compiler.resources">
@@ -77,6 +77,10 @@
     <pathelement location="${basedir}/lib/netty-all-4.0.24.Final.jar"/>
   </path>
   
+  <path id="library.opencsv-3.1.classpath">
+    <pathelement location="${basedir}/lib/opencsv-3.1.jar"/>
+  </path>
+  
   <!-- Modules -->
   
   
@@ -101,6 +105,7 @@
     <path refid="library.commons-pool2-2.2.classpath"/>
     <path refid="library.mysql-connector-java-5.1.30-bin.classpath"/>
     <path refid="library.netty-all-4.0.24.final.classpath"/>
+    <path refid="library.opencsv-3.1.classpath"/>
   </path>
   
   <path id="kicksemu.runtime.production.module.classpath">
@@ -110,6 +115,7 @@
     <path refid="library.commons-pool2-2.2.classpath"/>
     <path refid="library.mysql-connector-java-5.1.30-bin.classpath"/>
     <path refid="library.netty-all-4.0.24.final.classpath"/>
+    <path refid="library.opencsv-3.1.classpath"/>
   </path>
   
   <path id="kicksemu.module.classpath">
@@ -119,6 +125,7 @@
     <path refid="library.commons-pool2-2.2.classpath"/>
     <path refid="library.mysql-connector-java-5.1.30-bin.classpath"/>
     <path refid="library.netty-all-4.0.24.final.classpath"/>
+    <path refid="library.opencsv-3.1.classpath"/>
   </path>
   
   <path id="kicksemu.runtime.module.classpath">
@@ -129,6 +136,7 @@
     <path refid="library.commons-pool2-2.2.classpath"/>
     <path refid="library.mysql-connector-java-5.1.30-bin.classpath"/>
     <path refid="library.netty-all-4.0.24.final.classpath"/>
+    <path refid="library.opencsv-3.1.classpath"/>
   </path>
   
   
