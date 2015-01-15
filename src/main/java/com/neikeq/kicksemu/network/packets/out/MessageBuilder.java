@@ -800,7 +800,7 @@ public class MessageBuilder {
         room.getPlayers().keySet().stream()
                 .filter(playerId -> playerId != room.getHost())
                 .forEach(playerId -> {
-                    byte playerIndex = (byte)(room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                    byte playerIndex = (byte) (room.getPlayerTeam(playerId) == RoomTeam.RED ?
                             room.getRedTeam() : room.getBlueTeam()).indexOf(playerId);
 
                     msg.append(playerId);

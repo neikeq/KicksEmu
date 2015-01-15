@@ -8,7 +8,6 @@ import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.RewardCalculator;
-import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
