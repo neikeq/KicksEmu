@@ -132,7 +132,7 @@ def main(argv):
 def print_help():
     print('Usage:')
     print('python3 table_skill.py -i <input> -o <output>')
-    print(' -b specifies that the input is a binary file')
+    print(' -b specifies that the output must be a binary file')
 
 
 encoding = 'windows-1252'
