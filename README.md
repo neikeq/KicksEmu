@@ -10,6 +10,7 @@ It uses Netty framework for networking and Apache DBCP for MySql connection pool
 * commons-dbcp2
 * commons-logging
 * commons-pool2
+* opencsv-3.1
 
 ### Usage
 
@@ -39,16 +40,18 @@ ant build.all.artifacts
 
 Run `run.sh` for unix or `run.bat` for windows.
 
-The first argument may point to an alternative configuration file. Otherwise, the default one will be used.
+The first argument is optional and must be the name of an alternative configuration file. If there is no argument, the default configuration file will be used.
 
-The execution directory may contain the following subfolders:
+The execution directory must contain the following subdirectories:
 - data
   - Where the default configuration file (`config.properies`) is stored.
   - If this file cannot be found, the application will initialize its configuration with the default variables.
   - The application can initialize with a different config file if the first argument of the application represents a valid path.
-- lang
+- data/lang
   - This folder contains the translation files.
   - The name must follow this format: `lang_<acronym>.properties`, where which acronym to be loaded is decided by value of `lang` in the configuration file.
+- data/table
+  - Contains the table files required for special operations.
 - logs
   - This is the directory where the application will write all the logs.
   - The application will create it automatically if logging is enabled.
