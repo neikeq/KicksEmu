@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.utils.table;
 
-import java.io.BufferedReader;
+import com.opencsv.CSVReader;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,24 +9,25 @@ import java.util.List;
 
 public class TableReader {
 
-    List<Column> columns;
+    List<Row> rows;
     int index = 0;
 
-    public Column nextColumn() {
-        if (index < columns.size()) {
-            return columns.get(index++);
+    public Row nextColumn() throws IndexOutOfBoundsException {
+        if (index < rows.size()) {
+            return rows.get(index++);
         }
 
         return null;
     }
 
     public TableReader(String path) {
-        try (FileReader fr = new FileReader(path); BufferedReader br = new BufferedReader(fr)) {
-            columns = new ArrayList<>();
+        rows = new ArrayList<>();
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                columns.add(new Column(line));
+        try (FileReader fr = new FileReader(path);
+             CSVReader reader = new CSVReader(fr, ',', '\"', 1)) {
+            String[] row;
+            while ((row = reader.readNext()) != null) {
+                rows.add(new Row(row));
             }
         } catch (IOException ignored) {}
     }

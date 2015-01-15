@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.inventory.table;
 
-import com.neikeq.kicksemu.utils.table.Column;
+import com.neikeq.kicksemu.utils.table.Row;
 import com.neikeq.kicksemu.utils.table.TableReader;
 
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class InventoryTable {
         // Ignore first line
         reader.nextColumn();
 
-        Column line;
+        Row line;
         while ((line = reader.nextColumn()) != null) {
             SkillInfo column = new SkillInfo(line);
             skillsTable.put(column.getId(), column);

@@ -13,5 +13,6 @@
     <orderEntry type="library" name="commons-pool2-2.2" level="project" />
     <orderEntry type="library" name="mysql-connector-java-5.1.30-bin" level="project" />
     <orderEntry type="library" name="netty-all-4.0.24.Final" level="project" />
+    <orderEntry type="library" name="opencsv-3.1" level="project" />
   </component>
 </module>

@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.inventory.table;
 
-import com.neikeq.kicksemu.utils.table.Column;
+import com.neikeq.kicksemu.utils.table.Row;
 
 public class SkillInfo {
 
@@ -11,13 +11,13 @@ public class SkillInfo {
     private short level;
     private SkillPrice skillPrice;
 
-    public SkillInfo(Column column) {
-        name = column.nextRow();
-        id = Integer.valueOf(column.nextRow());
-        position = Short.valueOf(column.nextRow());
-        group = Short.valueOf(column.nextRow());
-        level = Short.valueOf(column.nextRow());
-        skillPrice = new SkillPrice(column);
+    public SkillInfo(Row row) {
+        name = row.nextRow();
+        id = Integer.valueOf(row.nextRow());
+        position = Short.valueOf(row.nextRow());
+        group = Short.valueOf(row.nextRow());
+        level = Short.valueOf(row.nextRow());
+        skillPrice = new SkillPrice(row);
     }
 
     public String getName() {
