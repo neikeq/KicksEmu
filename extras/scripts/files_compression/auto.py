@@ -66,10 +66,12 @@ def replace_last(s, old, new, count):
 
 
 def print_help():
-    print('Usage: python3 auto.py <input>')
+    print('Usage:')
+    print('python3 auto.py <input>')
+    print(' -c specifies that the file must be compressed instead of decompressed')
 
 if __name__ == '__main__':
-    if len(sys.argv) < 1:
+    if len(sys.argv) < 2:
         print_help()
         sys.exit(2)
 

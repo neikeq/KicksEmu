@@ -6,8 +6,8 @@ from zlib import error
 
 
 def main(argv):
-    input = ''
-    output = ''
+    finput = ''
+    foutput = ''
     compress = False
 
     try:
@@ -18,26 +18,26 @@ def main(argv):
 
     for opt, arg in opts:
         if opt in ('-i', '--ifile'):
-            input = arg
+            finput = arg
         elif opt in ('-o', '--ofile'):
-            output = arg
-        elif opt in ('-c'):
+            foutput = arg
+        elif opt in '-c':
             compress = True
 
-    if not os.path.isfile(input):
+    if not os.path.isfile(finput):
         print('Error: Input file does not exists.')
-    elif output == '':
+    elif foutput == '':
         print('Error: You did not specify an output file.')
     else:
-        file = open(output, 'wb')
+        file = open(foutput, 'wb')
         c = Compressor()
 
         try:
-            data = c.compress_file(input) if compress \
-                else c.decompress_file(input)
+            data = c.compress_file(finput) if compress \
+                else c.decompress_file(finput)
             file.write(data)
 
-            print('Done! Output:', output)
+            print('Done! Output:', foutput)
         except IOError as ioe:
             print('IOError:', ioe)
         except error as ze:
@@ -47,11 +47,13 @@ def main(argv):
 
 
 def print_help():
-    print('Usage: python3 single.py -i <input> -o <output>')
+    print('Usage:')
+    print('python3 single.py -i <input> -o <output>')
+    print(' -c specifies that the file must be compressed instead of decompressed')
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 1:
+    if len(sys.argv) < 2:
         print_help()
         sys.exit(2)
 
