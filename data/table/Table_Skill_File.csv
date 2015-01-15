@@ -1,0 +1,760 @@
+Index,Id,Position,Class,Level,Unknown,Kash 7,Kash 30,Kash Perm,Points 7,Points 30,Points Perm,Unknown,Name,Icon Path,Shop Description,Description
+0,10111,11,101,18,3,212,424,848,4500,9000,18000,92000,Middle spinkick,Skill/Skill_MiddleSpinKick,"When keeping hold of the ball
+a shooting ability to kick the 
+ball quickly with a spinning
+motion 
+Control: F","When keeping hold of the ball
+a shooting ability to kick the 
+ball quickly with a spinning
+motion 
+Control: F"
+1,10112,12,101,18,3,212,424,848,4500,9000,18000,92000,Middle spinkick,Skill/Skill_MiddleSpinKick,"When keeping hold of the ball
+a shooting ability to kick the 
+ball quickly with a spinning
+motion 
+Control: F","When keeping hold of the ball
+a shooting ability to kick the 
+ball quickly with a spinning
+motion 
+Control: F"
+2,10221,21,102,18,3,177,353,707,3750,7500,15000,92000,Lavona kick,Skill/Skill_LavonaKick,"Kicking the ball which can be 
+a shot or cross and is 
+performed by moving one leg 
+behind, and around
+Control: D","Kicking the ball which can be 
+a shot or cross and is 
+performed by moving one leg 
+behind, and around
+Control: D"
+3,10222,22,102,18,3,177,353,707,3750,7500,15000,92000,Lavona kick,Skill/Skill_LavonaKick,"Kicking the ball which can be 
+a shot or cross and is 
+performed by moving one leg 
+behind, and around
+Control: D","Kicking the ball which can be 
+a shot or cross and is 
+performed by moving one leg 
+behind, and around
+Control: D"
+4,10223,23,102,18,3,177,353,707,3750,7500,15000,92000,Lavona kick,Skill/Skill_LavonaKick,"Kicking the ball which can be 
+a shot or cross and is 
+performed by moving one leg 
+behind, and around
+Control: D","Kicking the ball which can be 
+a shot or cross and is 
+performed by moving one leg 
+behind, and around
+Control: D"
+5,10321,21,103,18,3,200,401,801,4250,8500,17000,92000,Lighting kick,Skill/Skill_LightningKick,"Shooting a really fast forward 
+shot
+Control: F","Shooting a really fast forward 
+shot
+Control: F"
+6,10412,12,104,30,3,236,471,943,5000,10000,20000,92000,Turn side kick,Skill/Skill_TurnSideKick,"Shooting after quick turn 
+to the left or right   
+Control: left or right + C","Shooting after quick turn 
+to the left or right   
+Control: left or right + C"
+7,10521,21,105,30,3,236,471,943,5000,10000,20000,92000,Instep kick,Skill/Skill_InstepKick,"Kick the ball on top of the foot 
+for a middle range shot
+Control: C","Kick the ball on top of the foot 
+for a middle range shot
+Control: C"
+8,10613,13,106,30,3,236,471,943,5000,10000,20000,92000,Turn round kick,Skill/Skill_TurnRoundKick,"Quick turn round shot 
+Control: F","Quick turn round shot 
+Control: F"
+9,10711,11,107,30,3,212,424,848,4500,9000,18000,92000,Inside kick,Skill/Skill_InsideKick,"When shooting towards 
+the goal post
+Control: D","When shooting towards 
+the goal post
+Control: D"
+10,10712,12,107,30,3,212,424,848,4500,9000,18000,92000,Inside kick,Skill/Skill_InsideKick,"When shooting towards 
+the goal post
+Control: D","When shooting towards 
+the goal post
+Control: D"
+11,10713,13,107,30,3,212,424,848,4500,9000,18000,92000,Inside kick,Skill/Skill_InsideKick,"When shooting towards 
+the goal post
+Control: D","When shooting towards 
+the goal post
+Control: D"
+12,10812,12,108,30,3,177,353,707,3750,7500,15000,92000,Turning shoot,Skill/Skill_TurningShoot,"A turning shot going 
+towards the goal post.
+Control: D or F","A turning shot going 
+towards the goal post.
+Control: D or F"
+13,10922,22,109,30,3,212,424,848,4500,9000,18000,92000,Beckham shoot,Skill/Skill_BeckhamShoot,"Lifting the ball high and 
+suddenly droping down 
+sharply.
+Control: F","Lifting the ball high and 
+suddenly droping down 
+sharply.
+Control: F"
+14,20110,10,201,0,3,71,141,283,1500,3000,6000,92000,Scissors kick,Skill/Skill_ScissorsKick,"A volley shot.
+Control: Auto","A volley shot.
+Control: Auto"
+15,20120,20,201,0,3,71,141,283,1500,3000,6000,92000,Scissors kick,Skill/Skill_ScissorsKick,"A volley shot.
+Control: Auto","A volley shot.
+Control: Auto"
+16,20211,11,202,18,3,118,236,471,2500,5000,10000,92000,Somersault kick,Skill/Skill_SummerSoltKick,"A shooting motion similar 
+to overhead kick
+Control: Auto","A shooting motion similar 
+to overhead kick
+Control: Auto"
+17,20212,12,202,18,3,118,236,471,2500,5000,10000,92000,Somersault kick,Skill/Skill_SummerSoltKick,"A shooting motion similar 
+to overhead kick
+Control: Auto","A shooting motion similar 
+to overhead kick
+Control: Auto"
+18,20213,13,202,18,3,118,236,471,2500,5000,10000,92000,Somersault kick,Skill/Skill_SummerSoltKick,"A shooting motion similar 
+to overhead kick
+Control: Auto","A shooting motion similar 
+to overhead kick
+Control: Auto"
+19,20221,21,202,18,3,118,236,471,2500,5000,10000,92000,Somersault kick,Skill/Skill_SummerSoltKick,"A shooting motion similar 
+to overhead kick
+Control: Auto","A shooting motion similar 
+to overhead kick
+Control: Auto"
+20,20311,11,203,30,3,236,471,943,5000,10000,20000,92000,Flying shoot,Skill/Skill_FlyingShoot,"Heading the ball high
+Control: Auto","Heading the ball high
+Control: Auto"
+21,20324,24,203,30,3,236,471,943,5000,10000,20000,92000,Flying shoot,Skill/Skill_FlyingShoot,"Heading the ball high
+Control: Auto","Heading the ball high
+Control: Auto"
+22,20411,11,204,18,3,177,353,707,3750,7500,15000,92000,Slip down kick,Skill/Skill_SlipDownKick,"A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto","A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto"
+23,20412,12,204,18,3,177,353,707,3750,7500,15000,92000,Slip down kick,Skill/Skill_SlipDownKick,"A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto","A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto"
+24,20413,13,204,18,3,177,353,707,3750,7500,15000,92000,Slip down kick,Skill/Skill_SlipDownKick,"A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto","A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto"
+25,20421,21,204,18,3,177,353,707,3750,7500,15000,92000,Slip down kick,Skill/Skill_SlipDownKick,"A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto","A kick for goal where the 
+player slide dawn and 
+kicks the ball
+Control: Auto"
+26,20511,11,205,18,3,177,353,707,3750,7500,15000,92000,Axe kick,Skill/Skill_AxeKick,"A kick for goal where the 
+player straighten leg coming 
+down on the ball
+Control: Auto","A kick for goal where the 
+player straighten leg coming 
+down on the ball
+Control: Auto"
+27,20512,12,205,18,3,177,353,707,3750,7500,15000,92000,Axe kick,Skill/Skill_AxeKick,"A kick for goal where the 
+player straighten leg coming 
+down on the ball
+Control: Auto","A kick for goal where the 
+player straighten leg coming 
+down on the ball
+Control: Auto"
+28,20611,11,206,18,3,200,401,801,4250,8500,17000,92000,Lose time shoot,Skill/Skill_LoseTimeShoot,"A heading shot, the ball is 
+at the highest position
+Control: Auto","A heading shot, the ball is 
+at the highest position
+Control: Auto"
+29,20632,32,206,30,3,200,401,801,4250,8500,17000,92000,Lose time shoot,Skill/Skill_LoseTimeShoot,"A heading shot, the ball is 
+at the highest position
+Control: Auto","A heading shot, the ball is 
+at the highest position
+Control: Auto"
+30,20712,12,207,30,3,212,424,848,4500,9000,18000,92000,Powerful shot,Skill/Skill_PowerfulShoot,"When a ball is coming low, 
+and allowing to shoot 
+towards the goal post 
+powerfully
+Control: Auto","When a ball is coming low, 
+and allowing to shoot 
+towards the goal post 
+powerfully
+Control: Auto"
+31,20721,21,207,30,3,212,424,848,4500,9000,18000,92000,Powerful shot,Skill/Skill_PowerfulShoot,"When a ball is coming low, 
+and allowing to shoot 
+towards the goal post 
+powerfully
+Control: Auto","When a ball is coming low, 
+and allowing to shoot 
+towards the goal post 
+powerfully
+Control: Auto"
+32,20811,11,208,18,3,141,283,566,3000,6000,12000,92000,Edmilson kick,Skill/Skill_EdmilsonKick,"A turning shot, when a ball 
+is coming from behind
+Control: Auto","A turning shot, when a ball 
+is coming from behind
+Control: Auto"
+33,20911,11,209,30,3,177,353,707,3750,7500,15000,92000,Direct turn kick,Skill/Skill_DirectTurnKick,"A turning shot, when a ball 
+is coming from behind low
+Control: Auto","A turning shot, when a ball 
+is coming from behind low
+Control: Auto"
+34,30110,10,301,0,3,71,141,283,1500,3000,6000,92000,Back dribble,Skill/Skill_BackDribble,"A dribbling move used to 
+escape a dangerous 
+defensive situation
+Control: E + down","A dribbling move used to 
+escape a dangerous 
+defensive situation
+Control: E + down"
+35,30120,20,301,0,3,71,141,283,1500,3000,6000,92000,Back dribble,Skill/Skill_BackDribble,"A dribbling move used to 
+escape a dangerous 
+defensive situation
+Control: E + down","A dribbling move used to 
+escape a dangerous 
+defensive situation
+Control: E + down"
+36,30130,30,301,0,3,71,141,283,1500,3000,6000,92000,Back dribble,Skill/Skill_BackDribble,"A dribbling move used to 
+escape a dangerous 
+defensive situation
+Control: E + down","A dribbling move used to 
+escape a dangerous 
+defensive situation
+Control: E + down"
+37,30210,10,302,0,3,82,165,330,1750,3500,7000,92000,Mexican jump,Skill/Skill_MexicanJump,"Jumping with ball to avoid 
+opponent players tackle 
+Control: W","Jumping with ball to avoid 
+opponent players tackle 
+Control: Z"
+38,30220,20,302,0,3,82,165,330,1750,3500,7000,92000,Mexican jump,Skill/Skill_MexicanJump,"Jumping with ball to avoid 
+opponent players tackle 
+Control: W","Jumping with ball to avoid 
+opponent players tackle 
+Control: Z"
+39,30230,30,302,0,3,82,165,330,1750,3500,7000,92000,Mexican jump,Skill/Skill_MexicanJump,"Jumping with ball to avoid 
+opponent players tackle 
+Control: W","Jumping with ball to avoid 
+opponent players tackle 
+Control: Z"
+40,30310,10,303,0,3,59,118,236,1250,2500,5000,92000,Step over,Skill/Skill_StepOver,"Special personal dribble skill
+Control: E + up","Special personal dribble skill
+Control: E + up"
+41,30320,20,303,0,3,59,118,236,1250,2500,5000,92000,Step over,Skill/Skill_StepOver,"Special personal dribble skill
+Control: E + up","Special personal dribble skill
+Control: E + up"
+42,30330,30,303,0,3,59,118,236,1250,2500,5000,92000,Step over,Skill/Skill_StepOver,"Special personal dribble skill
+Control: E + up","Special personal dribble skill
+Control: E + up"
+43,30410,10,304,0,3,94,189,377,2000,4000,8000,92000,Marseille roulette,Skill/Skill_MarseilleRoulette,"A dribbling movement where 
+the player steps over ball 
+protecting it from other player
+Control: E + left, E + right","A dribbling movement where 
+the player steps over ball 
+protecting it from other player
+Control: E + left, E + right"
+44,30421,21,304,18,3,94,189,377,2000,4000,8000,92000,Marseille roulette,Skill/Skill_MarseilleRoulette,"A dribbling movement where 
+the player steps over ball 
+protecting it from other player
+Control: E + left, E + right","A dribbling movement where 
+the player steps over ball 
+protecting it from other player
+Control: E + left, E + right"
+45,30520,20,305,0,3,59,118,236,1250,2500,5000,92000,Side step,Skill/Skill_SideStep,"Dribble the ball draggling 
+it over one side
+Control: E + left, E + right","Dribble the ball draggling 
+it over one side
+Control: E + left, E + right"
+46,30530,30,305,0,3,59,118,236,1250,2500,5000,92000,Side step,Skill/Skill_SideStep,"Dribble the ball draggling 
+it over one side
+Control: E + left, E + right","Dribble the ball draggling 
+it over one side
+Control: E + left, E + right"
+47,30621,21,306,18,3,94,189,377,2000,4000,8000,92000,Fake dribble,Skill/Skill_FakeDribble,"Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right","Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right"
+48,30622,22,306,18,3,94,189,377,2000,4000,8000,92000,Fake dribble,Skill/Skill_FakeDribble,"Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right","Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right"
+49,30623,23,306,18,3,94,189,377,2000,4000,8000,92000,Fake dribble,Skill/Skill_FakeDribble,"Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right","Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right"
+50,30624,24,306,18,3,94,189,377,2000,4000,8000,92000,Fake dribble,Skill/Skill_FakeDribble,"Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right","Cheat opponent player and 
+quickly dribble to the 
+opposite direction 
+Control: R + left, R + right"
+51,30711,11,307,18,3,118,236,471,2500,5000,10000,92000,Short step over,Skill/Skill_ShortStepOver,"A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up","A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up"
+52,30712,12,307,18,3,118,236,471,2500,5000,10000,92000,Short step over,Skill/Skill_ShortStepOver,"A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up","A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up"
+53,30713,13,307,18,3,118,236,471,2500,5000,10000,92000,Short step over,Skill/Skill_ShortStepOver,"A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up","A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up"
+54,30721,21,307,18,3,118,236,471,2500,5000,10000,92000,Short step over,Skill/Skill_ShortStepOver,"A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up","A dribbling movement,
+moving forward shortly 
+and quickly
+Control: E + up"
+55,30813,13,308,30,3,177,353,707,3750,7500,15000,92000,Flip flap,Skill/Skill_FlipFlap,"A dribble, cheating the 
+opponent player
+Control: R + left, R + right","A dribble, cheating the 
+opponent player
+Control: R + left, R + right"
+56,30913,13,309,18,3,118,236,471,2500,5000,10000,92000,Side step2,Skill/Skill_SideStep2,"A dribble, cheating the 
+opponent player
+Control: E + left, E + right","A dribble, cheating the 
+opponent player
+Control: E + left, E + right"
+57,30922,22,309,30,3,118,236,471,2500,5000,10000,92000,Side step3,Skill/Skill_SideStep2,"A dribble, cheating the 
+opponent player
+Control: E + left, E + right","A dribble, cheating the 
+opponent player
+Control: E + left, E + right"
+58,40120,20,401,0,3,82,165,330,1750,3500,7000,92000,Quick steal,Skill/Skill_QuickSteal,"A quick stealing maneuver
+Control: E","A quick stealing maneuver
+Control: E"
+59,40130,30,401,0,3,82,165,330,1750,3500,7000,92000,Quick steal,Skill/Skill_QuickSteal,"A quick stealing maneuver
+Control: E","A quick stealing maneuver
+Control: E"
+60,40222,22,402,30,3,165,330,660,3500,7000,14000,92000,Rapid steal,Skill/Skill_RapidSteal,"A very quick stealing 
+maneuver against an 
+opponent
+Control: E","A very quick stealing 
+maneuver against an 
+opponent
+Control: E"
+61,40223,23,402,30,3,165,330,660,3500,7000,14000,92000,Rapid steal,Skill/Skill_RapidSteal,"A very quick stealing 
+maneuver against an 
+opponent
+Control: E","A very quick stealing 
+maneuver against an 
+opponent
+Control: E"
+62,40224,24,402,30,3,165,330,660,3500,7000,14000,92000,Rapid steal,Skill/Skill_RapidSteal,"A very quick stealing 
+maneuver against an 
+opponent
+Control: E","A very quick stealing 
+maneuver against an 
+opponent
+Control: E"
+63,40233,33,402,18,3,165,330,660,3500,7000,14000,92000,Rapid steal,Skill/Skill_RapidSteal,"A very quick stealing 
+maneuver against an 
+opponent
+Control: E","A very quick stealing 
+maneuver against an 
+opponent
+Control: E"
+64,40323,23,403,18,3,236,471,943,5000,10000,20000,92000,Steal catch,Skill/Skill_StealCatch,"A stealing maneuver 
+against an opponent
+Control: C","A stealing maneuver 
+against an opponent
+Control: C"
+65,50124,24,501,18,3,94,189,377,2000,4000,8000,92000,Quick tackle,Skill/Skill_QuickTackle,"Perform a fast tackle 
+Control: Q","Perform a fast tackle 
+Control: A"
+66,50130,30,501,0,3,94,189,377,2000,4000,8000,92000,Quick tackle,Skill/Skill_QuickTackle,"Perform a fast tackle 
+Control: Q","Perform a fast tackle 
+Control: A"
+67,50232,32,502,30,3,189,377,754,4000,8000,16000,92000,Lighting tackle,Skill/Skill_LightningTackle,"Perform a very fast tackle
+Control: Q","Perform a very fast tackle
+Control: A"
+68,50233,33,502,30,3,189,377,754,4000,8000,16000,92000,Lighting tackle,Skill/Skill_LightningTackle,"Perform a very fast tackle
+Control: Q","Perform a very fast tackle
+Control: A"
+69,50431,31,504,30,3,236,471,943,5000,10000,20000,92000,Dread tackle,Skill/Skill_DreadTackle,"Perform the strongest and 
+fastest tackle
+Control: Q","Perform the strongest and 
+fastest tackle
+Control: A"
+70,50524,24,505,30,3,165,330,660,3500,7000,14000,92000,Tackle and Catch,Skill/Skill_TackleAndCatch,"Perform a very fast tackle 
+and catch the ball
+Control: Q","Perform a very fast tackle 
+and catch the ball
+Control: A"
+71,50632,32,506,30,3,200,401,801,4250,8500,17000,92000,Counter Tackle ,Skill/Skill_CounterTackle,"Perform the strongest tackle 
+and move forward with 
+the ball
+Control: X","Perform the strongest tackle 
+and move forward with 
+the ball
+Control: X"
+72,60110,10,601,0,3,71,141,283,1500,3000,6000,92000,Back pass,Skill/Skill_BackPass,"Short pass to own 
+goal keeper
+Control: Space","Short pass to own 
+goal keeper
+Control: Space"
+73,60120,20,601,0,3,71,141,283,1500,3000,6000,92000,Back pass,Skill/Skill_BackPass,"Short pass to own 
+goal keeper
+Control: Space","Short pass to own 
+goal keeper
+Control: Space"
+74,60130,30,601,0,3,71,141,283,1500,3000,6000,92000,Back pass,Skill/Skill_BackPass,"Short pass to own 
+goal keeper
+Control: Space","Short pass to own 
+goal keeper
+Control: Space"
+75,60213,13,602,18,3,118,236,471,2500,5000,10000,92000,Fast cross,Skill/Skill_FastCross,"Fast and quick cross to do 
+swift attack in the center 
+of the area
+Control: shortly A","Fast and quick cross to do 
+swift attack in the center 
+of the area
+Control: shortly Q"
+76,60222,22,602,18,3,118,236,471,2500,5000,10000,92000,Fast cross,Skill/Skill_FastCross,"Fast and quick cross to do 
+swift attack in the center 
+of the area
+Control: shortly A","Fast and quick cross to do 
+swift attack in the center 
+of the area
+Control: shortly Q"
+77,60231,31,602,18,3,118,236,471,2500,5000,10000,92000,Fast cross,Skill/Skill_FastCross,"Fast and quick cross to do 
+swift attack in the center 
+of the area
+Control: shortly A","Fast and quick cross to do 
+swift attack in the center 
+of the area
+Control: shortly Q"
+78,60313,13,603,18,3,59,118,236,1250,2500,5000,92000,Low cross,Skill/Skill_LowCross,"Cross the ball low
+Control: V + V","Cross the ball low
+Control: V + V"
+79,60322,22,603,18,3,59,118,236,1250,2500,5000,92000,Low cross,Skill/Skill_LowCross,"Cross the ball low
+Control: V + V","Cross the ball low
+Control: V + V"
+80,60331,31,603,18,3,59,118,236,1250,2500,5000,92000,Low cross,Skill/Skill_LowCross,"Cross the ball low
+Control: V + V","Cross the ball low
+Control: V + V"
+81,60413,13,604,18,3,82,165,330,1750,3500,7000,92000,High cross,Skill/Skill_HighCross,"Cross the ball high
+Control: V","Cross the ball high
+Control: V"
+82,60422,22,604,18,3,82,165,330,1750,3500,7000,92000,High cross,Skill/Skill_HighCross,"Cross the ball high
+Control: V","Cross the ball high
+Control: V"
+83,60431,31,604,18,3,82,165,330,1750,3500,7000,92000,High cross,Skill/Skill_HighCross,"Cross the ball high
+Control: V","Cross the ball high
+Control: V"
+84,60522,22,605,30,3,236,471,943,5000,10000,20000,92000,Beckham cross,Skill/Skill_BeckhamCross,"Cross the ball fast 
+in front of goal
+Control: X","Cross the ball fast 
+in front of goal
+Control: X"
+85,60613,13,606,18,3,141,283,566,3000,6000,12000,92000,Fake cross,Skill/Skill_FakeCross,"Fake a cross to cheat your 
+opponent
+Control: X","Fake a cross to cheat your 
+opponent
+Control: X"
+86,60721,21,607,18,3,118,236,471,2500,5000,10000,92000,Killer through pass,Skill/Skill_KillThrupass,"Fast pass going through 
+opponent players 
+Control: V","Fast pass going through 
+opponent players 
+Control: V"
+87,60723,23,607,18,3,118,236,471,2500,5000,10000,92000,Killer through pass,Skill/Skill_KillThrupass,"Fast pass going through 
+opponent players 
+Control: V","Fast pass going through 
+opponent players 
+Control: V"
+88,60823,23,608,30,3,118,236,471,2500,5000,10000,92000,Quick lobbingpass,Skill/Skill_Lobbingpass,"Pass over the opponent head
+Control: V","Pass over the opponent head
+Control: V"
+89,60833,33,608,18,3,118,236,471,2500,5000,10000,92000,Quick lobbingpass,Skill/Skill_Lobbingpass,"Pass over the opponent head
+Control: V","Pass over the opponent head
+Control: V"
+90,60923,23,609,18,3,141,283,566,3000,6000,12000,92000,Fake pass,Skill/Skill_Fakepass,"Fake a pass to cheat your 
+opponent
+Control: X","Fake a pass to cheat your 
+opponent
+Control: X"
+91,61013,13,610,30,3,141,283,566,3000,6000,12000,92000,Advanced fake cross,Skill/Skill_FakeCross2,"Cross a ball to cheat your 
+opponent
+Control: X + X","Cross a ball to cheat your 
+opponent
+Control: X + X"
+92,61113,13,611,18,3,118,236,471,2500,5000,10000,92000,Ghost cross,Skill/Skill_GhostCross,"Cross the ball, but the impact 
+point is invisible
+Control: A 
+(The both cant see it)","Cross the ball, but the impact 
+point is invisible
+Control: Q
+(The both cant see it)"
+93,61122,22,611,30,3,118,236,471,2500,5000,10000,92000,Ghost cross,Skill/Skill_GhostCross,"Cross the ball, but the impact 
+point is invisible
+Control: A 
+(The both cant see it)","Cross the ball, but the impact 
+point is invisible
+Control: Q
+(The both cant see it)"
+94,61213,13,612,30,0,177,353,707,3750,7500,15000,92000,Advanced ghost cross,Skill/Skill_GhostCross2,"Cross a ball to a spot only 
+your team members can see
+Control: A ","Cross a ball to a spot only 
+your team members can see
+Control: Q"
+95,62121,21,621,18,3,118,236,471,2500,5000,10000,92000,Target short pass,Skill/Skill_TargetShortpass,"Pass the ball to a precise 
+team member.
+Control: Number keys 
+from 1 to 5","Pass the ball to a precise 
+team member.
+Control: Number keys 
+from 1 to 5"
+96,62123,23,621,18,3,118,236,471,2500,5000,10000,92000,Target short pass,Skill/Skill_TargetShortpass,"Pass the ball to a precise 
+team member.
+Control: Number keys 
+from 1 to 5","Pass the ball to a precise 
+team member.
+Control: Number keys 
+from 1 to 5"
+97,62223,23,622,18,3,141,283,566,3000,6000,12000,92000,Killer through pass,Skill/Skill_TargetKillpass,"Perform a through pass 
+towards a specific member.
+Control: Number keys 
+from 1 to 5","Perform a through pass 
+towards a specific member.
+Control: Number keys 
+from 1 to 5"
+98,70124,24,701,18,3,141,283,566,3000,6000,12000,92000,High clear,Skill/Skill_HighClear,"Jumping and heading for 
+a high flying ball and clearing 
+it out of your goal area
+Control: Click A or D key 
+before ball comes ","Jumping and heading for 
+a high flying ball and clearing 
+it out of your goal area
+Control: Click Q or D key 
+before ball comes "
+99,70130,30,701,0,3,141,283,566,3000,6000,12000,92000,High clear,Skill/Skill_HighClear,"Jumping and heading for 
+a high flying ball and clearing 
+it out of your goal area
+Control: Click A or D key 
+before ball comes ","Jumping and heading for 
+a high flying ball and clearing 
+it out of your goal area
+Control: Click Q or D key 
+before ball comes "
+100,70231,31,702,18,3,200,401,801,4250,8500,17000,92000,Max clear,Skill/Skill_MaxClear,"Jumping and heading for 
+a the highest flying ball
+Control: Click A or D key 
+before ball comes ","Jumping and heading for 
+a the highest flying ball
+Control: Click Q or D key 
+before ball comes "
+101,70233,33,702,18,3,200,401,801,4250,8500,17000,92000,Max clear,Skill/Skill_MaxClear,"Jumping and heading for 
+a the highest flying ball
+Control: Click A or D key 
+before ball comes ","Jumping and heading for 
+a the highest flying ball
+Control: Click Q or D key 
+before ball comes "
+102,70324,24,703,18,3,153,306,613,3250,6500,13000,92000,Center heading,Skill/Skill_CenterHeading,"Jumping and heading for 
+the highest flying ball
+Control: Click A or S key 
+before ball comes","Jumping and heading for 
+the highest flying ball
+Control: Click Q or S key 
+before ball comes"
+103,70431,31,704,30,3,177,353,707,3750,7500,15000,92000,High trapping,Skill/Skill_HighTrapping,"Catch and control an high 
+flying ball
+Control: Click A or D key 
+before ball comes","Catch and control an high 
+flying ball
+Control: Click Q or D key 
+before ball comes"
+104,70433,33,704,30,3,177,353,707,3750,7500,15000,92000,High trapping,Skill/Skill_HighTrapping,"Catch and control an high 
+flying ball
+Control: Click A or D key 
+before ball comes","Catch and control an high 
+flying ball
+Control: Click Q or D key 
+before ball comes"
+105,70532,32,705,18,3,236,471,943,5000,10000,20000,92000,Max trapping,Skill/Skill_MaxTrapping,"Catch and control an high 
+flying ball
+Control: Click A or D key 
+before ball comes","Catch and control an high 
+flying ball
+Control: Click Q or D key 
+before ball comes"
+106,80113,13,801,18,3,236,471,943,5000,10000,20000,92000,Hit and Run,Skill/Skill_HitAndRun,"Quick movement after hitting 
+the ball forward
+Control: C","Quick movement after hitting 
+the ball forward
+Control: C"
+107,80122,22,801,18,3,236,471,943,5000,10000,20000,92000,Hit and Run,Skill/Skill_HitAndRun,"Quick movement after hitting 
+the ball forward
+Control: C","Quick movement after hitting 
+the ball forward
+Control: C"
+108,80131,31,801,18,3,236,471,943,5000,10000,20000,92000,Hit and Run,Skill/Skill_HitAndRun,"Quick movement after hitting 
+the ball forward
+Control: C","Quick movement after hitting 
+the ball forward
+Control: C"
+109,80231,31,802,18,3,177,353,707,3750,7500,15000,92000,Fast screen,Skill/Skill_FastScreen,"Mark your opponent moving 
+at a faster speed
+Control: W","Mark your opponent moving 
+at a faster speed
+Control: Z"
+110,80232,32,802,18,3,177,353,707,3750,7500,15000,92000,Fast screen,Skill/Skill_FastScreen,"Mark your opponent moving 
+at a faster speed
+Control: W","Mark your opponent moving 
+at a faster speed
+Control: Z"
+111,80233,33,802,18,3,177,353,707,3750,7500,15000,92000,Fast screen,Skill/Skill_FastScreen,"Mark your opponent moving 
+at a faster speed
+Control: W","Mark your opponent moving 
+at a faster speed
+Control: Z"
+112,80313,13,803,30,3,177,353,707,3750,7500,15000,92000,Fast sprint,Skill/Skill_FastSprint,"Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor ","Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor "
+113,80321,21,803,30,3,177,353,707,3750,7500,15000,92000,Fast sprint,Skill/Skill_FastSprint,"Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor ","Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor "
+114,80322,22,803,30,3,177,353,707,3750,7500,15000,92000,Fast sprint,Skill/Skill_FastSprint,"Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor ","Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor "
+115,80331,31,803,30,3,177,353,707,3750,7500,15000,92000,Fast sprint,Skill/Skill_FastSprint,"Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor ","Fast and quick running but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor "
+116,80413,13,804,18,3,177,353,707,3750,7500,15000,92000,Fast dribble,Skill/Skill_FastDribble,"Fast and quick dribble but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor","Fast and quick dribble but 
+the running gauge is 
+reduced quickly
+Control: Ctrl + cursor"
+117,90110,10,901,0,3,71,141,283,1500,3000,6000,92000,Endure,Skill/Skill_Endure,"Stubborn resistance to 
+opponent player
+Control: Auto","Stubborn resistance to 
+opponent player
+Control: Auto"
+118,90120,20,901,0,3,71,141,283,1500,3000,6000,92000,Endure,Skill/Skill_Endure,"Stubborn resistance to 
+opponent player
+Control: Auto","Stubborn resistance to 
+opponent player
+Control: Auto"
+119,90130,30,901,0,3,71,141,283,1500,3000,6000,92000,Endure,Skill/Skill_Endure,"Stubborn resistance to 
+opponent player
+Control: Auto","Stubborn resistance to 
+opponent player
+Control: Auto"
+120,90231,31,902,30,3,118,236,471,2500,5000,10000,92000,Choice point,Skill/Skill_ChoicePoint,"Secure position in crowded 
+area
+Control: R + cursor","Secure position in crowded 
+area
+Control: R + cursor"
+121,90232,32,902,18,3,118,236,471,2500,5000,10000,92000,Choice point,Skill/Skill_ChoicePoint,"Secure position in crowded 
+area
+Control: R + cursor","Secure position in crowded 
+area
+Control: R + cursor"
+122,90233,33,902,18,3,118,236,471,2500,5000,10000,92000,Choice point,Skill/Skill_ChoicePoint,"Secure position in crowded 
+area
+Control: R + cursor","Secure position in crowded 
+area
+Control: R + cursor"
+123,90323,23,903,30,3,177,353,707,3750,7500,15000,92000,Iron wall,Skill/Skill_IronWall,"Block a fast shot with your 
+body standing still and firm
+Control: Auto","Block a fast shot with your 
+body standing still and firm
+Control: Auto"
+124,90324,24,903,18,3,177,353,707,3750,7500,15000,92000,Iron wall,Skill/Skill_IronWall,"Block a fast shot with your 
+body standing still and firm
+Control: Auto","Block a fast shot with your 
+body standing still and firm
+Control: Auto"
+125,90331,31,903,18,3,177,353,707,3750,7500,15000,92000,Iron wall,Skill/Skill_IronWall,"Block a fast shot with your 
+body standing still and firm
+Control: Auto","Block a fast shot with your 
+body standing still and firm
+Control: Auto"
+126,90332,32,903,18,3,177,353,707,3750,7500,15000,92000,Iron wall,Skill/Skill_IronWall,"Block a fast shot with your 
+body standing still and firm
+Control: Auto","Block a fast shot with your 
+body standing still and firm
+Control: Auto"
+127,90333,33,903,18,3,177,353,707,3750,7500,15000,92000,Iron wall,Skill/Skill_IronWall,"Block a fast shot with your 
+body standing still and firm
+Control: Auto","Block a fast shot with your 
+body standing still and firm
+Control: Auto"
+128,90433,33,904,30,3,236,471,943,5000,10000,20000,92000,Push out,Skill/Skill_PushOut,"Push down the opponent 
+player in the defending 
+area
+Control: C","Push down the opponent 
+player in the defending 
+area
+Control: C"
+129,90531,31,905,18,3,141,283,566,3000,6000,12000,92000,Mountain block,Skill/Skill_MountainBlock,"Block the opponent player 
+who is trying to cross 
+or shoot
+Control: C","Block the opponent player 
+who is trying to cross 
+or shoot
+Control: C"
+130,90632,32,906,30,3,236,471,943,5000,10000,20000,92000,Diving block,Skill/Skill_DivingBlock,"Block the ball with your 
+body diving on the field
+Control: C","Block the ball with your 
+body diving on the field
+Control: C"
+131,90724,24,907,30,3,236,471,943,5000,10000,20000,92000,Body check,Skill/Skill_Bodycheck,"Pull down the opponent 
+player having the ball
+Control: C","Pull down the opponent 
+player having the ball
+Control: C"
+132,90812,12,908,30,3,177,353,707,3750,7500,15000,92000,Fake turn side,Skill/Skill_FakeTurnSide,"Fake a turn side kick, 
+without actually shooting
+Control: left or right + X","Fake a turn side kick, 
+without actually shooting
+Control: left or right + X"
+133,90922,22,909,30,3,177,353,707,3750,7500,15000,92000,Fake Beckham cross,Skill/Skill_FakeBeckhamCross,"Fake a Beckham cross, 
+without actually crossing
+Control: X + X","Fake a Beckham cross, 
+without actually crossing
+Control: X + X"
+134,91033,33,910,30,3,200,401,801,4250,8500,17000,92000,Body catch,Skill/Skill_BodyCatch,"Pull down the opponent 
+player having no ball
+Control: X","Pull down the opponent 
+player having no ball
+Control: X"
