@@ -4,8 +4,12 @@ import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
 
 public class Table {
 
+    public static void initializeMainTables() {
+        InventoryTable.initializeItemFreeTable(Constants.TABLE_ITEM_FREE_PATH);
+    }
+
     public static void initializeGameTables() {
-        InventoryTable.initializeSkillsTable(Constants.TABLE_SKILL_PATH);
-        InventoryTable.initializeCelesTable(Constants.TABLE_CELE_PATH);
+        InventoryTable.initializeSkillTable(Constants.TABLE_SKILL_PATH);
+        InventoryTable.initializeCeleTable(Constants.TABLE_CELE_PATH);
     }
 }

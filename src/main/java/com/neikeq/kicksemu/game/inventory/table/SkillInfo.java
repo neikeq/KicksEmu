@@ -5,11 +5,11 @@ import com.neikeq.kicksemu.utils.table.Row;
 
 public class SkillInfo {
 
-    private int id;
-    private short position;
-    private short level;
-    private Payment payment;
-    private Price price;
+    private final int id;
+    private final short position;
+    private final short level;
+    private final Payment payment;
+    private final Price price;
 
     public SkillInfo(Row row) {
         row.nextColumn();

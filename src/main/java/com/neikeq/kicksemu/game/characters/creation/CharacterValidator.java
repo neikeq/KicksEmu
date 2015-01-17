@@ -1,6 +1,8 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
 import com.neikeq.kicksemu.game.characters.PositionCodes;
+import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.inventory.table.ItemFree;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
@@ -16,6 +18,11 @@ class CharacterValidator {
 
     private static final List<Short> VALID_POSITIONS =
             Arrays.asList(PositionCodes.FW, PositionCodes.MF, PositionCodes.DF);
+
+    private static final List<Integer> VALID_FACES = Arrays.asList(
+                    101, 102, 103, 104, 105, 106, 201, 202, 203, 301, 302,
+                    303, 304, 401, 402, 403, 404, 405, 406, 407, 408, 409
+            );
 
     private static final int NAME_MIN_LENGTH = 3;
     private static final int NAME_MAX_LENGTH = 14;
@@ -46,14 +53,13 @@ class CharacterValidator {
     public static byte validate(CharacterBase character) {
         byte result = CreationResult.SUCCESS;
 
-        /*
-        * TODO Check if animation and face are valid and both represents the same gender
-        * TODO Check if default items are valid
-        */
         if (!isValidName(character.getName()) || nameAlreadyInUse(character.getName())) {
             result = CreationResult.NAME_ALREADY_IN_USE;
         } else if (!containsValidStats(character) || !isValidPosition(character.getPosition())) {
             result = CreationResult.INVALID_CHARACTER;
+        } else if (!containsValidItems(character) || !isValidFace(character) ||
+                !isValidAnimation(character)) {
+            result = CreationResult.SYSTEM_PROBLEM;
         }
 
         return result;
@@ -118,5 +124,33 @@ class CharacterValidator {
                 character.getStatsGoalkeeping() >= MIN_GOALKEEPING[index] &&
                 character.getStatsPunching() >= MIN_PUNCHING[index] &&
                 character.getStatsDefense() >= MIN_DEFENSE[index];
+    }
+
+    // TODO create itemClass enumerator or constants
+    private static boolean containsValidItems(CharacterBase character) {
+        ItemFree head = InventoryTable.getItemFree(itemFree ->
+                itemFree.getId() == character.getDefaultHead() &&
+                        itemFree.getItemClass() == 101);
+        ItemFree shirt = InventoryTable.getItemFree(itemFree ->
+                itemFree.getId() == character.getDefaultShirts() &&
+                        itemFree.getItemClass() == 103);
+        ItemFree pant = InventoryTable.getItemFree(itemFree ->
+                itemFree.getId() == character.getDefaultPants() &&
+                        itemFree.getItemClass() == 104);
+        ItemFree shoes = InventoryTable.getItemFree(itemFree ->
+                itemFree.getId() == character.getDefaultShoes() &&
+                        itemFree.getItemClass() == 106);
+
+        return head != null && shirt != null && pant != null && shoes != null;
+    }
+
+    private static boolean isValidFace(CharacterBase character) {
+        return VALID_FACES.contains(Integer.valueOf(character.getFace()));
+    }
+
+    // TODO create animation and faces enumerator or constants
+    private static boolean isValidAnimation(CharacterBase character) {
+        return (character.getAnimation() == 1 && character.getFace() < 400) ||
+                (character.getAnimation() == 2 && character.getFace() > 400);
     }
 }

@@ -5,10 +5,10 @@ import com.neikeq.kicksemu.utils.table.Row;
 
 public class CeleInfo {
 
-    private int id;
-    private short level;
-    private Payment payment;
-    private Price price;
+    private final int id;
+    private final short level;
+    private final Payment payment;
+    private final Price price;
 
     public CeleInfo(Row row) {
         row.nextColumn();

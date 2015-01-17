@@ -50,6 +50,8 @@ public class ServerManager {
 
     void initializeMain() {
         messageHandler = new MainMessageHandler();
+
+        Table.initializeMainTables();
     }
 
     private boolean initializeGame() {

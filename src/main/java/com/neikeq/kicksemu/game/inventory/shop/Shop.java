@@ -109,7 +109,7 @@ public class Shop {
         short level = PlayerInfo.getLevel(playerId);
 
         // Get the information about the celebration with the requested id
-        CeleInfo celeInfo = InventoryTable.getCeleInfo(s -> s.getId() == celeId);
+        CeleInfo celeInfo = InventoryTable.getCeleInfo(c -> c.getId() == celeId);
 
         Celebration cele = null;
         byte result = 0;

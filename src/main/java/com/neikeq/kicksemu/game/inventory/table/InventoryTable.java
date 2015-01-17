@@ -12,6 +12,7 @@ public class InventoryTable {
 
     private static final Map<Integer, SkillInfo> skillsTable = new HashMap<>();
     private static final Map<Integer, CeleInfo> celesTable = new HashMap<>();
+    private static final Map<Integer, ItemFree> itemFreeTable = new HashMap<>();
 
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
         Optional<SkillInfo> result = skillsTable.values().stream().filter(filter).findFirst();
@@ -33,7 +34,17 @@ public class InventoryTable {
         return result.get();
     }
 
-    public static void initializeSkillsTable(String path) {
+    public static ItemFree getItemFree(Predicate<ItemFree> filter) {
+        Optional<ItemFree> result = itemFreeTable.values().stream().filter(filter).findFirst();
+
+        if (!result.isPresent()) {
+            return null;
+        }
+
+        return result.get();
+    }
+
+    public static void initializeSkillTable(String path) {
         TableReader reader = new TableReader(path);
 
         // Ignore first row
@@ -46,7 +57,7 @@ public class InventoryTable {
         }
     }
 
-    public static void initializeCelesTable(String path) {
+    public static void initializeCeleTable(String path) {
         TableReader reader = new TableReader(path);
 
         // Ignore first row
@@ -56,6 +67,19 @@ public class InventoryTable {
         while ((line = reader.nextRow()) != null) {
             CeleInfo row = new CeleInfo(line);
             celesTable.put(row.getId(), row);
+        }
+    }
+
+    public static void initializeItemFreeTable(String path) {
+        TableReader reader = new TableReader(path);
+
+        // Ignore first row
+        reader.nextRow();
+
+        Row line;
+        while ((line = reader.nextRow()) != null) {
+            ItemFree row = new ItemFree(line);
+            itemFreeTable.put(row.getId(), row);
         }
     }
 }
