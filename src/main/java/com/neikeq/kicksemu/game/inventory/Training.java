@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.inventory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Training {
+public class Training implements Product {
 
     private int id;
     private int inventoryId;

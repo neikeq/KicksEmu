@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Skill {
+public class Skill implements Product, IndexedProduct {
 
     private int id;
     private int inventoryId;

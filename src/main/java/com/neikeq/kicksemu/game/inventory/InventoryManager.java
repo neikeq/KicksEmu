@@ -17,7 +17,7 @@ public class InventoryManager {
         byte newIndex = 0;
 
         Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
-        Skill skill = InventoryUtils.getByIdFromMap(skills, skillId);
+        Skill skill = (Skill) InventoryUtils.getByIdFromMap(skills, skillId);
 
         // If skill exists and skill is not yet activated
         if (skill != null && skill.getSelectionIndex() <= 0) {
@@ -48,12 +48,12 @@ public class InventoryManager {
         byte result = 0;
 
         int playerId = s.getPlayerId();
-        Skill skill = InventoryUtils.getByIdFromMap(skills, skillId);
+        Skill skill = (Skill) InventoryUtils.getByIdFromMap(skills, skillId);
 
         // If skill exists and skill is activated
         if (skill != null && skill.getSelectionIndex() > 0) {
             // Deactivate skill
-            skill.setSelectionIndex((byte)0);
+            skill.setSelectionIndex((byte) 0);
             s.send(MessageBuilder.deactivateSkill(skillId, result));
 
             PlayerInfo.setInventorySkills(skills, playerId);

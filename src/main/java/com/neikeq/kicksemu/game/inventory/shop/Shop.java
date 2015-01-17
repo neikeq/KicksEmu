@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.inventory.shop;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.InventoryUtils;
+import com.neikeq.kicksemu.game.inventory.Product;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
 import com.neikeq.kicksemu.game.inventory.table.SkillInfo;
@@ -52,7 +53,7 @@ public class Shop {
                         Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
 
                         // If the item is not already purchased
-                        if (!alreadyPurchasedSkill(skillId, skills.values())) {
+                        if (!alreadyPurchased(skillId, skills.values())) {
                             // Initialize skill with the requested data
                             int id = InventoryUtils.getSmallestMissingId(skills.values());
                             byte index = InventoryUtils.getSmallestMissingIndex(skills.values());
@@ -91,8 +92,8 @@ public class Shop {
         session.send(response);
     }
 
-    private static boolean alreadyPurchasedSkill(int skillId, Collection<Skill> skills) {
-        return skills.stream().filter(s -> s.getId() == skillId).findFirst().isPresent();
+    private static boolean alreadyPurchased(int id, Collection<? extends Product> product) {
+        return product.stream().filter(p -> p.getId() == id).findFirst().isPresent();
     }
 
     private static int getMoneyFromPaymentMode(Payment payment, int playerId) {

@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.inventory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Celebration {
+public class Celebration implements Product, IndexedProduct {
 
     private int id;
     private int inventoryId;

@@ -14,13 +14,13 @@ public class InventoryUtils {
         return DateUtils.toTimestamp(DateUtils.addDays(DateUtils.getSqlDate(), days));
     }
 
-    public static byte getSmallestMissingIndex(Collection<Skill> skills) {
+    public static byte getSmallestMissingIndex(Collection<? extends IndexedProduct> products) {
         List<Byte> indexes = new ArrayList<>();
 
-        indexes.addAll(skills.stream().map(Skill::getSelectionIndex)
+        indexes.addAll(products.stream().map(IndexedProduct::getSelectionIndex)
                 .collect(Collectors.toList()));
 
-        for (byte i = 1; i <= skills.size() + 1; i++) {
+        for (byte i = 1; i <= products.size() + 1; i++) {
             if (!indexes.contains(i)) {
                 return i;
             }
@@ -29,12 +29,12 @@ public class InventoryUtils {
         return 1;
     }
 
-    public static int getSmallestMissingId(Collection<Skill> skills) {
+    public static int getSmallestMissingId(Collection<? extends Product> products) {
         List<Integer> ids = new ArrayList<>();
 
-        ids.addAll(skills.stream().map(Skill::getInventoryId).collect(Collectors.toList()));
+        ids.addAll(products.stream().map(Product::getInventoryId).collect(Collectors.toList()));
 
-        for (int i = 0; i < skills.size() + 1; i++) {
+        for (int i = 0; i < products.size() + 1; i++) {
             if (!ids.contains(i)) {
                 return i;
             }
@@ -43,9 +43,9 @@ public class InventoryUtils {
         return 1;
     }
 
-    public static Skill getByIdFromMap(Map<Integer, Skill> skills, int skillId) {
-        Optional<Skill> skill = skills.values().stream()
-                .filter(s -> s.getId() == skillId).findFirst();
-        return skill.isPresent() ? skill.get() : null;
+    public static Product getByIdFromMap(Map<Integer, ? extends Product> products, int id) {
+        Optional<? extends Product> product = products.values().stream()
+                .filter(p -> p.getId() == id).findFirst();
+        return product.isPresent() ? product.get() : null;
     }
 }
