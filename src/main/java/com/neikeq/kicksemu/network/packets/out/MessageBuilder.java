@@ -961,6 +961,31 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage activateCele(int inventoryId, byte index, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.ACTIVATE_CELE);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(inventoryId);
+            msg.append(index);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage deactivateCele(int inventoryId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_CELE);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(inventoryId);
+        }
+
+        return msg;
+    }
+
     public static ServerMessage cancelLoading() {
         ServerMessage msg = new ServerMessage(MessageId.CANCEL_LOADING);
 

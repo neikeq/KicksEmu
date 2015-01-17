@@ -22,7 +22,7 @@ public class Celebration implements Product, IndexedProduct {
         this.id = id;
         this.inventoryId = inventoryId;
         this.expiration = Expiration.fromInt(expiration);
-        this.selectionIndex = selectionIndex;
+        this.setSelectionIndex(selectionIndex);
         this.timestampExpire = timestamp;
         this.visible = visible;
     }
@@ -32,7 +32,7 @@ public class Celebration implements Product, IndexedProduct {
 
         id = Integer.valueOf(data[0]);
         inventoryId = Integer.valueOf(data[1]);
-        selectionIndex = Byte.valueOf(data[2]);
+        setSelectionIndex(Byte.valueOf(data[2]));
         expiration = Expiration.fromInt(Integer.valueOf(data[3]));
         timestampExpire = new Timestamp(Long.valueOf(data[4]));
         visible = Boolean.valueOf(data[5]);
@@ -102,5 +102,9 @@ public class Celebration implements Product, IndexedProduct {
 
     public boolean isVisible() {
         return visible;
+    }
+
+    public void setSelectionIndex(byte selectionIndex) {
+        this.selectionIndex = selectionIndex;
     }
 }

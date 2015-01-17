@@ -63,6 +63,8 @@ public class MessageId {
     public static final int ACTIVATE_SKILL = 2621;
     public static final int DEACTIVATE_SKILL = 2622;
     public static final int PURCHASE_CELE = 2630;
+    public static final int ACTIVATE_CELE = 2631;
+    public static final int DEACTIVATE_CELE = 2632;
     public static final int TCP_PING = 2900;
     public static final int UPDATE_SETTINGS = 2901;
     public static final int ADD_STATS_POINTS = 2903;

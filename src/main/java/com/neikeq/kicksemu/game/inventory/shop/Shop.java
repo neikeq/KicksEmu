@@ -131,6 +131,7 @@ public class Shop {
                             // Initialize cele with the requested data
                             int id = InventoryUtils.getSmallestMissingId(celes.values());
                             byte index = InventoryUtils.getSmallestMissingIndex(celes.values());
+                            index = index > 9 ? 0 : index;
 
                             cele = new Celebration(celeId, id, expiration.toInt(), index,
                                     InventoryUtils.expirationToTimestamp(expiration), true);
