@@ -705,7 +705,7 @@ public class PlayerInfo {
     }
 
     public static Map<Integer, Celebration> getInventoryCelebration(int id) {
-        return Celebration.mapFromString(SqlUtils.getString("inventory_celebration", table, id));
+        return Celebration.mapFromString(SqlUtils.getString("inventory_celebration", table, id), id);
     }
 
     public static FriendsList getFriendsList(int id) {

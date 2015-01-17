@@ -45,9 +45,9 @@ public class Skill implements Product, IndexedProduct {
         Map<Integer, Skill> skills = new HashMap<>();
 
         if (!str.isEmpty()) {
-            boolean expired = false;
-
             String[] rows = str.split(";");
+
+            boolean expired = false;
 
             for (String row : rows) {
                 if (!row.isEmpty()) {

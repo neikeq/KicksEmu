@@ -1,5 +1,8 @@
 package com.neikeq.kicksemu.game.inventory;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.utils.DateUtils;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,15 +41,29 @@ public class Celebration implements Product, IndexedProduct {
         visible = Boolean.valueOf(data[5]);
     }
 
-    public static Map<Integer, Celebration> mapFromString(String str) {
+    public static Map<Integer, Celebration> mapFromString(String str, int playerId) {
         Map<Integer, Celebration> celebrations = new HashMap<>();
 
         if (!str.isEmpty()) {
             String[] rows = str.split(";");
 
+            boolean expired = false;
+
             for (String row : rows) {
-                Celebration celebration = new Celebration(row);
-                celebrations.put(celebration.getInventoryId(), celebration);
+                if (!row.isEmpty()) {
+                    Celebration celebration = new Celebration(row);
+
+                    if (celebration.getTimestampExpire().after(DateUtils.getTimestamp()) ||
+                            celebration.getExpiration().isPermanent()) {
+                        celebrations.put(celebration.getInventoryId(), celebration);
+                    } else {
+                        expired = true;
+                    }
+                }
+            }
+
+            if (expired) {
+                PlayerInfo.setInventoryCelebration(celebrations, playerId);
             }
         }
 
