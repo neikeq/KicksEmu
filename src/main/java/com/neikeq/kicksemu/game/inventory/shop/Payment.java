@@ -2,7 +2,8 @@ package com.neikeq.kicksemu.game.inventory.shop;
 
 public enum Payment {
     KASH,
-    POINTS;
+    POINTS,
+    BOTH;
 
     public static Payment fromInt(int value) {
         switch (value) {
@@ -10,8 +11,21 @@ public enum Payment {
                 return KASH;
             case 2:
                 return POINTS;
+            case 3:
+                return BOTH;
             default:
                 return null;
+        }
+    }
+
+    public boolean accepts(Payment payment) {
+        if (payment == BOTH) return false;
+
+        switch (this) {
+            case BOTH:
+                return payment != null;
+            default:
+                return payment == this;
         }
     }
 }

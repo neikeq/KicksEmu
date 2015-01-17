@@ -4,7 +4,7 @@ import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.shop.Payment;
 import com.neikeq.kicksemu.utils.table.Row;
 
-public class SkillPrice {
+public class Price {
 
     private int kash7;
     private int kash30;
@@ -13,7 +13,7 @@ public class SkillPrice {
     private int points30;
     private int pointsPerm;
 
-    public SkillPrice(Row row) {
+    public Price(Row row) {
         kash7 = Integer.valueOf(row.nextColumn());
         kash30 = Integer.valueOf(row.nextColumn());
         kashPerm = Integer.valueOf(row.nextColumn());

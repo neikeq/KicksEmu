@@ -103,9 +103,9 @@ class MessageUtils {
         msg.append(celebration.getInventoryId());
         msg.append((short)celebration.getId());
         msg.append(celebration.getSelectionIndex());
-        msg.append(celebration.getExpiration());
+        msg.append(celebration.getExpiration().toInt());
         msg.appendZeros(8);
-        msg.append((int) celebration.getTimestampExpire());
+        msg.append((int) celebration.getTimestampExpire().getTime());
         msg.append(celebration.isVisible());
     }
 

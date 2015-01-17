@@ -996,8 +996,8 @@ public class PlayerInfo {
         SqlUtils.setString("inventory_skills", Skill.mapToString(value), table, id);
     }
 
-    public static void setInventoryCelebration(String value, int id) {
-        SqlUtils.setString("inventory_celebration", value, table, id);
+    public static void setInventoryCelebration(Map<Integer, Celebration> value, int id) {
+        SqlUtils.setString("inventory_celebration", Celebration.mapToString(value), table, id);
     }
 
     public static void setFriendsList(FriendsList value, int id) {

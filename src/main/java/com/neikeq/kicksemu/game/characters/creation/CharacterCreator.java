@@ -23,7 +23,7 @@ public class CharacterCreator {
             if (UserInfo.hasEmptySlot(session.getUserId())) {
                 CharacterBase character = characterFromMessage(msg, accountId);
 
-                result = CharacterValidator.validation(character);
+                result = CharacterValidator.validate(character);
 
                 if (result == CreationResult.SUCCESS) {
                     int resultId = create(character);

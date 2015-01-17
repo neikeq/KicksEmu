@@ -43,7 +43,7 @@ class CharacterValidator {
     private static final byte[] MIN_PUNCHING = new byte[] { 0, 0, 0 };
     private static final byte[] MIN_DEFENSE = new byte[] { 0, 0, 0 };
 
-    public static byte validation(CharacterBase character) {
+    public static byte validate(CharacterBase character) {
         byte result = CreationResult.SUCCESS;
 
         /*

@@ -1,0 +1,14 @@
+// PurchaseCele
+// Tcp
+
+Id: 2630
+Size: 23
+
+Data:
+int packet_id
+byte payment // Kash: 1, Points: 2
+int price
+short cele_id
+int expiration
+int stats_bonus_one // ignored
+int stats_bonus_two // ignored

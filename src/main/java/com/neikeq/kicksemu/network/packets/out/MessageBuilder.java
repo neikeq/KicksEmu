@@ -948,6 +948,19 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage purchaseCele(int playerId, Celebration cele, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.PURCHASE_CELE);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendInventoryCelebration(cele, msg);
+        }
+
+        return msg;
+    }
+
     public static ServerMessage cancelLoading() {
         ServerMessage msg = new ServerMessage(MessageId.CANCEL_LOADING);
 
