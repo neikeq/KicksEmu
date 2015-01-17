@@ -23,7 +23,7 @@ public class Room {
     private byte minLevel;
     private byte maxLevel;
 
-    private boolean wasTraining;
+    private int trainingFactor;
 
     private String name;
     private String password;
@@ -611,11 +611,11 @@ public class Room {
         this.state = state;
     }
 
-    public boolean wasTraining() {
-        return wasTraining;
+    public int getTrainingFactor() {
+        return trainingFactor;
     }
 
-    public void setWasTraining(boolean wasTraining) {
-        this.wasTraining = wasTraining;
+    public void updateTrainingFactor() {
+        trainingFactor = isTraining() ? 0 : redTeamSize() + blueTeamSize();
     }
 }

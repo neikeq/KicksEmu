@@ -497,7 +497,7 @@ public class RoomManager {
         if (room != null && room.getMaster() == session.getPlayerId() && room.isLobbyScreen()) {
                 if (count == 0) {
                     room.setState(RoomState.LOADING);
-                    room.setWasTraining(room.isTraining());
+                    room.updateTrainingFactor();
                 }
 
                 ServerMessage msgCountDown = MessageBuilder.countDown(count);
