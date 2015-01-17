@@ -17,7 +17,7 @@ short animation
  * Boy 1: 101, Boy 2: 102, Boy 3: 103, Boy 4: 104, Boy 5: 105, Boy 6: 106, Boy 7: 201,
  * Boy 8: 202, Boy 9: 203, Boy 10: 301, Boy 11: 302, Boy 12: 303, Boy 13: 304, 
  * Girl 1: 401, Girl 2: 402, Girl 3: 403, Girl 4: 404, Girl 5: 405,
- *  Girl 6: 406, Girl 7: 407, Girl 8: 408, Girl 9: 409
+ * Girl 6: 406, Girl 7: 407, Girl 8: 408, Girl 9: 409
  */
 short face
 int head // Black: 1010010, Brown: 1010011, Blue: 1010012
