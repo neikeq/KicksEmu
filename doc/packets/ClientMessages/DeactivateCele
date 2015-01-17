@@ -1,0 +1,8 @@
+// DeactivateCele
+// Tcp
+
+Id: 2632
+Size: 8
+
+int packet_id
+int cele_id

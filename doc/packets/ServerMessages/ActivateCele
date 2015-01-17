@@ -1,0 +1,15 @@
+// ActivateCele
+// Tcp
+
+Id: 2631
+Size: 11
+
+int packet_id
+byte reason
+/*
+ * System problem: -1
+ * Cele does not exists: -2
+ */
+byte response
+int cele_id
+byte selection_index

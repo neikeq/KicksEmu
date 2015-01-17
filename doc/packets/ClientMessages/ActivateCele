@@ -1,0 +1,8 @@
+// ActivateSkill
+// Tcp
+
+Id: 2631
+Size: 8
+
+int packet_id
+int cele_id

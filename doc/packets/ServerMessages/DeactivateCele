@@ -1,0 +1,14 @@
+// DeactivateCele
+// Tcp
+
+Id: 2632
+Size: 10
+
+int packet_id
+byte reason
+/*
+ * System problem: -1
+ * Cele does not exists: -2
+ */
+byte response
+int cele_id
