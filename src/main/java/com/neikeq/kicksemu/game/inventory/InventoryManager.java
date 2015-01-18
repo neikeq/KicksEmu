@@ -79,7 +79,7 @@ public class InventoryManager {
             // Activate skill
             newIndex = InventoryUtils.getSmallestMissingIndex(celes.values());
 
-            if (newIndex <= 9) {
+            if (newIndex <= 5) {
                 cele.setSelectionIndex(newIndex);
 
                 PlayerInfo.setInventoryCelebration(celes, playerId);
