@@ -9,6 +9,7 @@ byte reason
 /*
  * System problem: -1
  * Skill does not exists: -2
+ * Skill slots are full: -3
  */
 byte response
 int skill_id

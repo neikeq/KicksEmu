@@ -1,0 +1,14 @@
+// PurchaseLearn
+// Tcp
+
+Id: 2610
+Size: 23
+
+Data:
+int packet_id
+byte payment // Kash: 1, Points: 2
+int price
+int learn_id
+int stats_bonus_one // ignored
+int stats_bonus_two // ignored
+short unknown

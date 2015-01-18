@@ -8,7 +8,8 @@ int packet_id
 byte reason
 /*
  * System problem: -1
- * Cele does not exists: -2
+ * Celebration does not exists: -2
+ * Celebration slots are full: -3
  */
 byte response
 int cele_id

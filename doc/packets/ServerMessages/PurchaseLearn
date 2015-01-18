@@ -1,0 +1,51 @@
+// PurchaseLearn
+// Tcp
+
+Id: 2610
+Size: 55
+
+Data:
+int packet_id
+byte reason
+/*
+ * System problem: -1
+ * Problem with kash: -2
+ * Problem with points: -3
+ * Not enough points: -5
+ * Not enough kash: -8
+ * Invalid level: -9
+ * Already purchased: -10
+ */
+byte response
+short level
+int experience
+short stats_points
+int kash
+int points
+char[8] unknown
+short tickets_kash
+short tickets_points
+short training_running
+short training_endurance
+short training_agility
+short training_ball_control
+short training_dribbling
+short training_stealing
+short training_tackling
+short training_heading
+short training_short_shots
+short training_long_shots
+short training_crossing
+short training_short_passes
+short training_long_passes
+short training_marking
+short training_goalkeeping // Should not be allowed to buy this training
+short training_punching // Should not be allowed to buy this training
+short training_defense // Should not be allowed to buy this training
+int inventory_id
+int learn_id
+int stats_bonus_one // ignore
+int stats_bonus_two // ignore
+short unknown // Ignored
+int timestamp_expire
+byte visible
