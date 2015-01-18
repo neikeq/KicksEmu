@@ -9,8 +9,6 @@ import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.users.UserInfo;
 
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.IntStream;
 
 class MessageUtils {
 
@@ -96,19 +94,19 @@ class MessageUtils {
         msg.append(skill.isVisible());
     }
 
-    public static void appendInventoryCelebration(Celebration celebration, ServerMessage msg) {
+    public static void appendInventoryCelebration(Celebration cele, ServerMessage msg) {
         // If the celebration is null we replace it with an empty one
-        if (celebration == null) {
-            celebration = new Celebration();
+        if (cele == null) {
+            cele = new Celebration();
         }
 
-        msg.append(celebration.getInventoryId());
-        msg.append((short)celebration.getId());
-        msg.append(celebration.getSelectionIndex());
-        msg.append(celebration.getExpiration().toInt());
+        msg.append(cele.getInventoryId());
+        msg.append((short)cele.getId());
+        msg.append(cele.getSelectionIndex());
+        msg.append(cele.getExpiration() != null ? cele.getExpiration().toInt() : 0);
         msg.appendZeros(8);
-        msg.append((int) celebration.getTimestampExpire().getTime());
-        msg.append(celebration.isVisible());
+        msg.append((int) cele.getTimestampExpire().getTime());
+        msg.append(cele.isVisible());
     }
 
     public static void appendStats(int playerId, ServerMessage msg) {
