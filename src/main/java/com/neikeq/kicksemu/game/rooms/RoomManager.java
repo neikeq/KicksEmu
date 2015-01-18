@@ -15,10 +15,15 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RoomManager {
 
@@ -204,14 +209,17 @@ public class RoomManager {
 
         short level = PlayerInfo.getLevel(session.getPlayerId());
 
-        Optional<Room> optional = rooms.values().stream()
+        List<Room> freeRooms = rooms.values().stream()
                 .filter(r -> !r.isPlaying() && r.getType() != RoomType.PASSWORD &&
                         !r.isFull() && !r.playerHasInvalidLevel(level))
-                .findFirst();
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        Collections.sort(freeRooms, (r1, r2) ->
+                Byte.compare(r2.getCurrentSize(), r1.getCurrentSize()));
 
         // If a valid room was found
-        if (optional.isPresent()) {
-            Room room = optional.get();
+        if (freeRooms.size() > 0) {
+            Room room = freeRooms.get(0);
 
             byte result = room.tryJoinRoom(session, "");
 
