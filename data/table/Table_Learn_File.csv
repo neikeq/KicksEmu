@@ -1,0 +1,103 @@
+Index,Id,StatIndex,Level,StatPoints,Payment,Kash,Points,Name,Stat,IconPath
+0,101,1,0,1,2,200,1000,Running Training 1,Running,Learn/Learn_Run
+1,102,1,10,1,2,400,2000,Running Training 2,Running,Learn/Learn_Run
+2,103,1,20,1,2,800,4000,Running Training 3,Running,Learn/Learn_Run
+3,104,1,30,1,2,1600,8000,Running Training 4,Running,Learn/Learn_Run
+4,105,1,40,1,2,3200,16000,Running Training 5,Running,Learn/Learn_Run
+5,106,1,50,1,2,6400,32000,Running Training 6,Running,Learn/Learn_Run
+6,201,2,0,1,2,200,1000,Endurance Training 1,Endurance,Learn/Learn_Endurance
+7,202,2,10,1,2,400,2000,Endurance Training 2,Endurance,Learn/Learn_Endurance
+8,203,2,20,1,2,800,4000,Endurance Training 3,Endurance,Learn/Learn_Endurance
+9,204,2,30,1,2,1600,8000,Endurance Training 4,Endurance,Learn/Learn_Endurance
+10,205,2,40,1,2,3200,16000,Endurance Training 5,Endurance,Learn/Learn_Endurance
+11,206,2,50,1,2,6400,32000,Endurance Training 6,Endurance,Learn/Learn_Endurance
+12,301,3,0,1,2,200,1000,Agility Training 1,Agility,Learn/Learn_Quick
+13,302,3,10,1,2,400,2000,Agility Training 2,Agility,Learn/Learn_Quick
+14,303,3,20,1,2,800,4000,Agility Training 3,Agility,Learn/Learn_Quick
+15,304,3,30,1,2,1600,8000,Agility Training 4,Agility,Learn/Learn_Quick
+16,305,3,40,1,2,3200,16000,Agility Training 5,Agility,Learn/Learn_Quick
+17,306,3,50,1,2,6400,32000,Agility Training 6,Agility,Learn/Learn_Quick
+18,401,4,0,1,2,200,1000,Ball Control Training 1,Ball Ctrl,Learn/Learn_Keeping
+19,402,4,10,1,2,400,2000,Ball Control Training 2,Ball Ctrl,Learn/Learn_Keeping
+20,403,4,20,1,2,800,4000,Ball Control Training 3,Ball Ctrl,Learn/Learn_Keeping
+21,404,4,30,1,2,1600,8000,Ball Control Training 4,Ball Ctrl,Learn/Learn_Keeping
+22,405,4,40,1,2,3200,16000,Ball Control Training 5,Ball Ctrl,Learn/Learn_Keeping
+23,406,4,50,1,2,6400,32000,Ball Control Training 6,Ball Ctrl,Learn/Learn_Keeping
+24,501,5,0,1,2,200,1000,Dribbling Training 1,Dribbling,Learn/Learn_Dribble
+25,502,5,10,1,2,400,2000,Dribbling Training 2,Dribbling,Learn/Learn_Dribble
+26,503,5,20,1,2,800,4000,Dribbling Training 3,Dribbling,Learn/Learn_Dribble
+27,504,5,30,1,2,1600,8000,Dribbling Training 4,Dribbling,Learn/Learn_Dribble
+28,505,5,40,1,2,3200,16000,Dribbling Training 5,Dribbling,Learn/Learn_Dribble
+29,506,5,50,1,2,6400,32000,Dribbling Training 6,Dribbling,Learn/Learn_Dribble
+30,601,6,0,1,2,200,1000,Stealing Training 1,Steal,Learn/Learn_Steal
+31,602,6,10,1,2,400,2000,Stealing Training 2,Steal,Learn/Learn_Steal
+32,603,6,20,1,2,800,4000,Stealing Training 3,Steal,Learn/Learn_Steal
+33,604,6,30,1,2,1600,8000,Stealing Training 4,Steal,Learn/Learn_Steal
+34,605,6,40,1,2,3200,16000,Stealing Training 5,Steal,Learn/Learn_Steal
+35,606,6,50,1,2,6400,32000,Stealing Training 6,Steal,Learn/Learn_Steal
+36,701,7,0,1,2,200,1000,Tackle Training 1,Tackle,Learn/Learn_Tackle
+37,702,7,10,1,2,400,2000,Tackle Training 2,Tackle,Learn/Learn_Tackle
+38,703,7,20,1,2,800,4000,Tackle Training 3,Tackle,Learn/Learn_Tackle
+39,704,7,30,1,2,1600,8000,Tackle Training 4,Tackle,Learn/Learn_Tackle
+40,705,7,40,1,2,3200,16000,Tackle Training 5,Tackle,Learn/Learn_Tackle
+41,706,7,50,1,2,6400,32000,Tackle Training 6,Tackle,Learn/Learn_Tackle
+42,801,8,0,1,2,200,1000,Heading Training 1,Heading,Learn/Learn_Heading
+43,802,8,10,1,2,400,2000,Heading Training 2,Heading,Learn/Learn_Heading
+44,803,8,20,1,2,800,4000,Heading Training 3,Heading,Learn/Learn_Heading
+45,804,8,30,1,2,1600,8000,Heading Training 4,Heading,Learn/Learn_Heading
+46,805,8,40,1,2,3200,16000,Heading Training 5,Heading,Learn/Learn_Heading
+47,806,8,50,1,2,6400,32000,Heading Training 6,Heading,Learn/Learn_Heading
+48,901,9,0,1,2,200,1000,Short Shots Training 1,Short Shots,Learn/Learn_ShortShoot
+49,902,9,10,1,2,400,2000,Short Shots Training 2,Short Shots,Learn/Learn_ShortShoot
+50,903,9,20,1,2,800,4000,Short Shots Training 3,Short Shots,Learn/Learn_ShortShoot
+51,904,9,30,1,2,1600,8000,Short Shots Training 4,Short Shots,Learn/Learn_ShortShoot
+52,905,9,40,1,2,3200,16000,Short Shots Training 5,Short Shots,Learn/Learn_ShortShoot
+53,906,9,50,1,2,6400,32000,Short Shots Training 6,Short Shots,Learn/Learn_ShortShoot
+54,1001,10,0,1,2,200,1000,Long Shots Training 1,Long Shots,Learn/Learn_LongShoot
+55,1002,10,10,1,2,400,2000,Long Shots Training 2,Long Shots,Learn/Learn_LongShoot
+56,1003,10,20,1,2,800,4000,Long Shots Training 3,Long Shots,Learn/Learn_LongShoot
+57,1004,10,30,1,2,1600,8000,Long Shots Training 4,Long Shots,Learn/Learn_LongShoot
+58,1005,10,40,1,2,3200,16000,Long Shots Training 5,Long Shots,Learn/Learn_LongShoot
+59,1006,10,50,1,2,6400,32000,Long Shots Training 6,Long Shots,Learn/Learn_LongShoot
+60,1101,11,0,1,2,200,1000,Cross Training 1,Cross,Learn/Learn_Cross
+61,1102,11,10,1,2,400,2000,Cross Training 2,Cross,Learn/Learn_Cross
+62,1103,11,20,1,2,800,4000,Cross Training 3,Cross,Learn/Learn_Cross
+63,1104,11,30,1,2,1600,8000,Cross Training 4,Cross,Learn/Learn_Cross
+64,1105,11,40,1,2,3200,16000,Cross Training 5,Cross,Learn/Learn_Cross
+65,1106,11,50,1,2,6400,32000,Cross Training 6,Cross,Learn/Learn_Cross
+66,1201,12,0,1,2,200,1000,Short Pass Training 1,Short Pass,Learn/Learn_ShortPass
+67,1202,12,10,1,2,400,2000,Short Pass Training 2,Short Pass,Learn/Learn_ShortPass
+68,1203,12,20,1,2,800,4000,Short Pass Training 3,Short Pass,Learn/Learn_ShortPass
+69,1204,12,30,1,2,1600,8000,Short Pass Training 4,Short Pass,Learn/Learn_ShortPass
+70,1205,12,40,1,2,3200,16000,Short Pass Training 5,Short Pass,Learn/Learn_ShortPass
+71,1206,12,50,1,2,6400,32000,Short Pass Training 6,Short Pass,Learn/Learn_ShortPass
+72,1301,13,0,1,2,200,1000,Long Pass Training 1,Long Pass,Learn/Learn_LongPass
+73,1302,13,10,1,2,400,2000,Long Pass Training 2,Long Pass,Learn/Learn_LongPass
+74,1303,13,20,1,2,800,4000,Long Pass Training 3,Long Pass,Learn/Learn_LongPass
+75,1304,13,30,1,2,1600,8000,Long Pass Training 4,Long Pass,Learn/Learn_LongPass
+76,1305,13,40,1,2,3200,16000,Long Pass Training 5,Long Pass,Learn/Learn_LongPass
+77,1306,13,50,1,2,6400,32000,Long Pass Training 6,Long Pass,Learn/Learn_LongPass
+78,1401,14,0,1,2,200,1000,Bodycheck Training 1,Bodycheck,Learn/Learn_Bodycheck
+79,1402,14,10,1,2,400,2000,Bodycheck Training 2,Bodycheck,Learn/Learn_Bodycheck
+80,1403,14,20,1,2,800,4000,Bodycheck Training 3,Bodycheck,Learn/Learn_Bodycheck
+81,1404,14,30,1,2,1600,8000,Bodycheck Training 4,Bodycheck,Learn/Learn_Bodycheck
+82,1405,14,40,1,2,3200,16000,Bodycheck Training 5,Bodycheck,Learn/Learn_Bodycheck
+83,1406,14,50,1,2,6400,32000,Bodycheck Training 6,Bodycheck,Learn/Learn_Bodycheck
+84,1501,15,0,1,2,200,1000,Goalkeeper Training 1,Goalkeeping,Learn/Learn_Catch
+85,1502,15,10,1,2,400,2000,Goalkeeper Training 2,Goalkeeping,Learn/Learn_Catch
+86,1503,15,20,1,2,800,4000,Goalkeeper Training 3,Goalkeeping,Learn/Learn_Catch
+87,1504,15,30,1,2,1600,8000,Goalkeeper Training 4,Goalkeeping,Learn/Learn_Catch
+88,1505,15,40,1,2,3200,16000,Goalkeeper Training 5,Goalkeeping,Learn/Learn_Catch
+89,1506,15,50,1,2,6400,32000,Goalkeeper Training 6,Goalkeeping,Learn/Learn_Catch
+90,1601,16,0,1,2,200,1000,Punching Training 1,Punching,Learn/Learn_Punch
+91,1602,16,10,1,2,400,2000,Punching Training 2,Punching,Learn/Learn_Punch
+92,1603,16,20,1,2,800,4000,Punching Training 3,Punching,Learn/Learn_Punch
+93,1604,16,30,1,2,1600,8000,Punching Training 4,Punching,Learn/Learn_Punch
+94,1605,16,40,1,2,3200,16000,Punching Training 5,Punching,Learn/Learn_Punch
+95,1606,16,50,1,2,6400,32000,Punching Training 6,Punching,Learn/Learn_Punch
+96,1701,17,0,1,2,200,1000,Defense Training 1,Defense,Learn/Learn_Defense
+97,1702,17,10,1,2,400,2000,Defense Training 2,Defense,Learn/Learn_Defense
+98,1703,17,20,1,2,800,4000,Defense Training 3,Defense,Learn/Learn_Defense
+99,1704,17,30,1,2,1600,8000,Defense Training 4,Defense,Learn/Learn_Defense
+100,1705,17,40,1,2,3200,16000,Defense Training 5,Defense,Learn/Learn_Defense
+101,1706,17,50,1,2,6400,32000,Defense Training 6,Defense,Learn/Learn_Defense
