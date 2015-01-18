@@ -12,6 +12,7 @@ public class InventoryTable {
 
     private static final Map<Integer, SkillInfo> skillsTable = new HashMap<>();
     private static final Map<Integer, CeleInfo> celesTable = new HashMap<>();
+    private static final Map<Integer, LearnInfo> learnTable = new HashMap<>();
     private static final Map<Integer, ItemFree> itemFreeTable = new HashMap<>();
 
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
@@ -34,6 +35,16 @@ public class InventoryTable {
         return result.get();
     }
 
+    public static LearnInfo getLearnInfo(Predicate<LearnInfo> filter) {
+        Optional<LearnInfo> result = learnTable.values().stream().filter(filter).findFirst();
+
+        if (!result.isPresent()) {
+            return null;
+        }
+
+        return result.get();
+    }
+
     public static ItemFree getItemFree(Predicate<ItemFree> filter) {
         Optional<ItemFree> result = itemFreeTable.values().stream().filter(filter).findFirst();
 
@@ -47,9 +58,6 @@ public class InventoryTable {
     public static void initializeSkillTable(String path) {
         TableReader reader = new TableReader(path);
 
-        // Ignore first row
-        reader.nextRow();
-
         Row line;
         while ((line = reader.nextRow()) != null) {
             SkillInfo row = new SkillInfo(line);
@@ -60,9 +68,6 @@ public class InventoryTable {
     public static void initializeCeleTable(String path) {
         TableReader reader = new TableReader(path);
 
-        // Ignore first row
-        reader.nextRow();
-
         Row line;
         while ((line = reader.nextRow()) != null) {
             CeleInfo row = new CeleInfo(line);
@@ -70,11 +75,18 @@ public class InventoryTable {
         }
     }
 
-    public static void initializeItemFreeTable(String path) {
+    public static void initializeLearnTable(String path) {
         TableReader reader = new TableReader(path);
 
-        // Ignore first row
-        reader.nextRow();
+        Row line;
+        while ((line = reader.nextRow()) != null) {
+            LearnInfo row = new LearnInfo(line);
+            learnTable.put(row.getId(), row);
+        }
+    }
+
+    public static void initializeItemFreeTable(String path) {
+        TableReader reader = new TableReader(path);
 
         Row line;
         while ((line = reader.nextRow()) != null) {

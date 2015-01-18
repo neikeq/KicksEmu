@@ -11,5 +11,6 @@ public class Table {
     public static void initializeGameTables() {
         InventoryTable.initializeSkillTable(Constants.TABLE_SKILL_PATH);
         InventoryTable.initializeCeleTable(Constants.TABLE_CELE_PATH);
+        InventoryTable.initializeLearnTable(Constants.TABLE_LEARN_PATH);
     }
 }
