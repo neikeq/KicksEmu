@@ -692,16 +692,8 @@ public class PlayerInfo {
         return Training.mapFromString(SqlUtils.getString("inventory_training", table, id));
     }
 
-    public static String getInventorySkillsString(int id) {
-        return SqlUtils.getString("inventory_skills", table, id);
-    }
-
     public static Map<Integer, Skill> getInventorySkills(int id) {
         return Skill.mapFromString(SqlUtils.getString("inventory_skills", table, id), id);
-    }
-
-    public static String getInventoryCelebrationString(int id) {
-        return SqlUtils.getString("inventory_celebration", table, id);
     }
 
     public static Map<Integer, Celebration> getInventoryCelebration(int id) {

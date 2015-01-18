@@ -6,6 +6,8 @@ import com.neikeq.kicksemu.utils.DateUtils;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Celebration implements Product, IndexedProduct {
 
@@ -80,21 +82,6 @@ public class Celebration implements Product, IndexedProduct {
         }
 
         return celes;
-    }
-
-    public static Map<Integer, Celebration> inUseFromString(String str) {
-        Map<Integer, Celebration> celebrations = new HashMap<>();
-
-        if (!str.isEmpty()) {
-            String[] rows = str.split(";");
-
-            for (String row : rows) {
-                Celebration celebration = new Celebration(row);
-                celebrations.put((int)celebration.getSelectionIndex(), celebration);
-            }
-        }
-
-        return celebrations;
     }
 
     public int getId() {

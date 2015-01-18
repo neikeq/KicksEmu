@@ -82,21 +82,6 @@ public class Skill implements Product, IndexedProduct {
         return skills;
     }
 
-    public static Map<Integer, Skill> getSkillsInUseFromString(String str) {
-        Map<Integer, Skill> skills = new HashMap<>();
-
-        if (!str.isEmpty()) {
-            String[] rows = str.split(";");
-
-            for (String row : rows) {
-                Skill skill = new Skill(row);
-                skills.put((int)skill.getSelectionIndex(), skill);
-            }
-        }
-
-        return skills;
-    }
-
     public int getId() {
         return id;
     }

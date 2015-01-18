@@ -9,6 +9,8 @@ import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.users.UserInfo;
 
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 class MessageUtils {
 
@@ -308,20 +310,20 @@ class MessageUtils {
     }
 
     public static void appendInventorySkillsInUse(int playerId, ServerMessage msg) {
-        String strSkills = PlayerInfo.getInventorySkillsString(playerId);
-        Map<Integer, Skill> skills = Skill.getSkillsInUseFromString(strSkills);
+        Skill[] skills = PlayerInfo.getInventorySkills(playerId).values().stream()
+                .filter(s -> s.getSelectionIndex() > 0).toArray(Skill[]::new);
 
-        for (int i = 1; i <= 30; i++) {
-            appendInventorySkill(skills.get(i), msg);
+        for (int i = 0; i < 30; i++) {
+            appendInventorySkill(i < skills.length ? skills[i] : null, msg);
         }
     }
 
     public static void appendInventoryCelebrationsInUse(int playerId, ServerMessage msg) {
-        Map<Integer, Celebration> celebrations =
-                Celebration.inUseFromString(PlayerInfo.getInventoryCelebrationString(playerId));
+        Celebration[] celebrations = PlayerInfo.getInventoryCelebration(playerId).values()
+                .stream().filter(c -> c.getSelectionIndex() > 0).toArray(Celebration[]::new);
 
-        for (int i = 1; i <= 5; i++) {
-            appendInventoryCelebration(celebrations.get(i), msg);
+        for (int i = 0; i < 5; i++) {
+            appendInventoryCelebration(i < celebrations.length ? celebrations[i] : null, msg);
         }
     }
 
