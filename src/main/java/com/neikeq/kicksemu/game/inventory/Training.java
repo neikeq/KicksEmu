@@ -7,14 +7,16 @@ public class Training implements Product {
 
     private int id;
     private int inventoryId;
-    private long timestampExpire;
     private boolean visible;
 
     public Training() {
-        id = 0;
-        inventoryId = 0;
-        timestampExpire = 0;
-        visible = false;
+        this(0, 0, false);
+    }
+
+    public Training(int id, int inventoryId, boolean visible) {
+        this.id = id;
+        this.inventoryId = inventoryId;
+        this.visible = visible;
     }
 
     private Training(String item) {
@@ -22,8 +24,7 @@ public class Training implements Product {
 
         id = Integer.valueOf(data[0]);
         inventoryId = Integer.valueOf(data[1]);
-        timestampExpire = Long.valueOf(data[2]);
-        visible = Boolean.valueOf(data[3]);
+        visible = Boolean.valueOf(data[2]);
     }
 
     public static Map<Integer, Training> mapFromString(String str) {
@@ -41,16 +42,22 @@ public class Training implements Product {
         return trainings;
     }
 
+    public static String mapToString(Map<Integer, Training> map) {
+        String learns = "";
+
+        for (Training t : map.values()) {
+            learns += t.getId() + "," + t.getInventoryId() + "," + t.isVisible() + ";";
+        }
+
+        return learns;
+    }
+
     public int getId() {
         return id;
     }
 
     public int getInventoryId() {
         return inventoryId;
-    }
-
-    public long getTimestampExpire() {
-        return timestampExpire;
     }
 
     public boolean isVisible() {

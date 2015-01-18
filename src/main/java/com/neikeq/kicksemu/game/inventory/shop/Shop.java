@@ -1,13 +1,16 @@
 package com.neikeq.kicksemu.game.inventory.shop;
 
+import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.InventoryUtils;
 import com.neikeq.kicksemu.game.inventory.Product;
 import com.neikeq.kicksemu.game.inventory.Skill;
+import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.inventory.table.CeleInfo;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.inventory.table.LearnInfo;
 import com.neikeq.kicksemu.game.inventory.table.SkillInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -124,7 +127,8 @@ public class Shop {
                 if (celePrice != -1 && celePrice == price) {
                     // If the player has enough money
                     if (price <= money) {
-                        Map<Integer, Celebration> celes = PlayerInfo.getInventoryCelebration(playerId);
+                        Map<Integer, Celebration> celes =
+                                PlayerInfo.getInventoryCelebration(playerId);
 
                         // If the item is not already purchased
                         if (!alreadyPurchased(celeId, celes.values())) {
@@ -164,6 +168,78 @@ public class Shop {
         }
 
         ServerMessage response = MessageBuilder.purchaseCele(playerId, cele, result);
+        session.send(response);
+    }
+
+    public static void purchaseLearn(Session session, ClientMessage msg) {
+        Payment payment = Payment.fromInt(msg.readByte());
+        int price = msg.readInt();
+        int learnId = msg.readShort();
+
+        // If the payment mode is invalid, ignore the request
+        if (payment == null) return;
+
+        int playerId = session.getPlayerId();
+        int money = getMoneyFromPaymentMode(payment, playerId);
+        short level = PlayerInfo.getLevel(playerId);
+
+        // Get the information about the learn with the requested id
+        LearnInfo learnInfo = InventoryTable.getLearnInfo(c -> c.getId() == learnId);
+
+        Training learn = null;
+        byte result = 0;
+
+        // If there is a learn with this id and the player position is valid for this learn
+        if (learnInfo != null) {
+            // If the player meets the level requirements for this learn
+            if (level >= learnInfo.getLevel()) {
+                int learnPrice = payment == Payment.POINTS ?
+                        learnInfo.getPoints() : learnInfo.getKash();
+
+                // If the price sent by the client is not invalid
+                if (learnPrice == price) {
+                    // If the player has enough money
+                    if (price <= money) {
+                        Map<Integer, Training> learns = PlayerInfo.getInventoryTraining(playerId);
+
+                        // If the item is not already purchased
+                        if (!alreadyPurchased(learnId, learns.values())) {
+                            // Initialize learn with the requested data
+                            int id = InventoryUtils.getSmallestMissingId(learns.values());
+
+                            learn = new Training(learnId, id, true);
+
+                            // Add it to the player's inventory
+                            learns.put(id, learn);
+                            PlayerInfo.setInventoryTraining(learns, playerId);
+                            // Add the learn stat points to the player stats
+                            CharacterUtils.setTrainingStatsByIndex(learnInfo.getStatIndex(),
+                                    learnInfo.getStatPoints(), playerId);
+                            // Deduct the price from the player's money
+                            sumMoneyToPaymentMode(payment, playerId, -price);
+                        } else {
+                            // Already purchased
+                            result = -10;
+                        }
+                    } else {
+                        // Not enough money
+                        result = (byte) (payment == Payment.KASH ? -8 : -5);
+                    }
+                } else {
+                    // The payment mode or price sent by the client is invalid
+                    result = (byte) (payment == Payment.KASH ? -2 : -3);
+                }
+            } else {
+                // Invalid level
+                result = -9;
+            }
+        } else {
+            // System detected a problem
+            // May be due to an invalid learn id
+            result = -1;
+        }
+
+        ServerMessage response = MessageBuilder.purchaseLearn(playerId, learn, result);
         session.send(response);
     }
 

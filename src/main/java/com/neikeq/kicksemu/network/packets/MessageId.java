@@ -59,6 +59,7 @@ public class MessageId {
     public static final int MATCH_FORCED_RESULT = 2408;
     public static final int UNKNOWN1 = 2409;
     public static final int UNKNOWN2 = 2411;
+    public static final int PURCHASE_LEARN = 2610;
     public static final int PURCHASE_SKILL = 2620;
     public static final int ACTIVATE_SKILL = 2621;
     public static final int DEACTIVATE_SKILL = 2622;

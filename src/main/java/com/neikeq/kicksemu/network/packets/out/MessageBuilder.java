@@ -910,6 +910,20 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage purchaseLearn(int playerId, Training learn, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.PURCHASE_LEARN);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendStatsTraining(playerId, msg);
+            MessageUtils.appendInventoryTraining(learn, msg);
+        }
+
+        return msg;
+    }
+
     public static ServerMessage purchaseSkill(int playerId, Skill skill, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_SKILL);
 

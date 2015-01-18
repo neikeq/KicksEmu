@@ -972,6 +972,74 @@ public class PlayerInfo {
         return (short)(value - add);
     }
 
+    public static void setTrainingRunning(short value, int id) {
+        SqlUtils.sumShort("training_running", value, table, id);
+    }
+
+    public static void setTrainingEndurance(short value, int id) {
+        SqlUtils.sumShort("training_endurance", value, table, id);
+    }
+
+    public static void setTrainingAgility(short value, int id) {
+        SqlUtils.sumShort("training_agility", value, table, id);
+    }
+
+    public static void setTrainingBallControl(short value, int id) {
+        SqlUtils.sumShort("training_ball_control", value, table, id);
+    }
+
+    public static void setTrainingDribbling(short value, int id) {
+        SqlUtils.sumShort("training_dribbling", value, table, id);
+    }
+
+    public static void setTrainingStealing(short value, int id) {
+        SqlUtils.sumShort("training_stealing", value, table, id);
+    }
+
+    public static void setTrainingTackling(short value, int id) {
+        SqlUtils.sumShort("training_tackling", value, table, id);
+    }
+
+    public static void setTrainingHeading(short value, int id) {
+        SqlUtils.sumShort("training_heading", value, table, id);
+    }
+
+    public static void setTrainingShortShots(short value, int id) {
+        SqlUtils.sumShort("training_short_shots", value, table, id);
+    }
+
+    public static void setTrainingLongShots(short value, int id) {
+        SqlUtils.sumShort("training_long_shots", value, table, id);
+    }
+
+    public static void setTrainingCrossing(short value, int id) {
+        SqlUtils.sumShort("training_crossing", value, table, id);
+    }
+
+    public static void setTrainingShortPasses(short value, int id) {
+        SqlUtils.sumShort("training_short_passes", value, table, id);
+    }
+
+    public static void setTrainingLongPasses(short value, int id) {
+        SqlUtils.sumShort("training_long_passes", value, table, id);
+    }
+
+    public static void setTrainingMarking(short value, int id) {
+        SqlUtils.sumShort("training_marking", value, table, id);
+    }
+
+    public static void setTrainingGoalkeeping(short value, int id) {
+        SqlUtils.sumShort("training_goalkeeping", value, table, id);
+    }
+
+    public static void setTrainingPunching(short value, int id) {
+        SqlUtils.sumShort("training_punching", value, table, id);
+    }
+
+    public static void setTrainingDefense(short value, int id) {
+        SqlUtils.sumShort("training_defense", value, table, id);
+    }
+
     public static void setStatusMessage(String value, int id) {
         SqlUtils.setString("status_message", value, table, id);
     }
@@ -980,8 +1048,8 @@ public class PlayerInfo {
         SqlUtils.setString("inventory_items", value, table, id);
     }
 
-    public static void setInventoryTraining(String value, int id) {
-        SqlUtils.setString("inventory_training", value, table, id);
+    public static void setInventoryTraining(Map<Integer, Training> value, int id) {
+        SqlUtils.setString("inventory_training", Training.mapToString(value), table, id);
     }
 
     public static void setInventorySkills(Map<Integer, Skill> value, int id) {

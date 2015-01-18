@@ -74,8 +74,7 @@ class MessageUtils {
 
         msg.append(training.getInventoryId());
         msg.append(training.getId());
-        msg.appendZeros(10);
-        msg.append((int) training.getTimestampExpire());
+        msg.appendZeros(14);
         msg.append(training.isVisible());
     }
 
@@ -105,7 +104,7 @@ class MessageUtils {
         msg.append(cele.getSelectionIndex());
         msg.append(cele.getExpiration() != null ? cele.getExpiration().toInt() : 0);
         msg.appendZeros(8);
-        msg.append((int) cele.getTimestampExpire().getTime());
+        msg.append((int) cele.getTimestampExpire().getTime() / 1000);
         msg.append(cele.isVisible());
     }
 
