@@ -17,7 +17,10 @@ import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -94,8 +97,10 @@ public class Shop {
             result = -1;
         }
 
-        ServerMessage response = MessageBuilder.purchaseSkill(playerId, skill, result);
-        session.send(response);
+        try (Connection con = MySqlManager.getConnection()){
+            ServerMessage response = MessageBuilder.purchaseSkill(playerId, skill, result, con);
+            session.send(response);
+        } catch (SQLException ignored) {}
     }
 
     public static void purchaseCele(Session session, ClientMessage msg) {
@@ -167,8 +172,10 @@ public class Shop {
             result = -1;
         }
 
-        ServerMessage response = MessageBuilder.purchaseCele(playerId, cele, result);
-        session.send(response);
+        try (Connection con = MySqlManager.getConnection()) {
+            ServerMessage response = MessageBuilder.purchaseCele(playerId, cele, result, con);
+            session.send(response);
+        } catch (SQLException ignored) {}
     }
 
     public static void purchaseLearn(Session session, ClientMessage msg) {
@@ -239,8 +246,10 @@ public class Shop {
             result = -1;
         }
 
-        ServerMessage response = MessageBuilder.purchaseLearn(playerId, learn, result);
-        session.send(response);
+        try (Connection con = MySqlManager.getConnection()) {
+            ServerMessage response = MessageBuilder.purchaseLearn(playerId, learn, result, con);
+            session.send(response);
+        } catch (SQLException ignored) {}
     }
 
     private static boolean alreadyPurchased(int id, Collection<? extends Product> product) {

@@ -70,6 +70,7 @@ public class MessageId {
     public static final int UPDATE_SETTINGS = 2901;
     public static final int ADD_STATS_POINTS = 2903;
     public static final int PLAYER_PROGRESS = 2904;
+    public static final int PLAYER_STATS = 2906;
     public static final int UDP_CHECK = 3001;
     public static final int UDP_GAME_1 = 9001;
     public static final int UDP_GAME_2 = 9002;

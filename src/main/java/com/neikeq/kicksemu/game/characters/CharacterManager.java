@@ -158,39 +158,39 @@ public class CharacterManager {
                 }
             }
 
-            // If all values are valid
-            if (result == 0) {
-                try (Connection con = MySqlManager.getConnection()) {
-                    short statsPoints = PlayerInfo.getStatsPoints(playerId, con);
+            try (Connection con = MySqlManager.getConnection()) {
+                // If all values are valid
+                if (result == 0) {
+                        short statsPoints = PlayerInfo.getStatsPoints(playerId, con);
 
-                    // If player have enough points
-                    if (total <= statsPoints) {
-                        total -= PlayerInfo.setStatsRunning(values[0], playerId, con);
-                        total -= PlayerInfo.setStatsEndurance(values[1], playerId, con);
-                        total -= PlayerInfo.setStatsAgility(values[2], playerId, con);
-                        total -= PlayerInfo.setStatsBallControl(values[3], playerId, con);
-                        total -= PlayerInfo.setStatsDribbling(values[4], playerId, con);
-                        total -= PlayerInfo.setStatsStealing(values[5], playerId, con);
-                        total -= PlayerInfo.setStatsTackling(values[6], playerId, con);
-                        total -= PlayerInfo.setStatsHeading(values[7], playerId, con);
-                        total -= PlayerInfo.setStatsShortShots(values[8], playerId, con);
-                        total -= PlayerInfo.setStatsLongShots(values[9], playerId, con);
-                        total -= PlayerInfo.setStatsCrossing(values[10], playerId, con);
-                        total -= PlayerInfo.setStatsShortPasses(values[11], playerId, con);
-                        total -= PlayerInfo.setStatsLongPasses(values[12], playerId, con);
-                        total -= PlayerInfo.setStatsMarking(values[13], playerId, con);
-                        total -= PlayerInfo.setStatsGoalkeeping(values[14], playerId, con);
-                        total -= PlayerInfo.setStatsPunching(values[15], playerId, con);
-                        total -= PlayerInfo.setStatsDefense(values[16], playerId, con);
+                        // If player have enough points
+                        if (total <= statsPoints) {
+                            total -= PlayerInfo.setStatsRunning(values[0], playerId, con);
+                            total -= PlayerInfo.setStatsEndurance(values[1], playerId, con);
+                            total -= PlayerInfo.setStatsAgility(values[2], playerId, con);
+                            total -= PlayerInfo.setStatsBallControl(values[3], playerId, con);
+                            total -= PlayerInfo.setStatsDribbling(values[4], playerId, con);
+                            total -= PlayerInfo.setStatsStealing(values[5], playerId, con);
+                            total -= PlayerInfo.setStatsTackling(values[6], playerId, con);
+                            total -= PlayerInfo.setStatsHeading(values[7], playerId, con);
+                            total -= PlayerInfo.setStatsShortShots(values[8], playerId, con);
+                            total -= PlayerInfo.setStatsLongShots(values[9], playerId, con);
+                            total -= PlayerInfo.setStatsCrossing(values[10], playerId, con);
+                            total -= PlayerInfo.setStatsShortPasses(values[11], playerId, con);
+                            total -= PlayerInfo.setStatsLongPasses(values[12], playerId, con);
+                            total -= PlayerInfo.setStatsMarking(values[13], playerId, con);
+                            total -= PlayerInfo.setStatsGoalkeeping(values[14], playerId, con);
+                            total -= PlayerInfo.setStatsPunching(values[15], playerId, con);
+                            total -= PlayerInfo.setStatsDefense(values[16], playerId, con);
 
-                        PlayerInfo.setStatsPoints((short) -total, playerId, con);
-                    } else {
-                        result = (byte) 253; // Not enough stats points
-                    }
-                } catch (SQLException ignored) {}
-            }
+                            PlayerInfo.setStatsPoints((short) -total, playerId, con);
+                        } else {
+                            result = (byte) 253; // Not enough stats points
+                        }
+                }
 
-            session.sendAndFlush(MessageBuilder.addStatsPoints(playerId, result));
+                session.sendAndFlush(MessageBuilder.addStatsPoints(playerId, result, con));
+            } catch (SQLException ignored) {}
         }
     }
 }

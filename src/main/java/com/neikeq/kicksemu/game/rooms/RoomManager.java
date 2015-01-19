@@ -615,6 +615,10 @@ public class RoomManager {
 
                         short levels = CharacterManager.checkExperience(playerId, con);
 
+                        if (levels > 0) {
+                            session.sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                        }
+
                         // If match was not in training mode, update player's history
                         if (room.getTrainingFactor() > 0) {
                             RewardCalculator.updatePlayerHistory(pr, teamResult,

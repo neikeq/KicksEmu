@@ -108,29 +108,29 @@ public class MessageBuilder {
 
             msg.append(PlayerInfo.getName(playerId, con), 15);
 
-            MessageUtils.appendQuestInfo(playerId, msg);
-            MessageUtils.appendTutorialInfo(playerId, msg);
+            MessageUtils.appendQuestInfo(playerId, con, msg);
+            MessageUtils.appendTutorialInfo(playerId, con, msg);
 
             msg.appendZeros(3);
 
-            MessageUtils.appendCharacterInfo(playerId, ownerId, msg);
+            MessageUtils.appendCharacterInfo(playerId, con, ownerId, msg);
 
             msg.appendZeros(2);
 
             msg.append(PlayerInfo.getAnimation(playerId, con));
             msg.append(PlayerInfo.getFace(playerId, con));
 
-            MessageUtils.appendDefaultClothes(playerId, msg);
+            MessageUtils.appendDefaultClothes(playerId, con, msg);
 
             msg.append(PlayerInfo.getPosition(playerId, con));
 
             msg.appendZeros(6);
 
-            MessageUtils.appendStats(playerId, msg);
+            MessageUtils.appendStats(playerId, con, msg);
 
             msg.appendZeros(4);
 
-            MessageUtils.appendItemsInUse(playerId, msg);
+            MessageUtils.appendItemsInUse(playerId, con, msg);
         }
 
         return msg;
@@ -343,37 +343,38 @@ public class MessageBuilder {
 
             msg.append(PlayerInfo.getStatusMessage(playerId, con), 35);
 
-            MessageUtils.appendQuestInfo(playerId, msg);
-            MessageUtils.appendTutorialInfo(playerId, msg);
+            MessageUtils.appendQuestInfo(playerId, con, msg);
+            MessageUtils.appendTutorialInfo(playerId, con, msg);
 
             msg.appendZeros(24);
 
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId, con), msg);
+            MessageUtils.appendCharacterInfo(playerId, con,
+                    PlayerInfo.getOwner(playerId, con), msg);
 
             msg.appendZeros(2);
 
             msg.append(PlayerInfo.getAnimation(playerId, con));
             msg.append(PlayerInfo.getFace(playerId, con));
 
-            MessageUtils.appendDefaultClothes(playerId, msg);
+            MessageUtils.appendDefaultClothes(playerId, con, msg);
 
             msg.append(PlayerInfo.getPosition(playerId, con));
             msg.appendZeros(6);
 
             // Stats
-            MessageUtils.appendStats(playerId, msg);
-            MessageUtils.appendStatsTraining(playerId, msg);
-            MessageUtils.appendStatsBonus(playerId, msg);
+            MessageUtils.appendStats(playerId, con, msg);
+            MessageUtils.appendStatsTraining(playerId, con, msg);
+            MessageUtils.appendStatsBonus(playerId, con, msg);
 
             // History
-            MessageUtils.appendHistory(playerId, msg);
-            MessageUtils.appendHistoryLastMonth(playerId, msg);
+            MessageUtils.appendHistory(playerId, con, msg);
+            MessageUtils.appendHistoryLastMonth(playerId, con, msg);
 
             // Ranking
-            MessageUtils.appendRanking(playerId, msg);
-            MessageUtils.appendRankingLastMonth(playerId, msg);
+            MessageUtils.appendRanking(playerId, con, msg);
+            MessageUtils.appendRankingLastMonth(playerId, con, msg);
 
-            MessageUtils.appendInventoryItemsInUse(playerId, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, con, msg);
 
             MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), con, msg);
         }
@@ -561,13 +562,13 @@ public class MessageBuilder {
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.append((short)session.getUdpPort());
 
-            MessageUtils.appendCharacterInfo(playerId, ownerId, msg);
+            MessageUtils.appendCharacterInfo(playerId, con, ownerId, msg);
             msg.appendZeros(2);
 
             msg.append(PlayerInfo.getAnimation(playerId, con));
             msg.append(PlayerInfo.getFace(playerId, con));
 
-            MessageUtils.appendDefaultClothes(playerId, msg);
+            MessageUtils.appendDefaultClothes(playerId, con, msg);
 
             msg.append(PlayerInfo.getPosition(playerId, con));
             msg.appendZeros(1);
@@ -578,14 +579,14 @@ public class MessageBuilder {
             msg.append((byte)0);
 
             // Stats
-            MessageUtils.appendStats(playerId, msg);
-            MessageUtils.appendStatsTraining(playerId, msg);
-            MessageUtils.appendStatsBonus(playerId, msg);
+            MessageUtils.appendStats(playerId, con, msg);
+            MessageUtils.appendStatsTraining(playerId, con, msg);
+            MessageUtils.appendStatsBonus(playerId, con, msg);
 
-            MessageUtils.appendInventoryItemsInUse(playerId, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, con, msg);
             MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), con, msg);
-            MessageUtils.appendInventorySkillsInUse(playerId, msg);
-            MessageUtils.appendInventoryCelebrationsInUse(playerId, msg);
+            MessageUtils.appendInventorySkillsInUse(playerId, con, msg);
+            MessageUtils.appendInventoryCelebrationsInUse(playerId, con, msg);
         }
 
         return msg;
@@ -867,6 +868,16 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage playerStats(int playerId, Connection con) {
+        ServerMessage msg = new ServerMessage(MessageId.PLAYER_STATS);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        MessageUtils.appendStats(playerId, con, msg);
+
+        return msg;
+    }
+
     public static ServerMessage unknown1() {
         ServerMessage msg = new ServerMessage(MessageId.UNKNOWN1);
 
@@ -891,7 +902,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage addStatsPoints(int playerId, byte result) {
+    public static ServerMessage addStatsPoints(int playerId, byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.ADD_STATS_POINTS);
 
         MessageUtils.appendResult(result, msg);
@@ -899,7 +910,7 @@ public class MessageBuilder {
         msg.append(playerId);
 
         msg.append(PlayerInfo.getStatsPoints(playerId));
-        MessageUtils.appendStats(playerId, msg);
+        MessageUtils.appendStats(playerId, con, msg);
 
         return msg;
     }
@@ -912,27 +923,30 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseLearn(int playerId, Training learn, byte result) {
+    public static ServerMessage purchaseLearn(int playerId, Training learn,
+                                              byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_LEARN);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
-            MessageUtils.appendStatsTraining(playerId, msg);
+            MessageUtils.appendCharacterInfo(playerId, con, PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendStatsTraining(playerId, con, msg);
             MessageUtils.appendInventoryTraining(learn, msg);
         }
 
         return msg;
     }
 
-    public static ServerMessage purchaseSkill(int playerId, Skill skill, byte result) {
+    public static ServerMessage purchaseSkill(int playerId, Skill skill,
+                                              byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_SKILL);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendCharacterInfo(playerId, con,
+                    PlayerInfo.getOwner(playerId), msg);
             MessageUtils.appendInventorySkill(skill, msg);
         }
 
@@ -964,13 +978,14 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseCele(int playerId, Celebration cele, byte result) {
+    public static ServerMessage purchaseCele(int playerId, Celebration cele,
+                                             byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_CELE);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendCharacterInfo(playerId, con, PlayerInfo.getOwner(playerId), msg);
             MessageUtils.appendInventoryCelebration(cele, msg);
         }
 
