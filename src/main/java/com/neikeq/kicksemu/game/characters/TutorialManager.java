@@ -27,30 +27,32 @@ public class TutorialManager {
 
         if (UserInfo.hasCharacter(characterId, session.getUserId())) {
             if (areValid(dribbling, passing, shooting, defense)) {
-                byte storedDribbling = PlayerInfo.getTutorialDribbling(characterId);
-                byte storedPassing = PlayerInfo.getTutorialPassing(characterId);
-                byte storedShooting = PlayerInfo.getTutorialShooting(characterId);
-                byte storedDefense = PlayerInfo.getTutorialDefense(characterId);
+                try (Connection con = MySqlManager.getConnection()) {
+                    byte storedDribbling = PlayerInfo.getTutorialDribbling(characterId, con);
+                    byte storedPassing = PlayerInfo.getTutorialPassing(characterId, con);
+                    byte storedShooting = PlayerInfo.getTutorialShooting(characterId, con);
+                    byte storedDefense = PlayerInfo.getTutorialDefense(characterId, con);
 
-                if (!compare(dribbling, storedDribbling)) {
-                    PlayerInfo.setTutorialDribbling(dribbling, characterId);
-                }
+                    if (!compare(dribbling, storedDribbling)) {
+                        PlayerInfo.setTutorialDribbling(dribbling, characterId, con);
+                    }
 
-                if (!compare(passing, storedPassing)) {
-                    PlayerInfo.setTutorialPassing(passing, characterId);
-                }
+                    if (!compare(passing, storedPassing)) {
+                        PlayerInfo.setTutorialPassing(passing, characterId, con);
+                    }
 
-                if (!compare(shooting, storedShooting)) {
-                    PlayerInfo.setTutorialShooting(shooting, characterId);
-                }
+                    if (!compare(shooting, storedShooting)) {
+                        PlayerInfo.setTutorialShooting(shooting, characterId, con);
+                    }
 
-                if (!compare(defense, storedDefense)) {
-                    PlayerInfo.setTutorialDefense(defense, characterId);
-                }
+                    if (!compare(defense, storedDefense)) {
+                        PlayerInfo.setTutorialDefense(defense, characterId, con);
+                    }
 
-                if (checkForReward(characterId, dribbling, passing, shooting, defense)) {
-                    reward = REWARD_POINTS;
-                }
+                    if (checkForReward(characterId, dribbling, passing, shooting, defense)) {
+                        reward = REWARD_POINTS;
+                    }
+                } catch (SQLException ignored) {}
             }
         } else {
             result = (byte)255; // System problem

@@ -28,8 +28,10 @@ public class CharacterManager {
     }
 
     private static void sendPlayerInfo(Session session) {
-        ServerMessage msg = MessageBuilder.playerInfo(session.getPlayerId(), (byte) 0);
-        session.send(msg);
+        try (Connection con = MySqlManager.getConnection()) {
+            ServerMessage msg = MessageBuilder.playerInfo(session.getPlayerId(), (byte) 0, con);
+            session.send(msg);
+        } catch (SQLException ignored) {}
     }
 
     private static void sendItemList(Session session) {
@@ -70,15 +72,15 @@ public class CharacterManager {
         session.close();
     }
 
-    public static void checkExperience(int playerId) {
-        short level = PlayerInfo.getLevel(playerId);
+    public static short checkExperience(int playerId, Connection con) {
         short levels = 0;
 
         String query = "SELECT level FROM levels WHERE experience <= ? AND level > ?";
 
-        try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1, PlayerInfo.getExperience(playerId));
+        try (PreparedStatement stmt = con.prepareStatement(query)) {
+            short level = PlayerInfo.getLevel(playerId, con);
+
+            stmt.setInt(1, PlayerInfo.getExperience(playerId, con));
             stmt.setShort(2, level);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -91,16 +93,18 @@ public class CharacterManager {
                     }
                 }
             }
+
+            if (levels > 0) {
+                PlayerInfo.setLevel(level, playerId, con);
+                onPlayerLevelUp(playerId, level, levels, con);
+            }
         } catch (SQLException ignored) {}
 
-        if (levels > 0) {
-            PlayerInfo.setLevel(level, playerId);
-            onPlayerLevelUp(playerId, level, levels);
-        }
+        return levels;
     }
 
-    public static void onPlayerLevelUp(int id, short level, short levels) {
-        short position = PlayerInfo.getPosition(id);
+    public static void onPlayerLevelUp(int id, short level, short levels, Connection con) {
+        short position = PlayerInfo.getPosition(id, con);
         int from = level - levels;
 
         // Calculate stats points to add
@@ -113,26 +117,26 @@ public class CharacterManager {
         // Add auto stats
         PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
 
-        statsPoints += PlayerInfo.setStatsRunning(autoStats.getRunning() * levels, id);
-        statsPoints += PlayerInfo.setStatsEndurance(autoStats.getEndurance() * levels, id);
-        statsPoints += PlayerInfo.setStatsAgility(autoStats.getAgility() * levels, id);
-        statsPoints += PlayerInfo.setStatsBallControl(autoStats.getBallControl() * levels, id);
-        statsPoints += PlayerInfo.setStatsDribbling(autoStats.getDribbling() * levels, id);
-        statsPoints += PlayerInfo.setStatsStealing(autoStats.getStealing() * levels, id);
-        statsPoints += PlayerInfo.setStatsTackling(autoStats.getTackling() * levels, id);
-        statsPoints += PlayerInfo.setStatsHeading(autoStats.getHeading() * levels, id);
-        statsPoints += PlayerInfo.setStatsShortShots(autoStats.getShortShots() * levels, id);
-        statsPoints += PlayerInfo.setStatsLongShots(autoStats.getLongShots() * levels, id);
-        statsPoints += PlayerInfo.setStatsCrossing(autoStats.getCrossing() * levels, id);
-        statsPoints += PlayerInfo.setStatsShortPasses(autoStats.getShortPasses() * levels, id);
-        statsPoints += PlayerInfo.setStatsLongPasses(autoStats.getLongPasses() * levels, id);
-        statsPoints += PlayerInfo.setStatsMarking(autoStats.getMarking() * levels, id);
-        statsPoints += PlayerInfo.setStatsGoalkeeping(autoStats.getGoalkeeping() * levels, id);
-        statsPoints += PlayerInfo.setStatsPunching(autoStats.getPunching() * levels, id);
-        statsPoints += PlayerInfo.setStatsDefense(autoStats.getDefense() * levels, id);
+        statsPoints += PlayerInfo.setStatsRunning(autoStats.getRunning() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsEndurance(autoStats.getEndurance() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsAgility(autoStats.getAgility() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsBallControl(autoStats.getBallControl() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsDribbling(autoStats.getDribbling() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsStealing(autoStats.getStealing() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsTackling(autoStats.getTackling() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsHeading(autoStats.getHeading() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsShortShots(autoStats.getShortShots() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsLongShots(autoStats.getLongShots() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsCrossing(autoStats.getCrossing() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsShortPasses(autoStats.getShortPasses() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsLongPasses(autoStats.getLongPasses() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsMarking(autoStats.getMarking() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsGoalkeeping(autoStats.getGoalkeeping() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsPunching(autoStats.getPunching() * levels, id, con);
+        statsPoints += PlayerInfo.setStatsDefense(autoStats.getDefense() * levels, id, con);
 
         // Add stats point
-        PlayerInfo.setStatsPoints(statsPoints, id);
+        PlayerInfo.setStatsPoints(statsPoints, id, con);
     }
 
     public static void addStatsPoints(Session session, ClientMessage msg) {
@@ -156,32 +160,34 @@ public class CharacterManager {
 
             // If all values are valid
             if (result == 0) {
-                short statsPoints = PlayerInfo.getStatsPoints(playerId);
+                try (Connection con = MySqlManager.getConnection()) {
+                    short statsPoints = PlayerInfo.getStatsPoints(playerId, con);
 
-                // If player have enough points
-                if (total <= statsPoints) {
-                    total -= PlayerInfo.setStatsRunning(values[0], playerId);
-                    total -= PlayerInfo.setStatsEndurance(values[1], playerId);
-                    total -= PlayerInfo.setStatsAgility(values[2], playerId);
-                    total -= PlayerInfo.setStatsBallControl(values[3], playerId);
-                    total -= PlayerInfo.setStatsDribbling(values[4], playerId);
-                    total -= PlayerInfo.setStatsStealing(values[5], playerId);
-                    total -= PlayerInfo.setStatsTackling(values[6], playerId);
-                    total -= PlayerInfo.setStatsHeading(values[7], playerId);
-                    total -= PlayerInfo.setStatsShortShots(values[8], playerId);
-                    total -= PlayerInfo.setStatsLongShots(values[9], playerId);
-                    total -= PlayerInfo.setStatsCrossing(values[10], playerId);
-                    total -= PlayerInfo.setStatsShortPasses(values[11], playerId);
-                    total -= PlayerInfo.setStatsLongPasses(values[12], playerId);
-                    total -= PlayerInfo.setStatsMarking(values[13], playerId);
-                    total -= PlayerInfo.setStatsGoalkeeping(values[14], playerId);
-                    total -= PlayerInfo.setStatsPunching(values[15], playerId);
-                    total -= PlayerInfo.setStatsDefense(values[16], playerId);
+                    // If player have enough points
+                    if (total <= statsPoints) {
+                        total -= PlayerInfo.setStatsRunning(values[0], playerId, con);
+                        total -= PlayerInfo.setStatsEndurance(values[1], playerId, con);
+                        total -= PlayerInfo.setStatsAgility(values[2], playerId, con);
+                        total -= PlayerInfo.setStatsBallControl(values[3], playerId, con);
+                        total -= PlayerInfo.setStatsDribbling(values[4], playerId, con);
+                        total -= PlayerInfo.setStatsStealing(values[5], playerId, con);
+                        total -= PlayerInfo.setStatsTackling(values[6], playerId, con);
+                        total -= PlayerInfo.setStatsHeading(values[7], playerId, con);
+                        total -= PlayerInfo.setStatsShortShots(values[8], playerId, con);
+                        total -= PlayerInfo.setStatsLongShots(values[9], playerId, con);
+                        total -= PlayerInfo.setStatsCrossing(values[10], playerId, con);
+                        total -= PlayerInfo.setStatsShortPasses(values[11], playerId, con);
+                        total -= PlayerInfo.setStatsLongPasses(values[12], playerId, con);
+                        total -= PlayerInfo.setStatsMarking(values[13], playerId, con);
+                        total -= PlayerInfo.setStatsGoalkeeping(values[14], playerId, con);
+                        total -= PlayerInfo.setStatsPunching(values[15], playerId, con);
+                        total -= PlayerInfo.setStatsDefense(values[16], playerId, con);
 
-                    PlayerInfo.setStatsPoints((short) -total, playerId);
-                } else {
-                    result = (byte) 253; // Not enough stats points
-                }
+                        PlayerInfo.setStatsPoints((short) -total, playerId, con);
+                    } else {
+                        result = (byte) 253; // Not enough stats points
+                    }
+                } catch (SQLException ignored) {}
             }
 
             session.sendAndFlush(MessageBuilder.addStatsPoints(playerId, result));

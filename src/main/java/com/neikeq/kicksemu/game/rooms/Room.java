@@ -7,7 +7,10 @@ import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -303,12 +306,13 @@ public class Room {
         sendRoomPlayersInfo(session);
 
         // Notify players in room about the new player
-        getPlayers().values().stream()
-                .filter(s -> s.getPlayerId() != playerId)
-                .forEach(s -> {
-                    ServerMessage msgNewPlayer = MessageBuilder.roomPlayerInfo(session, this);
-                    s.sendAndFlush(msgNewPlayer);
-                });
+        try (Connection con = MySqlManager.getConnection()) {
+            getPlayers().values().stream()
+                    .filter(s -> s.getPlayerId() != playerId)
+                    .forEach(s -> s.sendAndFlush(
+                            MessageBuilder.roomPlayerInfo(session, this, con))
+                    );
+        } catch (SQLException ignored) {}
     }
 
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
@@ -323,10 +327,10 @@ public class Room {
     }
 
     private void sendRoomPlayersInfo(Session session) {
-        getPlayers().values().stream().forEach(s -> {
-            ServerMessage roomPlayerInfo = MessageBuilder.roomPlayerInfo(s, this);
-            session.send(roomPlayerInfo);
-        });
+        try (Connection con = MySqlManager.getConnection()) {
+            getPlayers().values().stream().forEach(s ->
+                    session.send(MessageBuilder.roomPlayerInfo(s, this, con)));
+        } catch (SQLException ignored) {}
     }
 
     private void updateMaster() {

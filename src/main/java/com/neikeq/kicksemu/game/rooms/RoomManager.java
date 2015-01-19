@@ -15,7 +15,10 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -582,40 +585,43 @@ public class RoomManager {
             if (room.state() == RoomState.PLAYING) {
                 MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().size());
 
-                // Reward players
-                result.getPlayers().stream().forEach(pr -> {
-                    int playerId = pr.getPlayerId();
-                    int reward = RewardCalculator.calculateReward(pr, room,
-                            result.getCountdown());
+                try (Connection con = MySqlManager.getConnection()) {
+                    // Reward players
+                    result.getPlayers().stream().forEach(pr -> {
+                        int playerId = pr.getPlayerId();
+                        int reward = RewardCalculator.calculateReward(pr, room,
+                                result.getCountdown());
 
-                    TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                            result.getRedTeam() : result.getBlueTeam();
+                        TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                                result.getRedTeam() : result.getBlueTeam();
 
-                    short scoredGoals = teamResult.getGoals();
-                    short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                            result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
+                        short scoredGoals = teamResult.getGoals();
+                        short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                                result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
 
-                    // If player is mvp increase his rewards by 25%
-                    reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
-                    // If player position is a DF branch, his team did not lose and conceded 1
-                    // or less goals, increase his rewards by 30%
-                    reward += PlayerInfo.getPosition(playerId) / 10 == PositionCodes.DF / 10 &&
-                            concededGoals <= 1 && scoredGoals >= concededGoals ?
-                            (reward * 30) / 100 : 0;
+                        // If player is mvp increase his rewards by 25%
+                        reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+                        // If player position is a DF branch, his team did not lose and conceded 1
+                        // or less goals, increase his rewards by 30%
+                        reward += concededGoals <= 1 && scoredGoals >= concededGoals &&
+                                PlayerInfo.getPosition(playerId, con) / 10 == PositionCodes.DF / 10 ?
+                                (reward * 30) / 100 : 0;
 
-                    pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
-                    pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
+                        pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
+                        pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
 
-                    PlayerInfo.setPoints(pr.getPoints(), playerId);
-                    PlayerInfo.setExperience(pr.getExperience(), playerId);
+                        PlayerInfo.setPoints(pr.getPoints(), playerId, con);
+                        PlayerInfo.setExperience(pr.getExperience(), playerId, con);
 
-                    CharacterManager.checkExperience(playerId);
+                        short levels = CharacterManager.checkExperience(playerId, con);
 
-                    // If match was not in training mode, update player's history
-                    if (room.getTrainingFactor() > 0) {
-                        RewardCalculator.updatePlayerHistory(pr, teamResult, result.getMom());
-                    }
-                });
+                        // If match was not in training mode, update player's history
+                        if (room.getTrainingFactor() > 0) {
+                            RewardCalculator.updatePlayerHistory(pr, teamResult,
+                                    result.getMom(), con);
+                        }
+                    });
+                } catch (SQLException ignored) {}
 
                 result.getPlayers().stream().forEach(pr ->
                         room.getPlayers().get(pr.getPlayerId())

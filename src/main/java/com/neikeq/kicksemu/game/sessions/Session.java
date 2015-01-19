@@ -17,6 +17,7 @@ import java.net.InetSocketAddress;
 public class Session {
 
     private final Channel channel;
+    private final PlayerCache playerCache;
 
     private int userId;
     private int playerId;
@@ -117,7 +118,9 @@ public class Session {
     }
     
     public Session(Channel channel) {
+        this.playerCache = new PlayerCache();
         this.channel = channel;
+
         setRoomId(-1);
         setObserver(false);
         setUdpPort(-1);
@@ -163,7 +166,7 @@ public class Session {
     }
 
     public InetSocketAddress getRemoteAddress() {
-        return (InetSocketAddress)channel.remoteAddress();
+        return (InetSocketAddress) getChannel().remoteAddress();
     }
 
     public int getRoomId() {
@@ -208,5 +211,9 @@ public class Session {
 
     public void setPingState(byte pingState) {
         this.pingState = pingState;
+    }
+
+    public PlayerCache getPlayerCache() {
+        return playerCache;
     }
 }

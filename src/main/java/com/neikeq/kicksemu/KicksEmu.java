@@ -1,7 +1,6 @@
 package com.neikeq.kicksemu;
 
 import com.neikeq.kicksemu.config.Configuration;
-import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Input;

@@ -102,6 +102,8 @@ public class Authenticator {
                 session.setPlayerId(characterId);
                 session.setAuthenticated(true);
                 UserInfo.setOnline(true, session.getUserId());
+
+                ServerManager.addPlayer(characterId, session);
             } else {
                 // Account does not contain such character
                 result = AuthenticationResult.ACCESS_FAILURE;

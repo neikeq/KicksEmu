@@ -22,6 +22,7 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.net.InetSocketAddress;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -91,10 +92,11 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage characterInfo(int playerId, int ownerId, short slot) {
+    public static ServerMessage characterInfo(int playerId, int ownerId,
+                                              short slot, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.CHARACTER_INFO);
 
-        boolean blocked = PlayerInfo.isBlocked(playerId);
+        boolean blocked = PlayerInfo.isBlocked(playerId, con);
 
         MessageUtils.appendResult((byte) (blocked ? 254 : 0), msg);
 
@@ -104,7 +106,7 @@ public class MessageBuilder {
 
             msg.append(slot);
 
-            msg.append(PlayerInfo.getName(playerId), 15);
+            msg.append(PlayerInfo.getName(playerId, con), 15);
 
             MessageUtils.appendQuestInfo(playerId, msg);
             MessageUtils.appendTutorialInfo(playerId, msg);
@@ -115,12 +117,12 @@ public class MessageBuilder {
 
             msg.appendZeros(2);
 
-            msg.append(PlayerInfo.getAnimation(playerId));
-            msg.append(PlayerInfo.getFace(playerId));
+            msg.append(PlayerInfo.getAnimation(playerId, con));
+            msg.append(PlayerInfo.getFace(playerId, con));
 
             MessageUtils.appendDefaultClothes(playerId, msg);
 
-            msg.append(PlayerInfo.getPosition(playerId));
+            msg.append(PlayerInfo.getPosition(playerId, con));
 
             msg.appendZeros(6);
 
@@ -325,7 +327,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerInfo(int playerId, byte result) {
+    public static ServerMessage playerInfo(int playerId, byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_INFO);
 
         MessageUtils.appendResult(result, msg);
@@ -335,27 +337,27 @@ public class MessageBuilder {
 
             msg.appendZeros(54);
 
-            msg.append(PlayerInfo.getName(playerId), 15);
+            msg.append(PlayerInfo.getName(playerId, con), 15);
 
-            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId)), 15);
+            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId, con)), 15);
 
-            msg.append(PlayerInfo.getStatusMessage(playerId), 35);
+            msg.append(PlayerInfo.getStatusMessage(playerId, con), 35);
 
             MessageUtils.appendQuestInfo(playerId, msg);
             MessageUtils.appendTutorialInfo(playerId, msg);
 
             msg.appendZeros(24);
 
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId, con), msg);
 
             msg.appendZeros(2);
 
-            msg.append(PlayerInfo.getAnimation(playerId));
-            msg.append(PlayerInfo.getFace(playerId));
+            msg.append(PlayerInfo.getAnimation(playerId, con));
+            msg.append(PlayerInfo.getFace(playerId, con));
 
             MessageUtils.appendDefaultClothes(playerId, msg);
 
-            msg.append(PlayerInfo.getPosition(playerId));
+            msg.append(PlayerInfo.getPosition(playerId, con));
             msg.appendZeros(6);
 
             // Stats
@@ -373,13 +375,13 @@ public class MessageBuilder {
 
             MessageUtils.appendInventoryItemsInUse(playerId, msg);
 
-            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId), msg);
+            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), con, msg);
         }
 
         return msg;
     }
 
-    public static ServerMessage lobbyList(List<Integer> players, byte page, byte result) {
+    public static ServerMessage lobbyList(List<Integer> players, byte page, byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.LOBBY_LIST);
 
         MessageUtils.appendResult(result, msg);
@@ -390,10 +392,10 @@ public class MessageBuilder {
             for (Integer playerId : players) {
                 msg.append(true);
                 msg.append(playerId);
-                msg.append(PlayerInfo.getName(playerId), 15);
-                msg.append(PlayerInfo.getLevel(playerId));
-                msg.append((byte)PlayerInfo.getPosition(playerId));
-                msg.append(PlayerInfo.getStatusMessage(playerId), 35);
+                msg.append(PlayerInfo.getName(playerId, con), 15);
+                msg.append(PlayerInfo.getLevel(playerId, con));
+                msg.append((byte)PlayerInfo.getPosition(playerId, con));
+                msg.append(PlayerInfo.getStatusMessage(playerId, con), 35);
             }
         }
 
@@ -535,18 +537,18 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage roomPlayerInfo(Session session, Room room) {
+    public static ServerMessage roomPlayerInfo(Session session, Room room, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_PLAYER_INFO);
 
         if (session != null) {
             int playerId = session.getPlayerId();
-            int ownerId = PlayerInfo.getOwner(playerId);
+            int ownerId = PlayerInfo.getOwner(playerId, con);
 
             msg.append(true, 2);
             msg.append(playerId);
-            msg.append(PlayerInfo.getName(playerId), 15);
+            msg.append(PlayerInfo.getName(playerId, con), 15);
 
-            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId)), 15);
+            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId, con)), 15);
 
             msg.append((short)(room.getRedTeam().contains(playerId) ? 0 : 1));
 
@@ -562,12 +564,12 @@ public class MessageBuilder {
             MessageUtils.appendCharacterInfo(playerId, ownerId, msg);
             msg.appendZeros(2);
 
-            msg.append(PlayerInfo.getAnimation(playerId));
-            msg.append(PlayerInfo.getFace(playerId));
+            msg.append(PlayerInfo.getAnimation(playerId, con));
+            msg.append(PlayerInfo.getFace(playerId, con));
 
             MessageUtils.appendDefaultClothes(playerId, msg);
 
-            msg.append(PlayerInfo.getPosition(playerId));
+            msg.append(PlayerInfo.getPosition(playerId, con));
             msg.appendZeros(1);
             msg.append((short) 0);
             msg.appendZeros(3);
@@ -581,7 +583,7 @@ public class MessageBuilder {
             MessageUtils.appendStatsBonus(playerId, msg);
 
             MessageUtils.appendInventoryItemsInUse(playerId, msg);
-            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId), msg);
+            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), con, msg);
             MessageUtils.appendInventorySkillsInUse(playerId, msg);
             MessageUtils.appendInventoryCelebrationsInUse(playerId, msg);
         }
@@ -852,15 +854,15 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerProgress(int playerId) {
+    public static ServerMessage playerProgress(int playerId, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_PROGRESS);
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.append(PlayerInfo.getCurrentQuest(playerId));
-        msg.append(PlayerInfo.getLevel(playerId));
-        msg.append(PlayerInfo.getRemainingQuestMatches(playerId));
-        msg.append(PlayerInfo.getPoints(playerId));
+        msg.append(PlayerInfo.getCurrentQuest(playerId, con));
+        msg.append(PlayerInfo.getLevel(playerId, con));
+        msg.append(PlayerInfo.getRemainingQuestMatches(playerId, con));
+        msg.append(PlayerInfo.getPoints(playerId, con));
 
         return msg;
     }

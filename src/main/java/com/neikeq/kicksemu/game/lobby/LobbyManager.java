@@ -4,7 +4,10 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,18 +31,20 @@ public class LobbyManager {
         byte page = msg.readByte();
         int index = page * PLAYERS_PER_PAGE;
 
-        List<Integer> visiblePlayers = getMainLobby().getVisiblePlayers();
+        try (Connection con = MySqlManager.getConnection()) {
+            List<Integer> visiblePlayers = getMainLobby().getVisiblePlayers(con);
 
-        for (int i = index; i < index + 10; i++) {
-            if (i < visiblePlayers.size()) {
-                players.add(visiblePlayers.get(i));
-            } else {
-                break;
+            for (int i = index; i < index + 10; i++) {
+                if (i < visiblePlayers.size()) {
+                    players.add(visiblePlayers.get(i));
+                } else {
+                    break;
+                }
             }
-        }
 
-        ServerMessage response = MessageBuilder.lobbyList(players, page, (byte)0);
-        session.send(response);
+            ServerMessage response = MessageBuilder.lobbyList(players, page, (byte)0, con);
+            session.send(response);
+        } catch (SQLException ignored) {}
     }
 
     public static MainLobby getMainLobby() {

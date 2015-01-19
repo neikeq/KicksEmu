@@ -9,6 +9,10 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.MySqlManager;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class UserManager {
 
@@ -36,18 +40,19 @@ public class UserManager {
     public static void characterInfo(Session session) {
         int userId = session.getUserId();
 
-        int[] slots = new int[] {
-                UserInfo.getSlotOne(userId),
-                UserInfo.getSlotTwo(userId),
-                UserInfo.getSlotThree(userId)
-        };
+        try (Connection con = MySqlManager.getConnection()) {
+            int[] slots = new int[]{
+                    UserInfo.getSlotOne(userId, con),
+                    UserInfo.getSlotTwo(userId, con),
+                    UserInfo.getSlotThree(userId, con)
+            };
 
-        for (short i = 0; i < slots.length; i++) {
-            if (slots[i] > 0) {
-                ServerMessage response = MessageBuilder.characterInfo(slots[i], userId, i);
-                session.send(response);
+            for (short i = 0; i < slots.length; i++) {
+                if (slots[i] > 0) {
+                    session.send(MessageBuilder.characterInfo(slots[i], userId, i, con));
+                }
             }
-        }
+        } catch (SQLException ignored) {}
     }
 
     public static void updateSettings(Session session, ClientMessage msg) {
@@ -93,38 +98,40 @@ public class UserManager {
         if (session.getUserId() == userId && UserInfo.hasCharacter(playerId, userId)) {
             byte result = 0;
 
-            short currentPosition = PlayerInfo.getPosition(playerId);
+            try (Connection con = MySqlManager.getConnection()) {
+                short currentPosition = PlayerInfo.getPosition(playerId, con);
 
-            if (PositionCodes.isValidNewPosition(currentPosition, position)) {
-                PlayerInfo.setPosition(position, playerId);
+                if (PositionCodes.isValidNewPosition(currentPosition, position)) {
+                    PlayerInfo.setPosition(position, playerId, con);
 
-                PlayerStats stats = CharacterUpgrade.getInstance().getStats().get(position);
+                    PlayerStats stats = CharacterUpgrade.getInstance().getStats().get(position);
 
-                short remainStats = 0;
+                    short remainStats = 0;
 
-                remainStats += PlayerInfo.setStatsRunning(stats.getRunning(), playerId);
-                remainStats += PlayerInfo.setStatsEndurance(stats.getEndurance(), playerId);
-                remainStats += PlayerInfo.setStatsAgility(stats.getAgility(), playerId);
-                remainStats += PlayerInfo.setStatsBallControl(stats.getBallControl(), playerId);
-                remainStats += PlayerInfo.setStatsDribbling(stats.getDribbling(), playerId);
-                remainStats += PlayerInfo.setStatsStealing(stats.getStealing(), playerId);
-                remainStats += PlayerInfo.setStatsTackling(stats.getTackling(), playerId);
-                remainStats += PlayerInfo.setStatsHeading(stats.getHeading(), playerId);
-                remainStats += PlayerInfo.setStatsShortShots(stats.getShortShots(), playerId);
-                remainStats += PlayerInfo.setStatsLongShots(stats.getLongShots(), playerId);
-                remainStats += PlayerInfo.setStatsCrossing(stats.getCrossing(), playerId);
-                remainStats += PlayerInfo.setStatsShortPasses(stats.getShortPasses(), playerId);
-                remainStats += PlayerInfo.setStatsLongPasses(stats.getLongPasses(), playerId);
-                remainStats += PlayerInfo.setStatsMarking(stats.getMarking(), playerId);
-                remainStats += PlayerInfo.setStatsGoalkeeping(stats.getGoalkeeping(), playerId);
-                remainStats += PlayerInfo.setStatsPunching(stats.getPunching(), playerId);
-                remainStats += PlayerInfo.setStatsDefense(stats.getDefense(), playerId);
+                    remainStats += PlayerInfo.setStatsRunning(stats.getRunning(), playerId, con);
+                    remainStats += PlayerInfo.setStatsEndurance(stats.getEndurance(), playerId, con);
+                    remainStats += PlayerInfo.setStatsAgility(stats.getAgility(), playerId, con);
+                    remainStats += PlayerInfo.setStatsBallControl(stats.getBallControl(), playerId, con);
+                    remainStats += PlayerInfo.setStatsDribbling(stats.getDribbling(), playerId, con);
+                    remainStats += PlayerInfo.setStatsStealing(stats.getStealing(), playerId, con);
+                    remainStats += PlayerInfo.setStatsTackling(stats.getTackling(), playerId, con);
+                    remainStats += PlayerInfo.setStatsHeading(stats.getHeading(), playerId, con);
+                    remainStats += PlayerInfo.setStatsShortShots(stats.getShortShots(), playerId, con);
+                    remainStats += PlayerInfo.setStatsLongShots(stats.getLongShots(), playerId, con);
+                    remainStats += PlayerInfo.setStatsCrossing(stats.getCrossing(), playerId, con);
+                    remainStats += PlayerInfo.setStatsShortPasses(stats.getShortPasses(), playerId, con);
+                    remainStats += PlayerInfo.setStatsLongPasses(stats.getLongPasses(), playerId, con);
+                    remainStats += PlayerInfo.setStatsMarking(stats.getMarking(), playerId, con);
+                    remainStats += PlayerInfo.setStatsGoalkeeping(stats.getGoalkeeping(), playerId, con);
+                    remainStats += PlayerInfo.setStatsPunching(stats.getPunching(), playerId, con);
+                    remainStats += PlayerInfo.setStatsDefense(stats.getDefense(), playerId, con);
 
-                PlayerInfo.setStatsPoints(remainStats, playerId);
+                    PlayerInfo.setStatsPoints(remainStats, playerId, con);
 
-            } else {
-                result = -1;
-            }
+                } else {
+                    result = -1;
+                }
+            } catch (SQLException ignored) {}
 
             ServerMessage response = MessageBuilder.upgradeCharacter(result);
             session.send(response);

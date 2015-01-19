@@ -8,6 +8,7 @@ import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.users.UserInfo;
 
+import java.sql.Connection;
 import java.util.Map;
 
 class MessageUtils {
@@ -324,15 +325,15 @@ class MessageUtils {
         }
     }
 
-    public static void appendClubUniform(int clubId, ServerMessage msg) {
-        msg.append(ClubInfo.getUniformHomeShirts(clubId));
-        msg.append(ClubInfo.getUniformHomePants(clubId));
-        msg.append(ClubInfo.getUniformHomeSocks(clubId));
-        msg.append(ClubInfo.getUniformHomeWrist(clubId));
+    public static void appendClubUniform(int clubId, Connection con, ServerMessage msg) {
+        msg.append(ClubInfo.getUniformHomeShirts(clubId, con));
+        msg.append(ClubInfo.getUniformHomePants(clubId, con));
+        msg.append(ClubInfo.getUniformHomeSocks(clubId, con));
+        msg.append(ClubInfo.getUniformHomeWrist(clubId, con));
 
-        msg.append(ClubInfo.getUniformAwayShirts(clubId));
-        msg.append(ClubInfo.getUniformAwayPants(clubId));
-        msg.append(ClubInfo.getUniformAwaySocks(clubId));
-        msg.append(ClubInfo.getUniformAwayWrist(clubId));
+        msg.append(ClubInfo.getUniformAwayShirts(clubId, con));
+        msg.append(ClubInfo.getUniformAwayPants(clubId, con));
+        msg.append(ClubInfo.getUniformAwaySocks(clubId, con));
+        msg.append(ClubInfo.getUniformAwayWrist(clubId, con));
     }
 }

@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.lobby;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,9 +37,9 @@ public class MainLobby implements Lobby {
         return players;
     }
 
-    public List<Integer> getVisiblePlayers() {
+    public List<Integer> getVisiblePlayers(Connection con) {
         return players.stream().filter(id ->
-                !PlayerInfo.isModerator(id) || PlayerInfo.isVisible(id)
+                !PlayerInfo.isModerator(id, con) || PlayerInfo.isVisible(id, con)
         ).collect(Collectors.toList());
     }
 }

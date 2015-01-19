@@ -6,8 +6,6 @@ import com.neikeq.kicksemu.utils.DateUtils;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Celebration implements Product, IndexedProduct {
 

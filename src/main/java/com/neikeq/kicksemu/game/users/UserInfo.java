@@ -17,16 +17,12 @@ public class UserInfo {
 
     // Sql getters
 
-    public static String getUsername(int id) {
-        return SqlUtils.getString("username", table, id);
+    public static String getPassword(int id, Connection ... con) {
+        return SqlUtils.getString("password", table, id, con);
     }
 
-    public static String getPassword(int id) {
-        return SqlUtils.getString("password", table, id);
-    }
-
-    public static int getKash(int id) {
-        return SqlUtils.getInt("kash", table, id);
+    public static int getKash(int id, Connection ... con) {
+        return SqlUtils.getInt("kash", table, id, con);
     }
 
     public static UserSettings getSettings(int id) {
@@ -61,46 +57,46 @@ public class UserInfo {
         }
     }
 
-    public static Timestamp getLastCharDeletion(int id) {
-        return SqlUtils.getTimestamp("last_char_deletion", table, id);
+    public static Timestamp getLastCharDeletion(int id, Connection ... con) {
+        return SqlUtils.getTimestamp("last_char_deletion", table, id, con);
     }
 
-    public static int getSlotOne(int id) {
-        return SqlUtils.getInt("slot_one", table, id);
+    public static int getSlotOne(int id, Connection ... con) {
+        return SqlUtils.getInt("slot_one", table, id, con);
     }
 
-    public static int getSlotTwo(int id) {
-        return SqlUtils.getInt("slot_two", table, id);
+    public static int getSlotTwo(int id, Connection ... con) {
+        return SqlUtils.getInt("slot_two", table, id, con);
     }
 
-    public static int getSlotThree(int id) {
-        return SqlUtils.getInt("slot_three", table, id);
+    public static int getSlotThree(int id, Connection ... con) {
+        return SqlUtils.getInt("slot_three", table, id, con);
     }
 
     // Sql setters
 
-    public static void setKash(int value, int id) {
-        SqlUtils.sumInt("kash", value, table, id);
+    public static void setKash(int value, int id, Connection ... con) {
+        SqlUtils.sumInt("kash", value, table, id, con);
     }
 
-    public static void setLastCharDeletion(Date value, int id) {
-        SqlUtils.setTimestamp("last_char_deletion", DateUtils.toTimestamp(value), table, id);
+    public static void setLastCharDeletion(Date value, int id, Connection ... con) {
+        SqlUtils.setTimestamp("last_char_deletion", DateUtils.toTimestamp(value), table, id, con);
     }
 
-    public static void setSlotOne(int value, int id) {
-        SqlUtils.setInt("slot_one", value, table, id);
+    public static void setSlotOne(int value, int id, Connection ... con) {
+        SqlUtils.setInt("slot_one", value, table, id, con);
     }
 
-    public static void setSlotTwo(int value, int id) {
-        SqlUtils.setInt("slot_two", value, table, id);
+    public static void setSlotTwo(int value, int id, Connection ... con) {
+        SqlUtils.setInt("slot_two", value, table, id, con);
     }
 
-    public static void setSlotThree(int value, int id) {
-        SqlUtils.setInt("slot_three", value, table, id);
+    public static void setSlotThree(int value, int id, Connection ... con) {
+        SqlUtils.setInt("slot_three", value, table, id, con);
     }
 
-    public static void setOnline(boolean value, int id) {
-        SqlUtils.setBoolean("online", value, table, id);
+    public static void setOnline(boolean value, int id, Connection ... con) {
+        SqlUtils.setBoolean("online", value, table, id, con);
     }
 
     public static void setSettings(UserSettings settings, int id) {

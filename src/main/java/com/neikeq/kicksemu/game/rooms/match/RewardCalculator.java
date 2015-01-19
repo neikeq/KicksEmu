@@ -4,6 +4,8 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 
+import java.sql.Connection;
+
 public class RewardCalculator {
 
     public static int calculateReward(PlayerResult result, Room room, short countdown) {
@@ -27,31 +29,32 @@ public class RewardCalculator {
         }
     }
 
-    public static void updatePlayerHistory(PlayerResult result, TeamResult teamResult, int mvp) {
+    public static void updatePlayerHistory(PlayerResult result, TeamResult teamResult,
+                                           int mvp, Connection con) {
         int playerId = result.getPlayerId();
 
-        PlayerInfo.setHistoryMatches(1, playerId);
+        PlayerInfo.setHistoryMatches(1, playerId, con);
 
         switch (teamResult.getResult()) {
             case 0:
-                PlayerInfo.setHistoryDraws(1, playerId);
+                PlayerInfo.setHistoryDraws(1, playerId, con);
                 break;
             case 1:
-                PlayerInfo.setHistoryWins(1, playerId);
+                PlayerInfo.setHistoryWins(1, playerId, con);
                 break;
             default:
         }
 
         if (playerId == mvp) {
-            PlayerInfo.setHistoryMom(1, playerId);
+            PlayerInfo.setHistoryMom(1, playerId, con);
         }
 
-        PlayerInfo.setHistoryValidGoals(result.getGoals(), playerId);
-        PlayerInfo.setHistoryValidAssists(result.getAssists(), playerId);
-        PlayerInfo.setHistoryValidInterception(result.getBlocks(), playerId);
-        PlayerInfo.setHistoryValidShooting(result.getShots(), playerId);
-        PlayerInfo.setHistoryValidStealing(result.getSteals(), playerId);
-        PlayerInfo.setHistoryValidTackling(result.getTackles(), playerId);
-        PlayerInfo.setHistoryTotalPoints(result.getVotePoints(), playerId);
+        PlayerInfo.setHistoryValidGoals(result.getGoals(), playerId, con);
+        PlayerInfo.setHistoryValidAssists(result.getAssists(), playerId, con);
+        PlayerInfo.setHistoryValidInterception(result.getBlocks(), playerId, con);
+        PlayerInfo.setHistoryValidShooting(result.getShots(), playerId, con);
+        PlayerInfo.setHistoryValidStealing(result.getSteals(), playerId, con);
+        PlayerInfo.setHistoryValidTackling(result.getTackles(), playerId, con);
+        PlayerInfo.setHistoryTotalPoints(result.getVotePoints(), playerId, con);
     }
 }
