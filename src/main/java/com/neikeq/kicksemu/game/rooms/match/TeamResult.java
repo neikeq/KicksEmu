@@ -16,7 +16,7 @@ public class TeamResult {
     private final short ballControl;
 
     public void appendResult(ServerMessage msg) {
-        msg.append(result);
+        msg.append(getResult());
         msg.append(getGoals());
         msg.append(assists);
         msg.append(blocks);
@@ -61,5 +61,9 @@ public class TeamResult {
 
     public short getGoals() {
         return goals;
+    }
+
+    public short getResult() {
+        return result;
     }
 }

@@ -1008,117 +1008,73 @@ public class PlayerInfo {
         SqlUtils.sumShort("training_defense", value, table, id);
     }
 
-    public static void setHistoryMatches(int id, int value) {
+    public static void setHistoryMatches(int value, int id) {
         SqlUtils.sumInt("history_matches", value, table, id);
-    }
-
-    public static void setHistoryWins(int id, int value) {
-        SqlUtils.sumInt("history_wins", value, table, id);
-    }
-
-    public static void setHistoryDraws(int id, int value) {
-        SqlUtils.sumInt("history_draws", value, table, id);
-    }
-
-    public static void setHistoryMom(int id, int value) {
-        SqlUtils.sumInt("history_MOM", value, table, id);
-    }
-
-    public static void setHistoryValidGoals(int id, int value) {
-        SqlUtils.sumInt("history_valid_goals", value, table, id);
-    }
-
-    public static void setHistoryValidAssists(int id, int value) {
-        SqlUtils.sumInt("history_valid_assists", value, table, id);
-    }
-
-    public static void setHistoryValidInterception(int id, int value) {
-        SqlUtils.sumInt("history_valid_interception", value, table, id);
-    }
-
-    public static void setHistoryValidShooting(int id, int value) {
-        SqlUtils.sumInt("history_valid_shooting", value, table, id);
-    }
-
-    public static void setHistoryValidStealing(int id, int value) {
-        SqlUtils.sumInt("history_valid_stealing", value, table, id);
-    }
-
-    public static void setHistoryValidTackling(int id, int value) {
-        SqlUtils.sumInt("history_valid_tackling", value, table, id);
-    }
-
-    public static void setHistoryShooting(int id, int value) {
-        SqlUtils.sumInt("history_shooting", value, table, id);
-    }
-
-    public static void setHistoryStealing(int id, int value) {
-        SqlUtils.sumInt("history_stealing", value, table, id);
-    }
-
-    public static void setHistoryTackling(int id, int value) {
-        SqlUtils.sumInt("history_tackling", value, table, id);
-    }
-
-    public static void setHistoryTotalPoints(int id, int value) {
-        SqlUtils.sumInt("history_total_points", value, table, id);
-    }
-
-    // History Last Month
-
-    public static void setHistoryMonthMatches(int id, int value) {
         SqlUtils.sumInt("history_month_matches", value, table, id);
     }
 
-    public static void setHistoryMonthWins(int id, int value) {
+    public static void setHistoryWins(int value, int id) {
+        SqlUtils.sumInt("history_wins", value, table, id);
         SqlUtils.sumInt("history_month_wins", value, table, id);
     }
 
-    public static void setHistoryMonthDraws(int id, int value) {
+    public static void setHistoryDraws(int value, int id) {
+        SqlUtils.sumInt("history_draws", value, table, id);
         SqlUtils.sumInt("history_month_draws", value, table, id);
     }
 
-    public static void setHistoryMonthMom(int id, int value) {
+    public static void setHistoryMom(int value, int id) {
+        SqlUtils.sumInt("history_MOM", value, table, id);
         SqlUtils.sumInt("history_month_MOM", value, table, id);
     }
 
-    public static void setHistoryMonthValidGoals(int id, int value) {
+    public static void setHistoryValidGoals(int value, int id) {
+        SqlUtils.sumInt("history_valid_goals", value, table, id);
         SqlUtils.sumInt("history_month_valid_goals", value, table, id);
     }
 
-    public static void setHistoryMonthValidAssists(int id, int value) {
+    public static void setHistoryValidAssists(int value, int id) {
+        SqlUtils.sumInt("history_valid_assists", value, table, id);
         SqlUtils.sumInt("history_month_valid_assists", value, table, id);
     }
 
-    public static void setHistoryMonthValidInterception(int id, int value) {
+    public static void setHistoryValidInterception(int value, int id) {
+        SqlUtils.sumInt("history_valid_interception", value, table, id);
         SqlUtils.sumInt("history_month_valid_interception", value, table, id);
     }
 
-    public static void setHistoryMonthValidShooting(int id, int value) {
+    public static void setHistoryValidShooting(int value, int id) {
+        SqlUtils.sumInt("history_valid_shooting", value, table, id);
         SqlUtils.sumInt("history_month_valid_shooting", value, table, id);
     }
 
-    public static void setHistoryMonthValidStealing(int id, int value) {
+    public static void setHistoryValidStealing(int value, int id) {
+        SqlUtils.sumInt("history_valid_stealing", value, table, id);
         SqlUtils.sumInt("history_month_valid_stealing", value, table, id);
     }
 
-    public static void setHistoryMonthValidTackling(int id, int value) {
+    public static void setHistoryValidTackling(int value, int id) {
+        SqlUtils.sumInt("history_valid_tackling", value, table, id);
         SqlUtils.sumInt("history_month_valid_tackling", value, table, id);
     }
 
-    public static void setHistoryMonthShooting(int id, int value) {
+    public static void setHistoryShooting(int value, int id) {
+        SqlUtils.sumInt("history_shooting", value, table, id);
         SqlUtils.sumInt("history_month_shooting", value, table, id);
     }
 
-    public static void setHistoryMonthStealing(int id, int value) {
+    public static void setHistoryStealing(int value, int id) {
+        SqlUtils.sumInt("history_stealing", value, table, id);
         SqlUtils.sumInt("history_month_stealing", value, table, id);
     }
 
-    public static void setHistoryMonthTackling(int id, int value) {
+    public static void setHistoryTackling(int value, int id) {
+        SqlUtils.sumInt("history_tackling", value, table, id);
         SqlUtils.sumInt("history_month_tackling", value, table, id);
     }
 
-    public static void setHistoryMonthTotalPoints(int id, int value) {
+    public static void setHistoryTotalPoints(int value, int id) {
+        SqlUtils.sumInt("history_total_points", value, table, id);
         SqlUtils.sumInt("history_month_total_points", value, table, id);
     }
 

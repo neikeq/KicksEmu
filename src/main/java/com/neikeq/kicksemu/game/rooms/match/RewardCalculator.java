@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.match;
 
 import com.neikeq.kicksemu.config.Configuration;
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 
 public class RewardCalculator {
@@ -11,7 +12,6 @@ public class RewardCalculator {
                 if (Configuration.getBoolean("game.rewards.practice") && countdown <= 0) {
                     return (int)(12 * (float)(result.getVotePoints() / 10));
                 }
-                break;
             case 6:
                 return (int)(12 * (float)(result.getVotePoints() / 10));
             case 8:
@@ -19,8 +19,35 @@ public class RewardCalculator {
             case 10:
                 return (int)(24 * (float)(result.getVotePoints() / 10));
             default:
+                return 0;
+        }
+    }
+
+    public static void updatePlayerHistory(PlayerResult result, TeamResult teamResult, int mvp) {
+        int playerId = result.getPlayerId();
+
+        PlayerInfo.setHistoryMatches(1, playerId);
+
+        switch (teamResult.getResult()) {
+            case 0:
+                PlayerInfo.setHistoryDraws(1, playerId);
+                break;
+            case 1:
+                PlayerInfo.setHistoryWins(1, playerId);
+                break;
+            default:
         }
 
-        return 0;
+        if (playerId == mvp) {
+            PlayerInfo.setHistoryMom(1, playerId);
+        }
+
+        PlayerInfo.setHistoryValidGoals(result.getGoals(), playerId);
+        PlayerInfo.setHistoryValidAssists(result.getAssists(), playerId);
+        PlayerInfo.setHistoryValidInterception(result.getBlocks(), playerId);
+        PlayerInfo.setHistoryValidShooting(result.getShots(), playerId);
+        PlayerInfo.setHistoryValidStealing(result.getSteals(), playerId);
+        PlayerInfo.setHistoryValidTackling(result.getTackles(), playerId);
+        PlayerInfo.setHistoryTotalPoints(result.getVotePoints(), playerId);
     }
 }

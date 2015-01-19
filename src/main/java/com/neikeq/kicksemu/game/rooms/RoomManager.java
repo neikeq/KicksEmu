@@ -8,6 +8,7 @@ import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.RewardCalculator;
+import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -587,8 +588,10 @@ public class RoomManager {
                     int reward = RewardCalculator.calculateReward(pr, room,
                             result.getCountdown());
 
-                    short scoredGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                            result.getRedTeam().getGoals() : result.getBlueTeam().getGoals();
+                    TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                            result.getRedTeam() : result.getBlueTeam();
+
+                    short scoredGoals = teamResult.getGoals();
                     short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
                             result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
 
@@ -607,6 +610,11 @@ public class RoomManager {
                     PlayerInfo.setExperience(pr.getExperience(), playerId);
 
                     CharacterManager.checkExperience(playerId);
+
+                    // If match was not in training mode, update player's history
+                    if (room.getTrainingFactor() > 0) {
+                        RewardCalculator.updatePlayerHistory(pr, teamResult, result.getMom());
+                    }
                 });
 
                 result.getPlayers().stream().forEach(pr ->
