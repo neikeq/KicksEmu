@@ -710,14 +710,6 @@ public class PlayerInfo {
 
     // Sql setters
 
-    public static void setOwner(int value, int id) {
-        SqlUtils.setInt("owner", value, table, id);
-    }
-
-    public static void setName(String value, int id) {
-        SqlUtils.setString("name", value, table, id);
-    }
-
     public static void setBlocked(boolean value, int id) {
         SqlUtils.setBoolean("blocked", value, table, id);
     }
@@ -732,10 +724,6 @@ public class PlayerInfo {
 
     public static void setPosition(short value, int id) {
         SqlUtils.setShort("position", value, table, id);
-    }
-
-    public static void setClubId(int value, int id) {
-        SqlUtils.setInt("club_id", value, table, id);
     }
 
     public static void setCurrentQuest(short value, int id) {
@@ -782,28 +770,8 @@ public class PlayerInfo {
         SqlUtils.setShort("tickets_points", value, table, id);
     }
 
-    public static void setAnimation(short value, int id) {
-        SqlUtils.setShort("animation", value, table, id);
-    }
-
     public static void setFace(short value, int id) {
         SqlUtils.setShort("face", value, table, id);
-    }
-
-    public static void setDefaultHead(int value, int id) {
-        SqlUtils.setInt("default_head", value, table, id);
-    }
-
-    public static void setDefaultShirts(int value, int id) {
-        SqlUtils.setInt("default_shirts", value, table, id);
-    }
-
-    public static void setDefaultPants(int value, int id) {
-        SqlUtils.setInt("default_pants", value, table, id);
-    }
-
-    public static void setDefaultShoes(int value, int id) {
-        SqlUtils.setInt("default_shoes", value, table, id);
     }
 
     public static void setItemHead(int value, int id) {
@@ -1038,6 +1006,120 @@ public class PlayerInfo {
 
     public static void setTrainingDefense(short value, int id) {
         SqlUtils.sumShort("training_defense", value, table, id);
+    }
+
+    public static void setHistoryMatches(int id, int value) {
+        SqlUtils.sumInt("history_matches", value, table, id);
+    }
+
+    public static void setHistoryWins(int id, int value) {
+        SqlUtils.sumInt("history_wins", value, table, id);
+    }
+
+    public static void setHistoryDraws(int id, int value) {
+        SqlUtils.sumInt("history_draws", value, table, id);
+    }
+
+    public static void setHistoryMom(int id, int value) {
+        SqlUtils.sumInt("history_MOM", value, table, id);
+    }
+
+    public static void setHistoryValidGoals(int id, int value) {
+        SqlUtils.sumInt("history_valid_goals", value, table, id);
+    }
+
+    public static void setHistoryValidAssists(int id, int value) {
+        SqlUtils.sumInt("history_valid_assists", value, table, id);
+    }
+
+    public static void setHistoryValidInterception(int id, int value) {
+        SqlUtils.sumInt("history_valid_interception", value, table, id);
+    }
+
+    public static void setHistoryValidShooting(int id, int value) {
+        SqlUtils.sumInt("history_valid_shooting", value, table, id);
+    }
+
+    public static void setHistoryValidStealing(int id, int value) {
+        SqlUtils.sumInt("history_valid_stealing", value, table, id);
+    }
+
+    public static void setHistoryValidTackling(int id, int value) {
+        SqlUtils.sumInt("history_valid_tackling", value, table, id);
+    }
+
+    public static void setHistoryShooting(int id, int value) {
+        SqlUtils.sumInt("history_shooting", value, table, id);
+    }
+
+    public static void setHistoryStealing(int id, int value) {
+        SqlUtils.sumInt("history_stealing", value, table, id);
+    }
+
+    public static void setHistoryTackling(int id, int value) {
+        SqlUtils.sumInt("history_tackling", value, table, id);
+    }
+
+    public static void setHistoryTotalPoints(int id, int value) {
+        SqlUtils.sumInt("history_total_points", value, table, id);
+    }
+
+    // History Last Month
+
+    public static void setHistoryMonthMatches(int id, int value) {
+        SqlUtils.sumInt("history_month_matches", value, table, id);
+    }
+
+    public static void setHistoryMonthWins(int id, int value) {
+        SqlUtils.sumInt("history_month_wins", value, table, id);
+    }
+
+    public static void setHistoryMonthDraws(int id, int value) {
+        SqlUtils.sumInt("history_month_draws", value, table, id);
+    }
+
+    public static void setHistoryMonthMom(int id, int value) {
+        SqlUtils.sumInt("history_month_MOM", value, table, id);
+    }
+
+    public static void setHistoryMonthValidGoals(int id, int value) {
+        SqlUtils.sumInt("history_month_valid_goals", value, table, id);
+    }
+
+    public static void setHistoryMonthValidAssists(int id, int value) {
+        SqlUtils.sumInt("history_month_valid_assists", value, table, id);
+    }
+
+    public static void setHistoryMonthValidInterception(int id, int value) {
+        SqlUtils.sumInt("history_month_valid_interception", value, table, id);
+    }
+
+    public static void setHistoryMonthValidShooting(int id, int value) {
+        SqlUtils.sumInt("history_month_valid_shooting", value, table, id);
+    }
+
+    public static void setHistoryMonthValidStealing(int id, int value) {
+        SqlUtils.sumInt("history_month_valid_stealing", value, table, id);
+    }
+
+    public static void setHistoryMonthValidTackling(int id, int value) {
+        SqlUtils.sumInt("history_month_valid_tackling", value, table, id);
+    }
+
+    public static void setHistoryMonthShooting(int id, int value) {
+        SqlUtils.sumInt("history_month_shooting", value, table, id);
+    }
+
+    public static void setHistoryMonthStealing(int id, int value) {
+        SqlUtils.sumInt("history_month_stealing", value, table, id);
+    }
+
+    public static void setHistoryMonthTackling(int id, int value) {
+        SqlUtils.sumInt("history_month_tackling", value, table, id);
+    }
+
+    public static void setHistoryMonthTotalPoints(int id, int value) {
+        SqlUtils.sumInt("history_month_total_points", value, table, id);
     }
 
     public static void setStatusMessage(String value, int id) {
