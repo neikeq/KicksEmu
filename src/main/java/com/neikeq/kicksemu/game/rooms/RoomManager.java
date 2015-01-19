@@ -625,11 +625,12 @@ public class RoomManager {
                                     result.getMom(), con);
                         }
                     });
-                } catch (SQLException ignored) {}
 
-                result.getPlayers().stream().forEach(pr ->
-                        room.getPlayers().get(pr.getPlayerId())
-                                .sendAndFlush(MessageBuilder.matchResult(result, pr)));
+                    result.getPlayers().stream().forEach(pr ->
+                            room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
+                                    MessageBuilder.matchResult(result, pr, pr.getPlayerId(), con))
+                    );
+                } catch (SQLException ignored) {}
 
                 room.setState(RoomState.RESULT);
                 room.getConfirmedPlayers().clear();

@@ -1025,7 +1025,8 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult) {
+    public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult,
+                                            int playerId, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
 
         MessageUtils.appendResult((byte)0, msg);
@@ -1047,7 +1048,10 @@ public class MessageBuilder {
             msg.append(playerResult.getExperience());
             msg.append(playerResult.getPoints());
 
-            msg.appendZeros(132);
+            MessageUtils.appendHistory(playerId, con, msg);
+            MessageUtils.appendHistoryLastMonth(playerId, con, msg);
+
+            msg.appendZeros(56);
         }
 
         return msg;

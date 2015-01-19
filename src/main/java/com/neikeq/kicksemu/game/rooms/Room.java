@@ -158,11 +158,13 @@ public class Room {
         switch (state()) {
             case PLAYING:
                 setState(RoomState.RESULT);
-                sendBroadcast(MessageBuilder.matchResult(null, null));
+                try (Connection con = MySqlManager.getConnection()) {
+                    getPlayers().values().stream().forEach(s -> s.sendAndFlush(
+                            MessageBuilder.matchResult(null, null, s.getPlayerId(), con))
+                    );
 
-                try {
                     Thread.sleep(3000);
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException | SQLException ignored) {}
 
                 setState(RoomState.WAITING);
                 sendBroadcast(MessageBuilder.unknown1());
