@@ -874,6 +874,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
+        msg.append(PlayerInfo.getStatsPoints(playerId, con));
         MessageUtils.appendStats(playerId, con, msg);
 
         return msg;
