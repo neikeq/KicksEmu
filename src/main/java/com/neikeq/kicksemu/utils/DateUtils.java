@@ -54,4 +54,8 @@ public class DateUtils {
 
         return new java.sql.Date(calendar.getTime().getTime());
     }
+
+    public static long currentTimeMillis() {
+        return System.nanoTime() / 1000000;
+    }
 }

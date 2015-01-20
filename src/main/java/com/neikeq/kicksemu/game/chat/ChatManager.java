@@ -20,27 +20,29 @@ public class ChatManager {
     public static void chatMessage(Session session, ClientMessage msg) {
         msg.ignoreBytes(2);
 
-        int characterId = msg.readInt();
+        int playerId = msg.readInt();
 
-        if (session.getPlayerId() == characterId) {
+        if (session.getPlayerId() == playerId) {
             String name = msg.readString(15);
             ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
             String message = msg.readString(65);
 
-            if (type != null) {
-                switch (type) {
-                    case NORMAL:
-                        handleNormalMessage(session, name, message);
-                        break;
-                    case TEAM:
-                        handleTeamMessage(session, name, message);
-                        break;
-                    case WHISPER:
-                        if (isWhisperMessage(message)) {
-                            onMessageWhisper(session, name, message);
-                        }
-                        break;
-                    default:
+            if (!Flood.isPlayerLocked(playerId) && !Flood.onPlayerChat(playerId)) {
+                if (type != null) {
+                    switch (type) {
+                        case NORMAL:
+                            handleNormalMessage(session, name, message);
+                            break;
+                        case TEAM:
+                            handleTeamMessage(session, name, message);
+                            break;
+                        case WHISPER:
+                            if (isWhisperMessage(message)) {
+                                onMessageWhisper(session, name, message);
+                            }
+                            break;
+                        default:
+                    }
                 }
             }
         }
