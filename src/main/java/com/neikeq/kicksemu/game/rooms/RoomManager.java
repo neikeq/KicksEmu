@@ -553,6 +553,7 @@ public class RoomManager {
 
             if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
                 room.setState(RoomState.PLAYING);
+                room.setTimeStart(System.nanoTime());
                 room.sendBroadcast(MessageBuilder.playerReady((byte)0));
             }
         }
@@ -585,12 +586,19 @@ public class RoomManager {
             if (room.state() == RoomState.PLAYING) {
                 MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().size());
 
+                long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
+                short gameCountdown = result.getCountdown();
+
+                if (gameCountdown < countdown && gameCountdown - countdown > 30) {
+                    room.resetTrainingFactor();
+                }
+
                 try (Connection con = MySqlManager.getConnection()) {
                     // Reward players
                     result.getPlayers().stream().forEach(pr -> {
                         int playerId = pr.getPlayerId();
                         int reward = RewardCalculator.calculateReward(pr, room,
-                                result.getCountdown());
+                                gameCountdown, (int)countdown);
 
                         TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
                                 result.getRedTeam() : result.getBlueTeam();
@@ -609,6 +617,20 @@ public class RoomManager {
 
                         pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                         pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
+                    });
+
+                    result.getPlayers().stream().forEach(pr -> {
+                        int playerId = pr.getPlayerId();
+
+                        TeamResult tr = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                                result.getRedTeam() : result.getBlueTeam();
+
+                        room.getPlayers().get(playerId).sendAndFlush(
+                                MessageBuilder.matchResult(result, pr, tr, con));
+                    });
+
+                    result.getPlayers().stream().forEach(pr -> {
+                        int playerId = pr.getPlayerId();
 
                         PlayerInfo.setPoints(pr.getPoints(), playerId, con);
                         PlayerInfo.setExperience(pr.getExperience(), playerId, con);
@@ -619,17 +641,15 @@ public class RoomManager {
                             session.sendAndFlush(MessageBuilder.playerStats(playerId, con));
                         }
 
+                        TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                                result.getRedTeam() : result.getBlueTeam();
+
                         // If match was not in training mode, update player's history
                         if (room.getTrainingFactor() > 0) {
                             RewardCalculator.updatePlayerHistory(pr, teamResult,
                                     result.getMom(), con);
                         }
                     });
-
-                    result.getPlayers().stream().forEach(pr ->
-                            room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
-                                    MessageBuilder.matchResult(result, pr, pr.getPlayerId(), con))
-                    );
                 } catch (SQLException ignored) {}
 
                 room.setState(RoomState.RESULT);

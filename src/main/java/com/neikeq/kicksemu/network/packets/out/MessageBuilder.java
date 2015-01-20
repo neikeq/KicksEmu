@@ -12,6 +12,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
+import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.AuthenticationResult;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -1026,12 +1027,12 @@ public class MessageBuilder {
     }
 
     public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult,
-                                            int playerId, Connection con) {
+                                            TeamResult tr, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
 
         MessageUtils.appendResult((byte)0, msg);
 
-        if (result != null && playerResult != null) {
+        if (result != null && playerResult != null && tr != null) {
             msg.append(result.getMom());
 
             result.getRedTeam().appendResult(msg);
@@ -1048,10 +1049,7 @@ public class MessageBuilder {
             msg.append(playerResult.getExperience());
             msg.append(playerResult.getPoints());
 
-            MessageUtils.appendHistory(playerId, con, msg);
-            MessageUtils.appendHistoryLastMonth(playerId, con, msg);
-
-            msg.appendZeros(56);
+            MessageUtils.appendMatchHistory(playerResult, tr, result.getMom(), con, msg);
         }
 
         return msg;

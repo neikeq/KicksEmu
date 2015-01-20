@@ -28,6 +28,8 @@ public class Room {
 
     private int trainingFactor;
 
+    private long timeStart;
+
     private String name;
     private String password;
 
@@ -160,7 +162,7 @@ public class Room {
                 setState(RoomState.RESULT);
                 try (Connection con = MySqlManager.getConnection()) {
                     getPlayers().values().stream().forEach(s -> s.sendAndFlush(
-                            MessageBuilder.matchResult(null, null, s.getPlayerId(), con))
+                            MessageBuilder.matchResult(null, null, null, con))
                     );
 
                     Thread.sleep(3000);
@@ -621,7 +623,19 @@ public class Room {
         return trainingFactor;
     }
 
+    public void resetTrainingFactor() {
+        trainingFactor = 0;
+    }
+
     public void updateTrainingFactor() {
         trainingFactor = isTraining() ? 0 : redTeamSize() + blueTeamSize();
+    }
+
+    public long getTimeStart() {
+        return timeStart;
+    }
+
+    public void setTimeStart(long timeStart) {
+        this.timeStart = timeStart;
     }
 }
