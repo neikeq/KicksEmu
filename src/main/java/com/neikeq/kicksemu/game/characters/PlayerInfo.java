@@ -21,20 +21,38 @@ public class PlayerInfo {
 
     public static int getOwner(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getOwner() != null ?
+        int owner = s != null && s.getPlayerCache().getOwner() != null ?
                 s.getPlayerCache().getOwner() : SqlUtils.getInt("owner", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setOwner(owner);
+        }
+
+        return owner;
     }
 
     public static String getName(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getName() != null ?
+        String name = s != null && s.getPlayerCache().getName() != null ?
                 s.getPlayerCache().getName() : SqlUtils.getString("name", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setName(name);
+        }
+
+        return name;
     }
 
     public static int getClubId(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getClubId() != null ?
+        int clubId = s != null && s.getPlayerCache().getClubId() != null ?
                 s.getPlayerCache().getClubId() : SqlUtils.getInt("club_id", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setClubId(clubId);
+        }
+
+        return clubId;
     }
 
     public static boolean isBlocked(int id, Connection ... con) {
@@ -103,8 +121,14 @@ public class PlayerInfo {
 
     public static short getAnimation(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getAnimation() != null ?
+        short animation = s != null && s.getPlayerCache().getAnimation() != null ?
                 s.getPlayerCache().getAnimation() : SqlUtils.getShort("animation", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setAnimation(animation);
+        }
+
+        return animation;
     }
 
     public static short getFace(int id, Connection ... con) {
@@ -113,26 +137,50 @@ public class PlayerInfo {
 
     public static int getDefaultHead(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getDefaultHead() != null ?
+        int defaultHead = s != null && s.getPlayerCache().getDefaultHead() != null ?
                 s.getPlayerCache().getDefaultHead() : SqlUtils.getInt("default_head", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setDefaultHead(defaultHead);
+        }
+
+        return defaultHead;
     }
 
     public static int getDefaultShirts(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getDefaultShirts() != null ?
+        int defaultShirts = s != null && s.getPlayerCache().getDefaultShirts() != null ?
                 s.getPlayerCache().getDefaultShirts() : SqlUtils.getInt("default_shirts", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setDefaultShirts(defaultShirts);
+        }
+
+        return defaultShirts;
     }
 
     public static int getDefaultPants(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getDefaultPants() != null ?
+        int defaultPants = s != null && s.getPlayerCache().getDefaultPants() != null ?
                 s.getPlayerCache().getDefaultPants() : SqlUtils.getInt("default_pants", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setDefaultPants(defaultPants);
+        }
+
+        return defaultPants;
     }
 
     public static int getDefaultShoes(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        return s != null && s.getPlayerCache().getDefaultShoes() != null ?
+        int defaultShoes = s != null && s.getPlayerCache().getDefaultShoes() != null ?
                 s.getPlayerCache().getDefaultShoes() : SqlUtils.getInt("default_shoes", table, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setDefaultShoes(defaultShoes);
+        }
+
+        return defaultShoes;
     }
 
     public static int getItemHead(int id, Connection ... con) {
