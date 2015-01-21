@@ -14,7 +14,7 @@ class Compressor:
         return zlib.decompress(data[len(self.header):len(data)])
 
     def compress(self, data):
-        result = zlib.compress(data)
+        result = zlib.compress(data, 1)
         return self.add_header(result)
 
     def decompress_file(self, path):
