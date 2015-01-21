@@ -3,7 +3,6 @@ package com.neikeq.kicksemu.game.chat;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

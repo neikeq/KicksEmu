@@ -6,6 +6,9 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.rooms.Room;
+import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
+import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -209,46 +212,52 @@ class MessageUtils {
         msg.append(PlayerInfo.getHistoryMonthTotalPoints(playerId, con));
     }
 
-    public static void appendMatchHistory(PlayerResult pr, TeamResult teamResult, int mom,
+    public static void appendMatchHistory(PlayerResult pr, Room room, MatchResult result,
                                           Connection con, ServerMessage msg) {
-        int playerId = pr.getPlayerId();
+        int id = pr.getPlayerId();
+        boolean training = room.getTrainingFactor() <= 0;
 
-        msg.append(PlayerInfo.getHistoryMatches(playerId, con) + 1);
-        msg.append(PlayerInfo.getHistoryWins(playerId, con) +
-                teamResult.getResult() == 1 ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryDraws(playerId, con) +
-                teamResult.getResult() == 0 ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryMom(playerId, con) + mom == playerId ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryValidGoals(playerId, con) + pr.getGoals());
-        msg.append(PlayerInfo.getHistoryValidAssists(playerId, con) + pr.getAssists());
-        msg.append(PlayerInfo.getHistoryValidInterception(playerId, con) + pr.getBlocks());
-        msg.append(PlayerInfo.getHistoryValidShooting(playerId, con) + pr.getShots());
-        msg.append(PlayerInfo.getHistoryValidStealing(playerId, con) + pr.getSteals());
-        msg.append(PlayerInfo.getHistoryValidTackling(playerId, con) + pr.getTackles());
+        TeamResult tr = !training ? room.getPlayerTeam(pr.getPlayerId()) == RoomTeam.RED ?
+                result.getRedTeam() : result.getBlueTeam() :
+                new TeamResult((short)-1, (short)0, (short)0, (short)0, (short)0, (short)0,
+                        (short)0, (short)0, (short)0);
+
+        msg.append(PlayerInfo.getHistoryMatches(id, con) + (training ? 0 : 1));
+        msg.append(PlayerInfo.getHistoryWins(id, con) +
+                tr.getResult() == 1 ? 1 : 0);
+        msg.append(PlayerInfo.getHistoryDraws(id, con) +
+                tr.getResult() == 0 ? 1 : 0);
+        msg.append(PlayerInfo.getHistoryMom(id, con) + result.getMom() == id ? 1 : 0);
+        msg.append(PlayerInfo.getHistoryValidGoals(id, con) + pr.getGoals());
+        msg.append(PlayerInfo.getHistoryValidAssists(id, con) + pr.getAssists());
+        msg.append(PlayerInfo.getHistoryValidInterception(id, con) + pr.getBlocks());
+        msg.append(PlayerInfo.getHistoryValidShooting(id, con) + pr.getShots());
+        msg.append(PlayerInfo.getHistoryValidStealing(id, con) + pr.getSteals());
+        msg.append(PlayerInfo.getHistoryValidTackling(id, con) + pr.getTackles());
         msg.appendZeros(4);
-        msg.append(PlayerInfo.getHistoryShooting(playerId, con));
-        msg.append(PlayerInfo.getHistoryStealing(playerId, con));
-        msg.append(PlayerInfo.getHistoryTackling(playerId, con));
+        msg.append(PlayerInfo.getHistoryShooting(id, con));
+        msg.append(PlayerInfo.getHistoryStealing(id, con));
+        msg.append(PlayerInfo.getHistoryTackling(id, con));
         msg.appendZeros(4);
-        msg.append(PlayerInfo.getHistoryTotalPoints(playerId, con) + pr.getVotePoints());
-        msg.append(PlayerInfo.getHistoryMonthMatches(playerId, con) + 1);
-        msg.append(PlayerInfo.getHistoryMonthWins(playerId, con) +
-                teamResult.getResult() == 1 ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryMonthDraws(playerId, con) +
-                teamResult.getResult() == 0 ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryMonthMom(playerId, con) + mom == playerId ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryMonthValidGoals(playerId, con) + pr.getGoals());
-        msg.append(PlayerInfo.getHistoryMonthValidAssists(playerId, con) + pr.getAssists());
-        msg.append(PlayerInfo.getHistoryMonthValidInterception(playerId, con) + pr.getBlocks());
-        msg.append(PlayerInfo.getHistoryMonthValidShooting(playerId, con) + pr.getShots());
-        msg.append(PlayerInfo.getHistoryMonthValidStealing(playerId, con) + pr.getSteals());
-        msg.append(PlayerInfo.getHistoryMonthValidTackling(playerId, con) + pr.getTackles());
+        msg.append(PlayerInfo.getHistoryTotalPoints(id, con) + pr.getVotePoints());
+        msg.append(PlayerInfo.getHistoryMonthMatches(id, con) + (training ? 0 : 1));
+        msg.append(PlayerInfo.getHistoryMonthWins(id, con) +
+                tr.getResult() == 1 ? 1 : 0);
+        msg.append(PlayerInfo.getHistoryMonthDraws(id, con) +
+                tr.getResult() == 0 ? 1 : 0);
+        msg.append(PlayerInfo.getHistoryMonthMom(id, con) + result.getMom() == id ? 1 : 0);
+        msg.append(PlayerInfo.getHistoryMonthValidGoals(id, con) + pr.getGoals());
+        msg.append(PlayerInfo.getHistoryMonthValidAssists(id, con) + pr.getAssists());
+        msg.append(PlayerInfo.getHistoryMonthValidInterception(id, con) + pr.getBlocks());
+        msg.append(PlayerInfo.getHistoryMonthValidShooting(id, con) + pr.getShots());
+        msg.append(PlayerInfo.getHistoryMonthValidStealing(id, con) + pr.getSteals());
+        msg.append(PlayerInfo.getHistoryMonthValidTackling(id, con) + pr.getTackles());
         msg.appendZeros(4);
-        msg.append(PlayerInfo.getHistoryMonthShooting(playerId, con));
-        msg.append(PlayerInfo.getHistoryMonthStealing(playerId, con));
-        msg.append(PlayerInfo.getHistoryMonthTackling(playerId, con));
+        msg.append(PlayerInfo.getHistoryMonthShooting(id, con));
+        msg.append(PlayerInfo.getHistoryMonthStealing(id, con));
+        msg.append(PlayerInfo.getHistoryMonthTackling(id, con));
         msg.appendZeros(4);
-        msg.append(PlayerInfo.getHistoryMonthTotalPoints(playerId, con) + pr.getVotePoints());
+        msg.append(PlayerInfo.getHistoryMonthTotalPoints(id, con) + pr.getVotePoints());
     }
 
     public static void appendRanking(int playerId, Connection con, ServerMessage msg) {

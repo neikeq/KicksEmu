@@ -1029,12 +1029,12 @@ public class MessageBuilder {
     }
 
     public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult,
-                                            TeamResult tr, Connection con) {
+                                            Room room, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
 
         MessageUtils.appendResult((byte)0, msg);
 
-        if (result != null && playerResult != null && tr != null) {
+        if (result != null && playerResult != null && room != null) {
             msg.append(result.getMom());
 
             result.getRedTeam().appendResult(msg);
@@ -1051,7 +1051,7 @@ public class MessageBuilder {
             msg.append(playerResult.getExperience());
             msg.append(playerResult.getPoints());
 
-            MessageUtils.appendMatchHistory(playerResult, tr, result.getMom(), con, msg);
+            MessageUtils.appendMatchHistory(playerResult, room, result, con, msg);
         }
 
         return msg;

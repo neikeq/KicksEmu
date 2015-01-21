@@ -620,13 +620,8 @@ public class RoomManager {
                     });
 
                     result.getPlayers().stream().forEach(pr -> {
-                        int playerId = pr.getPlayerId();
-
-                        TeamResult tr = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                                result.getRedTeam() : result.getBlueTeam();
-
-                        room.getPlayers().get(playerId).sendAndFlush(
-                                MessageBuilder.matchResult(result, pr, tr, con));
+                        room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
+                                MessageBuilder.matchResult(result, pr, room, con));
                     });
 
                     result.getPlayers().stream().forEach(pr -> {
