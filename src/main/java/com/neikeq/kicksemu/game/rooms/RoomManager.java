@@ -505,13 +505,13 @@ public class RoomManager {
         Room room = getRoomById(roomId);
 
         if (room != null && room.getMaster() == session.getPlayerId() && room.isLobbyScreen()) {
-                if (count == 0) {
-                    room.setState(RoomState.LOADING);
-                    room.updateTrainingFactor();
-                }
+            if (count == 0) {
+                room.setState(RoomState.LOADING);
+                room.updateTrainingFactor();
+            }
 
-                ServerMessage msgCountDown = MessageBuilder.countDown(count);
-                room.sendBroadcast(msgCountDown);
+            ServerMessage msgCountDown = MessageBuilder.countDown(count);
+            room.sendBroadcast(msgCountDown);
         }
     }
 
@@ -619,10 +619,10 @@ public class RoomManager {
                         pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
                     });
 
-                    result.getPlayers().stream().forEach(pr -> {
-                        room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
-                                MessageBuilder.matchResult(result, pr, room, con));
-                    });
+                    result.getPlayers().stream().forEach(pr ->
+                            room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
+                                    MessageBuilder.matchResult(result, pr, room, con))
+                    );
 
                     result.getPlayers().stream().forEach(pr -> {
                         int playerId = pr.getPlayerId();

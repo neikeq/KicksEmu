@@ -212,22 +212,25 @@ class MessageUtils {
         msg.append(PlayerInfo.getHistoryMonthTotalPoints(playerId, con));
     }
 
-    public static void appendMatchHistory(PlayerResult pr, Room room, MatchResult result,
+    public static void appendMatchHistory(PlayerResult playerResult, Room room, MatchResult result,
                                           Connection con, ServerMessage msg) {
-        int id = pr.getPlayerId();
+        int id = playerResult.getPlayerId();
         boolean training = room.getTrainingFactor() <= 0;
 
-        TeamResult tr = !training ? room.getPlayerTeam(pr.getPlayerId()) == RoomTeam.RED ?
+        TeamResult tr = !training ? room.getPlayerTeam(id) == RoomTeam.RED ?
                 result.getRedTeam() : result.getBlueTeam() :
                 new TeamResult((short)-1, (short)0, (short)0, (short)0, (short)0, (short)0,
                         (short)0, (short)0, (short)0);
 
+        PlayerResult pr = !training ? playerResult : new PlayerResult((short)-1, (short)0,
+                (short)0, (short)0, (short)0, (short)0, (short)0, (short)0, (short)0);
+
         msg.append(PlayerInfo.getHistoryMatches(id, con) + (training ? 0 : 1));
         msg.append(PlayerInfo.getHistoryWins(id, con) +
-                tr.getResult() == 1 ? 1 : 0);
+                (tr.getResult() == 1 ? 1 : 0));
         msg.append(PlayerInfo.getHistoryDraws(id, con) +
-                tr.getResult() == 0 ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryMom(id, con) + result.getMom() == id ? 1 : 0);
+                (tr.getResult() == 0 ? 1 : 0));
+        msg.append(PlayerInfo.getHistoryMom(id, con) + (result.getMom() == id ? 1 : 0));
         msg.append(PlayerInfo.getHistoryValidGoals(id, con) + pr.getGoals());
         msg.append(PlayerInfo.getHistoryValidAssists(id, con) + pr.getAssists());
         msg.append(PlayerInfo.getHistoryValidInterception(id, con) + pr.getBlocks());
@@ -242,10 +245,10 @@ class MessageUtils {
         msg.append(PlayerInfo.getHistoryTotalPoints(id, con) + pr.getVotePoints());
         msg.append(PlayerInfo.getHistoryMonthMatches(id, con) + (training ? 0 : 1));
         msg.append(PlayerInfo.getHistoryMonthWins(id, con) +
-                tr.getResult() == 1 ? 1 : 0);
+                (tr.getResult() == 1 ? 1 : 0));
         msg.append(PlayerInfo.getHistoryMonthDraws(id, con) +
-                tr.getResult() == 0 ? 1 : 0);
-        msg.append(PlayerInfo.getHistoryMonthMom(id, con) + result.getMom() == id ? 1 : 0);
+                (tr.getResult() == 0 ? 1 : 0));
+        msg.append(PlayerInfo.getHistoryMonthMom(id, con) + (result.getMom() == id ? 1 : 0));
         msg.append(PlayerInfo.getHistoryMonthValidGoals(id, con) + pr.getGoals());
         msg.append(PlayerInfo.getHistoryMonthValidAssists(id, con) + pr.getAssists());
         msg.append(PlayerInfo.getHistoryMonthValidInterception(id, con) + pr.getBlocks());
