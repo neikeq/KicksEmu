@@ -15,19 +15,23 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) throws Exception {
-        ClientMessage message = new ClientMessage(packet.content());
+        try {
+            ClientMessage message = new ClientMessage(packet.content());
 
-        int playerId = message.readInt(2);
+            int playerId = message.readInt(2);
 
-        MessageHandler messageHandler = ServerManager.getMessageHandler();
-        Session session = ServerManager.getSessionById(playerId);
+            MessageHandler messageHandler = ServerManager.getMessageHandler();
+            Session session = ServerManager.getSessionById(playerId);
 
-        session.setUdpPort(packet.sender().getPort());
+            session.setUdpPort(packet.sender().getPort());
 
-        // Handle the incoming message
-        if (!messageHandler.handle(session, message)) {
-            Output.println("Received unknown datagram packet (id: " + message.getMessageId() +
-                    ") from: " + packet.sender().getAddress().getHostAddress(), Level.DEBUG);
+            // Handle the incoming message
+            if (!messageHandler.handle(session, message)) {
+                Output.println("Received unknown datagram packet (id: " + message.getMessageId() +
+                        ") from: " + packet.sender().getAddress().getHostAddress(), Level.DEBUG);
+            }
+        } finally {
+            packet.release();
         }
     }
 

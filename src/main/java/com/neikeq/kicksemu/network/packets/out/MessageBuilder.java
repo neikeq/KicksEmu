@@ -511,7 +511,7 @@ public class MessageBuilder {
         if (result == 0) {
             msg.append((short)roomId);
             msg.append((short)(team != null ? team.toInt() : -1));
-            msg.append((short)(team != null ? team.toInt() : -1));
+            msg.append((short)0);
         }
 
         return msg;
