@@ -1,4 +1,4 @@
-Index,Id,Class,Name,Level,Gender,Unknown,Unknown,Brand,Unknown,Payment,Exchange,Kash 7,Kash 30,Kash Perm,Points 7,Points 30,Points Perm,Unknown,Icon Path,NifFile1,NifFile2,NifFile3,NifFile4,NifFile5,Description
+Index,Id,Class,Name,Unknown,Gender,Level,Unknown,Unknown,Brand,Unknown,Payment,Exchange,Kash 7,Kash 30,Kash Perm,Points 7,Points 30,Points Perm,Unknown,Icon Path,NifFile1,NifFile2,NifFile3,NifFile4,NifFile5,Description
 0,1001010,100,Male A,0,1,0,0,0,0,0,3,512,118,236,471,2500,5000,10000,0,Item/Body101_0,-,-,-,-,,
 1,1001020,100,Male B,0,1,0,0,0,0,0,3,512,118,236,471,2500,5000,10000,0,Item/Body102_0,-,-,-,-,,
 2,1001030,100,Male C,0,1,0,0,0,0,0,3,512,118,236,471,2500,5000,10000,0,Item/Body103_0,-,-,-,-,,
