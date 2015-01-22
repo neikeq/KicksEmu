@@ -13,7 +13,9 @@ public class Constants {
     public static final String TABLE_CELE_PATH = TABLE_DIR + "Table_Cele_File.csv";
     public static final String TABLE_LEARN_PATH = TABLE_DIR + "Table_Learn_File.csv";
     public static final String TABLE_ITEM_FREE_PATH = TABLE_DIR + "Table_ItemFree_File.csv";
-    
+    public static final String TABLE_ITEM_PATH = TABLE_DIR + "Table_Item_File.csv";
+    public static final String TABLE_OPTION_PATH = TABLE_DIR + "Table_Option_File.csv";
+
     public static final int SESSION_ID_INDEX = 2;
     public static final int TARGET_ID_INDEX = 6;
     public static final int BODY_SIZE_INDEX = 10;

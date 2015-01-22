@@ -14,45 +14,43 @@ public class InventoryTable {
     private static final Map<Integer, CeleInfo> celesTable = new HashMap<>();
     private static final Map<Integer, LearnInfo> learnTable = new HashMap<>();
     private static final Map<Integer, ItemFree> itemFreeTable = new HashMap<>();
+    private static final Map<Integer, ItemInfo> itemTable = new HashMap<>();
+    private static final Map<Integer, OptionInfo> optionTable = new HashMap<>();
 
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
         Optional<SkillInfo> result = skillsTable.values().stream().filter(filter).findFirst();
 
-        if (!result.isPresent()) {
-            return null;
-        }
-
-        return result.get();
+        return result.isPresent() ? result.get() : null;
     }
 
     public static CeleInfo getCeleInfo(Predicate<CeleInfo> filter) {
         Optional<CeleInfo> result = celesTable.values().stream().filter(filter).findFirst();
 
-        if (!result.isPresent()) {
-            return null;
-        }
-
-        return result.get();
+        return result.isPresent() ? result.get() : null;
     }
 
     public static LearnInfo getLearnInfo(Predicate<LearnInfo> filter) {
         Optional<LearnInfo> result = learnTable.values().stream().filter(filter).findFirst();
 
-        if (!result.isPresent()) {
-            return null;
-        }
-
-        return result.get();
+        return result.isPresent() ? result.get() : null;
     }
 
     public static ItemFree getItemFree(Predicate<ItemFree> filter) {
         Optional<ItemFree> result = itemFreeTable.values().stream().filter(filter).findFirst();
 
-        if (!result.isPresent()) {
-            return null;
-        }
+        return result.isPresent() ? result.get() : null;
+    }
 
-        return result.get();
+    public static ItemInfo getItemInfo(Predicate<ItemInfo> filter) {
+        Optional<ItemInfo> result = itemTable.values().stream().filter(filter).findFirst();
+
+        return result.isPresent() ? result.get() : null;
+    }
+
+    public static OptionInfo getOptionInfo(Predicate<OptionInfo> filter) {
+        Optional<OptionInfo> result = optionTable.values().stream().filter(filter).findFirst();
+
+        return result.isPresent() ? result.get() : null;
     }
 
     public static void initializeSkillTable(String path) {
@@ -92,6 +90,26 @@ public class InventoryTable {
         while ((line = reader.nextRow()) != null) {
             ItemFree row = new ItemFree(line);
             itemFreeTable.put(row.getId(), row);
+        }
+    }
+
+    public static void initializeItemTable(String path) {
+        TableReader reader = new TableReader(path);
+
+        Row line;
+        while ((line = reader.nextRow()) != null) {
+            ItemInfo row = new ItemInfo(line);
+            itemTable.put(row.getId(), row);
+        }
+    }
+
+    public static void initializeOptionTable(String path) {
+        TableReader reader = new TableReader(path);
+
+        Row line;
+        while ((line = reader.nextRow()) != null) {
+            OptionInfo row = new OptionInfo(line);
+            optionTable.put(row.getId(), row);
         }
     }
 }
