@@ -95,6 +95,18 @@ class BinaryReader:
         self.index += length
         return value
 
+    def read_bytes(self, length):
+        """
+        Returns the byte array at the current index and
+        increases index by length.
+
+        Keyword arguments:
+        length -- the number of bytes to read
+        """
+        value = bytes(self.data[self.index:self.index + length])
+        self.index += length
+        return value
+
     def ignore_bytes(self, number):
         """
         Increases the index by the specified number of bytes to ignore.

@@ -62,7 +62,7 @@ class BinaryWriter:
         Keyword arguments:
         value -- the byte to write.
         """
-        self.data.extend(value)
+        self.data.extend(value.to_bytes(1, self.byteorder))
 
     def write_short(self, value):
         """
@@ -114,6 +114,15 @@ class BinaryWriter:
 
         if len(data) < length:
             self.write_zeros(length - len(data))
+
+    def write_bytes(self, value):
+        """
+        Appends the specified byte array.
+
+        Keyword arguments:
+        value -- the byte array to write.
+        """
+        self.data.extend(value)
 
     def write_zeros(self, number):
         """

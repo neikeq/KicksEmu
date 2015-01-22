@@ -32,6 +32,6 @@ class Compressor:
         result.write_int(self.header_version)
         result.write_int(orig_len)
         result.write_int(len(data))
-        result.write_byte(self.header)
-        result.write_byte(data)
+        result.write_bytes(self.header)
+        result.write_bytes(data)
         return result.array()
