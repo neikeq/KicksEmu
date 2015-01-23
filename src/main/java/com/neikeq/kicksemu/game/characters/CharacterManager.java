@@ -25,6 +25,7 @@ public class CharacterManager {
         sendSkillList(session);
         sendCelebrationList(session);
         sendPlayerInfo(session);
+        sendItemsInUse(session);
     }
 
     private static void sendPlayerInfo(Session session) {
@@ -39,6 +40,20 @@ public class CharacterManager {
 
         ServerMessage msg = MessageBuilder.itemList(items, (byte) 0);
         session.send(msg);
+    }
+
+    private static void sendItemsInUse(Session session) {
+        int playerId = session.getPlayerId();
+
+        Map<Integer, Item> items = PlayerInfo.getInventoryItems(session.getPlayerId());
+
+        if (items.size() > 0) {
+            Item item = items.values().iterator().next();
+
+            session.send(item.isSelected() ?
+                    MessageBuilder.activateItem(item.getInventoryId(), playerId, (byte) 0) :
+                    MessageBuilder.deactivateItem(item.getInventoryId(), playerId, (byte) 0));
+        }
     }
 
     private static void sendTrainingList(Session session) {

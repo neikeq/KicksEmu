@@ -287,7 +287,6 @@ public class Shop {
                 (optionInfoOne == null || optionInfoOne.isValidLevel(level, payment)) &&
                 (optionInfoTwo == null || optionInfoTwo.isValidLevel(level, payment));
 
-        Item item = null;
         byte result = 0;
 
         // If there is a item with this id and the player position is valid for this item
@@ -312,7 +311,7 @@ public class Shop {
                             // Initialize item with the requested data
                             int id = InventoryUtils.getSmallestMissingId(items.values());
 
-                            item = new Item(itemId, id, expiration.toInt(),
+                            Item item = new Item(itemId, id, expiration.toInt(),
                                     statsBonusOne, statsBonusTwo, (short)0,
                                     InventoryUtils.expirationToTimestamp(expiration),
                                     false, true);
