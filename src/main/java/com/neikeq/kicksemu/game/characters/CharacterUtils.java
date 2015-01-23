@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
 import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
@@ -214,10 +215,10 @@ public class CharacterUtils {
     }
 
     public static void updateItemsInUse(int inventoryId, Map<Integer, Item> items, int playerId) {
-        OptionInfo optionInfo = InventoryTable.getOptionInfo(o ->
+        ItemInfo itemInfo = InventoryTable.getItemInfo(o ->
                 o.getId() == items.get(inventoryId).getId());
 
-        Item itemOut = items.get(getItemInUseByType(optionInfo.getType(), playerId));
+        Item itemOut = items.get(getItemInUseByType(itemInfo.getType(), playerId));
 
         if (itemOut != null) {
             itemOut.deactivateGracefully(playerId);
