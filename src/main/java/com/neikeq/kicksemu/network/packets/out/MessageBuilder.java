@@ -364,7 +364,7 @@ public class MessageBuilder {
             // Stats
             MessageUtils.appendStats(playerId, con, msg);
             MessageUtils.appendStatsTraining(playerId, con, msg);
-            MessageUtils.appendStatsBonus(playerId, con, msg);
+            MessageUtils.appendStatsBonus(playerId, msg, con);
 
             // History
             MessageUtils.appendHistory(playerId, con, msg);
@@ -582,7 +582,7 @@ public class MessageBuilder {
             // Stats
             MessageUtils.appendStats(playerId, con, msg);
             MessageUtils.appendStatsTraining(playerId, con, msg);
-            MessageUtils.appendStatsBonus(playerId, con, msg);
+            MessageUtils.appendStatsBonus(playerId, msg, con);
 
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
             MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), con, msg);
@@ -925,8 +925,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseItem(int playerId, Item item,
-                                              byte result, Connection con) {
+    public static ServerMessage purchaseItem(int playerId, byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_ITEM);
 
         MessageUtils.appendResult(result, msg);
@@ -934,8 +933,36 @@ public class MessageBuilder {
         if (result == 0) {
             MessageUtils.appendCharacterInfo(playerId, con,
                     PlayerInfo.getOwner(playerId), msg);
-            MessageUtils.appendStatsBonus(playerId, con, msg);
+            MessageUtils.appendStatsBonus(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage activateItem(int inventoryId, int playerId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.ACTIVATE_ITEM);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendStatsBonus(playerId, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg);
+            msg.append(inventoryId);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage deactivateItem(int inventoryId, int playerId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_ITEM);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendStatsBonus(playerId, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg);
+            msg.append(inventoryId);
         }
 
         return msg;
@@ -984,13 +1011,13 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage deactivateSkill(int inventoryId, byte result) {
+    public static ServerMessage deactivateSkill(int skillId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_SKILL);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(inventoryId);
+            msg.append(skillId);
         }
 
         return msg;

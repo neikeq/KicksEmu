@@ -1,0 +1,9 @@
+// DeactivateItem
+// Tcp
+
+Id: 2604
+Size: 8
+
+Data:
+int packet_id
+int inventoryId

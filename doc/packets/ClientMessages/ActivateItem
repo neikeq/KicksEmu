@@ -1,0 +1,9 @@
+// ActivateItem
+// Tcp
+
+Id: 2603
+Size: 8
+
+Data:
+int packet_id
+int inventoryId

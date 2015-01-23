@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.inventory;
 
+import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -119,6 +120,58 @@ public class InventoryManager {
             PlayerInfo.setInventoryCelebration(celes, playerId);
         } else {
             result = -2; // Cele does not exists
+        }
+
+        return result;
+    }
+
+    public static void deactivateItem(Session session, ClientMessage msg) {
+        int inventoryId = msg.readInt();
+        int playerId = session.getPlayerId();
+
+        byte result = deactivateItem(session, inventoryId,
+                PlayerInfo.getInventoryItems(playerId));
+
+        if (result != 0) {
+            session.send(MessageBuilder.deactivateItem(inventoryId, playerId, result));
+        }
+    }
+
+    public static void activateItem(Session session, ClientMessage msg) {
+        int playerId = session.getPlayerId();
+        int inventoryId = msg.readInt();
+
+        byte result = 0;
+
+        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+        Item item = items.get(inventoryId);
+
+        // If item exists
+        if (item != null && !item.isSelected()) {
+            CharacterUtils.updateItemsInUse(inventoryId, items, playerId);
+            PlayerInfo.setInventoryItems(items, playerId);
+        } else {
+            result = -2; // Skill does not exists
+        }
+
+        session.send(MessageBuilder.activateItem(inventoryId, playerId, result));
+    }
+
+    public static byte deactivateItem(Session s, int inventoryId, Map<Integer, Item> items) {
+        byte result = 0;
+
+        int playerId = s.getPlayerId();
+        Item item = items.get(inventoryId);
+
+        // If item exists
+        if (item != null) {
+            // Deactivate item
+            item.deactivateGracefully(playerId);
+            s.send(MessageBuilder.deactivateItem(inventoryId, playerId,  result));
+
+            PlayerInfo.setInventoryItems(items, playerId);
+        } else {
+            result = -2; // Item does not exists
         }
 
         return result;

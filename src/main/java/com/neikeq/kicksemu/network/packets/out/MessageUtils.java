@@ -154,7 +154,7 @@ class MessageUtils {
         msg.append(PlayerInfo.getTrainingStatsDefense(playerId, con));
     }
 
-    public static void appendStatsBonus(int playerId, Connection con, ServerMessage msg) {
+    public static void appendStatsBonus(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getBonusStatsRunning(playerId, con));
         msg.append(PlayerInfo.getBonusStatsEndurance(playerId, con));
         msg.append(PlayerInfo.getBonusStatsAgility(playerId, con));

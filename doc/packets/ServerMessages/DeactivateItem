@@ -1,0 +1,15 @@
+// DeactivateItem
+// Tcp
+
+Id: 2604
+Size: 10
+
+Data:
+int packet_id
+byte reason
+/*
+ * System problem: -1
+ * Item does not exists: -2
+ */
+byte response
+int inventoryId
