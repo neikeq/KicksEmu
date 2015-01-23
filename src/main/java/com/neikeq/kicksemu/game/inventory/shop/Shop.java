@@ -348,7 +348,7 @@ public class Shop {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
-            session.send(MessageBuilder.purchaseItem(playerId, item, result, con));
+            session.send(MessageBuilder.purchaseItem(playerId, result, con));
 
             if (result == 0) {
                 session.send(MessageBuilder.itemList(PlayerInfo.getInventoryItems(playerId),
