@@ -1,6 +1,8 @@
 package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.inventory.Item;
+import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
@@ -174,8 +176,48 @@ public class CharacterUtils {
         }
     }
 
+    public static int getItemInUseByType(int type, int playerId) {
+        switch (type) {
+            case 101:
+                return PlayerInfo.getItemHead(playerId);
+            case 102:
+                return PlayerInfo.getItemGlasses(playerId);
+            case 103:
+                return PlayerInfo.getItemShirts(playerId);
+            case 104:
+                return PlayerInfo.getItemPants(playerId);
+            case 105:
+                return PlayerInfo.getItemGlove(playerId);
+            case 106:
+                return PlayerInfo.getItemShoes(playerId);
+            case 107:
+                return PlayerInfo.getItemSocks(playerId);
+            case 111:
+                return PlayerInfo.getItemWrist(playerId);
+            case 112:
+                return PlayerInfo.getItemArm(playerId);
+            case 113:
+                return PlayerInfo.getItemKnee(playerId);
+            case 121:
+                return PlayerInfo.getItemEar(playerId);
+            case 122:
+                return PlayerInfo.getItemNeck(playerId);
+            case 124:
+                return PlayerInfo.getItemMask(playerId);
+            case 125:
+                return PlayerInfo.getItemMuffler(playerId);
+            case 126:
+                return PlayerInfo.getItemPackage(playerId);
+            default:
+                return -1;
+        }
+    }
+
     public static void updateItemsInUse(int inventoryId, Map<Integer, Item> items, int playerId) {
-        Item itemOut = items.get(PlayerInfo.getItemHead(playerId));
+        OptionInfo optionInfo = InventoryTable.getOptionInfo(o ->
+                o.getId() == items.get(inventoryId).getId());
+
+        Item itemOut = items.get(getItemInUseByType(optionInfo.getType(), playerId));
 
         if (itemOut != null) {
             itemOut.deactivateGracefully(playerId);
