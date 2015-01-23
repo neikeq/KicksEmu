@@ -1,11 +1,13 @@
 package com.neikeq.kicksemu.game.characters;
 
+import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class CharacterUtils {
 
@@ -62,6 +64,127 @@ public class CharacterUtils {
             case 17:
                 PlayerInfo.setTrainingDefense(value, playerId);
                 break;
+        }
+    }
+
+    public static void setBonusStatsByIndex(int index, short value, int playerId) {
+        switch (index) {
+            case 1:
+                PlayerInfo.setBonusRunning(value, playerId);
+                break;
+            case 2:
+                PlayerInfo.setBonusEndurance(value, playerId);
+                break;
+            case 3:
+                PlayerInfo.setBonusAgility(value, playerId);
+                break;
+            case 4:
+                PlayerInfo.setBonusBallControl(value, playerId);
+                break;
+            case 5:
+                PlayerInfo.setBonusDribbling(value, playerId);
+                break;
+            case 6:
+                PlayerInfo.setBonusStealing(value, playerId);
+                break;
+            case 7:
+                PlayerInfo.setBonusTackling(value, playerId);
+                break;
+            case 8:
+                PlayerInfo.setBonusHeading(value, playerId);
+                break;
+            case 9:
+                PlayerInfo.setBonusShortShots(value, playerId);
+                break;
+            case 10:
+                PlayerInfo.setBonusLongShots(value, playerId);
+                break;
+            case 11:
+                PlayerInfo.setBonusCrossing(value, playerId);
+                break;
+            case 12:
+                PlayerInfo.setBonusShortPasses(value, playerId);
+                break;
+            case 13:
+                PlayerInfo.setBonusLongPasses(value, playerId);
+                break;
+            case 14:
+                PlayerInfo.setBonusMarking(value, playerId);
+                break;
+            case 15:
+                PlayerInfo.setBonusGoalkeeping(value, playerId);
+                break;
+            case 16:
+                PlayerInfo.setBonusPunching(value, playerId);
+                break;
+            case 17:
+                PlayerInfo.setBonusDefense(value, playerId);
+                break;
+        }
+    }
+
+    public static void setItemInUseByType(int type, int inventoryId, int playerId) {
+        switch (type) {
+            case 101:
+                PlayerInfo.setItemHead(inventoryId, playerId);
+                break;
+            case 102:
+                PlayerInfo.setItemGlasses(inventoryId, playerId);
+                break;
+            case 103:
+                PlayerInfo.setItemShirts(inventoryId, playerId);
+                break;
+            case 104:
+                PlayerInfo.setItemPants(inventoryId, playerId);
+                break;
+            case 105:
+                PlayerInfo.setItemGlove(inventoryId, playerId);
+                break;
+            case 106:
+                PlayerInfo.setItemShoes(inventoryId, playerId);
+                break;
+            case 107:
+                PlayerInfo.setItemSocks(inventoryId, playerId);
+                break;
+            case 111:
+                PlayerInfo.setItemWrist(inventoryId, playerId);
+                break;
+            case 112:
+                PlayerInfo.setItemArm(inventoryId, playerId);
+                break;
+            case 113:
+                PlayerInfo.setItemKnee(inventoryId, playerId);
+                break;
+            case 121:
+                PlayerInfo.setItemEar(inventoryId, playerId);
+                break;
+            case 122:
+                PlayerInfo.setItemNeck(inventoryId, playerId);
+                break;
+            case 124:
+                PlayerInfo.setItemMask(inventoryId, playerId);
+                break;
+            case 125:
+                PlayerInfo.setItemMuffler(inventoryId, playerId);
+                break;
+            case 126:
+                PlayerInfo.setItemPackage(inventoryId, playerId);
+                break;
+            default:
+        }
+    }
+
+    public static void updateItemsInUse(int inventoryId, Map<Integer, Item> items, int playerId) {
+        Item itemOut = items.get(PlayerInfo.getItemHead(playerId));
+
+        if (itemOut != null) {
+            itemOut.deactivateGracefully(playerId);
+        }
+
+        Item itemIn = items.get(inventoryId);
+
+        if (itemIn != null) {
+            itemIn.activateGracefully(playerId);
         }
     }
 

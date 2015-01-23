@@ -64,11 +64,11 @@ class MessageUtils {
         msg.append(item.getInventoryId());
         msg.append(item.getId());
         msg.append(item.isSelected());
-        msg.append(item.getExpiration());
+        msg.append(item.getExpiration() != null ? item.getExpiration().toInt() : 0);
         msg.append(item.getStatsBonusOne());
         msg.append(item.getStatsBonusTwo());
         msg.append(item.getRemainUsages());
-        msg.append((int)item.getTimestampExpire());
+        msg.append((int) (item.getTimestampExpire().getTime() / 1000));
         msg.append(item.isVisible());
     }
 
@@ -343,7 +343,7 @@ class MessageUtils {
         appendItemInUse(items.get(PlayerInfo.getItemPackage(playerId, con)), msg);
     }
 
-    public static void appendInventoryItemsInUse(int playerId, Connection con, ServerMessage msg) {
+    public static void appendInventoryItemsInUse(int playerId, ServerMessage msg, Connection ... con) {
         Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId, con);
 
         appendInventoryItem(items.get(PlayerInfo.getItemHead(playerId, con)), msg);

@@ -5,12 +5,15 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.InventoryUtils;
+import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Product;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.inventory.table.CeleInfo;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
 import com.neikeq.kicksemu.game.inventory.table.LearnInfo;
+import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
 import com.neikeq.kicksemu.game.inventory.table.SkillInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -33,7 +36,7 @@ public class Shop {
         Expiration expiration = Expiration.fromInt(msg.readInt());
 
         // If the payment mode is invalid, ignore the request
-        if (payment == null) return;
+        if (payment == null || payment == Payment.BOTH) return;
 
         int playerId = session.getPlayerId();
         int money = getMoneyFromPaymentMode(payment, playerId);
@@ -54,7 +57,7 @@ public class Shop {
             if (level >= skillInfo.getLevel()) {
                 int skillPrice = skillInfo.getPrice().getPriceFor(expiration, payment);
 
-                // If the price sent by the client is not invalid
+                // If the price sent by the client is valid
                 if (skillPrice != -1 && skillPrice == price &&
                         skillInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
@@ -110,7 +113,7 @@ public class Shop {
         Expiration expiration = Expiration.fromInt(msg.readInt());
 
         // If the payment mode is invalid, ignore the request
-        if (payment == null) return;
+        if (payment == null || payment == Payment.BOTH) return;
 
         int playerId = session.getPlayerId();
         int money = getMoneyFromPaymentMode(payment, playerId);
@@ -128,8 +131,9 @@ public class Shop {
             if (level >= celeInfo.getLevel()) {
                 int celePrice = celeInfo.getPrice().getPriceFor(expiration, payment);
 
-                // If the price sent by the client is not invalid
-                if (celePrice != -1 && celePrice == price) {
+                // If the price sent by the client is valid
+                if (celePrice != -1 && celePrice == price &&
+                        celeInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
                     if (price <= money) {
                         Map<Integer, Celebration> celes =
@@ -181,10 +185,10 @@ public class Shop {
     public static void purchaseLearn(Session session, ClientMessage msg) {
         Payment payment = Payment.fromInt(msg.readByte());
         int price = msg.readInt();
-        int learnId = msg.readShort();
+        int learnId = msg.readInt();
 
         // If the payment mode is invalid, ignore the request
-        if (payment == null) return;
+        if (payment == null || payment == Payment.BOTH) return;
 
         int playerId = session.getPlayerId();
         int money = getMoneyFromPaymentMode(payment, playerId);
@@ -203,8 +207,9 @@ public class Shop {
                 int learnPrice = payment == Payment.POINTS ?
                         learnInfo.getPoints() : learnInfo.getKash();
 
-                // If the price sent by the client is not invalid
-                if (learnPrice == price) {
+                // If the price sent by the client is valid
+                if (learnPrice != -1 && learnPrice == price &&
+                        learnInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
                     if (price <= money) {
                         Map<Integer, Training> learns = PlayerInfo.getInventoryTraining(playerId);
@@ -249,6 +254,103 @@ public class Shop {
         try (Connection con = MySqlManager.getConnection()) {
             ServerMessage response = MessageBuilder.purchaseLearn(playerId, learn, result, con);
             session.send(response);
+        } catch (SQLException ignored) {}
+    }
+
+    public static void purchaseItem(Session session, ClientMessage msg) {
+        Payment payment = Payment.fromInt(msg.readByte());
+        int price = msg.readInt();
+        int itemId = msg.readInt();
+        Expiration expiration = Expiration.fromInt(msg.readInt());
+        int statsBonusOne = msg.readInt();
+        int statsBonusTwo = msg.readInt();
+
+        // If the payment mode is invalid, ignore the request
+        if (payment == null || payment == Payment.BOTH) return;
+
+        int playerId = session.getPlayerId();
+        int money = getMoneyFromPaymentMode(payment, playerId);
+        short level = PlayerInfo.getLevel(playerId);
+
+        // Get the information about the item with the requested id
+        ItemInfo itemInfo = InventoryTable.getItemInfo(c -> c.getId() == itemId);
+        OptionInfo optionInfoOne = InventoryTable.getOptionInfo(c -> c.getId() == statsBonusOne);
+        OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(c -> c.getId() == statsBonusTwo);
+
+        boolean isInvalidBonus = (optionInfoOne == null && statsBonusOne != 0) ||
+                (optionInfoTwo == null && statsBonusTwo != 0);
+
+        boolean isValidBonusLevel =
+                (optionInfoOne == null || optionInfoOne.isValidLevel(level, payment)) &&
+                (optionInfoTwo == null || optionInfoTwo.isValidLevel(level, payment));
+
+        Item item = null;
+        byte result = 0;
+
+        // If there is a item with this id and the player position is valid for this item
+        if (itemInfo != null && expiration != null && !isInvalidBonus) {
+            // If the player meets the level requirements for this item
+            if (level >= itemInfo.getLevel() && isValidBonusLevel) {
+                int itemPrice = itemInfo.getPrice().getPriceFor(expiration, payment);
+                itemPrice += optionInfoOne == null ? 0 :
+                        optionInfoOne.getPrice().getPriceFor(expiration, payment);
+                itemPrice += optionInfoTwo == null ? 0 :
+                        optionInfoTwo.getPrice().getPriceFor(expiration, payment);
+
+                // If the price sent by the client is valid
+                if (itemPrice != -1 && itemPrice == price &&
+                        itemInfo.getPayment().accepts(payment)) {
+                    // If the player has enough money
+                    if (price <= money) {
+                        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+
+                        // If the item is not already purchased
+                        if (!alreadyPurchased(itemId, items.values())) {
+                            // Initialize item with the requested data
+                            int id = InventoryUtils.getSmallestMissingId(items.values());
+
+                            item = new Item(itemId, id, expiration.toInt(),
+                                    statsBonusOne, statsBonusTwo, (short)0,
+                                    InventoryUtils.expirationToTimestamp(expiration),
+                                    false, true);
+
+                            // Add it to the player's inventory
+                            items.put(id, item);
+                            // Activate item
+                            CharacterUtils.updateItemsInUse(id, items, playerId);
+                            // Update player's inventory
+                            PlayerInfo.setInventoryItems(items, playerId);
+                            // Deduct the price from the player's money
+                            sumMoneyToPaymentMode(payment, playerId, -price);
+                        } else {
+                            // Already purchased
+                            result = -10;
+                        }
+                    } else {
+                        // Not enough money
+                        result = (byte) (payment == Payment.KASH ? -8 : -5);
+                    }
+                } else {
+                    // The payment mode or price sent by the client is invalid
+                    result = (byte) (payment == Payment.KASH ? -2 : -3);
+                }
+            } else {
+                // Invalid level
+                result = -9;
+            }
+        } else {
+            // System detected a problem
+            // May be due to an invalid item id
+            result = -1;
+        }
+
+        try (Connection con = MySqlManager.getConnection()) {
+            session.send(MessageBuilder.purchaseItem(playerId, item, result, con));
+
+            if (result == 0) {
+                session.send(MessageBuilder.itemList(PlayerInfo.getInventoryItems(playerId),
+                        (byte) 0));
+            }
         } catch (SQLException ignored) {}
     }
 

@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.inventory.table;
 
+import com.neikeq.kicksemu.game.inventory.shop.Payment;
 import com.neikeq.kicksemu.utils.table.Row;
 
 public class OptionInfo {
@@ -10,6 +11,10 @@ public class OptionInfo {
     private final short kashLlevel;
     private final short pointsLevel;
     private final Price price;
+
+    public boolean isValidLevel(short level, Payment payment) {
+        return payment == Payment.KASH ? level >= kashLlevel : level >= pointsLevel;
+    }
 
     public OptionInfo(Row row) {
         row.nextColumn();

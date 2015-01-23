@@ -12,7 +12,6 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
-import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.AuthenticationResult;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -375,7 +374,7 @@ public class MessageBuilder {
             MessageUtils.appendRanking(playerId, con, msg);
             MessageUtils.appendRankingLastMonth(playerId, con, msg);
 
-            MessageUtils.appendInventoryItemsInUse(playerId, con, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
 
             MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), con, msg);
         }
@@ -585,7 +584,7 @@ public class MessageBuilder {
             MessageUtils.appendStatsTraining(playerId, con, msg);
             MessageUtils.appendStatsBonus(playerId, con, msg);
 
-            MessageUtils.appendInventoryItemsInUse(playerId, con, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
             MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), con, msg);
             MessageUtils.appendInventorySkillsInUse(playerId, con, msg);
             MessageUtils.appendInventoryCelebrationsInUse(playerId, con, msg);
@@ -922,6 +921,22 @@ public class MessageBuilder {
         ServerMessage msg = new ServerMessage(MessageId.QUICK_JOIN_ROOM);
 
         MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
+    public static ServerMessage purchaseItem(int playerId, Item item,
+                                              byte result, Connection con) {
+        ServerMessage msg = new ServerMessage(MessageId.PURCHASE_ITEM);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendCharacterInfo(playerId, con,
+                    PlayerInfo.getOwner(playerId), msg);
+            MessageUtils.appendStatsBonus(playerId, con, msg);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+        }
 
         return msg;
     }

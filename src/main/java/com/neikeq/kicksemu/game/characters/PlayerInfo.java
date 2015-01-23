@@ -752,7 +752,7 @@ public class PlayerInfo {
     }
 
     public static Map<Integer, Item> getInventoryItems(int id, Connection ... con) {
-        return Item.mapFromString(SqlUtils.getString("inventory_items", table, id, con));
+        return Item.mapFromString(SqlUtils.getString("inventory_items", table, id, con), id);
     }
 
     public static Map<Integer, Training> getInventoryTraining(int id, Connection ... con) {
@@ -1075,6 +1075,74 @@ public class PlayerInfo {
         SqlUtils.sumShort("training_defense", value, table, id, con);
     }
 
+    public static void setBonusRunning(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_running", value, table, id, con);
+    }
+
+    public static void setBonusEndurance(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_endurance", value, table, id, con);
+    }
+
+    public static void setBonusAgility(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_agility", value, table, id, con);
+    }
+
+    public static void setBonusBallControl(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_ball_control", value, table, id, con);
+    }
+
+    public static void setBonusDribbling(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_dribbling", value, table, id, con);
+    }
+
+    public static void setBonusStealing(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_stealing", value, table, id, con);
+    }
+
+    public static void setBonusTackling(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_tackling", value, table, id, con);
+    }
+
+    public static void setBonusHeading(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_heading", value, table, id, con);
+    }
+
+    public static void setBonusShortShots(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_short_shots", value, table, id, con);
+    }
+
+    public static void setBonusLongShots(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_long_shots", value, table, id, con);
+    }
+
+    public static void setBonusCrossing(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_crossing", value, table, id, con);
+    }
+
+    public static void setBonusShortPasses(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_short_passes", value, table, id, con);
+    }
+
+    public static void setBonusLongPasses(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_long_passes", value, table, id, con);
+    }
+
+    public static void setBonusMarking(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_marking", value, table, id, con);
+    }
+
+    public static void setBonusGoalkeeping(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_goalkeeping", value, table, id, con);
+    }
+
+    public static void setBonusPunching(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_punching", value, table, id, con);
+    }
+
+    public static void setBonusDefense(short value, int id, Connection ... con) {
+        SqlUtils.sumShort("bonus_defense", value, table, id, con);
+    }
+
     public static void setHistoryMatches(int value, int id, Connection ... con) {
         SqlUtils.sumInt("history_matches", value, table, id, con);
         SqlUtils.sumInt("history_month_matches", value, table, id, con);
@@ -1149,8 +1217,8 @@ public class PlayerInfo {
         SqlUtils.setString("status_message", value, table, id, con);
     }
 
-    public static void setInventoryItems(String value, int id, Connection ... con) {
-        SqlUtils.setString("inventory_items", value, table, id, con);
+    public static void setInventoryItems(Map<Integer, Item> value, int id, Connection ... con) {
+        SqlUtils.setString("inventory_items", Item.mapToString(value), table, id, con);
     }
 
     public static void setInventoryTraining(Map<Integer, Training> value, int id, Connection ... con) {
