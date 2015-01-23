@@ -1,0 +1,14 @@
+// BuyItem
+// Tcp
+
+Id: 2600
+Size: 25
+
+Data:
+int packet_id
+byte payment // Kash: 1, Points: 2
+int price
+int item_id
+int expiration
+int stats_bonus_one
+int stats_bonus_two
