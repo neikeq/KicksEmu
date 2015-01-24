@@ -275,7 +275,7 @@ public class Shop {
         // Get the information about the item with the requested id
         ItemInfo itemInfo = InventoryTable.getItemInfo(c -> c.getId() == itemId);
 
-        if (itemInfo != null && itemInfo.getType() > 200) return;
+        if (itemInfo != null && (itemInfo.getType() < 101 || itemInfo.getType() > 200)) return;
 
         OptionInfo optionInfoOne = InventoryTable.getOptionInfo(c -> c.getId() == statsBonusOne);
         OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(c -> c.getId() == statsBonusTwo);
