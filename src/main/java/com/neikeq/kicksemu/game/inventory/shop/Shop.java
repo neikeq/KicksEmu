@@ -267,6 +267,7 @@ public class Shop {
 
         // If the payment mode is invalid, ignore the request
         if (payment == null || payment == Payment.BOTH) return;
+        if (payment == Payment.POINTS && expiration == Expiration.DAYS_PERM) return;
 
         int playerId = session.getPlayerId();
         int money = getMoneyFromPaymentMode(payment, playerId);
