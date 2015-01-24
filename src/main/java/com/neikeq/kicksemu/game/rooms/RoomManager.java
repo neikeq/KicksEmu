@@ -633,7 +633,8 @@ public class RoomManager {
                         short levels = CharacterManager.checkExperience(playerId, con);
 
                         if (levels > 0) {
-                            session.sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                            room.getPlayers().get(pr.getPlayerId())
+                                    .sendAndFlush(MessageBuilder.playerStats(playerId, con));
                         }
 
                         TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
