@@ -178,8 +178,8 @@ public class RoomManager {
                 }
 
                 // Notify the client to join the room
-                ServerMessage msgJoinRoom = MessageBuilder.joinRoom(room.getId(),
-                        room.getPlayerTeam(session.getPlayerId()), result);
+                ServerMessage msgJoinRoom = MessageBuilder.joinRoom(room,
+                        session.getPlayerId(), result);
                 session.send(msgJoinRoom);
 
                 // Add the player to the room
@@ -201,8 +201,7 @@ public class RoomManager {
         byte result = room != null ? room.tryJoinRoom(session, password) : -3;
 
         // Send the notification to the client
-        ServerMessage response = MessageBuilder.joinRoom(roomId,
-                room != null ? room.getPlayerTeam(session.getPlayerId()) : null, result);
+        ServerMessage response = MessageBuilder.joinRoom(room, session.getPlayerId(), result);
         session.send(response);
     }
 
@@ -226,8 +225,8 @@ public class RoomManager {
             byte result = room.tryJoinRoom(session, "");
 
             // Send the notification to the client
-            ServerMessage response = MessageBuilder.joinRoom(room.getId(),
-                    room.getPlayerTeam(session.getPlayerId()), result);
+            ServerMessage response = MessageBuilder.joinRoom(room,
+                    session.getPlayerId(), result);
             session.send(response);
         } else {
             // Notify the player that no room were found

@@ -502,15 +502,20 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage joinRoom(int roomId, RoomTeam team, byte result) {
+    public static ServerMessage joinRoom(Room room, int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.JOIN_ROOM);
 
         MessageUtils.appendResult(result, msg);
 
-        if (result == 0) {
-            msg.append((short)roomId);
+        if (result == 0 && room != null) {
+            msg.append((short)room.getId());
+
+            RoomTeam team = room.getPlayerTeam(playerId);
             msg.append((short)(team != null ? team.toInt() : -1));
-            msg.append((short)0);
+
+            byte playerIndex = (byte) (room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                    room.getRedTeam() : room.getBlueTeam()).indexOf(playerId);
+            msg.append(playerIndex);
         }
 
         return msg;
