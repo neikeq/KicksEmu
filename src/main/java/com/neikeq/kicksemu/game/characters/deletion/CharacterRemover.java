@@ -40,12 +40,8 @@ public class CharacterRemover {
                 Arrays.fill(password, '\0');
 
                 if (limitTimeExpired(userId)) {
-                    if (remove(charId)) {
-                        clearOwnerSlot(userId, slot);
-                        updateExpireTime(userId);
-                    } else {
-                        result = RemoverResult.SYSTEM_PROBLEM;
-                    }
+                    clearOwnerSlot(userId, slot);
+                    updateExpireTime(userId);
                 } else {
                     result = RemoverResult.TIME_LIMIT;
                 }
@@ -66,19 +62,6 @@ public class CharacterRemover {
         java.sql.Timestamp lastDeletionDate = UserInfo.getLastCharDeletion(userId);
 
         return lastDeletionDate == null || DateUtils.getTimestamp().after(lastDeletionDate);
-    }
-
-    private static boolean remove(int characterId) {
-        String query = "DELETE FROM characters WHERE id = ?";
-
-        try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1, characterId);
-
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            return false;
-        }
     }
 
     private static void clearOwnerSlot(int userId, int slot) {
