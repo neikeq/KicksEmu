@@ -584,6 +584,9 @@ public class RoomManager {
 
             // If match started
             if (room.state() == RoomState.PLAYING) {
+                room.setState(RoomState.RESULT);
+                room.getConfirmedPlayers().clear();
+
                 MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().size());
 
                 long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
@@ -647,9 +650,6 @@ public class RoomManager {
                         }
                     });
                 } catch (SQLException ignored) {}
-
-                room.setState(RoomState.RESULT);
-                room.getConfirmedPlayers().clear();
             }
         }
     }
