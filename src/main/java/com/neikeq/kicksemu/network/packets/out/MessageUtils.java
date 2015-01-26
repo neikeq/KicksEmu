@@ -14,7 +14,6 @@ import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.users.UserInfo;
 
 import java.sql.Connection;
-import java.util.Map;
 
 class MessageUtils {
 
@@ -68,7 +67,8 @@ class MessageUtils {
         msg.append(item.getStatsBonusOne());
         msg.append(item.getStatsBonusTwo());
         msg.append(item.getRemainUsages());
-        msg.append((int) (item.getTimestampExpire().getTime() / 1000));
+        msg.append(item.getExpiration() != null && item.getExpiration().isPermanent() ?
+                0 : (int) (item.getTimestampExpire().getTime() / 1000));
         msg.append(item.isVisible());
     }
 
@@ -95,7 +95,8 @@ class MessageUtils {
         msg.append(skill.getSelectionIndex());
         msg.append(skill.getExpiration() != null ? skill.getExpiration().toInt() : 0);
         msg.appendZeros(8);
-        msg.append((int) (skill.getTimestampExpire().getTime() / 1000));
+        msg.append(skill.getExpiration() != null && skill.getExpiration().isPermanent() ?
+                0 : (int) (skill.getTimestampExpire().getTime() / 1000));
         msg.append(skill.isVisible());
     }
 
@@ -110,7 +111,8 @@ class MessageUtils {
         msg.append(cele.getSelectionIndex());
         msg.append(cele.getExpiration() != null ? cele.getExpiration().toInt() : 0);
         msg.appendZeros(8);
-        msg.append((int) cele.getTimestampExpire().getTime() / 1000);
+        msg.append(cele.getExpiration() != null && cele.getExpiration().isPermanent() ?
+                0 : (int) (cele.getTimestampExpire().getTime() / 1000));
         msg.append(cele.isVisible());
     }
 
@@ -324,43 +326,39 @@ class MessageUtils {
     }
 
     public static void appendItemsInUse(int playerId, Connection con, ServerMessage msg) {
-        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId, con);
-
-        appendItemInUse(items.get(PlayerInfo.getItemHead(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemGlasses(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemShirts(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemPants(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemGlove(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemShoes(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemSocks(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemWrist(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemArm(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemKnee(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemEar(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemNeck(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemMask(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemMuffler(playerId, con)), msg);
-        appendItemInUse(items.get(PlayerInfo.getItemPackage(playerId, con)), msg);
+        appendItemInUse(PlayerInfo.getItemHead(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemGlasses(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemShirts(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemPants(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemGlove(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemShoes(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemSocks(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemWrist(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemArm(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemKnee(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemEar(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemNeck(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemMask(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemMuffler(playerId, con), msg);
+        appendItemInUse(PlayerInfo.getItemPackage(playerId, con), msg);
     }
 
     public static void appendInventoryItemsInUse(int playerId, ServerMessage msg, Connection ... con) {
-        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId, con);
-
-        appendInventoryItem(items.get(PlayerInfo.getItemHead(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemGlasses(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemShirts(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemPants(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemGlove(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemShoes(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemSocks(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemWrist(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemArm(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemKnee(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemEar(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemNeck(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemMask(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemMuffler(playerId, con)), msg);
-        appendInventoryItem(items.get(PlayerInfo.getItemPackage(playerId, con)), msg);
+        appendInventoryItem(PlayerInfo.getItemHead(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemGlasses(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemShirts(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemPants(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemGlove(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemShoes(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemSocks(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemWrist(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemArm(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemKnee(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemEar(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemNeck(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemMask(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemMuffler(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemPackage(playerId, con), msg);
     }
 
     public static void appendInventorySkillsInUse(int playerId, Connection con, ServerMessage msg) {

@@ -10,7 +10,7 @@ public class InventoryUtils {
 
     public static Timestamp expirationToTimestamp(Expiration expiration) {
         if (expiration == Expiration.DAYS_PERM) {
-            return new Timestamp(0);
+            return DateUtils.getTimestamp();
         }
 
         int days = expiration.toInt() % 1000;

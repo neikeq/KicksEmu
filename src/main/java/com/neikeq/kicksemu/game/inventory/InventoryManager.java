@@ -26,7 +26,7 @@ public class InventoryManager {
             newIndex = InventoryUtils.getSmallestMissingIndex(skills.values());
             skill.setSelectionIndex(newIndex);
 
-            PlayerInfo.setInventorySkills(skills, playerId);
+            PlayerInfo.setInventorySkill(skill, playerId);
         } else {
             result = -2; // Skill does not exists
         }
@@ -57,7 +57,7 @@ public class InventoryManager {
             skill.setSelectionIndex((byte) 0);
             s.send(MessageBuilder.deactivateSkill(skillId, result));
 
-            PlayerInfo.setInventorySkills(skills, playerId);
+            PlayerInfo.setInventorySkill(skill, playerId);
         } else {
             result = -2; // Skill does not exists
         }
@@ -83,7 +83,7 @@ public class InventoryManager {
             if (newIndex <= 5) {
                 cele.setSelectionIndex(newIndex);
 
-                PlayerInfo.setInventoryCelebration(celes, playerId);
+                PlayerInfo.setInventoryCele(cele, playerId);
             } else {
                 result = -3;
             }
@@ -117,7 +117,7 @@ public class InventoryManager {
             cele.setSelectionIndex((byte) 0);
             s.send(MessageBuilder.deactivateCele(celeId, result));
 
-            PlayerInfo.setInventoryCelebration(celes, playerId);
+            PlayerInfo.setInventoryCele(cele, playerId);
         } else {
             result = -2; // Cele does not exists
         }
@@ -129,8 +129,8 @@ public class InventoryManager {
         int inventoryId = msg.readInt();
         int playerId = session.getPlayerId();
 
-        byte result = deactivateItem(session, inventoryId,
-                PlayerInfo.getInventoryItems(playerId));
+        byte result = deactivateItem(session, PlayerInfo.getInventoryItems(playerId)
+                .get(inventoryId));
 
         if (result != 0) {
             session.send(MessageBuilder.deactivateItem(inventoryId, playerId, result));
@@ -148,8 +148,8 @@ public class InventoryManager {
 
         // If item exists
         if (item != null && !item.isSelected()) {
-            CharacterUtils.updateItemsInUse(inventoryId, items, playerId);
-            PlayerInfo.setInventoryItems(items, playerId);
+            CharacterUtils.updateItemsInUse(item, playerId);
+            PlayerInfo.setInventoryItem(item, playerId);
         } else {
             result = -2; // Skill does not exists
         }
@@ -157,19 +157,18 @@ public class InventoryManager {
         session.send(MessageBuilder.activateItem(inventoryId, playerId, result));
     }
 
-    public static byte deactivateItem(Session s, int inventoryId, Map<Integer, Item> items) {
+    public static byte deactivateItem(Session s, Item item) {
         byte result = 0;
 
         int playerId = s.getPlayerId();
-        Item item = items.get(inventoryId);
 
         // If item exists
         if (item != null) {
             // Deactivate item
             item.deactivateGracefully(playerId);
-            s.send(MessageBuilder.deactivateItem(inventoryId, playerId,  result));
+            s.send(MessageBuilder.deactivateItem(item.getInventoryId(), playerId,  result));
 
-            PlayerInfo.setInventoryItems(items, playerId);
+            PlayerInfo.setInventoryItem(item, playerId);
         } else {
             result = -2; // Item does not exists
         }

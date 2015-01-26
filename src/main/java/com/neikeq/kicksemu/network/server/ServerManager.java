@@ -51,7 +51,7 @@ public class ServerManager {
     void initializeMain() {
         messageHandler = new MainMessageHandler();
 
-        Table.initializeMainTables();
+        Table.initializeTables();
     }
 
     private boolean initializeGame() {
@@ -62,7 +62,7 @@ public class ServerManager {
         serverBase = ServerBase.fromConfig();
         serverId = serverBase.getId();
 
-        Table.initializeGameTables();
+        Table.initializeTables();
 
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
             return ServerUtils.insertServer(serverBase);

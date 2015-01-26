@@ -1,17 +1,28 @@
 package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.inventory.Celebration;
+import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.Item;
+import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsList;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredList;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
+import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class PlayerInfo {
 
@@ -183,64 +194,73 @@ public class PlayerInfo {
         return defaultShoes;
     }
 
-    public static int getItemHead(int id, Connection ... con) {
-        return SqlUtils.getInt("item_head", table, id, con);
+    public static Item getItemInUseByType(ItemType type, int id, Connection ... con) {
+        Optional<Item> result = getInventoryItems(id, con).values().stream().filter(item -> {
+            ItemInfo itemInfo = InventoryTable.getItemInfo(i -> i.getId() == item.getId());
+            return itemInfo != null && itemInfo.getType() == type.toInt() && item.isSelected();
+        }).findFirst();
+
+        return result.isPresent() ? result.get() : null;
     }
 
-    public static int getItemGlasses(int id, Connection ... con) {
-        return SqlUtils.getInt("item_glasses", table, id, con);
+    public static Item getItemHead(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.HEAD, id, con);
     }
 
-    public static int getItemShirts(int id, Connection ... con) {
-        return SqlUtils.getInt("item_shirts", table, id, con);
+    public static Item getItemGlasses(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.GLASSES, id, con);
     }
 
-    public static int getItemPants(int id, Connection ... con) {
-        return SqlUtils.getInt("item_pants", table, id, con);
+    public static Item getItemShirts(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.SHIRTS, id, con);
     }
 
-    public static int getItemGlove(int id, Connection ... con) {
-        return SqlUtils.getInt("item_glove", table, id, con);
+    public static Item getItemPants(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.PANTS, id, con);
     }
 
-    public static int getItemShoes(int id, Connection ... con) {
-        return SqlUtils.getInt("item_shoes", table, id, con);
+    public static Item getItemGlove(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.GLOVES, id, con);
     }
 
-    public static int getItemSocks(int id, Connection ... con) {
-        return SqlUtils.getInt("item_socks", table, id, con);
+    public static Item getItemShoes(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.SHOES, id, con);
     }
 
-    public static int getItemWrist(int id, Connection ... con) {
-        return SqlUtils.getInt("item_wrist", table, id, con);
+    public static Item getItemSocks(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.SOCKS, id, con);
     }
 
-    public static int getItemArm(int id, Connection ... con) {
-        return SqlUtils.getInt("item_arm", table, id, con);
+    public static Item getItemWrist(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.WRIST, id, con);
     }
 
-    public static int getItemKnee(int id, Connection ... con) {
-        return SqlUtils.getInt("item_knee", table, id, con);
+    public static Item getItemArm(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.ARM, id, con);
     }
 
-    public static int getItemEar(int id, Connection ... con) {
-        return SqlUtils.getInt("item_ear", table, id, con);
+    public static Item getItemKnee(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.KNEE, id, con);
     }
 
-    public static int getItemNeck(int id, Connection ... con) {
-        return SqlUtils.getInt("item_neck", table, id, con);
+    public static Item getItemEar(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.EAR, id, con);
     }
 
-    public static int getItemMask(int id, Connection ... con) {
-        return SqlUtils.getInt("item_mask", table, id, con);
+    public static Item getItemNeck(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.NECK, id, con);
     }
 
-    public static int getItemMuffler(int id, Connection ... con) {
-        return SqlUtils.getInt("item_muffler", table, id, con);
+    public static Item getItemMask(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.MASK, id, con);
     }
 
-    public static int getItemPackage(int id, Connection ... con) {
-        return SqlUtils.getInt("item_package", table, id, con);
+    public static Item getItemMuffler(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.MUFFLER, id, con);
+    }
+
+    public static Item getItemPackage(int id, Connection ... con) {
+        return getItemInUseByType(ItemType.PACKAGE, id, con);
     }
 
     public static short getStatsPoints(int id, Connection ... con) {
@@ -752,19 +772,175 @@ public class PlayerInfo {
     }
 
     public static Map<Integer, Item> getInventoryItems(int id, Connection ... con) {
-        return Item.mapFromString(SqlUtils.getString("inventory_items", table, id, con), id);
+        Session s = ServerManager.getSessionById(id);
+
+        if (s != null && s.getPlayerCache().getItems() != null) {
+            return s.getPlayerCache().getItems();
+        }
+
+        Map<Integer, Item> items = new HashMap<>();
+
+        String query = "SELECT * FROM items WHERE player_id = ? AND " +
+                "(timestamp_expire > ? OR expiration = ?)";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setTimestamp(2, DateUtils.getTimestamp());
+                stmt.setInt(3, Expiration.DAYS_PERM.toInt());
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Item item = new Item(rs.getInt("item_id"), rs.getInt("inventory_id"),
+                                rs.getInt("expiration"), rs.getInt("bonus_one"),
+                                rs.getInt("bonus_two"), rs.getShort("usages"),
+                                rs.getTimestamp("timestamp_expire"),
+                                rs.getBoolean("selected"), rs.getBoolean("visible"));
+
+                        items.put(item.getInventoryId(), item);
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+
+        if (s != null) {
+            s.getPlayerCache().setItems(items);
+        }
+
+        return items;
     }
 
     public static Map<Integer, Training> getInventoryTraining(int id, Connection ... con) {
-        return Training.mapFromString(SqlUtils.getString("inventory_training", table, id, con));
+        Session s = ServerManager.getSessionById(id);
+
+        if (s != null && s.getPlayerCache().getLearns() != null) {
+            return s.getPlayerCache().getLearns();
+        }
+
+        Map<Integer, Training> learns = new HashMap<>();
+
+        String query = "SELECT * FROM learns WHERE player_id = ?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Training skill = new Training(rs.getInt("learn_id"),
+                                rs.getInt("inventory_id"), rs.getBoolean("visible"));
+
+                        learns.put(skill.getInventoryId(), skill);
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+
+        if (s != null) {
+            s.getPlayerCache().setLearns(learns);
+        }
+
+        return learns;
     }
 
     public static Map<Integer, Skill> getInventorySkills(int id, Connection ... con) {
-        return Skill.mapFromString(SqlUtils.getString("inventory_skills", table, id, con), id);
+        Session s = ServerManager.getSessionById(id);
+
+        if (s != null && s.getPlayerCache().getSkills() != null) {
+            return s.getPlayerCache().getSkills();
+        }
+
+        Map<Integer, Skill> skills = new HashMap<>();
+
+        String query = "SELECT * FROM skills WHERE player_id = ? AND " +
+                "(timestamp_expire > ? OR expiration = ?)";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setTimestamp(2, DateUtils.getTimestamp());
+                stmt.setInt(3, Expiration.DAYS_PERM.toInt());
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Skill skill = new Skill(
+                                rs.getInt("skill_id"), rs.getInt("inventory_id"),
+                                rs.getInt("expiration"), rs.getByte("selection_index"),
+                                rs.getTimestamp("timestamp_expire"), rs.getBoolean("visible"));
+
+                        skills.put(skill.getInventoryId(), skill);
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+
+        if (s != null) {
+            s.getPlayerCache().setSkills(skills);
+        }
+
+        return skills;
     }
 
     public static Map<Integer, Celebration> getInventoryCelebration(int id, Connection ... con) {
-        return Celebration.mapFromString(SqlUtils.getString("inventory_celebration", table, id, con), id);
+        Session s = ServerManager.getSessionById(id);
+
+        if (s != null && s.getPlayerCache().getCeles() != null) {
+            return s.getPlayerCache().getCeles();
+        }
+
+        Map<Integer, Celebration> celes = new HashMap<>();
+
+        String query = "SELECT * FROM ceres WHERE player_id = ? AND " +
+                "(timestamp_expire > ? OR expiration = ?)";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setTimestamp(2, DateUtils.getTimestamp());
+                stmt.setInt(3, Expiration.DAYS_PERM.toInt());
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Celebration cele = new Celebration(
+                                rs.getInt("cere_id"), rs.getInt("inventory_id"),
+                                rs.getInt("expiration"), rs.getByte("selection_index"),
+                                rs.getTimestamp("timestamp_expire"), rs.getBoolean("visible"));
+
+                        celes.put(cele.getInventoryId(), cele);
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+
+        if (s != null) {
+            s.getPlayerCache().setCeles(celes);
+        }
+
+        return celes;
     }
 
     public static FriendsList getFriendsList(int id, Connection ... con) {
@@ -839,66 +1015,6 @@ public class PlayerInfo {
 
     public static void setFace(short value, int id, Connection ... con) {
         SqlUtils.setShort("face", value, table, id, con);
-    }
-
-    public static void setItemHead(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_head", value, table, id, con);
-    }
-
-    public static void setItemGlasses(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_glasses", value, table, id, con);
-    }
-
-    public static void setItemShirts(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_shirts", value, table, id, con);
-    }
-
-    public static void setItemPants(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_pants", value, table, id, con);
-    }
-
-    public static void setItemGlove(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_glove", value, table, id, con);
-    }
-
-    public static void setItemShoes(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_shoes", value, table, id, con);
-    }
-
-    public static void setItemSocks(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_socks", value, table, id, con);
-    }
-
-    public static void setItemWrist(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_wrist", value, table, id, con);
-    }
-
-    public static void setItemArm(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_arm", value, table, id, con);
-    }
-
-    public static void setItemKnee(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_knee", value, table, id, con);
-    }
-
-    public static void setItemEar(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_ear", value, table, id, con);
-    }
-
-    public static void setItemNeck(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_neck", value, table, id, con);
-    }
-
-    public static void setItemMask(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_mask", value, table, id, con);
-    }
-
-    public static void setItemMuffler(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_muffler", value, table, id, con);
-    }
-
-    public static void setItemPackage(int value, int id, Connection ... con) {
-        SqlUtils.setInt("item_package", value, table, id, con);
     }
 
     public static void setStatsPoints(short value, int id, Connection ... con) {
@@ -1217,20 +1333,226 @@ public class PlayerInfo {
         SqlUtils.setString("status_message", value, table, id, con);
     }
 
-    public static void setInventoryItems(Map<Integer, Item> value, int id, Connection ... con) {
-        SqlUtils.setString("inventory_items", Item.mapToString(value), table, id, con);
+    public static void addInventoryItem(Item item, int id, Connection ... con) {
+        String query = "INSERT INTO items VALUES(?,?,?,?,?,?,?,?,?,?)";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, item.getInventoryId());
+                stmt.setInt(3, item.getId());
+                stmt.setInt(4, item.getExpiration().toInt());
+                stmt.setInt(5, item.getStatsBonusOne());
+                stmt.setInt(6, item.getStatsBonusTwo());
+                stmt.setShort(7, item.getRemainUsages());
+                stmt.setTimestamp(8, item.getTimestampExpire());
+                stmt.setBoolean(9, item.isSelected());
+                stmt.setBoolean(10, item.isVisible());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 
-    public static void setInventoryTraining(Map<Integer, Training> value, int id, Connection ... con) {
-        SqlUtils.setString("inventory_training", Training.mapToString(value), table, id, con);
+    public static void setInventoryItem(Item item, int id, Connection ... con) {
+        String query = "UPDATE items SET bonus_one=?, bonus_two=?, usages=?, " +
+                "timestamp_expire=?, selected=? WHERE player_id=? AND inventory_id=?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, item.getStatsBonusOne());
+                stmt.setInt(2, item.getStatsBonusTwo());
+                stmt.setShort(3, item.getRemainUsages());
+                stmt.setTimestamp(4, item.getTimestampExpire());
+                stmt.setBoolean(5, item.isSelected());
+                stmt.setInt(6, id);
+                stmt.setInt(7, item.getInventoryId());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 
-    public static void setInventorySkills(Map<Integer, Skill> value, int id, Connection ... con) {
-        SqlUtils.setString("inventory_skills", Skill.mapToString(value), table, id, con);
+    public static void removeInventoryItem(Item item, int id, Connection ... con) {
+        String query = "DELETE FROM items WHERE player_id=? AND inventory_id=?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, item.getInventoryId());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 
-    public static void setInventoryCelebration(Map<Integer, Celebration> value, int id, Connection ... con) {
-        SqlUtils.setString("inventory_celebration", Celebration.mapToString(value), table, id, con);
+    public static void addInventoryTraining(Training training, int id, Connection ... con) {
+        String query = "INSERT INTO learns VALUES(?,?,?,?)";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, training.getInventoryId());
+                stmt.setInt(3, training.getId());
+                stmt.setBoolean(4, training.isVisible());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
+    public static void addInventorySkill(Skill skill, int id, Connection ... con) {
+        String query = "INSERT INTO skills VALUES(?,?,?,?,?,?,?)";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, skill.getInventoryId());
+                stmt.setInt(3, skill.getId());
+                stmt.setInt(4, skill.getExpiration().toInt());
+                stmt.setByte(5, skill.getSelectionIndex());
+                stmt.setTimestamp(6, skill.getTimestampExpire());
+                stmt.setBoolean(7, skill.isVisible());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
+    public static void setInventorySkill(Skill skill, int id, Connection ... con) {
+        String query = "UPDATE skills SET selection_index=?, timestamp_expire=? " +
+                "WHERE player_id=? AND inventory_id=?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setByte(1, skill.getSelectionIndex());
+                stmt.setTimestamp(2, skill.getTimestampExpire());
+                stmt.setInt(3, id);
+                stmt.setInt(4, skill.getInventoryId());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
+    public static void removeInventorySkill(Skill skill, int id, Connection ... con) {
+        String query = "DELETE FROM skills WHERE player_id=? AND inventory_id=?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, skill.getInventoryId());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
+    public static void addInventoryCele(Celebration cele, int id, Connection ... con) {
+        String query = "INSERT INTO ceres VALUES(?,?,?,?,?,?,?)";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, cele.getInventoryId());
+                stmt.setInt(3, cele.getId());
+                stmt.setInt(4, cele.getExpiration().toInt());
+                stmt.setByte(5, cele.getSelectionIndex());
+                stmt.setTimestamp(6, cele.getTimestampExpire());
+                stmt.setBoolean(7, cele.isVisible());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
+    public static void setInventoryCele(Celebration cele, int id, Connection ... con) {
+        String query = "UPDATE ceres SET selection_index=?, timestamp_expire=? " +
+                "WHERE player_id=? AND inventory_id=?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setByte(1, cele.getSelectionIndex());
+                stmt.setTimestamp(2, cele.getTimestampExpire());
+                stmt.setInt(3, id);
+                stmt.setInt(4, cele.getInventoryId());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
+    public static void removeInventoryCele(Celebration cele, int id, Connection ... con) {
+        String query = "DELETE FROM ceres WHERE player_id=? AND inventory_id=?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, cele.getInventoryId());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 
     public static void setFriendsList(FriendsList value, int id, Connection ... con) {

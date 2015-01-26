@@ -75,7 +75,7 @@ public class Shop {
 
                             // Add it to the player's inventory
                             skills.put(id, skill);
-                            PlayerInfo.setInventorySkills(skills, playerId);
+                            PlayerInfo.addInventorySkill(skill, playerId);
                             // Deduct the price from the player's money
                             sumMoneyToPaymentMode(payment, playerId, -price);
                         } else {
@@ -151,7 +151,7 @@ public class Shop {
 
                             // Add it to the player's inventory
                             celes.put(id, cele);
-                            PlayerInfo.setInventoryCelebration(celes, playerId);
+                            PlayerInfo.addInventoryCele(cele, playerId);
                             // Deduct the price from the player's money
                             sumMoneyToPaymentMode(payment, playerId, -price);
                         } else {
@@ -223,7 +223,7 @@ public class Shop {
 
                             // Add it to the player's inventory
                             learns.put(id, learn);
-                            PlayerInfo.setInventoryTraining(learns, playerId);
+                            PlayerInfo.addInventoryTraining(learn, playerId);
                             // Add the learn stat points to the player stats
                             CharacterUtils.setTrainingStatsByIndex(learnInfo.getStatIndex(),
                                     learnInfo.getStatPoints(), playerId);
@@ -320,9 +320,9 @@ public class Shop {
                             // Add it to the player's inventory
                             items.put(id, item);
                             // Activate item
-                            CharacterUtils.updateItemsInUse(id, items, playerId);
+                            CharacterUtils.updateItemsInUse(item, playerId);
                             // Update player's inventory
-                            PlayerInfo.setInventoryItems(items, playerId);
+                            PlayerInfo.addInventoryItem(item, playerId);
                             // Deduct the price from the player's money
                             sumMoneyToPaymentMode(payment, playerId, -price);
                         } else {

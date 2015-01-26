@@ -43,11 +43,13 @@ CREATE TABLE IF NOT EXISTS `blacklist` (
 
 -- Dumping structure for table kicksdb.ceres
 CREATE TABLE IF NOT EXISTS `ceres` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `price_points` int(10) unsigned DEFAULT NULL,
-  `price_kash` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `player_id` int(11) unsigned NOT NULL,
+  `inventory_id` int(11) unsigned NOT NULL,
+  `cere_id` int(11) unsigned NOT NULL,
+  `expiration` int(11) unsigned NOT NULL,
+  `selection_index` tinyint(4) unsigned NOT NULL,
+  `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `visible` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -79,21 +81,6 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `default_shirts` int(10) unsigned NOT NULL,
   `default_pants` int(10) unsigned NOT NULL,
   `default_shoes` int(10) unsigned NOT NULL,
-  `item_head` int(10) NOT NULL DEFAULT '-1',
-  `item_glasses` int(10) NOT NULL DEFAULT '-1',
-  `item_shirts` int(10) NOT NULL DEFAULT '-1',
-  `item_pants` int(10) NOT NULL DEFAULT '-1',
-  `item_glove` int(10) NOT NULL DEFAULT '-1',
-  `item_shoes` int(10) NOT NULL DEFAULT '-1',
-  `item_socks` int(10) NOT NULL DEFAULT '-1',
-  `item_wrist` int(10) NOT NULL DEFAULT '-1',
-  `item_arm` int(10) NOT NULL DEFAULT '-1',
-  `item_knee` int(10) NOT NULL DEFAULT '-1',
-  `item_ear` int(10) NOT NULL DEFAULT '-1',
-  `item_neck` int(10) NOT NULL DEFAULT '-1',
-  `item_mask` int(10) NOT NULL DEFAULT '-1',
-  `item_muffler` int(10) NOT NULL DEFAULT '-1',
-  `item_package` int(10) NOT NULL DEFAULT '-1',
   `stats_points` smallint(6) unsigned NOT NULL,
   `stats_running` smallint(6) unsigned NOT NULL,
   `stats_endurance` smallint(6) unsigned NOT NULL,
@@ -112,10 +99,6 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `stats_goalkeeping` smallint(6) unsigned NOT NULL,
   `stats_punching` smallint(6) unsigned NOT NULL,
   `stats_defense` smallint(6) unsigned NOT NULL,
-  `inventory_items` text NOT NULL,
-  `inventory_training` text NOT NULL,
-  `inventory_skills` text NOT NULL,
-  `inventory_celebration` text NOT NULL,
   `status_message` varchar(34) NOT NULL DEFAULT '0',
   `friends_list` text NOT NULL,
   `ignored_list` text NOT NULL,
@@ -209,13 +192,27 @@ CREATE TABLE IF NOT EXISTS `clubs` (
 
 -- Dumping structure for table kicksdb.items
 CREATE TABLE IF NOT EXISTS `items` (
-  `id` smallint(6) unsigned NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `valid_effects` text NOT NULL,
-  `price_kash` int(11) unsigned DEFAULT NULL,
-  `price_points` int(11) unsigned DEFAULT NULL,
-  `gender` enum('F','M','BOTH') NOT NULL,
-  PRIMARY KEY (`id`)
+  `player_id` int(11) unsigned NOT NULL,
+  `inventory_id` int(11) unsigned NOT NULL,
+  `item_id` int(11) unsigned NOT NULL,
+  `expiration` int(11) unsigned NOT NULL,
+  `bonus_one` int(11) unsigned NOT NULL,
+  `bonus_two` int(11) unsigned NOT NULL,
+  `usages` smallint(6) unsigned NOT NULL,
+  `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `selected` bit(1) NOT NULL,
+  `visible` bit(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table kicksdb.learns
+CREATE TABLE IF NOT EXISTS `learns` (
+  `player_id` int(11) DEFAULT NULL,
+  `inventory_id` int(11) DEFAULT NULL,
+  `learn_id` int(11) DEFAULT NULL,
+  `visible` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -256,12 +253,13 @@ CREATE TABLE IF NOT EXISTS `servers` (
 
 -- Dumping structure for table kicksdb.skills
 CREATE TABLE IF NOT EXISTS `skills` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `price_points` int(10) unsigned DEFAULT NULL,
-  `price_kash` int(10) unsigned DEFAULT NULL,
-  `valid_positions` text,
-  PRIMARY KEY (`id`)
+  `player_id` int(11) unsigned NOT NULL,
+  `inventory_id` int(11) unsigned NOT NULL,
+  `skill_id` int(11) unsigned NOT NULL,
+  `expiration` int(11) unsigned NOT NULL,
+  `selection_index` tinyint(4) unsigned NOT NULL,
+  `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `visible` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.

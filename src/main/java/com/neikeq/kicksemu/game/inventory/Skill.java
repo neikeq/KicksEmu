@@ -1,11 +1,8 @@
 package com.neikeq.kicksemu.game.inventory;
 
-import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Skill implements Product, IndexedProduct {
 
@@ -17,7 +14,7 @@ public class Skill implements Product, IndexedProduct {
     private boolean visible;
 
     public Skill() {
-        this(0, 0, 0, (byte)0, new Timestamp(0), false);
+        this(0, 0, 0, (byte)0, DateUtils.getTimestamp(), false);
     }
 
     public Skill(int id, int inventoryId, int expiration,
@@ -28,58 +25,6 @@ public class Skill implements Product, IndexedProduct {
         this.setSelectionIndex(selectionIndex);
         this.setTimestampExpire(timestampExpire);
         this.visible = visible;
-    }
-
-    private Skill(String item) {
-        String[] data = item.split(",");
-
-        id = Integer.valueOf(data[0]);
-        inventoryId = Integer.valueOf(data[1]);
-        setSelectionIndex(Byte.valueOf(data[2]));
-        expiration = Expiration.fromInt(Integer.valueOf(data[3]));
-        setTimestampExpire(Long.valueOf(data[4]));
-        visible = Boolean.valueOf(data[5]);
-    }
-
-    public static Map<Integer, Skill> mapFromString(String str, int playerId) {
-        Map<Integer, Skill> skills = new HashMap<>();
-
-        if (!str.isEmpty()) {
-            String[] rows = str.split(";");
-
-            boolean expired = false;
-
-            for (String row : rows) {
-                if (!row.isEmpty()) {
-                    Skill skill = new Skill(row);
-
-                    if (skill.getTimestampExpire().after(DateUtils.getTimestamp()) ||
-                            skill.getExpiration().isPermanent()) {
-                        skills.put(skill.getInventoryId(), skill);
-                    } else {
-                        expired = true;
-                    }
-                }
-            }
-
-            if (expired) {
-                PlayerInfo.setInventorySkills(skills, playerId);
-            }
-        }
-
-        return skills;
-    }
-
-    public static String mapToString(Map<Integer, Skill> map) {
-        String skills = "";
-
-        for (Skill s : map.values()) {
-            skills += s.getId() + "," + s.getInventoryId() + "," + s.getSelectionIndex() + "," +
-                    s.getExpiration().toInt() + "," + s.getTimestampExpire().getTime() +
-                    "," + s.isVisible() + ";";
-        }
-
-        return skills;
     }
 
     public int getId() {

@@ -1,16 +1,15 @@
 package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.inventory.Item;
+import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
 import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
-import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 public class CharacterUtils {
 
@@ -126,105 +125,52 @@ public class CharacterUtils {
         }
     }
 
-    public static void setItemInUseByType(int type, int inventoryId, int playerId) {
+    public static Item getItemInUseByType(ItemType type, int playerId) {
         switch (type) {
-            case 101:
-                PlayerInfo.setItemHead(inventoryId, playerId);
-                break;
-            case 102:
-                PlayerInfo.setItemGlasses(inventoryId, playerId);
-                break;
-            case 103:
-                PlayerInfo.setItemShirts(inventoryId, playerId);
-                break;
-            case 104:
-                PlayerInfo.setItemPants(inventoryId, playerId);
-                break;
-            case 105:
-                PlayerInfo.setItemGlove(inventoryId, playerId);
-                break;
-            case 106:
-                PlayerInfo.setItemShoes(inventoryId, playerId);
-                break;
-            case 107:
-                PlayerInfo.setItemSocks(inventoryId, playerId);
-                break;
-            case 111:
-                PlayerInfo.setItemWrist(inventoryId, playerId);
-                break;
-            case 112:
-                PlayerInfo.setItemArm(inventoryId, playerId);
-                break;
-            case 113:
-                PlayerInfo.setItemKnee(inventoryId, playerId);
-                break;
-            case 121:
-                PlayerInfo.setItemEar(inventoryId, playerId);
-                break;
-            case 122:
-                PlayerInfo.setItemNeck(inventoryId, playerId);
-                break;
-            case 124:
-                PlayerInfo.setItemMask(inventoryId, playerId);
-                break;
-            case 125:
-                PlayerInfo.setItemMuffler(inventoryId, playerId);
-                break;
-            case 126:
-                PlayerInfo.setItemPackage(inventoryId, playerId);
-                break;
-            default:
-        }
-    }
-
-    public static int getItemInUseByType(int type, int playerId) {
-        switch (type) {
-            case 101:
+            case HEAD:
                 return PlayerInfo.getItemHead(playerId);
-            case 102:
+            case GLASSES:
                 return PlayerInfo.getItemGlasses(playerId);
-            case 103:
+            case SHIRTS:
                 return PlayerInfo.getItemShirts(playerId);
-            case 104:
+            case PANTS:
                 return PlayerInfo.getItemPants(playerId);
-            case 105:
+            case GLOVES:
                 return PlayerInfo.getItemGlove(playerId);
-            case 106:
+            case SHOES:
                 return PlayerInfo.getItemShoes(playerId);
-            case 107:
+            case SOCKS:
                 return PlayerInfo.getItemSocks(playerId);
-            case 111:
+            case WRIST:
                 return PlayerInfo.getItemWrist(playerId);
-            case 112:
+            case ARM:
                 return PlayerInfo.getItemArm(playerId);
-            case 113:
+            case KNEE:
                 return PlayerInfo.getItemKnee(playerId);
-            case 121:
+            case EAR:
                 return PlayerInfo.getItemEar(playerId);
-            case 122:
+            case NECK:
                 return PlayerInfo.getItemNeck(playerId);
-            case 124:
+            case MASK:
                 return PlayerInfo.getItemMask(playerId);
-            case 125:
+            case MUFFLER:
                 return PlayerInfo.getItemMuffler(playerId);
-            case 126:
+            case PACKAGE:
                 return PlayerInfo.getItemPackage(playerId);
             default:
-                return -1;
+                return null;
         }
     }
 
-    public static void updateItemsInUse(int inventoryId, Map<Integer, Item> items, int playerId) {
+    public static void updateItemsInUse(Item itemIn, int playerId) {
         ItemInfo itemInfo = InventoryTable.getItemInfo(o ->
-                o.getId() == items.get(inventoryId).getId());
+                o.getId() == itemIn.getId());
 
-        Item itemOut = items.get(getItemInUseByType(itemInfo.getType(), playerId));
+        Item itemOut = getItemInUseByType(ItemType.fromInt(itemInfo.getType()), playerId);
 
         if (itemOut != null) {
             itemOut.deactivateGracefully(playerId);
         }
-
-        Item itemIn = items.get(inventoryId);
 
         if (itemIn != null) {
             itemIn.activateGracefully(playerId);

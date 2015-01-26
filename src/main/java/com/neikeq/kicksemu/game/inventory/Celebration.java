@@ -1,11 +1,8 @@
 package com.neikeq.kicksemu.game.inventory;
 
-import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Celebration implements Product, IndexedProduct {
 
@@ -17,7 +14,7 @@ public class Celebration implements Product, IndexedProduct {
     private boolean visible;
 
     public Celebration() {
-        this(0, 0, 0, (byte)0, new Timestamp(0), false);
+        this(0, 0, 0, (byte)0, DateUtils.getTimestamp(), false);
     }
 
     public Celebration(int id, int inventoryId, int expiration, byte selectionIndex,
@@ -28,58 +25,6 @@ public class Celebration implements Product, IndexedProduct {
         this.setSelectionIndex(selectionIndex);
         this.timestampExpire = timestamp;
         this.visible = visible;
-    }
-
-    private Celebration(String item) {
-        String[] data = item.split(",");
-
-        id = Integer.valueOf(data[0]);
-        inventoryId = Integer.valueOf(data[1]);
-        setSelectionIndex(Byte.valueOf(data[2]));
-        expiration = Expiration.fromInt(Integer.valueOf(data[3]));
-        timestampExpire = new Timestamp(Long.valueOf(data[4]));
-        visible = Boolean.valueOf(data[5]);
-    }
-
-    public static Map<Integer, Celebration> mapFromString(String str, int playerId) {
-        Map<Integer, Celebration> celebrations = new HashMap<>();
-
-        if (!str.isEmpty()) {
-            String[] rows = str.split(";");
-
-            boolean expired = false;
-
-            for (String row : rows) {
-                if (!row.isEmpty()) {
-                    Celebration celebration = new Celebration(row);
-
-                    if (celebration.getTimestampExpire().after(DateUtils.getTimestamp()) ||
-                            celebration.getExpiration().isPermanent()) {
-                        celebrations.put(celebration.getInventoryId(), celebration);
-                    } else {
-                        expired = true;
-                    }
-                }
-            }
-
-            if (expired) {
-                PlayerInfo.setInventoryCelebration(celebrations, playerId);
-            }
-        }
-
-        return celebrations;
-    }
-
-    public static String mapToString(Map<Integer, Celebration> map) {
-        String celes = "";
-
-        for (Celebration c : map.values()) {
-            celes += c.getId() + "," + c.getInventoryId() + "," + c.getSelectionIndex() + "," +
-                    c.getExpiration().toInt() + "," + c.getTimestampExpire().getTime() +
-                    "," + c.isVisible() + ";";
-        }
-
-        return celes;
     }
 
     public int getId() {
