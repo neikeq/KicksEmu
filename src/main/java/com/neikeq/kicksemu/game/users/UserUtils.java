@@ -17,9 +17,8 @@ public class UserUtils {
             stmt.setInt(1, userId);
 
             try (ResultSet result = stmt.executeQuery()) {
-                return result.next() && result.getBoolean("online");
+                return result.next() && result.getShort("online") >= 0;
             }
-
         } catch (SQLException e) {
             return true;
         }

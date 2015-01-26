@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_ip` varchar(64) NOT NULL DEFAULT '',
   `creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `last_connection` timestamp NULL DEFAULT NULL,
-  `online` bit(1) NOT NULL DEFAULT b'0',
+  `online` smallint(6) NOT NULL DEFAULT '-1',
   `kash` int(11) unsigned NOT NULL DEFAULT '0',
   `settings_camera` tinyint(4) NOT NULL DEFAULT '5',
   `settings_shadows` tinyint(4) NOT NULL DEFAULT '0',

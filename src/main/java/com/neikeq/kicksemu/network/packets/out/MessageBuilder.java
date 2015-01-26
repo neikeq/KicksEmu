@@ -702,10 +702,32 @@ public class MessageBuilder {
             msg.append(PlayerInfo.getLevel(friendId));
             msg.append((byte)PlayerInfo.getPosition(friendId));
 
-            // TODO Add status functionality for SERVER and TEAM codes
-            boolean connected = ServerManager.isPlayerConnected(friendId);
-            msg.append((byte)(connected ? 2 : 0));
-            msg.append(connected ? (short)ServerManager.getSessionById(friendId).getRoomId() : 0);
+            byte status;
+            short online = 0;
+            short location = 0;
+
+            if (!ServerManager.isPlayerConnected(friendId)) {
+                online = UserInfo.getOnline(PlayerInfo.getOwner(friendId));
+                status = (byte)(online > 0 ? 1 : 0);
+            } else {
+                status = 2;
+            }
+
+            switch (status) {
+                case 1:
+                    location = online;
+                    break;
+                case 2:
+                    location = (short)ServerManager.getSessionById(friendId).getRoomId();
+                    break;
+                case 3:
+                    location = (short)ServerManager.getSessionById(friendId).getRoomId();
+                    break;
+                default:
+            }
+
+            msg.append(status);
+            msg.append(location);
         }
 
         return msg;

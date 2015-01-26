@@ -27,15 +27,6 @@ public class ServerManager {
 
     private static final Object locker = new Object();
 
-    public ServerManager(String serverTypeId) {
-        this(ServerType.valueOf(serverTypeId.toUpperCase()));
-    }
-
-    private ServerManager(ServerType type) {
-        serverType = type;
-        players = new HashMap<>();
-    }
-
     public boolean init() {
         switch (getServerType()) {
             case MAIN:
@@ -50,6 +41,7 @@ public class ServerManager {
 
     void initializeMain() {
         messageHandler = new MainMessageHandler();
+        serverId = 0;
 
         Table.initializeTables();
     }
@@ -89,8 +81,8 @@ public class ServerManager {
     }
 
     private static void updateConnectedUsers() {
-        if (serverId > 0) {
-            ServerInfo.setConnectedUsers((short) getPlayers().size(), serverId);
+        if (getServerId() > 0) {
+            ServerInfo.setConnectedUsers((short) getPlayers().size(), getServerId());
         }
     }
 
@@ -110,6 +102,19 @@ public class ServerManager {
         synchronized (locker) {
             return getPlayers().containsKey(characterId);
         }
+    }
+
+    public ServerManager(String serverTypeId) {
+        this(ServerType.valueOf(serverTypeId.toUpperCase()));
+    }
+
+    private ServerManager(ServerType type) {
+        serverType = type;
+        players = new HashMap<>();
+    }
+
+    public static short getServerId() {
+        return serverId;
     }
 
     public ServerType getServerType() {
