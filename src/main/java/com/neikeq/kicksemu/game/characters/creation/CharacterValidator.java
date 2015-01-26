@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
 import com.neikeq.kicksemu.game.characters.PositionCodes;
+import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
 import com.neikeq.kicksemu.game.inventory.table.ItemFree;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -126,20 +127,19 @@ class CharacterValidator {
                 character.getStatsDefense() >= MIN_DEFENSE[index];
     }
 
-    // TODO create itemClass enumerator or constants
     private static boolean containsValidItems(CharacterBase character) {
         ItemFree head = InventoryTable.getItemFree(itemFree ->
                 itemFree.getId() == character.getDefaultHead() &&
-                        itemFree.getItemClass() == 101);
+                        itemFree.getType() == ItemType.HEAD.toInt());
         ItemFree shirt = InventoryTable.getItemFree(itemFree ->
                 itemFree.getId() == character.getDefaultShirts() &&
-                        itemFree.getItemClass() == 103);
+                        itemFree.getType() == ItemType.SHIRTS.toInt());
         ItemFree pant = InventoryTable.getItemFree(itemFree ->
                 itemFree.getId() == character.getDefaultPants() &&
-                        itemFree.getItemClass() == 104);
+                        itemFree.getType() == ItemType.PANTS.toInt());
         ItemFree shoes = InventoryTable.getItemFree(itemFree ->
                 itemFree.getId() == character.getDefaultShoes() &&
-                        itemFree.getItemClass() == 106);
+                        itemFree.getType() == ItemType.SHOES.toInt());
 
         return head != null && shirt != null && pant != null && shoes != null;
     }
