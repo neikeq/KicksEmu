@@ -224,9 +224,6 @@ public class Shop {
                             // Add it to the player's inventory
                             learns.put(id, learn);
                             PlayerInfo.addInventoryTraining(learn, playerId);
-                            // Add the learn stat points to the player stats
-                            CharacterUtils.setTrainingStatsByIndex(learnInfo.getStatIndex(),
-                                    learnInfo.getStatPoints(), playerId);
                             // Deduct the price from the player's money
                             sumMoneyToPaymentMode(payment, playerId, -price);
                         } else {

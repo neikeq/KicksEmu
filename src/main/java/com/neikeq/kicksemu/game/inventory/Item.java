@@ -1,9 +1,6 @@
 package com.neikeq.kicksemu.game.inventory;
 
-import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
-import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
@@ -39,22 +36,6 @@ public class Item implements Product {
 
     public void deactivateGracefully(int playerId) {
         if (isSelected()) {
-            OptionInfo optionInfo = InventoryTable.getOptionInfo(c ->
-                    c.getId() == getStatsBonusOne());
-
-            if (optionInfo != null) {
-                CharacterUtils.setBonusStatsByIndex(optionInfo.getType() - 10,
-                        (short) -optionInfo.getValue(), playerId);
-            }
-
-            OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(c ->
-                    c.getId() == getStatsBonusTwo());
-
-            if (optionInfoTwo != null) {
-                CharacterUtils.setBonusStatsByIndex(optionInfoTwo.getType() - 10,
-                        (short) -optionInfoTwo.getValue(), playerId);
-            }
-
             setSelected(false);
             PlayerInfo.setInventoryItem(this, playerId);
         }
@@ -62,21 +43,6 @@ public class Item implements Product {
 
     public void activateGracefully(int playerId) {
         if (!isSelected()) {
-            OptionInfo optionInfoOne = InventoryTable.getOptionInfo(c ->
-                    c.getId() == getStatsBonusOne());
-            OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(c ->
-                    c.getId() == getStatsBonusTwo());
-
-            if (optionInfoOne != null) {
-                CharacterUtils.setBonusStatsByIndex(optionInfoOne.getType() - 10,
-                        optionInfoOne.getValue(), playerId);
-            }
-
-            if (optionInfoTwo != null) {
-                CharacterUtils.setBonusStatsByIndex(optionInfoTwo.getType() - 10,
-                        optionInfoTwo.getValue(), playerId);
-            }
-
             setSelected(true);
             PlayerInfo.setInventoryItem(this, playerId);
         }

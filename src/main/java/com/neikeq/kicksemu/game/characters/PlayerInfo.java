@@ -8,6 +8,8 @@ import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
 import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
+import com.neikeq.kicksemu.game.inventory.table.LearnInfo;
+import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsList;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredList;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -337,144 +339,42 @@ public class PlayerInfo {
         return SqlUtils.getShort("stats_defense", table, id, con);
     }
 
-    // Stats Training
+    public static PlayerStats getTrainingStats(int id, Connection ... con) {
+        PlayerStats learnStats = new PlayerStats();
 
-    public static short getTrainingStatsRunning(int id, Connection ... con) {
-        return SqlUtils.getShort("training_running", table, id, con);
+        getInventoryTraining(id, con).values().stream().forEach(learn -> {
+            LearnInfo learnInfo = InventoryTable.getLearnInfo(l -> l.getId() == learn.getId());
+
+            if (learnInfo != null) {
+                CharacterUtils.sumStatsByIndex(learnInfo.getStatIndex(),
+                        learnInfo.getStatPoints(), learnStats);
+            }
+        });
+
+        return learnStats;
     }
 
-    public static short getTrainingStatsEndurance(int id, Connection ... con) {
-        return SqlUtils.getShort("training_endurance", table, id, con);
-    }
+    public static PlayerStats getBonusStats(int id, Connection ... con) {
+        PlayerStats bonusStats = new PlayerStats();
 
-    public static short getTrainingStatsAgility(int id, Connection ... con) {
-        return SqlUtils.getShort("training_agility", table, id, con);
-    }
+        getInventoryItems(id, con).values().stream().forEach(item -> {
+            OptionInfo optionInfoOne = InventoryTable.getOptionInfo(of ->
+                    of.getId() == item.getStatsBonusOne());
+            OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(of ->
+                    of.getId() == item.getStatsBonusTwo());
 
-    public static short getTrainingStatsBallControl(int id, Connection ... con) {
-        return SqlUtils.getShort("training_ball_control", table, id, con);
-    }
+            if (optionInfoOne != null) {
+                CharacterUtils.sumStatsByIndex(optionInfoOne.getType() - 10,
+                        optionInfoOne.getValue(), bonusStats);
+            }
 
-    public static short getTrainingStatsDribbling(int id, Connection ... con) {
-        return SqlUtils.getShort("training_dribbling", table, id, con);
-    }
+            if (optionInfoTwo != null) {
+                CharacterUtils.sumStatsByIndex(optionInfoTwo.getType() - 10,
+                        optionInfoTwo.getValue(), bonusStats);
+            }
+        });
 
-    public static short getTrainingStatsStealing(int id, Connection ... con) {
-        return SqlUtils.getShort("training_stealing", table, id, con);
-    }
-
-    public static short getTrainingStatsTackling(int id, Connection ... con) {
-        return SqlUtils.getShort("training_tackling", table, id, con);
-    }
-
-    public static short getTrainingStatsHeading(int id, Connection ... con) {
-        return SqlUtils.getShort("training_heading", table, id, con);
-    }
-
-    public static short getTrainingStatsShortShots(int id, Connection ... con) {
-        return SqlUtils.getShort("training_short_shots", table, id, con);
-    }
-
-    public static short getTrainingStatsLongShots(int id, Connection ... con) {
-        return SqlUtils.getShort("training_long_shots", table, id, con);
-    }
-
-    public static short getTrainingStatsCrossing(int id, Connection ... con) {
-        return SqlUtils.getShort("training_crossing", table, id, con);
-    }
-
-    public static short getTrainingStatsShortPasses(int id, Connection ... con) {
-        return SqlUtils.getShort("training_short_passes", table, id, con);
-    }
-
-    public static short getTrainingStatsLongPasses(int id, Connection ... con) {
-        return SqlUtils.getShort("training_long_passes", table, id, con);
-    }
-
-    public static short getTrainingStatsMarking(int id, Connection ... con) {
-        return SqlUtils.getShort("training_marking", table, id, con);
-    }
-
-    public static short getTrainingStatsGoalkeeping(int id, Connection ... con) {
-        return SqlUtils.getShort("training_goalkeeping", table, id, con);
-    }
-
-    public static short getTrainingStatsPunching(int id, Connection ... con) {
-        return SqlUtils.getShort("training_punching", table, id, con);
-    }
-
-    public static short getTrainingStatsDefense(int id, Connection ... con) {
-        return SqlUtils.getShort("training_defense", table, id, con);
-    }
-
-    // Stats Bonus
-
-    public static short getBonusStatsRunning(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_running", table, id, con);
-    }
-
-    public static short getBonusStatsEndurance(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_endurance", table, id, con);
-    }
-
-    public static short getBonusStatsAgility(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_agility", table, id, con);
-    }
-
-    public static short getBonusStatsBallControl(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_ball_control", table, id, con);
-    }
-
-    public static short getBonusStatsDribbling(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_dribbling", table, id, con);
-    }
-
-    public static short getBonusStatsStealing(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_stealing", table, id, con);
-    }
-
-    public static short getBonusStatsTackling(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_tackling", table, id, con);
-    }
-
-    public static short getBonusStatsHeading(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_heading", table, id, con);
-    }
-
-    public static short getBonusStatsShortShots(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_short_shots", table, id, con);
-    }
-
-    public static short getBonusStatsLongShots(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_long_shots", table, id, con);
-    }
-
-    public static short getBonusStatsCrossing(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_crossing", table, id, con);
-    }
-
-    public static short getBonusStatsShortPasses(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_short_passes", table, id, con);
-    }
-
-    public static short getBonusStatsLongPasses(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_long_passes", table, id, con);
-    }
-
-    public static short getBonusStatsMarking(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_marking", table, id, con);
-    }
-
-    public static short getBonusStatsGoalkeeping(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_goalkeeping", table, id, con);
-    }
-
-    public static short getBonusStatsPunching(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_punching", table, id, con);
-    }
-
-    public static short getBonusStatsDefense(int id, Connection ... con) {
-        return SqlUtils.getShort("bonus_defense", table, id, con);
+        return bonusStats;
     }
 
     // History
@@ -1121,142 +1021,6 @@ public class PlayerInfo {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsDefense(id, con), value);
         SqlUtils.sumShort("stats_defense", add, table, id, con);
         return (short)(value - add);
-    }
-
-    public static void setTrainingRunning(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_running", value, table, id, con);
-    }
-
-    public static void setTrainingEndurance(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_endurance", value, table, id, con);
-    }
-
-    public static void setTrainingAgility(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_agility", value, table, id, con);
-    }
-
-    public static void setTrainingBallControl(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_ball_control", value, table, id, con);
-    }
-
-    public static void setTrainingDribbling(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_dribbling", value, table, id, con);
-    }
-
-    public static void setTrainingStealing(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_stealing", value, table, id, con);
-    }
-
-    public static void setTrainingTackling(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_tackling", value, table, id, con);
-    }
-
-    public static void setTrainingHeading(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_heading", value, table, id, con);
-    }
-
-    public static void setTrainingShortShots(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_short_shots", value, table, id, con);
-    }
-
-    public static void setTrainingLongShots(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_long_shots", value, table, id, con);
-    }
-
-    public static void setTrainingCrossing(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_crossing", value, table, id, con);
-    }
-
-    public static void setTrainingShortPasses(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_short_passes", value, table, id, con);
-    }
-
-    public static void setTrainingLongPasses(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_long_passes", value, table, id, con);
-    }
-
-    public static void setTrainingMarking(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_marking", value, table, id, con);
-    }
-
-    public static void setTrainingGoalkeeping(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_goalkeeping", value, table, id, con);
-    }
-
-    public static void setTrainingPunching(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_punching", value, table, id, con);
-    }
-
-    public static void setTrainingDefense(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("training_defense", value, table, id, con);
-    }
-
-    public static void setBonusRunning(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_running", value, table, id, con);
-    }
-
-    public static void setBonusEndurance(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_endurance", value, table, id, con);
-    }
-
-    public static void setBonusAgility(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_agility", value, table, id, con);
-    }
-
-    public static void setBonusBallControl(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_ball_control", value, table, id, con);
-    }
-
-    public static void setBonusDribbling(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_dribbling", value, table, id, con);
-    }
-
-    public static void setBonusStealing(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_stealing", value, table, id, con);
-    }
-
-    public static void setBonusTackling(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_tackling", value, table, id, con);
-    }
-
-    public static void setBonusHeading(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_heading", value, table, id, con);
-    }
-
-    public static void setBonusShortShots(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_short_shots", value, table, id, con);
-    }
-
-    public static void setBonusLongShots(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_long_shots", value, table, id, con);
-    }
-
-    public static void setBonusCrossing(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_crossing", value, table, id, con);
-    }
-
-    public static void setBonusShortPasses(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_short_passes", value, table, id, con);
-    }
-
-    public static void setBonusLongPasses(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_long_passes", value, table, id, con);
-    }
-
-    public static void setBonusMarking(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_marking", value, table, id, con);
-    }
-
-    public static void setBonusGoalkeeping(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_goalkeeping", value, table, id, con);
-    }
-
-    public static void setBonusPunching(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_punching", value, table, id, con);
-    }
-
-    public static void setBonusDefense(short value, int id, Connection ... con) {
-        SqlUtils.sumShort("bonus_defense", value, table, id, con);
     }
 
     public static void setHistoryMatches(int value, int id, Connection ... con) {
