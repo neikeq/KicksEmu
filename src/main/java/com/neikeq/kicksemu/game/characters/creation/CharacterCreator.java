@@ -55,9 +55,8 @@ public class CharacterCreator {
                     " stats_ball_control, stats_dribbling, stats_stealing, stats_tackling," +
                     " stats_heading, stats_short_shots, stats_long_shots, stats_crossing," +
                     " stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping," +
-                    " stats_punching, stats_defense, inventory_items, inventory_training," +
-                    " inventory_skills, inventory_celebration, friends_list, ignored_list)" +
-                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    " stats_punching, stats_defense, friends_list, ignored_list)" +
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             try (PreparedStatement stmt = con.prepareStatement(creation_query)) {
                 stmt.setInt(1, character.getOwner());
@@ -89,10 +88,6 @@ public class CharacterCreator {
                 stmt.setShort(27, character.getStatsDefense());
                 stmt.setString(28, "");
                 stmt.setString(29, "");
-                stmt.setString(30, "");
-                stmt.setString(31, "");
-                stmt.setString(32, "");
-                stmt.setString(33, "");
 
                 stmt.executeUpdate();
             }
