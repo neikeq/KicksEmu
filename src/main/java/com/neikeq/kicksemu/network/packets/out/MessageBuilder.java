@@ -703,19 +703,21 @@ public class MessageBuilder {
             msg.append((byte)PlayerInfo.getPosition(friendId));
 
             byte status;
-            short online = 0;
+            short server = 0;
             short location = 0;
+            int userId = PlayerInfo.getOwner(friendId);
 
             if (!ServerManager.isPlayerConnected(friendId)) {
-                online = UserInfo.getOnline(PlayerInfo.getOwner(friendId));
-                status = (byte)(online > 0 ? 1 : 0);
+                server = UserInfo.getServer(userId);
+
+                status = (byte)(server > 0 && UserInfo.getOnline(userId) == friendId ? 1 : 0);
             } else {
                 status = 2;
             }
 
             switch (status) {
                 case 1:
-                    location = online;
+                    location = server;
                     break;
                 case 2:
                     location = (short)ServerManager.getSessionById(friendId).getRoomId();

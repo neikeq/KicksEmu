@@ -69,8 +69,12 @@ public class UserInfo {
         return SqlUtils.getInt("slot_two", table, id, con);
     }
 
-    public static short getOnline(int id, Connection ... con) {
-        return SqlUtils.getShort("online", table, id, con);
+    public static int getOnline(int id, Connection ... con) {
+        return SqlUtils.getInt("online", table, id, con);
+    }
+
+    public static short getServer(int id, Connection ... con) {
+        return SqlUtils.getShort("server", table, id, con);
     }
 
     public static int getSlotThree(int id, Connection ... con) {
@@ -99,8 +103,12 @@ public class UserInfo {
         SqlUtils.setInt("slot_three", value, table, id, con);
     }
 
-    public static void setOnline(short value, int id, Connection ... con) {
-        SqlUtils.setShort("online", value, table, id, con);
+    public static void setOnline(int value, int id, Connection ... con) {
+        SqlUtils.setInt("online", value, table, id, con);
+    }
+
+    public static void setServer(short value, int id, Connection ... con) {
+        SqlUtils.setShort("server", value, table, id, con);
     }
 
     public static void setSettings(UserSettings settings, int id) {

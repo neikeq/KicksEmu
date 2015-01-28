@@ -103,7 +103,8 @@ public class Session {
             setUdpAuthenticated(false);
 
             // Update user status on database
-            UserInfo.setOnline((byte)-1, userId);
+            UserInfo.setServer((short)-1, userId);
+            UserInfo.setOnline(-1, userId);
 
             if (playerId > 0) {
                 // Remove session from the list of connected clients

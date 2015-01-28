@@ -34,7 +34,8 @@ public class Authenticator {
         if (result == AuthenticationResult.SUCCESS) {
             session.setUserId(UserUtils.getIdFromUsername(username));
             session.setAuthenticated(true);
-            UserInfo.setOnline(ServerManager.getServerId(), session.getUserId());
+            UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
+            UserInfo.setOnline(0, session.getUserId());
         }
 
         ServerMessage response = MessageBuilder.certifyLogin(session.getUserId(), result);
@@ -101,7 +102,8 @@ public class Authenticator {
             if (UserInfo.hasCharacter(characterId, session.getUserId())) {
                 session.setPlayerId(characterId);
                 session.setAuthenticated(true);
-                UserInfo.setOnline(ServerManager.getServerId(), session.getUserId());
+                UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
+                UserInfo.setOnline(0, session.getUserId());
 
                 ServerManager.addPlayer(characterId, session);
             } else {
@@ -159,7 +161,8 @@ public class Authenticator {
             session.setUserId(accountId);
             session.setPlayerId(characterId);
             session.setAuthenticated(true);
-            UserInfo.setOnline(ServerManager.getServerId(), session.getUserId());
+            UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
+            UserInfo.setOnline(characterId, session.getUserId());
 
             ServerManager.addPlayer(characterId, session);
             LobbyManager.addPlayer(characterId);
