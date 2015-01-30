@@ -5,6 +5,7 @@ from binary.bwriter import BinaryWriter
 class Compressor:
 
     header_version = 108311
+    header_len = 48
 
     header = [
         0x40, 0x5C, 0x3A, 0x32, 0x47, 0x21, 0x3F, 0x33, 0x39, 0x51, 0x40, 0x56,
@@ -13,7 +14,7 @@ class Compressor:
     ]
 
     def decompress(self, data):
-        return zlib.decompress(data[len(self.header):len(data)])
+        return zlib.decompress(data[self.header_len:len(data)])
 
     def compress(self, data):
         result = zlib.compress(data)
