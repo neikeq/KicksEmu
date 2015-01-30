@@ -26,6 +26,37 @@ public class PlayerCache {
     private Map<Integer, Celebration> celes;
     private Map<Integer, Training> learns;
 
+    public void clear() {
+        owner = null;
+        clubId = null;
+        defaultHead = null;
+        defaultShirts = null;
+        defaultPants = null;
+        defaultShoes = null;
+        animation = null;
+        name = null;
+
+        if (items != null) {
+            items.clear();
+            items = null;
+        }
+
+        if (skills != null) {
+            skills.clear();
+            skills = null;
+        }
+
+        if (celes != null) {
+            celes.clear();
+            celes = null;
+        }
+
+        if (learns != null) {
+            learns.clear();
+            learns = null;
+        }
+    }
+
     public Integer getOwner() {
         return owner;
     }

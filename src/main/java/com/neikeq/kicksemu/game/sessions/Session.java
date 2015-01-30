@@ -106,6 +106,8 @@ public class Session {
             UserInfo.setServer((short)-1, userId);
             UserInfo.setOnline(-1, userId);
 
+            playerCache.clear();
+
             if (playerId > 0) {
                 // Remove session from the list of connected clients
                 ServerManager.removePlayer(playerId);
@@ -117,7 +119,7 @@ public class Session {
             leaveRoom(RoomLeaveReason.DISCONNECTED);
         }
     }
-    
+
     public Session(Channel channel) {
         this.playerCache = new PlayerCache();
         this.channel = channel;
