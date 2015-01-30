@@ -114,7 +114,7 @@ public class KicksEmu {
 
     /**
      * Prints an error which the application cannot handle. Then stops the emulator.
-     * 
+     *
      * @param messages error message/s
      */
     void handleFatalError(String... messages) {
@@ -128,7 +128,7 @@ public class KicksEmu {
         Output.println(Localization.get("init.error.exit"), Level.CRITICAL);
         stop();
     }
-    
+
     /** Performs required disposing operations */
     private void dispose() {
         // Dispose server sockets
@@ -145,10 +145,6 @@ public class KicksEmu {
     }
 
     private void cleanNetworking() {
-        if (ServerManager.getPlayers() != null) {
-            ServerManager.getPlayers().values().stream().forEach(Session::close);
-        }
-
         if (nettyTcpServer != null) {
             nettyTcpServer.close();
         }
