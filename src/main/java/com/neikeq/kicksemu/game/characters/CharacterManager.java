@@ -125,8 +125,8 @@ public class CharacterManager {
         // Calculate stats points to add
         short statsPoints = 0;
 
-        for (int i = from; i < level; i++) {
-            statsPoints += CharacterUpgrade.getInstance().statsPointsForLevel(++i);
+        for (int i = from; i < level; ++i) {
+            statsPoints += CharacterUpgrade.getInstance().statsPointsForLevel(i);
         }
 
         // Add auto stats
