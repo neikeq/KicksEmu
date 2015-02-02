@@ -357,11 +357,11 @@ public class PlayerInfo {
     public static PlayerStats getBonusStats(int id, Connection ... con) {
         PlayerStats bonusStats = new PlayerStats();
 
-        getInventoryItems(id, con).values().stream().forEach(item -> {
+        getInventoryItems(id, con).values().stream().filter(Item::isSelected).forEach(item -> {
             OptionInfo optionInfoOne = InventoryTable.getOptionInfo(of ->
-                    of.getId() == item.getStatsBonusOne());
+                        of.getId() == item.getStatsBonusOne());
             OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(of ->
-                    of.getId() == item.getStatsBonusTwo());
+                        of.getId() == item.getStatsBonusTwo());
 
             if (optionInfoOne != null) {
                 CharacterUtils.sumStatsByIndex(optionInfoOne.getType() - 10,
