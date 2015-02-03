@@ -16,6 +16,7 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.GameEvents;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -596,6 +597,8 @@ public class RoomManager {
                 }
 
                 try (Connection con = MySqlManager.getConnection()) {
+                    boolean goldenTime = GameEvents.isGoldenTime();
+
                     // Reward players
                     result.getPlayers().stream().forEach(pr -> {
                         int playerId = pr.getPlayerId();
@@ -616,6 +619,8 @@ public class RoomManager {
                         reward += concededGoals <= 1 && scoredGoals >= concededGoals &&
                                 PlayerInfo.getPosition(playerId, con) / 10 == PositionCodes.DF / 10 ?
                                 (reward * 30) / 100 : 0;
+                        // Golden Time reward bonus
+                        reward += goldenTime ? (reward * 50) / 100 : 0;
 
                         pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                         pr.setPoints(reward * Configuration.getInt("game.rewards.point"));

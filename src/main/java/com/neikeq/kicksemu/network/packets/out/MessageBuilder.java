@@ -20,6 +20,7 @@ import com.neikeq.kicksemu.game.users.UserSettings;
 import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.utils.DateUtils;
+import com.neikeq.kicksemu.utils.GameEvents;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
@@ -457,7 +458,8 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.appendZeros(2);
+            msg.append(GameEvents.isGoldenTime());
+            msg.append(GameEvents.isClubTime());
             msg.append(tip, 120);
         }
 
