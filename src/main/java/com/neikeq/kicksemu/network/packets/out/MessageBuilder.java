@@ -513,11 +513,9 @@ public class MessageBuilder {
             msg.append((short)room.getId());
 
             RoomTeam team = room.getPlayerTeam(playerId);
-            msg.append((short)(team != null ? team.toInt() : -1));
-
-            byte playerIndex = (byte) (room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                    room.getRedTeam() : room.getBlueTeam()).indexOf(playerId);
-            msg.append(playerIndex);
+            short teamIndex = team != null ? (short)team.toInt() : -1;
+            msg.append(teamIndex);
+            msg.append(teamIndex);
         }
 
         return msg;
