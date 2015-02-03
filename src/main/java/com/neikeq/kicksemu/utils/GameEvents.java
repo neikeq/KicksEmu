@@ -15,8 +15,6 @@ public class GameEvents {
                 return (hours >= 16 && hours < 18) || (hours > 20 && hours < 23);
             case Calendar.MONDAY:
                 return hours >= 21 && hours < 23;
-            case Calendar.TUESDAY:
-                return hours >= 20 && hours < 21;
             case Calendar.WEDNESDAY:
                 return hours >= 21 && hours < 23;
             case Calendar.FRIDAY:
