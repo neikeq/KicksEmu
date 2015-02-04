@@ -565,13 +565,15 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            byte result = 0;
+            if (room.state() == RoomState.WAITING || room.state() == RoomState.COUNT_DOWN) {
+                byte result = 0;
 
-            if (room.getConfirmedPlayers().size() < room.getPlayers().size()) {
-                result = -1;
+                if (room.getConfirmedPlayers().size() < room.getPlayers().size()) {
+                    result = -1;
+                }
+
+                session.send(MessageBuilder.startMatch(result));
             }
-
-            session.send(MessageBuilder.startMatch(result));
         }
     }
 
