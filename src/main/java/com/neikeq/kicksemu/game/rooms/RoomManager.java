@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.rooms;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.characters.PositionCodes;
+import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
@@ -618,8 +618,8 @@ public class RoomManager {
                         // If player position is a DF branch, his team did not lose and conceded 1
                         // or less goals, increase his rewards by 30%
                         reward += concededGoals <= 1 && scoredGoals >= concededGoals &&
-                                PlayerInfo.getPosition(playerId, con) / 10 == PositionCodes.DF / 10 ?
-                                (reward * 30) / 100 : 0;
+                                Position.trunk(PlayerInfo.getPosition(playerId, con)) ==
+                                        Position.DF ? (reward * 30) / 100 : 0;
                         // Golden Time reward bonus
                         reward += goldenTime ? (reward * 50) / 100 : 0;
 

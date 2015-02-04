@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.characters;
 
-public class PositionCodes {
+public class Position {
 
     public static final short FW = 10;
     public static final short ST = 11;
@@ -15,6 +15,10 @@ public class PositionCodes {
     public static final short SB = 31;
     public static final short CB = 32;
     public static final short SW = 33;
+
+    public static short trunk(short position) {
+        return (short)(position - (position % 10));
+    }
 
     public static boolean isValidNewPosition(short currentPos, short newPos) {
         switch (currentPos) {

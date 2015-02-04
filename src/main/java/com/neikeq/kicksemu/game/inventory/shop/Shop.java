@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.inventory.shop;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.InventoryUtils;
@@ -46,7 +47,7 @@ public class Shop {
         // Get the information about the skill with the requested id which
         // is available for the player's position or its base position
         SkillInfo skillInfo = InventoryTable.getSkillInfo(s -> s.getId() == skillId &&
-                (s.getPosition() == position || s.getPosition() == (position / 10 * 10)));
+                (s.getPosition() == position || s.getPosition() == Position.trunk(position)));
 
         Skill skill = null;
         byte result = 0;

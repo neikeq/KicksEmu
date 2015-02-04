@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
-import com.neikeq.kicksemu.game.characters.PositionCodes;
+import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
 import com.neikeq.kicksemu.game.inventory.table.ItemFree;
@@ -18,7 +18,7 @@ class CharacterValidator {
     private static final String validSpecialChars = "()[]-_.,:;";
 
     private static final List<Short> VALID_POSITIONS =
-            Arrays.asList(PositionCodes.FW, PositionCodes.MF, PositionCodes.DF);
+            Arrays.asList(Position.FW, Position.MF, Position.DF);
 
     private static final List<Integer> VALID_FACES = Arrays.asList(
                     101, 102, 103, 104, 105, 106, 201, 202, 203, 301, 302,

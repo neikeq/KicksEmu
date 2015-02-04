@@ -1,7 +1,7 @@
 package com.neikeq.kicksemu.game.characters.upgrade;
 
 import com.neikeq.kicksemu.game.characters.PlayerStats;
-import com.neikeq.kicksemu.game.characters.PositionCodes;
+import com.neikeq.kicksemu.game.characters.Position;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,54 +15,54 @@ public class CharacterUpgrade {
     private static CharacterUpgrade instance;
 
     public void defineStats() {
-        getStats().put(PositionCodes.ST,
+        getStats().put(Position.ST,
                 new PlayerStats(0, 0, 0, 7, 7, 0, -10, 7, 7, -10, 0, 0, 0, 0, 0, 0, 0));
-        getStats().put(PositionCodes.CF,
+        getStats().put(Position.CF,
                 new PlayerStats(0, 0, 7, 0, 7, 0, -10, 0, 7, -10, 0, 7, 0, 0, 0, 0, 0));
-        getStats().put(PositionCodes.WF,
+        getStats().put(Position.WF,
                 new PlayerStats(0, 7, 0, 0, 7, 0, -10, 0, 7, -10, 7, 0, 0, 0, 0, 0, 0));
-        getStats().put(PositionCodes.AMF,
+        getStats().put(Position.AMF,
                 new PlayerStats(0, 0, 7, 0, 7, 0, -10, 0, 0, 7, 0, 7, -10, 0, 0, 0, 0));
-        getStats().put(PositionCodes.SMF,
+        getStats().put(Position.SMF,
                 new PlayerStats(0, 7, 0, 0, 7, 0, -10, -10, 0, 7, 7, 0, 0, 0, 0, 0, 0));
-        getStats().put(PositionCodes.CMF,
+        getStats().put(Position.CMF,
                 new PlayerStats(0, 0, 0, 7, 7, 0, -10, -10, 0, 7, 0, 7, 0, 0, 0, 0, 0));
-        getStats().put(PositionCodes.DMF,
+        getStats().put(Position.DMF,
                 new PlayerStats(0, 7, 0, 0, 0, 7, 0, 7, -10, -10, 0, 0, 0, 7, 0, 0, 0));
-        getStats().put(PositionCodes.SB,
+        getStats().put(Position.SB,
                 new PlayerStats(0, 7, 7, 0, 0, 7, 0, -10, -10, 0, 7, 0, 0, 0, 0, 0, 0));
-        getStats().put(PositionCodes.CB,
+        getStats().put(Position.CB,
                 new PlayerStats(0, 7, 0, 0, 0, 7, 7, 7, -10, -10, 0, 0, 0, 0, 0, 0, 0));
-        getStats().put(PositionCodes.SW,
+        getStats().put(Position.SW,
                 new PlayerStats(0, 7, 0, 0, 0, 0, 7, 0, -10, -10, 0, 0, 7, 7, 0, 0, 0));
     }
 
     public void defineAutoStats() {
-        getAutoStats().put(PositionCodes.FW,
+        getAutoStats().put(Position.FW,
                 new PlayerStats(1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.ST,
+        getAutoStats().put(Position.ST,
                 new PlayerStats(1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.CF,
+        getAutoStats().put(Position.CF,
                 new PlayerStats(1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.WF,
+        getAutoStats().put(Position.WF,
                 new PlayerStats(1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.MF,
+        getAutoStats().put(Position.MF,
                 new PlayerStats(1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.AMF,
+        getAutoStats().put(Position.AMF,
                 new PlayerStats(1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.SMF,
+        getAutoStats().put(Position.SMF,
                 new PlayerStats(1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.CMF,
+        getAutoStats().put(Position.CMF,
                 new PlayerStats(1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.DMF,
+        getAutoStats().put(Position.DMF,
                 new PlayerStats(1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.DF,
+        getAutoStats().put(Position.DF,
                 new PlayerStats(1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.SB,
+        getAutoStats().put(Position.SB,
                 new PlayerStats(1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.CB,
+        getAutoStats().put(Position.CB,
                 new PlayerStats(1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-        getAutoStats().put(PositionCodes.SW,
+        getAutoStats().put(Position.SW,
                 new PlayerStats(1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     }
 
