@@ -7,6 +7,7 @@ import com.neikeq.kicksemu.game.characters.PositionCodes;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
+import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.RewardCalculator;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -565,15 +566,13 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            if (room.state() == RoomState.WAITING || room.state() == RoomState.COUNT_DOWN) {
-                byte result = 0;
+            byte result = 0;
 
-                if (room.getConfirmedPlayers().size() < room.getPlayers().size()) {
-                    result = -1;
-                }
-
-                session.send(MessageBuilder.startMatch(result));
+            if (room.getConfirmedPlayers().size() < room.getPlayers().size()) {
+                result = -1;
             }
+
+            session.send(MessageBuilder.startMatch(result));
         }
     }
 
@@ -587,9 +586,9 @@ public class RoomManager {
             // If match started
             if (room.state() == RoomState.PLAYING) {
                 room.setState(RoomState.RESULT);
-                room.getConfirmedPlayers().clear();
 
-                MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().size());
+                MatchResult result = MatchResult.fromMessage(msg,
+                        room.redTeamSize() + room.blueTeamSize());
 
                 long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
                 short gameCountdown = result.getCountdown();
@@ -605,7 +604,7 @@ public class RoomManager {
                     result.getPlayers().stream().forEach(pr -> {
                         int playerId = pr.getPlayerId();
                         int reward = RewardCalculator.calculateReward(pr, room,
-                                gameCountdown, (int)countdown);
+                                gameCountdown, (int) countdown);
 
                         TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
                                 result.getRedTeam() : result.getBlueTeam();
@@ -633,6 +632,11 @@ public class RoomManager {
                                     MessageBuilder.matchResult(result, pr, room, con))
                     );
 
+                    room.getObservers().stream().forEach(o ->
+                        room.getPlayers().get(o).sendAndFlush(MessageBuilder.matchResult(result,
+                                        new PlayerResult(o), room, con))
+                    );
+
                     result.getPlayers().stream().forEach(pr -> {
                         int playerId = pr.getPlayerId();
 
@@ -655,6 +659,8 @@ public class RoomManager {
                                     result.getMom(), con);
                         }
                     });
+
+                    room.getConfirmedPlayers().clear();
                 } catch (SQLException ignored) {}
             }
         }
