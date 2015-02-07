@@ -1,0 +1,57 @@
+// ViewInfo
+// Tcp
+
+Id: 2902
+Size:
+
+Data:
+int packet_id
+byte reason
+byte response
+int player_id
+char[15] player_name
+short position
+short level
+char[15] club_name
+int history_wins
+int history_draws
+int history_loses
+short history_month_wins
+short history_month_draws
+short history_month_loses
+// History
+short history_matches
+short history_wins
+short history_draws
+short history_MOM
+short history_valid_goals
+short history_valid_assists
+short history_valid_interception
+short history_valid_shooting
+short history_valid_stealing
+short history_valid_tackling
+short history_unknown
+short history_shooting
+short history_stealing
+short history_tackling
+short history_unknown
+short history_total_points
+// History Last Month
+short history_month_matches
+short history_month_wins
+short history_month_draws
+short history_month_MOM
+short history_month_valid_goals
+short history_month_valid_assists
+short history_month_valid_interception
+short history_month_valid_shooting
+short history_month_valid_stealing
+short history_month_valid_tackling
+short history_month_unknown
+short history_month_shooting
+short history_month_stealing
+short history_month_tackling
+short history_month_unknown
+short history_month_total_points
+// Club Info
+// ...

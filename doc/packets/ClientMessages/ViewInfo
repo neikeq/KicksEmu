@@ -1,0 +1,9 @@
+// ViewInfo
+// Tcp
+
+Id: 2902
+Size: 8
+
+Data:
+int packet_id
+int player_id
