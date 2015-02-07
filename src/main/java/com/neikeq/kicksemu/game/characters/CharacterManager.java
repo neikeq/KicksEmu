@@ -9,6 +9,7 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
@@ -26,6 +27,14 @@ public class CharacterManager {
         sendCelebrationList(session);
         sendPlayerInfo(session);
         sendItemsInUse(session);
+    }
+
+    public static void playerDetails(Session session, ClientMessage msg) {
+        int playerId = msg.readInt();
+
+        if (ServerManager.isPlayerConnected(playerId)) {
+            session.send(MessageBuilder.playerDetails(playerId, (byte) 0));
+        }
     }
 
     private static void sendPlayerInfo(Session session) {

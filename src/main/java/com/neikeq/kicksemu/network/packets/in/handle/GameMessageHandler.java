@@ -76,6 +76,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.UNKNOWN1, RoomManager::unknown1);
         events.put(MessageId.UNKNOWN2, RoomManager::unknown2);
         events.put(MessageId.ADD_STATS_POINTS, CharacterManager::addStatsPoints);
+        events.put(MessageId.PLAYER_DETAILS, CharacterManager::playerDetails);
         events.put(MessageId.PURCHASE_ITEM, Shop::purchaseItem);
         events.put(MessageId.DEACTIVATE_ITEM, InventoryManager::deactivateItem);
         events.put(MessageId.ACTIVATE_ITEM, InventoryManager::activateItem);

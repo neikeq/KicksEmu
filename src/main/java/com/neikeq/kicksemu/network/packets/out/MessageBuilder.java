@@ -1136,4 +1136,76 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage playerDetails(int playerId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.PLAYER_DETAILS);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(playerId);
+            msg.append(PlayerInfo.getName(playerId), 15);
+            msg.append(PlayerInfo.getPosition(playerId));
+            msg.append(PlayerInfo.getLevel(playerId));
+            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId)), 15);
+
+            int historyMatches = PlayerInfo.getHistoryMatches(playerId);
+            int historyWins = PlayerInfo.getHistoryWins(playerId);
+            int historyDraws = PlayerInfo.getHistoryDraws(playerId);
+            int historyLoses = historyMatches - (historyWins + historyDraws);
+            short historyMonthMatches = (short) PlayerInfo.getHistoryMonthMatches(playerId);
+            short historyMonthWins = (short) PlayerInfo.getHistoryMonthWins(playerId);
+            short historyMonthDraws = (short) PlayerInfo.getHistoryMonthDraws(playerId);
+            short historyMonthLoses = (short) (historyMonthMatches -
+                    (historyMonthWins + historyMonthDraws));
+
+            // Matches history
+            msg.append(historyWins);
+            msg.append(historyDraws);
+            msg.append(historyLoses);
+            msg.append(historyMonthWins);
+            msg.append(historyMonthDraws);
+            msg.append(historyMonthLoses);
+
+            // History
+            msg.append((short)historyMatches);
+            msg.append((short)historyWins);
+            msg.append((short)historyDraws);
+            msg.append((short)PlayerInfo.getHistoryMom(playerId));
+            msg.append((short)PlayerInfo.getHistoryValidGoals(playerId));
+            msg.append((short)PlayerInfo.getHistoryValidAssists(playerId));
+            msg.append((short)PlayerInfo.getHistoryValidInterception(playerId));
+            msg.append((short)PlayerInfo.getHistoryValidShooting(playerId));
+            msg.append((short)PlayerInfo.getHistoryValidStealing(playerId));
+            msg.append((short)PlayerInfo.getHistoryValidTackling(playerId));
+            msg.appendZeros(2);
+            msg.append((short)PlayerInfo.getHistoryShooting(playerId));
+            msg.append((short)PlayerInfo.getHistoryStealing(playerId));
+            msg.append((short)PlayerInfo.getHistoryTackling(playerId));
+            msg.appendZeros(2);
+            msg.append((short)PlayerInfo.getHistoryTotalPoints(playerId));
+
+            // History Last Month
+            msg.append(historyMonthMatches);
+            msg.append(historyMonthWins);
+            msg.append(historyMonthDraws);
+            msg.append((short)PlayerInfo.getHistoryMonthMom(playerId));
+            msg.append((short)PlayerInfo.getHistoryMonthValidGoals(playerId));
+            msg.append((short)PlayerInfo.getHistoryMonthValidAssists(playerId));
+            msg.append((short)PlayerInfo.getHistoryMonthValidInterception(playerId));
+            msg.append((short)PlayerInfo.getHistoryMonthValidShooting(playerId));
+            msg.append((short)PlayerInfo.getHistoryMonthValidStealing(playerId));
+            msg.append((short) PlayerInfo.getHistoryMonthValidTackling(playerId));
+            msg.appendZeros(2);
+            msg.append((short)PlayerInfo.getHistoryMonthShooting(playerId));
+            msg.append((short)PlayerInfo.getHistoryMonthStealing(playerId));
+            msg.append((short) PlayerInfo.getHistoryMonthTackling(playerId));
+            msg.appendZeros(2);
+            msg.append((short) PlayerInfo.getHistoryMonthTotalPoints(playerId));
+
+            // TODO Add club info
+        }
+
+        return msg;
+    }
 }

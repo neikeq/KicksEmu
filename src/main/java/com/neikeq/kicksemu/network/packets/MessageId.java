@@ -71,6 +71,7 @@ public class MessageId {
     public static final int DEACTIVATE_CELE = 2632;
     public static final int TCP_PING = 2900;
     public static final int UPDATE_SETTINGS = 2901;
+    public static final int PLAYER_DETAILS = 2902;
     public static final int ADD_STATS_POINTS = 2903;
     public static final int PLAYER_PROGRESS = 2904;
     public static final int PLAYER_STATS = 2906;
