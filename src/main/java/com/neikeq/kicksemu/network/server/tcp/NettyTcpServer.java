@@ -10,6 +10,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.net.BindException;
+
 public class NettyTcpServer {
 
     private final int port;
@@ -39,7 +41,7 @@ public class NettyTcpServer {
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
     }
 
-    public void start() throws InterruptedException {
+    public void start() throws InterruptedException, BindException {
         Output.println(Localization.get("net.bind.tcp", String.valueOf(port)));
 
         channelFuture = bootstrap.bind(port).sync();

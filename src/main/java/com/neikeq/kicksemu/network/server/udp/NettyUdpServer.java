@@ -9,6 +9,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
+import java.net.BindException;
+
 public class NettyUdpServer {
 
     private final int port;
@@ -35,7 +37,7 @@ public class NettyUdpServer {
                 .handler(new ClientHandler());
     }
 
-    public void start() throws InterruptedException {
+    public void start() throws InterruptedException, BindException {
         Output.println(Localization.get("net.bind.udp", String.valueOf(port)));
 
         channelFuture = bootstrap.bind(port).sync();

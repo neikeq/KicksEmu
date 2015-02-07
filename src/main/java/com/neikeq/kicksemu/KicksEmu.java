@@ -12,6 +12,7 @@ import com.neikeq.kicksemu.network.server.tcp.NettyTcpServer;
 import com.neikeq.kicksemu.network.server.udp.NettyUdpServer;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.net.BindException;
 import java.sql.SQLException;
 
 public class KicksEmu {
@@ -99,6 +100,8 @@ public class KicksEmu {
         } catch (IllegalArgumentException e) {
             // e.x.: Pool size is less than zero
             handleFatalError(e.getMessage());
+        } catch (BindException e) {
+            handleFatalError(Localization.get("net.bind.error"), e.getMessage());
         }
 
         long endTime = (System.nanoTime() - startTime) / 1000000;
