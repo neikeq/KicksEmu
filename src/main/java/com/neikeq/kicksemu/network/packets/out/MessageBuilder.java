@@ -460,7 +460,8 @@ public class MessageBuilder {
         if (result == 0) {
             msg.append(GameEvents.isGoldenTime());
             msg.append(GameEvents.isClubTime());
-            msg.append(tip, 120);
+
+            msg.append(tip, tip.length() > 120 ? 120 : tip.length());
         }
 
         return msg;

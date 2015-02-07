@@ -685,6 +685,10 @@ public class RoomManager {
             Room room = getRoomById(roomId);
 
             room.sendBroadcast(MessageBuilder.unknown2());
+
+            if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
+                room.sendBroadcast(MessageBuilder.nextTip("", (byte)0));
+            }
         }
     }
 
