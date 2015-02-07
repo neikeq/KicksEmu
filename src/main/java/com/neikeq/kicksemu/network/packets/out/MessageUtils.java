@@ -23,19 +23,20 @@ class MessageUtils {
         msg.append(result == 0 ? result : (byte)255);
     }
 
-    public static void appendQuestInfo(int playerId, Connection con, ServerMessage msg) {
+    public static void appendQuestInfo(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getCurrentQuest(playerId, con));
         msg.append(PlayerInfo.getRemainingQuestMatches(playerId, con));
     }
 
-    public static void appendTutorialInfo(int playerId, Connection con, ServerMessage msg) {
+    public static void appendTutorialInfo(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getTutorialDribbling(playerId, con));
         msg.append(PlayerInfo.getTutorialPassing(playerId, con));
         msg.append(PlayerInfo.getTutorialShooting(playerId, con));
         msg.append(PlayerInfo.getTutorialDefense(playerId, con));
     }
 
-    public static void appendCharacterInfo(int playerId, Connection con, int ownerId, ServerMessage msg) {
+    public static void appendCharacterInfo(int playerId, int ownerId,
+                                           ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getLevel(playerId, con));
         msg.append(PlayerInfo.getExperience(playerId, con));
         msg.append(PlayerInfo.getStatsPoints(playerId, con));
@@ -48,7 +49,7 @@ class MessageUtils {
         msg.append(PlayerInfo.getTicketsPoints(playerId, con));
     }
 
-    public static void appendDefaultClothes(int playerId, Connection con, ServerMessage msg) {
+    public static void appendDefaultClothes(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getDefaultHead(playerId, con));
         msg.append(PlayerInfo.getDefaultShirts(playerId, con));
         msg.append(PlayerInfo.getDefaultPants(playerId, con));
@@ -117,7 +118,7 @@ class MessageUtils {
         msg.append(cele.isVisible());
     }
 
-    public static void appendStats(int playerId, Connection con, ServerMessage msg) {
+    public static void appendStats(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getStatsRunning(playerId, con));
         msg.append(PlayerInfo.getStatsEndurance(playerId, con));
         msg.append(PlayerInfo.getStatsAgility(playerId, con));
@@ -137,7 +138,7 @@ class MessageUtils {
         msg.append(PlayerInfo.getStatsDefense(playerId, con));
     }
 
-    public static void appendStatsTraining(int playerId, Connection con, ServerMessage msg) {
+    public static void appendStatsTraining(int playerId, ServerMessage msg, Connection ... con) {
         PlayerStats learnStats = PlayerInfo.getTrainingStats(playerId, con);
 
         msg.append(learnStats.getRunning());
@@ -181,7 +182,7 @@ class MessageUtils {
         msg.append(bonusStats.getDefense());
     }
 
-    public static void appendHistory(int playerId, Connection con, ServerMessage msg) {
+    public static void appendHistory(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getHistoryMatches(playerId, con));
         msg.append(PlayerInfo.getHistoryWins(playerId, con));
         msg.append(PlayerInfo.getHistoryDraws(playerId, con));
@@ -200,7 +201,7 @@ class MessageUtils {
         msg.append(PlayerInfo.getHistoryTotalPoints(playerId, con));
     }
 
-    public static void appendHistoryLastMonth(int playerId, Connection con, ServerMessage msg) {
+    public static void appendHistoryLastMonth(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getHistoryMonthMatches(playerId, con));
         msg.append(PlayerInfo.getHistoryMonthWins(playerId, con));
         msg.append(PlayerInfo.getHistoryMonthDraws(playerId, con));
@@ -220,7 +221,7 @@ class MessageUtils {
     }
 
     public static void appendMatchHistory(PlayerResult playerResult, Room room, MatchResult result,
-                                          Connection con, ServerMessage msg) {
+                                          ServerMessage msg, Connection ... con) {
         int id = playerResult.getPlayerId();
         boolean training = room.getTrainingFactor() <= 0;
 
@@ -270,7 +271,7 @@ class MessageUtils {
         msg.append(PlayerInfo.getHistoryMonthTotalPoints(id, con) + pr.getVotePoints());
     }
 
-    public static void appendRanking(int playerId, Connection con, ServerMessage msg) {
+    public static void appendRanking(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getRankingMatches(playerId, con));
         msg.append(PlayerInfo.getRankingWins(playerId, con));
         msg.append(PlayerInfo.getRankingPoints(playerId, con));
@@ -297,7 +298,7 @@ class MessageUtils {
         msg.append(PlayerInfo.getRankingTotalPoints(playerId, con));
     }
 
-    public static void appendRankingLastMonth(int playerId, Connection con, ServerMessage msg) {
+    public static void appendRankingLastMonth(int playerId, ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getRankingMonthMatches(playerId, con));
         msg.append(PlayerInfo.getRankingMonthWins(playerId, con));
         msg.append(PlayerInfo.getRankingMonthPoints(playerId, con));
@@ -330,7 +331,7 @@ class MessageUtils {
         msg.appendZeros(20);
     }
 
-    public static void appendItemsInUse(int playerId, Connection con, ServerMessage msg) {
+    public static void appendItemsInUse(int playerId, ServerMessage msg, Connection ... con) {
         appendItemInUse(PlayerInfo.getItemHead(playerId, con), msg);
         appendItemInUse(PlayerInfo.getItemGlasses(playerId, con), msg);
         appendItemInUse(PlayerInfo.getItemShirts(playerId, con), msg);
@@ -366,7 +367,7 @@ class MessageUtils {
         appendInventoryItem(PlayerInfo.getItemPackage(playerId, con), msg);
     }
 
-    public static void appendInventorySkillsInUse(int playerId, Connection con, ServerMessage msg) {
+    public static void appendInventorySkillsInUse(int playerId, ServerMessage msg, Connection ... con) {
         Skill[] skills = PlayerInfo.getInventorySkills(playerId, con).values().stream()
                 .filter(s -> s.getSelectionIndex() > 0).toArray(Skill[]::new);
 
@@ -375,7 +376,7 @@ class MessageUtils {
         }
     }
 
-    public static void appendInventoryCelebrationsInUse(int playerId, Connection con, ServerMessage msg) {
+    public static void appendInventoryCelebrationsInUse(int playerId, ServerMessage msg, Connection ... con) {
         Celebration[] celebrations = PlayerInfo.getInventoryCelebration(playerId, con).values()
                 .stream().filter(c -> c.getSelectionIndex() > 0).toArray(Celebration[]::new);
 
@@ -384,7 +385,7 @@ class MessageUtils {
         }
     }
 
-    public static void appendClubUniform(int clubId, Connection con, ServerMessage msg) {
+    public static void appendClubUniform(int clubId, ServerMessage msg, Connection ... con) {
         msg.append(ClubInfo.getUniformHomeShirts(clubId, con));
         msg.append(ClubInfo.getUniformHomePants(clubId, con));
         msg.append(ClubInfo.getUniformHomeSocks(clubId, con));
