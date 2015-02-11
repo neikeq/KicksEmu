@@ -68,34 +68,21 @@ public class Input {
     }
 
     private void handleLogs(String ... arg) {
-        switch (arg[1]) {
-            case "true":
-                Logger.getInstance().setLogging(true);
-                break;
-            case "false":
-                Logger.getInstance().setLogging(false);
-                break;
-            default:
-                System.out.println(Logger.getInstance().getLogging());
+        try {
+            Logger logger = Logger.getInstance();
+            logger.setLogging(Boolean.valueOf(arg[1]));
+            System.out.println("Logging " + (logger.getLogging() ? "enabled." : "disabled."));
+        } catch (IllegalArgumentException ignored) {
+            System.out.println("Invalid parameter for logging. Expected boolean type.");
         }
     }
 
     private void handleVerbosity(String ... arg) {
-        switch (arg[1]) {
-            case "debug":
-                KicksEmu.getInstance().getOutput().setLevel(Level.DEBUG);
-                break;
-            case "info":
-                KicksEmu.getInstance().getOutput().setLevel(Level.INFO);
-                break;
-            case "warning":
-                KicksEmu.getInstance().getOutput().setLevel(Level.WARNING);
-                break;
-            case "critical":
-                KicksEmu.getInstance().getOutput().setLevel(Level.CRITICAL);
-                break;
-            default:
-                System.out.println(Localization.get("input.error", arg[1]));
+        try {
+            Level specifiedLevel = Level.valueOf(arg[1].toUpperCase());
+            KicksEmu.getInstance().getOutput().setLevel(specifiedLevel);
+        } catch (IllegalArgumentException ignored) {
+            System.out.println(Localization.get("input.error", arg[1]));
         }
     }
 
