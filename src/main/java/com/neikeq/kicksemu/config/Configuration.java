@@ -31,22 +31,22 @@ public class Configuration {
         config = new Properties();
 
         // Output Settings
-        config.put("output.logging", String.valueOf(true));
-        config.put("output.verbosity", String.valueOf(0));
+        config.put("output.logging", "true");
+        config.put("output.verbosity", "0");
         
         // MySQL Database Settings
-        config.put("mysql.idle.min", String.valueOf(5));
-        config.put("mysql.idle.max", String.valueOf(20));
+        config.put("mysql.idle.min", "5");
+        config.put("mysql.idle.max", "20");
         config.put("mysql.user", "root");
         config.put("mysql.pass", "");
         config.put("mysql.host", "localhost");
-        config.put("mysql.port", String.valueOf(3306));
+        config.put("mysql.port", "3306");
         config.put("mysql.database", "kicksdb");
         
         // Networking Settings
         config.put("net.type", "main");
-        config.put("net.backlog", String.valueOf(50));
-        config.put("net.tcp.bind.port", String.valueOf(1299));
+        config.put("net.backlog", "50");
+        config.put("net.tcp.bind.port", "1299");
         
         // Language Settings
         config.put("lang", "en");
