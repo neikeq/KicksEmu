@@ -82,7 +82,7 @@ public class ServerManager {
 
     private static void updateConnectedUsers() {
         if (getServerId() > 0) {
-            ServerInfo.setConnectedUsers((short) getPlayers().size(), getServerId());
+            ServerInfo.setConnectedUsers((short) connectedPlayers(), getServerId());
         }
     }
 
@@ -102,6 +102,10 @@ public class ServerManager {
         synchronized (locker) {
             return getPlayers().containsKey(characterId);
         }
+    }
+
+    public static int connectedPlayers() {
+        return getPlayers().size();
     }
 
     public ServerManager(String serverTypeId) {

@@ -168,7 +168,7 @@ public class KicksEmu {
         return output;
     }
 
-    ServerManager getServerManager() {
+    public ServerManager getServerManager() {
         return serverManager;
     }
 

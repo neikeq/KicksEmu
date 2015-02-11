@@ -60,6 +60,10 @@ public class RoomManager {
         }
     }
 
+    public static int openRooms() {
+        return rooms.size();
+    }
+
     /**
      * Returns the smallest missing key in rooms map.<br>
      * Required to get an id for new rooms.

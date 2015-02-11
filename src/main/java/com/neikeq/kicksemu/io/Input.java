@@ -1,11 +1,15 @@
 package com.neikeq.kicksemu.io;
 
 import com.neikeq.kicksemu.game.chat.ChatUtils;
+import com.neikeq.kicksemu.game.lobby.LobbyManager;
+import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.io.logging.Logger;
+import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.network.server.ServerType;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,13 +21,13 @@ public class Input {
 
     /** List of valid commands. */
     private Map<String, InputHandler> commands;
-    
+
     public void listen() {
         try (Scanner scanner = new Scanner(System.in)) {
         	while (Thread.currentThread().isAlive()) {
 	            if (scanner.hasNextLine()) {
 	                String input = scanner.nextLine();
-	                
+
 	                if (!input.isEmpty()) {
 	                    handle(input);
 	                }
@@ -31,7 +35,7 @@ public class Input {
 	        }
         }
     }
-    
+
     private void handle(String input) {
         String[] args = input.split(" ");
 
@@ -106,6 +110,20 @@ public class Input {
         ChatUtils.broadcastNotice(message.toString());
     }
 
+    private void handleStats() {
+        ServerType serverType = KicksEmu.getInstance().getServerManager().getServerType();
+
+        System.out.println("- Server: " + ServerManager.getServerId());
+        System.out.println("- Type: " + serverType.toString());
+        System.out.println("- Connected users: " + ServerManager.connectedPlayers());
+
+        if (serverType == ServerType.GAME) {
+            System.out.println("- Users in lobby: " +
+                    LobbyManager.getMainLobby().getPlayers().size());
+            System.out.println("- Open rooms: " + RoomManager.openRooms());
+        }
+    }
+
     void defineCommands() {
         commands = new TreeMap<>();
         commands.put("save", this::handleSave);
@@ -113,6 +131,7 @@ public class Input {
         commands.put("verb", this::handleVerbosity);
         commands.put("stop", (arg) -> KicksEmu.getInstance().stop());
         commands.put("notice", this::handleNotice);
+        commands.put("stats", (arg) -> handleStats());
     }
 
     public Input() {
