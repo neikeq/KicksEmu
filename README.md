@@ -42,19 +42,10 @@ Execute `run.sh` on unix and `run.bat` on windows.
 
 If you wish to use a different configuration file, you can pass its name as first argument when running the emulator. If this argument is omitted, the default configuration will be used.
 
-The execution directory must contain the following subdirectories:
-- [<root directory>/data/config](https://github.com/neikeq/KicksEmu/tree/master/data/config)
-  - The default configuration files are stored here.
-  - If a configuration file cannot be located/loaded, the application will initialize its configuration with the default variables.
-  - The application can initialize with a different configuration file if the first argument of the application represents a valid configuration file name.
-- [<root directory>/data/lang](https://github.com/neikeq/KicksEmu/tree/master/data/lang)
-  - This folder contains all the translation files.
-  - The name of the files must follow this format: `lang_<acronym>.properties`, where the acronym to be loaded is decided by value of `lang` in the configuration file.
-- [<root directory>/data/table](https://github.com/neikeq/KicksEmu/tree/master/data/table)
-  - Contains all the game table files required that may be required for different operations.
-- <root directory>/logs
-  - This is the directory where all the logs are written to.
-  - If logging is enabled, and this folder does not exist, the application will try to create it automatically. If it fails to create the folder, logging will be disabled.
+You can find a short description about the repository directories
+[here](https://github.com/neikeq/KicksEmu/wiki/Directory-Tree).
+
+[Visit the wiki](https://github.com/neikeq/KicksEmu/wiki) for more information
 
 ### License
 Published under the [GNU GPL v3.0](https://github.com/neikeq/KicksEmu/blob/master/LICENSE) license.
