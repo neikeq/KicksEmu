@@ -136,6 +136,8 @@ function set_character_stats_points($char_id, $stats_points, $db) {
 }
 
 function sum_character_stats_points($char_id, $stats_points, $db) {
+    if ($stats_points == 0) return false;
+
     $stmt = $db->prepare("UPDATE characters SET stats_points=stats_points+? WHERE id=?");
     $stmt->bind_param("ii", $stats_points, $char_id);
     $stmt->execute();
@@ -146,6 +148,8 @@ function sum_character_stats_points($char_id, $stats_points, $db) {
 }
 
 function sum_character_stats_by_index($char_id, $value, $index, $db) {
+    if ($stats_points == 0) return false;
+
     $stats_type = get_stats_type_by_index($index);
     $current_stats = get_character_stats_by_type($char_id, $stats_type, $db);
     $value_final = stats_up_to_hundred($current_stats, $value, $db);

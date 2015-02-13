@@ -149,6 +149,7 @@ function reset_stats_by_id($char_id, $db) {
     
     if ($level > 18) {
         on_character_level_up($char_id, 18, 17, $branch_position, $db);
+        apply_upgrade_stats($char_id, $position, $db);
         on_character_level_up($char_id, $level, $level - 18, $position, $db);
     } else {
         on_character_level_up($char_id, $level, $level - 1, $position, $db);
@@ -175,6 +176,17 @@ function reset_stats_global($reason, $db) {
     }
     
     return $result;
+}
+
+function apply_upgrade_stats($char_id, $position, $db) {
+    $remain_stats = 0;
+
+    for ($i = 0; $i < 17; $i++) {
+        $remain_stats += sum_character_stats_by_index(Constants::$upgrade_stats[$position][$i],
+                                                      $char_id, $db);
+    }
+
+    sum_character_stats_points($remain_stats, $char_id, $db);
 }
 
 function change_position($character, $position, $db) {
