@@ -182,8 +182,8 @@ function apply_upgrade_stats($char_id, $position, $db) {
     $remain_stats = 0;
 
     for ($i = 0; $i < 17; $i++) {
-        $remain_stats += sum_character_stats_by_index(Constants::$upgrade_stats[$position][$i],
-                                                      $char_id, $db);
+        $remain_stats += sum_character_stats_by_index($char_id, Constants::$upgrade_stats[$position][$i],
+                                                      $i, $db);
     }
 
     sum_character_stats_points($remain_stats, $char_id, $db);
