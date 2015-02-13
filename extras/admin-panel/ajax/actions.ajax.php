@@ -171,7 +171,7 @@ function reset_stats_global($reason, $db) {
     $stmt->close();
     
     for ($i = 0; $i < count($chars); $i++) {
-        $result |= reset_stats_by_id($char_id, $db);
+        $result |= reset_stats_by_id($chars[$i], $db);
     }
     
     return $result;
