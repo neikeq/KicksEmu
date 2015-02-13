@@ -137,7 +137,7 @@ function set_character_stats_points($char_id, $stats_points, $db) {
 
 function sum_character_stats_points($char_id, $stats_points, $db) {
     if ($stats_points == 0) return false;
-
+    
     $stmt = $db->prepare("UPDATE characters SET stats_points=stats_points+? WHERE id=?");
     $stmt->bind_param("ii", $stats_points, $char_id);
     $stmt->execute();
@@ -148,7 +148,7 @@ function sum_character_stats_points($char_id, $stats_points, $db) {
 }
 
 function sum_character_stats_by_index($char_id, $value, $index, $db) {
-    if ($value == 0) return false;
+    if ($value == 0) return 0;
 
     $stats_type = get_stats_type_by_index($index);
     $current_stats = get_character_stats_by_type($char_id, $stats_type, $db);
@@ -183,7 +183,7 @@ function next_inventory_id($char_id, $table, $db) {
     $stmt->execute();
     
     $ids = array();
-    
+
     while ($stmt->fetch()) {
         array_push($ids, $inventory_id);
     }
@@ -242,9 +242,10 @@ function on_character_level_up($char_id, $level, $levels, $position, $db) {
     
     $stats_points = 0;
     
-    for ($i = $level_from; $i < $level; ++$i) {
-        $stats_to_add = array_key_exists($i, Constants::$stats_for_level) ?
-                        Constants::$stats_for_level[$i] : 1;
+    for ($i = $level_from; $i < $level; $i++) {
+        $index = $i + 1;
+        $stats_to_add = array_key_exists($index, Constants::$stats_for_level) ?
+                        Constants::$stats_for_level[$index] : 1;
         $stats_points += $stats_to_add;
     }
     
