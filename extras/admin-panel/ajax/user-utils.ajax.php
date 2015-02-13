@@ -171,25 +171,29 @@ function remove_all_character_skills($char_id, $db) {
 }
 
 function next_inventory_id($char_id, $table, $db) {
+    $result = 1;
+
     $stmt = $db->prepare("SELECT inventory_id FROM " . $table . " WHERE player_id=?");
     $stmt->bind_param("i", $char_id);
     $stmt->bind_result($inventory_id);
     $stmt->execute();
-    $rows = $stmt->get_result()->fetch_all(MYSQLI_NUM);
-    $stmt->close();
     
     $ids = array();
-    for ($i = 0; $i < count($rows); $i++) {
-        array_push($ids, $rows[$i][0]);
+    
+    while ($stmt->fetch()) {
+        array_push($ids, $inventory_id);
     }
     
     for ($i = 0; $i < count($ids) + 1; $i++) {
         if (!in_array($i, $ids)) {
-            return $i;
+            $result = $i;
+            break;
         }
     }
     
-    return 1;
+    $stmt->close();
+    
+    return $result;
 }
 
 function already_purchased($char_id, $id, $table, $cel, $db) {

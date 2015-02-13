@@ -156,16 +156,22 @@ function reset_stats_by_id($char_id, $db) {
 }
 
 function reset_stats_global($reason, $db) {
+    $result = 1;
+
     $stmt = $db->prepare("SELECT id FROM characters");
-    $stmt->bind_result($inventory_id);
+    $stmt->bind_result($char_id);
     $stmt->execute();
-    $characters = $stmt->get_result()->fetch_all(MYSQLI_NUM);
+
+    $chars = array();
+    
+    while ($stmt->fetch()) {
+        array_push($chars, $char_id);
+    }
+    
     $stmt->close();
     
-    $result = 1;
-    
-    foreach ($characters as $current_id) {
-        $result |= reset_stats_by_id($current_id[0], $db);
+    for ($i = 0; $i < count($chars); $i++) {
+        $result |= reset_stats_by_id($char_id, $db);
     }
     
     return $result;
