@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.inventory.shop;
 
+import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.Position;
@@ -349,8 +350,8 @@ public class Shop {
             session.send(MessageBuilder.purchaseItem(playerId, result, con));
 
             if (result == 0) {
-                session.send(MessageBuilder.itemList(PlayerInfo.getInventoryItems(playerId),
-                        (byte) 0));
+                CharacterManager.sendItemList(session);
+                CharacterManager.sendItemsInUse(session);
             }
         } catch (SQLException ignored) {}
     }

@@ -44,14 +44,14 @@ public class CharacterManager {
         } catch (SQLException ignored) {}
     }
 
-    private static void sendItemList(Session session) {
+    public static void sendItemList(Session session) {
         Map<Integer, Item> items = PlayerInfo.getInventoryItems(session.getPlayerId());
 
-        ServerMessage msg = MessageBuilder.itemList(items, (byte) 0);
-        session.send(msg);
+        session.send(MessageBuilder.itemList(items, (byte) 0));
     }
 
-    private static void sendItemsInUse(Session session) {
+    /** This is a trick to update client's inventory items in use. */
+    public static void sendItemsInUse(Session session) {
         int playerId = session.getPlayerId();
 
         Map<Integer, Item> items = PlayerInfo.getInventoryItems(session.getPlayerId());
