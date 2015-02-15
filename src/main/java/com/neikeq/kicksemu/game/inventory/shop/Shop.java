@@ -374,8 +374,10 @@ public class Shop {
         switch (payment) {
             case KASH:
                 UserInfo.setKash(value, PlayerInfo.getOwner(playerId));
+                break;
             case POINTS:
                 PlayerInfo.setPoints(value, playerId);
+                break;
             default:
         }
     }
