@@ -183,13 +183,11 @@ public class RoomManager {
                     addRoom(room);
                 }
 
-                // Notify the client to join the room
-                ServerMessage msgJoinRoom = MessageBuilder.joinRoom(room,
-                        session.getPlayerId(), result);
-                session.send(msgJoinRoom);
-
                 // Add the player to the room
                 room.addPlayer(session);
+
+                // Notify the client to join the room
+                session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
             }
         }
     }
@@ -207,8 +205,7 @@ public class RoomManager {
         byte result = room != null ? room.tryJoinRoom(session, password) : -3;
 
         // Send the notification to the client
-        ServerMessage response = MessageBuilder.joinRoom(room, session.getPlayerId(), result);
-        session.send(response);
+        session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
     }
 
     public static void quickJoinRoom(Session session) {
@@ -231,9 +228,7 @@ public class RoomManager {
             byte result = room.tryJoinRoom(session, "");
 
             // Send the notification to the client
-            ServerMessage response = MessageBuilder.joinRoom(room,
-                    session.getPlayerId(), result);
-            session.send(response);
+            session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
         } else {
             // Notify the player that no room were found
             session.sendAndFlush(MessageBuilder.quickJoinRoom((byte) -2));
