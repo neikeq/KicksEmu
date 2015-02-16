@@ -306,28 +306,22 @@ public class Shop {
                     if (price <= money) {
                         Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
 
-                        // If the item is not already purchased
-                        if (!alreadyPurchased(itemId, items.values())) {
-                            // Initialize item with the requested data
-                            int id = InventoryUtils.getSmallestMissingId(items.values());
+                        // Initialize item with the requested data
+                        int id = InventoryUtils.getSmallestMissingId(items.values());
 
-                            Item item = new Item(itemId, id, expiration.toInt(),
-                                    statsBonusOne, statsBonusTwo, (short)0,
-                                    InventoryUtils.expirationToTimestamp(expiration),
-                                    false, true);
+                        Item item = new Item(itemId, id, expiration.toInt(),
+                                statsBonusOne, statsBonusTwo, (short)0,
+                                InventoryUtils.expirationToTimestamp(expiration),
+                                false, true);
 
-                            // Add it to the player's inventory
-                            items.put(id, item);
-                            // Activate item
-                            CharacterUtils.updateItemsInUse(item, playerId);
-                            // Update player's inventory
-                            PlayerInfo.addInventoryItem(item, playerId);
-                            // Deduct the price from the player's money
-                            sumMoneyToPaymentMode(payment, playerId, -price);
-                        } else {
-                            // Already purchased
-                            result = -10;
-                        }
+                        // Add it to the player's inventory
+                        items.put(id, item);
+                        // Activate item
+                        CharacterUtils.updateItemsInUse(item, playerId);
+                        // Update player's inventory
+                        PlayerInfo.addInventoryItem(item, playerId);
+                        // Deduct the price from the player's money
+                        sumMoneyToPaymentMode(payment, playerId, -price);
                     } else {
                         // Not enough money
                         result = (byte) (payment == Payment.KASH ? -8 : -5);
