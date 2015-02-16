@@ -368,7 +368,7 @@ public class Shop {
     private static void sumMoneyToPaymentMode(Payment payment, int playerId, int value) {
         switch (payment) {
             case KASH:
-                UserInfo.setKash(value, PlayerInfo.getOwner(playerId));
+                UserInfo.sumKash(value, PlayerInfo.getOwner(playerId));
                 break;
             case POINTS:
                 PlayerInfo.sumPoints(value, playerId);
