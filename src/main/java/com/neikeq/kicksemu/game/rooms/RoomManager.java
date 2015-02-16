@@ -639,8 +639,8 @@ public class RoomManager {
                     result.getPlayers().stream().forEach(pr -> {
                         int playerId = pr.getPlayerId();
 
-                        PlayerInfo.setPoints(pr.getPoints(), playerId, con);
-                        PlayerInfo.setExperience(pr.getExperience(), playerId, con);
+                        PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
+                        PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
 
                         short levels = CharacterManager.checkExperience(playerId, con);
 

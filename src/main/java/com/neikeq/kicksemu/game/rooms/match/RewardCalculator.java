@@ -39,28 +39,28 @@ public class RewardCalculator {
                                            int mvp, Connection con) {
         int playerId = result.getPlayerId();
 
-        PlayerInfo.setHistoryMatches(1, playerId, con);
+        PlayerInfo.sumHistoryMatches(1, playerId, con);
 
         switch (teamResult.getResult()) {
             case 0:
-                PlayerInfo.setHistoryDraws(1, playerId, con);
+                PlayerInfo.sumHistoryDraws(1, playerId, con);
                 break;
             case 1:
-                PlayerInfo.setHistoryWins(1, playerId, con);
+                PlayerInfo.sumHistoryWins(1, playerId, con);
                 break;
             default:
         }
 
         if (playerId == mvp) {
-            PlayerInfo.setHistoryMom(1, playerId, con);
+            PlayerInfo.sumHistoryMom(1, playerId, con);
         }
 
-        PlayerInfo.setHistoryValidGoals(result.getGoals(), playerId, con);
-        PlayerInfo.setHistoryValidAssists(result.getAssists(), playerId, con);
-        PlayerInfo.setHistoryValidInterception(result.getBlocks(), playerId, con);
-        PlayerInfo.setHistoryValidShooting(result.getShots(), playerId, con);
-        PlayerInfo.setHistoryValidStealing(result.getSteals(), playerId, con);
-        PlayerInfo.setHistoryValidTackling(result.getTackles(), playerId, con);
-        PlayerInfo.setHistoryTotalPoints(result.getVotePoints(), playerId, con);
+        PlayerInfo.sumHistoryValidGoals(result.getGoals(), playerId, con);
+        PlayerInfo.sumHistoryValidAssists(result.getAssists(), playerId, con);
+        PlayerInfo.sumHistoryValidInterception(result.getBlocks(), playerId, con);
+        PlayerInfo.sumHistoryValidShooting(result.getShots(), playerId, con);
+        PlayerInfo.sumHistoryValidStealing(result.getSteals(), playerId, con);
+        PlayerInfo.sumHistoryValidTackling(result.getTackles(), playerId, con);
+        PlayerInfo.sumHistoryTotalPoints(result.getVotePoints(), playerId, con);
     }
 }

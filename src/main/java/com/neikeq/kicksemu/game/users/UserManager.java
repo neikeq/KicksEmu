@@ -108,25 +108,25 @@ public class UserManager {
 
                     short remainStats = 0;
 
-                    remainStats += PlayerInfo.setStatsRunning(stats.getRunning(), playerId, con);
-                    remainStats += PlayerInfo.setStatsEndurance(stats.getEndurance(), playerId, con);
-                    remainStats += PlayerInfo.setStatsAgility(stats.getAgility(), playerId, con);
-                    remainStats += PlayerInfo.setStatsBallControl(stats.getBallControl(), playerId, con);
-                    remainStats += PlayerInfo.setStatsDribbling(stats.getDribbling(), playerId, con);
-                    remainStats += PlayerInfo.setStatsStealing(stats.getStealing(), playerId, con);
-                    remainStats += PlayerInfo.setStatsTackling(stats.getTackling(), playerId, con);
-                    remainStats += PlayerInfo.setStatsHeading(stats.getHeading(), playerId, con);
-                    remainStats += PlayerInfo.setStatsShortShots(stats.getShortShots(), playerId, con);
-                    remainStats += PlayerInfo.setStatsLongShots(stats.getLongShots(), playerId, con);
-                    remainStats += PlayerInfo.setStatsCrossing(stats.getCrossing(), playerId, con);
-                    remainStats += PlayerInfo.setStatsShortPasses(stats.getShortPasses(), playerId, con);
-                    remainStats += PlayerInfo.setStatsLongPasses(stats.getLongPasses(), playerId, con);
-                    remainStats += PlayerInfo.setStatsMarking(stats.getMarking(), playerId, con);
-                    remainStats += PlayerInfo.setStatsGoalkeeping(stats.getGoalkeeping(), playerId, con);
-                    remainStats += PlayerInfo.setStatsPunching(stats.getPunching(), playerId, con);
-                    remainStats += PlayerInfo.setStatsDefense(stats.getDefense(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsRunning(stats.getRunning(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsEndurance(stats.getEndurance(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsAgility(stats.getAgility(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsBallControl(stats.getBallControl(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsDribbling(stats.getDribbling(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsStealing(stats.getStealing(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsTackling(stats.getTackling(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsHeading(stats.getHeading(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsShortShots(stats.getShortShots(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsLongShots(stats.getLongShots(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsCrossing(stats.getCrossing(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsShortPasses(stats.getShortPasses(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsLongPasses(stats.getLongPasses(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsMarking(stats.getMarking(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsGoalkeeping(stats.getGoalkeeping(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsPunching(stats.getPunching(), playerId, con);
+                    remainStats += PlayerInfo.sumStatsDefense(stats.getDefense(), playerId, con);
 
-                    PlayerInfo.setStatsPoints(remainStats, playerId, con);
+                    PlayerInfo.sumStatsPoints(remainStats, playerId, con);
 
                 } else {
                     result = -1;

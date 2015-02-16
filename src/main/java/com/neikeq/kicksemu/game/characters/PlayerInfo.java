@@ -897,11 +897,11 @@ public class PlayerInfo {
         SqlUtils.setBoolean("received_reward", value, table, id, con);
     }
 
-    public static void setExperience(int value, int id, Connection ... con) {
+    public static void sumExperience(int value, int id, Connection... con) {
         SqlUtils.sumInt("experience", value, table, id, con);
     }
 
-    public static void setPoints(int value, int id, Connection ... con) {
+    public static void sumPoints(int value, int id, Connection... con) {
         SqlUtils.sumInt("points", value, table, id, con);
     }
 
@@ -917,178 +917,178 @@ public class PlayerInfo {
         SqlUtils.setShort("face", value, table, id, con);
     }
 
-    public static void setStatsPoints(short value, int id, Connection ... con) {
+    public static void sumStatsPoints(short value, int id, Connection... con) {
         SqlUtils.sumShort("stats_points", value, table, id, con);
     }
 
-    public static short setStatsRunning(int value, int id, Connection ... con) {
+    public static short sumStatsRunning(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsRunning(id, con), value);
         SqlUtils.sumShort("stats_running", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsEndurance(int value, int id, Connection ... con) {
+    public static short sumStatsEndurance(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsEndurance(id, con), value);
         SqlUtils.sumShort("stats_endurance", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsAgility(int value, int id, Connection ... con) {
+    public static short sumStatsAgility(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsAgility(id, con), value);
         SqlUtils.sumShort("stats_agility", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsBallControl(int value, int id, Connection ... con) {
+    public static short sumStatsBallControl(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsBallControl(id, con), value);
         SqlUtils.sumShort("stats_ball_control", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsDribbling(int value, int id, Connection ... con) {
+    public static short sumStatsDribbling(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsDribbling(id, con), value);
         SqlUtils.sumShort("stats_dribbling", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsStealing(int value, int id, Connection ... con) {
+    public static short sumStatsStealing(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsStealing(id, con), value);
         SqlUtils.sumShort("stats_stealing", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsTackling(int value, int id, Connection ... con) {
+    public static short sumStatsTackling(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsTackling(id, con), value);
         SqlUtils.sumShort("stats_tackling", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsHeading(int value, int id, Connection ... con) {
+    public static short sumStatsHeading(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsHeading(id, con), value);
         SqlUtils.sumShort("stats_heading", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsShortShots(int value, int id, Connection ... con) {
+    public static short sumStatsShortShots(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsShortShots(id, con), value);
         SqlUtils.sumShort("stats_short_shots", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsLongShots(int value, int id, Connection ... con) {
+    public static short sumStatsLongShots(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsLongShots(id, con), value);
         SqlUtils.sumShort("stats_long_shots", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsCrossing(int value, int id, Connection ... con) {
+    public static short sumStatsCrossing(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsCrossing(id, con), value);
         SqlUtils.sumShort("stats_crossing", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsShortPasses(int value, int id, Connection ... con) {
+    public static short sumStatsShortPasses(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsShortPasses(id, con), value);
         SqlUtils.sumShort("stats_short_passes", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsLongPasses(int value, int id, Connection ... con) {
+    public static short sumStatsLongPasses(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsLongPasses(id, con), value);
         SqlUtils.sumShort("stats_long_passes", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsMarking(int value, int id, Connection ... con) {
+    public static short sumStatsMarking(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsMarking(id, con), value);
         SqlUtils.sumShort("stats_marking", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsGoalkeeping(int value, int id, Connection ... con) {
+    public static short sumStatsGoalkeeping(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsGoalkeeping(id, con), value);
         SqlUtils.sumShort("stats_goalkeeping", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsPunching(int value, int id, Connection ... con) {
+    public static short sumStatsPunching(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsPunching(id, con), value);
         SqlUtils.sumShort("stats_punching", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static short setStatsDefense(int value, int id, Connection ... con) {
+    public static short sumStatsDefense(int value, int id, Connection... con) {
         short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsDefense(id, con), value);
         SqlUtils.sumShort("stats_defense", add, table, id, con);
         return (short)(value - add);
     }
 
-    public static void setHistoryMatches(int value, int id, Connection ... con) {
+    public static void sumHistoryMatches(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_matches", value, table, id, con);
         SqlUtils.sumInt("history_month_matches", value, table, id, con);
     }
 
-    public static void setHistoryWins(int value, int id, Connection ... con) {
+    public static void sumHistoryWins(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_wins", value, table, id, con);
         SqlUtils.sumInt("history_month_wins", value, table, id, con);
     }
 
-    public static void setHistoryDraws(int value, int id, Connection ... con) {
+    public static void sumHistoryDraws(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_draws", value, table, id, con);
         SqlUtils.sumInt("history_month_draws", value, table, id, con);
     }
 
-    public static void setHistoryMom(int value, int id, Connection ... con) {
+    public static void sumHistoryMom(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_MOM", value, table, id, con);
         SqlUtils.sumInt("history_month_MOM", value, table, id, con);
     }
 
-    public static void setHistoryValidGoals(int value, int id, Connection ... con) {
+    public static void sumHistoryValidGoals(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_valid_goals", value, table, id, con);
         SqlUtils.sumInt("history_month_valid_goals", value, table, id, con);
     }
 
-    public static void setHistoryValidAssists(int value, int id, Connection ... con) {
+    public static void sumHistoryValidAssists(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_valid_assists", value, table, id, con);
         SqlUtils.sumInt("history_month_valid_assists", value, table, id, con);
     }
 
-    public static void setHistoryValidInterception(int value, int id, Connection ... con) {
+    public static void sumHistoryValidInterception(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_valid_interception", value, table, id, con);
         SqlUtils.sumInt("history_month_valid_interception", value, table, id, con);
     }
 
-    public static void setHistoryValidShooting(int value, int id, Connection ... con) {
+    public static void sumHistoryValidShooting(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_valid_shooting", value, table, id, con);
         SqlUtils.sumInt("history_month_valid_shooting", value, table, id, con);
     }
 
-    public static void setHistoryValidStealing(int value, int id, Connection ... con) {
+    public static void sumHistoryValidStealing(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_valid_stealing", value, table, id, con);
         SqlUtils.sumInt("history_month_valid_stealing", value, table, id, con);
     }
 
-    public static void setHistoryValidTackling(int value, int id, Connection ... con) {
+    public static void sumHistoryValidTackling(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_valid_tackling", value, table, id, con);
         SqlUtils.sumInt("history_month_valid_tackling", value, table, id, con);
     }
 
-    public static void setHistoryShooting(int value, int id, Connection ... con) {
+    public static void sumHistoryShooting(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_shooting", value, table, id, con);
         SqlUtils.sumInt("history_month_shooting", value, table, id, con);
     }
 
-    public static void setHistoryStealing(int value, int id, Connection ... con) {
+    public static void sumHistoryStealing(int value, int id, Connection ... con) {
         SqlUtils.sumInt("history_stealing", value, table, id, con);
         SqlUtils.sumInt("history_month_stealing", value, table, id, con);
     }
 
-    public static void setHistoryTackling(int value, int id, Connection ... con) {
+    public static void sumHistoryTackling(int value, int id, Connection ... con) {
         SqlUtils.sumInt("history_tackling", value, table, id, con);
         SqlUtils.sumInt("history_month_tackling", value, table, id, con);
     }
 
-    public static void setHistoryTotalPoints(int value, int id, Connection ... con) {
+    public static void sumHistoryTotalPoints(int value, int id, Connection... con) {
         SqlUtils.sumInt("history_total_points", value, table, id, con);
         SqlUtils.sumInt("history_month_total_points", value, table, id, con);
     }

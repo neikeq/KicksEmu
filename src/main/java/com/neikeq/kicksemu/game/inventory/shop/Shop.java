@@ -371,7 +371,7 @@ public class Shop {
                 UserInfo.setKash(value, PlayerInfo.getOwner(playerId));
                 break;
             case POINTS:
-                PlayerInfo.setPoints(value, playerId);
+                PlayerInfo.sumPoints(value, playerId);
                 break;
             default:
         }
