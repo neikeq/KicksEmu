@@ -25,7 +25,7 @@ public class ChatManager {
         if (session.getPlayerId() == playerId) {
             String name = msg.readString(15);
             ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
-            String message = msg.readString(65);
+            String message = msg.readString(67);
 
             if (!Flood.isPlayerLocked(playerId) && !Flood.onPlayerChat(playerId)) {
                 if (type != null) {
