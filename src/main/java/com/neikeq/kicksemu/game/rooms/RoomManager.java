@@ -373,15 +373,18 @@ public class RoomManager {
 
         // If the room is valid, the player is inside it and it is in waiting state
         if (room != null && room.isPlayerIn(playerId) && room.state() == RoomState.WAITING) {
-            RoomTeam currentTeam = room.getPlayerTeam(playerId);
-            RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
+            if (!room.getSwapLocker().isPlayerLocked(playerId)) {
+                room.getSwapLocker().lockPlayer(playerId);
+                RoomTeam currentTeam = room.getPlayerTeam(playerId);
+                RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
 
-            ServerMessage msgSwapTeam = MessageBuilder.swapTeam(playerId, newTeam);
+                ServerMessage msgSwapTeam = MessageBuilder.swapTeam(playerId, newTeam);
 
-            if (newTeam != currentTeam) {
-                room.sendBroadcast(msgSwapTeam);
-            } else {
-                session.send(msgSwapTeam);
+                if (newTeam != currentTeam) {
+                    room.sendBroadcast(msgSwapTeam);
+                } else {
+                    session.send(msgSwapTeam);
+                }
             }
         }
     }

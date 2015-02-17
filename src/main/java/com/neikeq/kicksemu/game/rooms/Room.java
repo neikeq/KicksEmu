@@ -41,6 +41,7 @@ public class Room {
     private GoalkeeperMode goalkeeperMode;
 
     private final RoomLobby roomLobby;
+    private final SwapLocker swapLocker;
 
     private final Map<Integer, Session> players;
 
@@ -112,6 +113,8 @@ public class Room {
             if (session.isObserver()) {
                 observers.add(playerId);
             }
+
+            swapLocker.lockPlayer(playerId);
         }
 
         session.setRoomId(getId());
@@ -454,6 +457,7 @@ public class Room {
         observers = new ArrayList<>();
 
         roomLobby = new RoomLobby();
+        swapLocker = new SwapLocker();
 
         state = RoomState.WAITING;
     }
@@ -637,5 +641,9 @@ public class Room {
 
     public void setTimeStart(long timeStart) {
         this.timeStart = timeStart;
+    }
+
+    public SwapLocker getSwapLocker() {
+        return swapLocker;
     }
 }
