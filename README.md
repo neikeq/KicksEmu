@@ -1,5 +1,6 @@
 KicksEmu
 ========
+[![Travis CI Build Status](https://travis-ci.org/neikeq/KicksEmu.svg?branch=master)](https://travis-ci.org/neikeq/KicksEmu)
 
 KicksEmu is an open-source emulator for the Kicks Online MMO game.<br>
 It uses Netty framework for networking and Apache DBCP for MySql connection pooling.
