@@ -150,7 +150,6 @@
   <path id="kicksemu.module.sourcepath">
     <dirset dir="${module.kicksemu.basedir}">
       <include name="src/main/java"/>
-      <include name="src/main/resources"/>
     </dirset>
   </path>
   
@@ -169,10 +168,6 @@
     
     <copy todir="${kicksemu.output.dir}">
       <fileset dir="${module.kicksemu.basedir}/src/main/java">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-      <fileset dir="${module.kicksemu.basedir}/src/main/resources">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
