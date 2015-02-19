@@ -2,13 +2,18 @@ package com.neikeq.kicksemu.game.chat;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.inventory.table.LevelInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -50,6 +55,34 @@ public class CommandHandler {
                 ChatUtils.sendServerMessage(session, "You are not the room's master.");
             }
         }
+    }
+
+    private static void onProgress(Session session, String... args) {
+        String expNeeded;
+        int playerId = session.getPlayerId();
+        try (Connection con = MySqlManager.getConnection()) {
+
+            if(args.length <2) {
+                int playerLvl = PlayerInfo.getLevel(playerId, con);
+                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLvl() == playerLvl + 1);
+                int expForAskedLvl = lvlInfo.getExp();
+                final int exp = PlayerInfo.getExperience(playerId, con);
+                expNeeded = String.valueOf(expForAskedLvl - exp);
+            } else {
+                int playerLvl = PlayerInfo.getLevel(playerId, con);
+                int askedLvl = Integer.parseInt(args[1]);
+                if (playerLvl >= askedLvl || askedLvl > 55) {
+                    return;
+                }
+                final int exp = PlayerInfo.getExperience(playerId, con);
+                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLvl() == askedLvl);
+                int expForAskedLvl = lvlInfo.getExp();
+                expNeeded = String.valueOf(expForAskedLvl - exp);
+            }
+        } catch (SQLException | NumberFormatException ed) {
+            return;
+        }
+        ChatUtils.sendServerMessage(session, expNeeded);
     }
 
     private static void onWho(Session session, String... args) {
@@ -148,6 +181,7 @@ public class CommandHandler {
     private static void defineCommands() {
         commands = new LinkedHashMap<>();
         commands.put("host", CommandHandler::onMaster);
+        commands.put("progress", CommandHandler::onProgress);
         commands.put("who", CommandHandler::onWho);
         commands.put("kick", CommandHandler::onKick);
         commands.put("punish", CommandHandler::onPunish);

@@ -11,5 +11,6 @@ public class Table {
         InventoryTable.initializeLearnTable(Constants.TABLE_LEARN_PATH);
         InventoryTable.initializeItemTable(Constants.TABLE_ITEM_PATH);
         InventoryTable.initializeOptionTable(Constants.TABLE_OPTION_PATH);
+        InventoryTable.initializeLevelTable(Constants.TABLE_LEVEL_PATH);
     }
 }

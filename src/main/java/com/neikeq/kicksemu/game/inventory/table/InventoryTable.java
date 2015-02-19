@@ -16,9 +16,16 @@ public class InventoryTable {
     private static final Map<Integer, ItemFree> itemFreeTable = new HashMap<>();
     private static final Map<Integer, ItemInfo> itemTable = new HashMap<>();
     private static final Map<Integer, OptionInfo> optionTable = new HashMap<>();
+    private static final Map<Integer, LevelInfo> levelInfoTable = new HashMap<>();
 
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
         Optional<SkillInfo> result = skillsTable.values().stream().filter(filter).findFirst();
+
+        return result.isPresent() ? result.get() : null;
+    }
+
+    public static LevelInfo getLevelInfo(Predicate<LevelInfo> filter) {
+        Optional<LevelInfo> result = levelInfoTable.values().stream().filter(filter).findFirst();
 
         return result.isPresent() ? result.get() : null;
     }
@@ -110,6 +117,16 @@ public class InventoryTable {
         while ((line = reader.nextRow()) != null) {
             OptionInfo row = new OptionInfo(line);
             optionTable.put(row.getId(), row);
+        }
+    }
+
+    public static void initializeLevelTable(String path) {
+        TableReader reader = new TableReader(path);
+
+        Row line;
+        while ((line = reader.nextRow()) != null) {
+            LevelInfo row = new LevelInfo(line);
+            levelInfoTable.put(row.getLvl(), row);
         }
     }
 }
