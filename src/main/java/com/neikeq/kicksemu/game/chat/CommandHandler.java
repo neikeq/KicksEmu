@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.chat;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
-import com.neikeq.kicksemu.game.inventory.table.LevelExpInfo;
+import com.neikeq.kicksemu.game.inventory.table.LevelInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
@@ -58,13 +58,13 @@ public class CommandHandler {
     }
 
     private static void onProgress(Session session, String... args) {
-        String expNeeded = "";
+        String expNeeded;
         int playerId = session.getPlayerId();
         try (Connection con = MySqlManager.getConnection()) {
 
             if(args.length <2) {
                 int playerLvl = PlayerInfo.getLevel(playerId, con);
-                LevelExpInfo lvlInfo = InventoryTable.getLevelExp(c -> c.getLvl() == playerLvl +1);
+                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLvl() == playerLvl + 1);
                 int expForAskedLvl = lvlInfo.getExp();
                 final int exp = PlayerInfo.getExperience(playerId, con);
                 expNeeded = String.valueOf(expForAskedLvl - exp);
@@ -75,7 +75,7 @@ public class CommandHandler {
                     return;
                 }
                 final int exp = PlayerInfo.getExperience(playerId, con);
-                LevelExpInfo lvlInfo = InventoryTable.getLevelExp(c -> c.getLvl() == askedLvl);
+                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLvl() == askedLvl);
                 int expForAskedLvl = lvlInfo.getExp();
                 expNeeded = String.valueOf(expForAskedLvl - exp);
             }

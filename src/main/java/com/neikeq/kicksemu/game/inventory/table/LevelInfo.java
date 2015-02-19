@@ -5,12 +5,12 @@ import com.neikeq.kicksemu.utils.table.Row;
 /**
  * Created by Kriss on 19/02/2015.
  */
-public class LevelExpInfo {
+public class LevelInfo {
 
     private final int lvl;
     private final int exp;
 
-    public LevelExpInfo(Row row) {
+    public LevelInfo(Row row) {
         row.nextColumn();
         lvl = Integer.valueOf(row.nextColumn());
         exp = Integer.valueOf(row.nextColumn());
