@@ -71,8 +71,7 @@ public class CommandHandler {
             } else {
                 int playerLvl = PlayerInfo.getLevel(playerId, con);
                 int askedLvl = Integer.parseInt(args[1]);
-                if (playerLvl <= askedLvl || askedLvl > 55) {
-                    ChatUtils.sendServerMessage(session, expNeeded);
+                if (playerLvl >= askedLvl || askedLvl > 55) {
                     return;
                 }
                 final int exp = PlayerInfo.getExperience(playerId, con);
