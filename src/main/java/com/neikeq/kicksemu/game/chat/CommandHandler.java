@@ -80,7 +80,7 @@ public class CommandHandler {
                 expNeeded = String.valueOf(expForAskedLvl - exp);
             }
         } catch (SQLException | NumberFormatException ed) {
-            expNeeded = "";
+            return;
         }
         ChatUtils.sendServerMessage(session, expNeeded);
     }
