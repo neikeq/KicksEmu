@@ -82,7 +82,7 @@ public class CommandHandler {
         } catch (SQLException | NumberFormatException ed) {
             return;
         }
-        ChatUtils.sendServerMessage(session, expNeeded);
+        ChatUtils.sendServerMessage(session, expNeeded + " to reach Lv " + args[1]);
     }
 
     private static void onWho(Session session, String... args) {
