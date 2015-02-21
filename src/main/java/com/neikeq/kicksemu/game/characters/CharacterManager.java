@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -98,31 +99,20 @@ public class CharacterManager {
 
     public static short checkExperience(int playerId, Connection con) {
         short levels = 0;
+        final short level = PlayerInfo.getLevel(playerId, con);
+        final int experience = PlayerInfo.getExperience(playerId, con);
 
-        String query = "SELECT level FROM levels WHERE experience <= ? AND level > ?";
+        short newLevel = InventoryTable.getLevelInfo(li ->
+                li.getLevel() > level && li.getExperience() <= experience).getLevel();
 
-        try (PreparedStatement stmt = con.prepareStatement(query)) {
-            short level = PlayerInfo.getLevel(playerId, con);
+        if (newLevel > level) {
+            levels += newLevel - level;
+        }
 
-            stmt.setInt(1, PlayerInfo.getExperience(playerId, con));
-            stmt.setShort(2, level);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    short newLevel = rs.getShort("level");
-
-                    if (newLevel > level) {
-                        levels += newLevel - level;
-                        level = newLevel;
-                    }
-                }
-            }
-
-            if (levels > 0) {
-                PlayerInfo.setLevel(level, playerId, con);
-                onPlayerLevelUp(playerId, level, levels, con);
-            }
-        } catch (SQLException ignored) {}
+        if (levels > 0) {
+            PlayerInfo.setLevel(newLevel, playerId, con);
+            onPlayerLevelUp(playerId, newLevel, levels, con);
+        }
 
         return levels;
     }

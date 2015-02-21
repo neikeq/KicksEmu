@@ -16,7 +16,7 @@ public class InventoryTable {
     private static final Map<Integer, ItemFree> itemFreeTable = new HashMap<>();
     private static final Map<Integer, ItemInfo> itemTable = new HashMap<>();
     private static final Map<Integer, OptionInfo> optionTable = new HashMap<>();
-    private static final Map<Integer, LevelInfo> levelInfoTable = new HashMap<>();
+    private static final Map<Short, LevelInfo> levelInfoTable = new HashMap<>();
 
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
         Optional<SkillInfo> result = skillsTable.values().stream().filter(filter).findFirst();

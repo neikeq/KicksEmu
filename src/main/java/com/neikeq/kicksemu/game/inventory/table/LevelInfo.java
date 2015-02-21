@@ -7,16 +7,16 @@ import com.neikeq.kicksemu.utils.table.Row;
  */
 public class LevelInfo {
 
-    private final int level;
+    private final short level;
     private final int experience;
 
     public LevelInfo(Row row) {
         row.nextColumn();
-        level = Integer.valueOf(row.nextColumn());
+        level = Short.valueOf(row.nextColumn());
         experience = Integer.valueOf(row.nextColumn());
     }
 
-    public int getLevel() {
+    public short getLevel() {
         return level;
     }
 
