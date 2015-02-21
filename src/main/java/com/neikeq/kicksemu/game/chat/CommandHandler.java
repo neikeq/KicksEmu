@@ -60,29 +60,22 @@ public class CommandHandler {
     private static void onProgress(Session session, String... args) {
         String expNeeded;
         int playerId = session.getPlayerId();
-        try (Connection con = MySqlManager.getConnection()) {
 
-            if(args.length <2) {
-                int playerLvl = PlayerInfo.getLevel(playerId, con);
-                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLevel() == playerLvl + 1);
-                int expForAskedLvl = lvlInfo.getExperience();
-                final int exp = PlayerInfo.getExperience(playerId, con);
-                expNeeded = String.valueOf(expForAskedLvl - exp);
-            } else {
-                int playerLvl = PlayerInfo.getLevel(playerId, con);
-                int askedLvl = Integer.parseInt(args[1]);
-                if (playerLvl >= askedLvl || askedLvl > 55) {
-                    return;
-                }
-                final int exp = PlayerInfo.getExperience(playerId, con);
-                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLevel() == askedLvl);
-                int expForAskedLvl = lvlInfo.getExperience();
-                expNeeded = String.valueOf(expForAskedLvl - exp);
+        try (Connection con = MySqlManager.getConnection()) {
+            short playerLvl = PlayerInfo.getLevel(playerId, con);
+            short askedLvl = args.length < 2 ? (short)(playerLvl + 1) : Short.valueOf(args[1]);
+
+            if (playerLvl >= askedLvl || askedLvl > 60) {
+                return;
             }
-        } catch (SQLException | NumberFormatException ed) {
-            return;
-        }
-        ChatUtils.sendServerMessage(session, expNeeded + " to reach Lv " + args[1]);
+
+            LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLevel() == askedLvl);
+            int expForAskedLvl = lvlInfo.getExperience();
+            final int exp = PlayerInfo.getExperience(playerId, con);
+            expNeeded = String.valueOf(expForAskedLvl - exp);
+
+            ChatUtils.sendServerMessage(session, expNeeded + " to reach Lv " + askedLvl);
+        } catch (SQLException | NumberFormatException ignored) {}
     }
 
     private static void onWho(Session session, String... args) {
