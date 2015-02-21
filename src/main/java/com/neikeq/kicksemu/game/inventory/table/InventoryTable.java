@@ -126,7 +126,7 @@ public class InventoryTable {
         Row line;
         while ((line = reader.nextRow()) != null) {
             LevelInfo row = new LevelInfo(line);
-            levelInfoTable.put(row.getLvl(), row);
+            levelInfoTable.put(row.getLevel(), row);
         }
     }
 }

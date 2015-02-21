@@ -7,21 +7,21 @@ import com.neikeq.kicksemu.utils.table.Row;
  */
 public class LevelInfo {
 
-    private final int lvl;
-    private final int exp;
+    private final int level;
+    private final int experience;
 
     public LevelInfo(Row row) {
         row.nextColumn();
-        lvl = Integer.valueOf(row.nextColumn());
-        exp = Integer.valueOf(row.nextColumn());
+        level = Integer.valueOf(row.nextColumn());
+        experience = Integer.valueOf(row.nextColumn());
     }
 
-    public int getLvl() {
-        return lvl;
+    public int getLevel() {
+        return level;
     }
 
-    public int getExp() {
-        return exp;
+    public int getExperience() {
+        return experience;
     }
 }
 

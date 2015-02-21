@@ -64,8 +64,8 @@ public class CommandHandler {
 
             if(args.length <2) {
                 int playerLvl = PlayerInfo.getLevel(playerId, con);
-                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLvl() == playerLvl + 1);
-                int expForAskedLvl = lvlInfo.getExp();
+                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLevel() == playerLvl + 1);
+                int expForAskedLvl = lvlInfo.getExperience();
                 final int exp = PlayerInfo.getExperience(playerId, con);
                 expNeeded = String.valueOf(expForAskedLvl - exp);
             } else {
@@ -75,8 +75,8 @@ public class CommandHandler {
                     return;
                 }
                 final int exp = PlayerInfo.getExperience(playerId, con);
-                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLvl() == askedLvl);
-                int expForAskedLvl = lvlInfo.getExp();
+                LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLevel() == askedLvl);
+                int expForAskedLvl = lvlInfo.getExperience();
                 expNeeded = String.valueOf(expForAskedLvl - exp);
             }
         } catch (SQLException | NumberFormatException ed) {

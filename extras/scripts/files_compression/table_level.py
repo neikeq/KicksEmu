@@ -11,7 +11,7 @@ def to_table(data, path):
         csv_writer = csv.writer(f, delimiter=',', quotechar='"',
                                 quoting=csv.QUOTE_MINIMAL)
 
-        csv_writer.writerow('Level From,Level To,Experience,Experience Gap,UnknownFlag,Details'.split(','))
+        csv_writer.writerow('Index,Level,Experience,Experience Gap,UnknownFlag,Details'.split(','))
 
         reader = BinaryReader(data, 'little')
         size = reader.read_int()
