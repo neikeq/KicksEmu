@@ -6,10 +6,10 @@ import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
-import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
-import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
-import com.neikeq.kicksemu.game.inventory.table.LearnInfo;
-import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
+import com.neikeq.kicksemu.game.table.TableManager;
+import com.neikeq.kicksemu.game.table.ItemInfo;
+import com.neikeq.kicksemu.game.table.LearnInfo;
+import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsList;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredList;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -198,7 +198,7 @@ public class PlayerInfo {
 
     public static Item getItemInUseByType(ItemType type, int id, Connection ... con) {
         Optional<Item> result = getInventoryItems(id, con).values().stream().filter(item -> {
-            ItemInfo itemInfo = InventoryTable.getItemInfo(i -> i.getId() == item.getId());
+            ItemInfo itemInfo = TableManager.getItemInfo(i -> i.getId() == item.getId());
             return itemInfo != null && itemInfo.getType() == type.toInt() && item.isSelected();
         }).findFirst();
 
@@ -343,7 +343,7 @@ public class PlayerInfo {
         PlayerStats learnStats = new PlayerStats();
 
         getInventoryTraining(id, con).values().stream().forEach(learn -> {
-            LearnInfo learnInfo = InventoryTable.getLearnInfo(l -> l.getId() == learn.getId());
+            LearnInfo learnInfo = TableManager.getLearnInfo(l -> l.getId() == learn.getId());
 
             if (learnInfo != null) {
                 CharacterUtils.sumStatsByIndex(learnInfo.getStatIndex(),
@@ -358,10 +358,10 @@ public class PlayerInfo {
         PlayerStats bonusStats = new PlayerStats();
 
         getInventoryItems(id, con).values().stream().filter(Item::isSelected).forEach(item -> {
-            OptionInfo optionInfoOne = InventoryTable.getOptionInfo(of ->
-                        of.getId() == item.getStatsBonusOne());
-            OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(of ->
-                        of.getId() == item.getStatsBonusTwo());
+            OptionInfo optionInfoOne = TableManager.getOptionInfo(of ->
+                    of.getId() == item.getStatsBonusOne());
+            OptionInfo optionInfoTwo = TableManager.getOptionInfo(of ->
+                    of.getId() == item.getStatsBonusTwo());
 
             if (optionInfoOne != null) {
                 CharacterUtils.sumStatsByIndex(optionInfoOne.getType() - 10,

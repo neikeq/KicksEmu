@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.inventory.table;
+package com.neikeq.kicksemu.game.table;
 
 import com.neikeq.kicksemu.utils.table.Row;
 import com.neikeq.kicksemu.utils.table.TableReader;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class InventoryTable {
+public class TableManager {
 
     private static final Map<Integer, SkillInfo> skillsTable = new HashMap<>();
     private static final Map<Integer, CeleInfo> celesTable = new HashMap<>();

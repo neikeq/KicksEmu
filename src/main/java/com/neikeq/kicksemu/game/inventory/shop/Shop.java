@@ -11,12 +11,12 @@ import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Product;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
-import com.neikeq.kicksemu.game.inventory.table.CeleInfo;
-import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
-import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
-import com.neikeq.kicksemu.game.inventory.table.LearnInfo;
-import com.neikeq.kicksemu.game.inventory.table.OptionInfo;
-import com.neikeq.kicksemu.game.inventory.table.SkillInfo;
+import com.neikeq.kicksemu.game.table.CeleInfo;
+import com.neikeq.kicksemu.game.table.TableManager;
+import com.neikeq.kicksemu.game.table.ItemInfo;
+import com.neikeq.kicksemu.game.table.LearnInfo;
+import com.neikeq.kicksemu.game.table.OptionInfo;
+import com.neikeq.kicksemu.game.table.SkillInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -47,7 +47,7 @@ public class Shop {
 
         // Get the information about the skill with the requested id which
         // is available for the player's position or its base position
-        SkillInfo skillInfo = InventoryTable.getSkillInfo(s -> s.getId() == skillId &&
+        SkillInfo skillInfo = TableManager.getSkillInfo(s -> s.getId() == skillId &&
                 (s.getPosition() == position || s.getPosition() == Position.trunk(position)));
 
         Skill skill = null;
@@ -122,7 +122,7 @@ public class Shop {
         short level = PlayerInfo.getLevel(playerId);
 
         // Get the information about the celebration with the requested id
-        CeleInfo celeInfo = InventoryTable.getCeleInfo(c -> c.getId() == celeId);
+        CeleInfo celeInfo = TableManager.getCeleInfo(c -> c.getId() == celeId);
 
         Celebration cele = null;
         byte result = 0;
@@ -197,7 +197,7 @@ public class Shop {
         short level = PlayerInfo.getLevel(playerId);
 
         // Get the information about the learn with the requested id
-        LearnInfo learnInfo = InventoryTable.getLearnInfo(c -> c.getId() == learnId);
+        LearnInfo learnInfo = TableManager.getLearnInfo(c -> c.getId() == learnId);
 
         Training learn = null;
         byte result = 0;
@@ -273,12 +273,12 @@ public class Shop {
         short level = PlayerInfo.getLevel(playerId);
 
         // Get the information about the item with the requested id
-        ItemInfo itemInfo = InventoryTable.getItemInfo(c -> c.getId() == itemId);
+        ItemInfo itemInfo = TableManager.getItemInfo(c -> c.getId() == itemId);
 
         if (itemInfo != null && (itemInfo.getType() < 101 || itemInfo.getType() > 200)) return;
 
-        OptionInfo optionInfoOne = InventoryTable.getOptionInfo(c -> c.getId() == statsBonusOne);
-        OptionInfo optionInfoTwo = InventoryTable.getOptionInfo(c -> c.getId() == statsBonusTwo);
+        OptionInfo optionInfoOne = TableManager.getOptionInfo(c -> c.getId() == statsBonusOne);
+        OptionInfo optionInfoTwo = TableManager.getOptionInfo(c -> c.getId() == statsBonusTwo);
 
         boolean isInvalidBonus = (optionInfoOne == null && statsBonusOne != 0) ||
                 (optionInfoTwo == null && statsBonusTwo != 0);

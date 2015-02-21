@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.inventory.table;
+package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.shop.Payment;

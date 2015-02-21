@@ -2,8 +2,8 @@ package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.ItemType;
-import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
-import com.neikeq.kicksemu.game.inventory.table.ItemInfo;
+import com.neikeq.kicksemu.game.table.TableManager;
+import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
@@ -107,7 +107,7 @@ public class CharacterUtils {
     }
 
     public static void updateItemsInUse(Item itemIn, int playerId) {
-        ItemInfo itemInfo = InventoryTable.getItemInfo(o ->
+        ItemInfo itemInfo = TableManager.getItemInfo(o ->
                 o.getId() == itemIn.getId());
 
         Item itemOut = getItemInUseByType(ItemType.fromInt(itemInfo.getType()), playerId);

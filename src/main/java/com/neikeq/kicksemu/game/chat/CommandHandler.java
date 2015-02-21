@@ -2,8 +2,8 @@ package com.neikeq.kicksemu.game.chat;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
-import com.neikeq.kicksemu.game.inventory.table.LevelInfo;
+import com.neikeq.kicksemu.game.table.TableManager;
+import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
@@ -69,7 +69,7 @@ public class CommandHandler {
                 return;
             }
 
-            LevelInfo lvlInfo = InventoryTable.getLevelInfo(c -> c.getLevel() == askedLvl);
+            LevelInfo lvlInfo = TableManager.getLevelInfo(c -> c.getLevel() == askedLvl);
             int expForAskedLvl = lvlInfo.getExperience();
             final int exp = PlayerInfo.getExperience(playerId, con);
             expNeeded = String.valueOf(expForAskedLvl - exp);

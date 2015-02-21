@@ -5,7 +5,7 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
-import com.neikeq.kicksemu.game.inventory.table.InventoryTable;
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -14,8 +14,6 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -102,7 +100,7 @@ public class CharacterManager {
         final short level = PlayerInfo.getLevel(playerId, con);
         final int experience = PlayerInfo.getExperience(playerId, con);
 
-        short newLevel = InventoryTable.getLevelInfo(li ->
+        short newLevel = TableManager.getLevelInfo(li ->
                 li.getLevel() > level && li.getExperience() <= experience).getLevel();
 
         if (newLevel > level) {
