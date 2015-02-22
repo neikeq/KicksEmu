@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
@@ -10,6 +11,8 @@ import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.RewardCalculator;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
+import com.neikeq.kicksemu.game.servers.GameServerType;
+import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -132,11 +135,12 @@ public class RoomManager {
 
             byte result = 0;
 
-            // TODO check if the server allows this goalkeeperMode
+            GameServerType serverType = ServerInfo.getType(ServerManager.getServerId());
+
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
                 result = (byte) 253; // Wrong level settings
-            } else if (maxSize == null || type == null ||
-                    map == null || ball == null || goalkeeperMode == null) {
+            } else if (maxSize == null || type == null || map == null || ball == null ||
+                    goalkeeperMode == null || !goalkeeperMode.isValidForServer(serverType)) {
                 result = (byte) 255; // System problem
             } else {
                 short playerLevel = PlayerInfo.getLevel(session.getPlayerId());

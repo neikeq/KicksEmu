@@ -1,6 +1,11 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
+import com.neikeq.kicksemu.game.servers.GameServerType;
+
 public enum GoalkeeperMode {
+
+    // TODO Add CLUB and TOURNAMENT modes
+
     AI,
     PLAYER,
     TRAINING_ONE,
@@ -38,6 +43,20 @@ public enum GoalkeeperMode {
                 return 4;
             default:
                 return -1;
+        }
+    }
+
+    // TODO Add TOURNAMENT and CLUB server checks
+    public boolean isValidForServer(GameServerType serverType) {
+        switch (serverType) {
+            case PRIVATE:
+            case NORMAL:
+                return this == AI;
+            case PRACTICE:
+                return this == TRAINING_ONE || this == TRAINING_TWO ||
+                        this == TRAINING_THREE;
+            default:
+                return false;
         }
     }
 }
