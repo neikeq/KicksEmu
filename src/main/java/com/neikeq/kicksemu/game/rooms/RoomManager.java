@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.game.rooms;
 
-import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
@@ -121,7 +120,7 @@ public class RoomManager {
 
             msg.ignoreBytes(1);
 
-            GoalkeeperMode goalkeeperMode = GoalkeeperMode.fromInt(msg.readByte());
+            RoomMode roomMode = RoomMode.fromInt(msg.readByte());
 
             byte minLevel = msg.readByte();
             byte maxLevel = msg.readByte();
@@ -140,7 +139,7 @@ public class RoomManager {
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
                 result = (byte) 253; // Wrong level settings
             } else if (maxSize == null || type == null || map == null || ball == null ||
-                    goalkeeperMode == null || !goalkeeperMode.isValidForServer(serverType)) {
+                    roomMode == null || !roomMode.isValidForServer(serverType)) {
                 result = (byte) 255; // System problem
             } else {
                 short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
@@ -172,7 +171,7 @@ public class RoomManager {
                 room.setName(name);
                 room.setPassword(password);
                 room.setType(type);
-                room.setGoalkeeperMode(goalkeeperMode);
+                room.setRoomMode(roomMode);
                 room.setMinLevel(minLevel);
                 room.setMaxLevel(maxLevel);
                 room.setMap(map);
@@ -306,7 +305,7 @@ public class RoomManager {
         String name = msg.readString(45);
         String password = msg.readString(4);
         msg.ignoreBytes(1);
-        GoalkeeperMode goalkeeperMode = GoalkeeperMode.fromInt(msg.readByte());
+        RoomMode roomMode = RoomMode.fromInt(msg.readByte());
         byte minLevel = msg.readByte();
         byte maxLevel = msg.readByte();
         RoomSize maxSize = RoomSize.fromInt(msg.readByte());
@@ -328,7 +327,7 @@ public class RoomManager {
         short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
         // TODO check if the server allows this goalkeeperMode
-        if (maxSize == null || type == null || goalkeeperMode == null) {
+        if (maxSize == null || type == null || roomMode == null) {
             result = (byte) 255; // System problem
         } else if (room == null) {
             result = (byte) 254; // Room does not exist
@@ -354,7 +353,7 @@ public class RoomManager {
             room.setType(type);
             room.setName(name);
             room.setPassword(password);
-            room.setGoalkeeperMode(goalkeeperMode);
+            room.setRoomMode(roomMode);
             room.setMinLevel(minLevel);
             room.setMaxLevel(maxLevel);
             room.setMaxSize(maxSize);

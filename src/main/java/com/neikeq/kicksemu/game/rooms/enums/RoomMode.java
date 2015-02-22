@@ -2,22 +2,22 @@ package com.neikeq.kicksemu.game.rooms.enums;
 
 import com.neikeq.kicksemu.game.servers.GameServerType;
 
-public enum GoalkeeperMode {
+public enum RoomMode {
 
     // TODO Add CLUB and TOURNAMENT modes
 
-    AI,
-    PLAYER,
+    AI_GOALKEEPER,
+    PLAYER_GOALKEEPER,
     TRAINING_ONE,
     TRAINING_TWO,
     TRAINING_THREE;
 
-    public static GoalkeeperMode fromInt(int mode) {
+    public static RoomMode fromInt(int mode) {
         switch (mode) {
             case 0:
-                return AI;
+                return AI_GOALKEEPER;
             case 1:
-                return PLAYER;
+                return PLAYER_GOALKEEPER;
             case 2:
                 return TRAINING_ONE;
             case 3:
@@ -31,9 +31,9 @@ public enum GoalkeeperMode {
 
     public int toInt() {
         switch (this) {
-            case AI:
+            case AI_GOALKEEPER:
                 return 0;
-            case PLAYER:
+            case PLAYER_GOALKEEPER:
                 return 1;
             case TRAINING_ONE:
                 return 2;
@@ -51,7 +51,7 @@ public enum GoalkeeperMode {
         switch (serverType) {
             case PRIVATE:
             case NORMAL:
-                return this == AI;
+                return this == AI_GOALKEEPER;
             case PRACTICE:
                 return this == TRAINING_ONE || this == TRAINING_TWO ||
                         this == TRAINING_THREE;

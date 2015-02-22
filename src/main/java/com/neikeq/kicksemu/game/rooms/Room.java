@@ -38,7 +38,7 @@ public class Room {
     private RoomBall ball;
     private RoomType type;
     private RoomSize maxSize;
-    private GoalkeeperMode goalkeeperMode;
+    private RoomMode roomMode;
 
     private final RoomLobby roomLobby;
     private final SwapLocker swapLocker;
@@ -494,12 +494,12 @@ public class Room {
         this.type = type;
     }
 
-    public GoalkeeperMode getGoalkeeperMode() {
-        return goalkeeperMode;
+    public RoomMode getRoomMode() {
+        return roomMode;
     }
 
-    public void setGoalkeeperMode(GoalkeeperMode goalkeeperMode) {
-        this.goalkeeperMode = goalkeeperMode;
+    public void setRoomMode(RoomMode roomMode) {
+        this.roomMode = roomMode;
     }
 
     public byte getMinLevel() {
