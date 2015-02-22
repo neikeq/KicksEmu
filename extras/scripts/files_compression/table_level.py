@@ -51,8 +51,7 @@ def to_row(reader):
     row.append(reader.read_int())
     row.append(reader.read_int())
     row.append(reader.read_int())
-    row.append(reader.read_bool())
-    reader.ignore_bytes(3)
+    row.append(reader.read_bool(), 4)
     row.append(reader.read_string(32, encoding).partition('\x00')[0])
 
     return row
@@ -63,8 +62,7 @@ def from_row(row, writer):
     writer.write_int(int(row[1]))
     writer.write_int(int(row[2]))
     writer.write_int(int(row[3]))
-    writer.write_bool(bool(row[4]))
-    writer.write_zeros(3)
+    writer.write_bool(bool(row[4]), 4)
     writer.write_string_fixed(row[5], 32, encoding)
 
 

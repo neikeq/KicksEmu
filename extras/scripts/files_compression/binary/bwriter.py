@@ -46,21 +46,22 @@ class BinaryWriter:
         """
         return len(self.data)
 
-    def write_bool(self, value):
+    def write_bool(self, value, length=1):
         """
         Appends the specified 8-bit bool.
 
         Keyword arguments:
-        value -- the bool to write.
+        value -- the bool to write
+        length -- the number of bytes to write
         """
-        self.data.extend(1 if value else 0)
+        self.data.extend(value.to_bytes(length, self.byteorder))
 
     def write_byte(self, value):
         """
         Appends the specified 8-bit byte.
 
         Keyword arguments:
-        value -- the byte to write.
+        value -- the byte to write
         """
         self.data.extend(value.to_bytes(1, self.byteorder))
 
@@ -69,7 +70,7 @@ class BinaryWriter:
         Appends the specified 16-bit integer.
 
         Keyword arguments:
-        value -- the int to write.
+        value -- the int to write
         """
         self.data.extend(value.to_bytes(2, self.byteorder))
 
@@ -78,7 +79,7 @@ class BinaryWriter:
         Appends the specified 32-bit integer.
 
         Keyword arguments:
-        value -- the int to write.
+        value -- the int to write
         """
         self.data.extend(value.to_bytes(4, self.byteorder))
 
@@ -91,7 +92,7 @@ class BinaryWriter:
         encoding -- the encoding used to write de string (default 'utf-8')
 
         Returns:
-        The number of bytes written.
+        The number of bytes written
         """
         data = bytes(value, encoding)
         self.data.extend(data)
@@ -120,7 +121,7 @@ class BinaryWriter:
         Appends the specified byte array.
 
         Keyword arguments:
-        value -- the byte array to write.
+        value -- the byte array to write
         """
         self.data.extend(value)
 

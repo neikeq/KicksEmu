@@ -33,7 +33,7 @@ class BinaryReader:
         byteorder -- endianness used to read from the array. (default 'big')
         """
         self.data = data
-        self.order = byteorder
+        self.byteorder = byteorder
         self.index = 0
 
     def set_index(self, index):
@@ -49,14 +49,17 @@ class BinaryReader:
         """
         return len(self.data) - self.index
 
-    def read_bool(self):
+    def read_bool(self, length):
         """
-        Returns True if the byte at the current index is not equal to zero,
-        otherwise returns False. Increases index by 1.
+        Returns True if the value at the current index is not equal to zero,
+        otherwise returns False. Increases index by length.
+
+        Keyword arguments:
+        length -- the number of bytes to read
         """
-        value = self.data[self.index] != 0
-        self.index += 1
-        return value
+        data = self.data[self.index:self.index + length]
+        self.index += length
+        return int.from_bytes(data, byteorder=self.byteorder) != 0
 
     def read_byte(self):
         """
@@ -72,7 +75,7 @@ class BinaryReader:
         """
         data = self.data[self.index:self.index + 2]
         self.index += 2
-        return int.from_bytes(data, byteorder=self.order)
+        return int.from_bytes(data, byteorder=self.byteorder)
 
     def read_int(self):
         """
@@ -80,7 +83,7 @@ class BinaryReader:
         """
         data = self.data[self.index:self.index + 4]
         self.index += 4
-        return int.from_bytes(data, byteorder=self.order)
+        return int.from_bytes(data, byteorder=self.byteorder)
 
     def read_string(self, length, encoding='utf-8'):
         """
