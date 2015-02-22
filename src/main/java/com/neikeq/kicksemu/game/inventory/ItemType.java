@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.inventory;
 
 public enum ItemType {
 
+    FACE,
     HEAD,
     GLASSES,
     SHIRTS,
@@ -20,6 +21,8 @@ public enum ItemType {
 
     public int toInt() {
         switch (this) {
+            case FACE:
+                return 100;
             case HEAD:
                 return 101;
             case GLASSES:
@@ -57,6 +60,8 @@ public enum ItemType {
 
     public static ItemType fromInt(int code) {
         switch (code) {
+            case 100:
+                return FACE;
             case 101:
                 return HEAD;
             case 102:

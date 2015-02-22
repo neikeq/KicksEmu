@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
+import com.neikeq.kicksemu.game.characters.Animation;
+
 class CharacterBase {
 
     private int owner;
@@ -8,7 +10,7 @@ class CharacterBase {
 
     private short statsPoints;
 
-    private short animation;
+    private Animation animation;
     private short face;
 
     private int defaultHead;
@@ -67,11 +69,11 @@ class CharacterBase {
         this.statsPoints = statsPoints;
     }
 
-    public short getAnimation() {
+    public Animation getAnimation() {
         return animation;
     }
 
-    public void setAnimation(short animation) {
+    public void setAnimation(Animation animation) {
         this.animation = animation;
     }
 

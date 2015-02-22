@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
+import com.neikeq.kicksemu.game.characters.Animation;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -62,7 +63,7 @@ public class CharacterCreator {
                 stmt.setInt(1, character.getOwner());
                 stmt.setString(2, character.getName());
                 stmt.setShort(3, character.getPosition());
-                stmt.setShort(4, character.getAnimation());
+                stmt.setShort(4, character.getAnimation().toShort());
                 stmt.setShort(5, character.getFace());
                 stmt.setInt(6, character.getDefaultHead());
                 stmt.setInt(7, character.getDefaultShirts());
@@ -131,7 +132,7 @@ public class CharacterCreator {
         character.setName(msg.readString(15));
         character.setStatsPoints(msg.readShort());
         msg.ignoreBytes(2);
-        character.setAnimation(msg.readShort());
+        character.setAnimation(Animation.fromShort(msg.readShort()));
         character.setFace(msg.readShort());
         character.setDefaultHead(msg.readInt());
         character.setDefaultShirts(msg.readInt());

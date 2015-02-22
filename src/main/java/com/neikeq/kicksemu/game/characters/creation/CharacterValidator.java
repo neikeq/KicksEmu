@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
+import com.neikeq.kicksemu.game.characters.Animation;
 import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
@@ -148,9 +149,8 @@ class CharacterValidator {
         return VALID_FACES.contains(Integer.valueOf(character.getFace()));
     }
 
-    // TODO create animation and faces enumerator or constants
     private static boolean isValidAnimation(CharacterBase character) {
-        return (character.getAnimation() == 1 && character.getFace() < 400) ||
-                (character.getAnimation() == 2 && character.getFace() > 400);
+        return (character.getAnimation() == Animation.MALE && character.getFace() < 400) ||
+                (character.getAnimation() == Animation.FEMALE && character.getFace() > 400);
     }
 }
