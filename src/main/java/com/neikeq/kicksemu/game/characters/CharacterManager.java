@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -100,16 +101,20 @@ public class CharacterManager {
         final short level = PlayerInfo.getLevel(playerId, con);
         final int experience = PlayerInfo.getExperience(playerId, con);
 
-        short newLevel = TableManager.getLevelInfo(li ->
-                li.getLevel() > level && li.getExperience() <= experience).getLevel();
+        LevelInfo newLevelInfo = TableManager.getLevelInfo(li ->
+                li.getLevel() > level && li.getExperience() <= experience);
 
-        if (newLevel > level) {
-            levels += newLevel - level;
-        }
+        if (newLevelInfo != null) {
+            short newLevel = newLevelInfo.getLevel();
 
-        if (levels > 0) {
-            PlayerInfo.setLevel(newLevel, playerId, con);
-            onPlayerLevelUp(playerId, newLevel, levels, con);
+            if (newLevel > level) {
+                levels += newLevel - level;
+            }
+
+            if (levels > 0) {
+                PlayerInfo.setLevel(newLevel, playerId, con);
+                onPlayerLevelUp(playerId, newLevel, levels, con);
+            }
         }
 
         return levels;
