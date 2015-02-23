@@ -534,7 +534,7 @@ public class MessageBuilder {
             msg.append(room.getPassword(), 4);
             msg.appendZeros(1);
             msg.append(room.getMaster());
-            msg.append((byte)room.getGoalkeeperMode().toInt());
+            msg.append((byte)room.getRoomMode().toInt());
             msg.append(room.getMinLevel());
             msg.append(room.getMaxLevel());
             msg.append((short)room.getMap().toInt());
@@ -647,7 +647,7 @@ public class MessageBuilder {
             msg.append(room.getName(), 45);
             msg.append(room.getPassword(), 4);
             msg.appendZeros(1);
-            msg.append((byte)room.getGoalkeeperMode().toInt());
+            msg.append((byte)room.getRoomMode().toInt());
             msg.append(room.getMinLevel());
             msg.append(room.getMaxLevel());
             msg.append((byte)room.getMaxSize().toInt());
@@ -1166,6 +1166,8 @@ public class MessageBuilder {
             msg.append(historyMonthWins);
             msg.append(historyMonthDraws);
             msg.append(historyMonthLoses);
+
+            // TODO Fix History and Last Month History writing to PlayerDetails message
 
             // History
             msg.append((short)historyMatches);
