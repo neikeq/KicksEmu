@@ -326,8 +326,10 @@ public class RoomManager {
 
         short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
-        // TODO check if the server allows this goalkeeperMode
-        if (maxSize == null || type == null || roomMode == null) {
+        GameServerType serverType = ServerInfo.getType(ServerManager.getServerId());
+
+        if (maxSize == null || type == null || roomMode == null ||
+                !roomMode.isValidForServer(serverType)) {
             result = (byte) 255; // System problem
         } else if (room == null) {
             result = (byte) 254; // Room does not exist
