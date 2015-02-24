@@ -19,7 +19,7 @@ public class MatchBroadcaster {
         Room room = RoomManager.getRoomById(session.getRoomId());
 
         if (room != null && room.isPlayerIn(targetId)) {
-            Session targetSession = ServerManager.getSessionById(targetId);
+            Session targetSession = room.getPlayers().get(targetId);
             Channel ch = KicksEmu.getInstance().getNettyUdpServer().getChannelFuture().channel();
 
             try {
