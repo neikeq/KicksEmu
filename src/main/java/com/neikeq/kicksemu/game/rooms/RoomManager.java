@@ -382,15 +382,12 @@ public class RoomManager {
         if (room != null && room.isPlayerIn(playerId) && room.state() == RoomState.WAITING) {
             if (!room.getSwapLocker().isPlayerLocked(playerId)) {
                 room.getSwapLocker().lockPlayer(playerId);
+
                 RoomTeam currentTeam = room.getPlayerTeam(playerId);
                 RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
 
-                ServerMessage msgSwapTeam = MessageBuilder.swapTeam(playerId, newTeam);
-
                 if (newTeam != currentTeam) {
-                    room.sendBroadcast(msgSwapTeam);
-                } else {
-                    session.send(msgSwapTeam);
+                    room.sendBroadcast(MessageBuilder.swapTeam(playerId, newTeam));
                 }
             }
         }
