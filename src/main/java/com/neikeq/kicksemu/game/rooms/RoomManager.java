@@ -318,13 +318,11 @@ public class RoomManager {
             maxLevel = MAX_ROOM_LEVEL;
         }
 
-        // Check that everything is correct
+        // Check that settings are valid
 
         byte result = 0;
 
         Room room = rooms.get(roomId);
-
-        short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
         GameServerType serverType = ServerInfo.getType(ServerManager.getServerId());
 
@@ -343,25 +341,29 @@ public class RoomManager {
             result = (byte) 249; // Invalid maximum level
         } else if (!room.isValidMinLevel(minLevel)) {
             result = (byte) 248; // Invalid minimum level
-        } else if (playerLevel < minLevel || playerLevel > maxLevel) {
-            result = (byte) 250; // Invalid level
         } else {
-            // Limit the length of the name
-            if (name.length() > MAX_ROOM_NAME_LENGTH) {
-                name = name.substring(0, MAX_ROOM_NAME_LENGTH);
+            short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
+
+            if (playerLevel < minLevel || playerLevel > maxLevel) {
+                result = (byte) 250; // Invalid level
+            } else {
+                // Limit the length of the name
+                if (name.length() > MAX_ROOM_NAME_LENGTH) {
+                    name = name.substring(0, MAX_ROOM_NAME_LENGTH);
+                }
+
+                // Update room settings
+                room.setType(type);
+                room.setName(name);
+                room.setPassword(password);
+                room.setRoomMode(roomMode);
+                room.setMinLevel(minLevel);
+                room.setMaxLevel(maxLevel);
+                room.setMaxSize(maxSize);
+
+                ServerMessage msgRoomSettings = MessageBuilder.roomSettings(room, result);
+                room.sendBroadcast(msgRoomSettings);
             }
-
-            // Update room settings
-            room.setType(type);
-            room.setName(name);
-            room.setPassword(password);
-            room.setRoomMode(roomMode);
-            room.setMinLevel(minLevel);
-            room.setMaxLevel(maxLevel);
-            room.setMaxSize(maxSize);
-
-            ServerMessage msgRoomSettings = MessageBuilder.roomSettings(room, result);
-            room.sendBroadcast(msgRoomSettings);
         }
 
         if (result != 0) {
