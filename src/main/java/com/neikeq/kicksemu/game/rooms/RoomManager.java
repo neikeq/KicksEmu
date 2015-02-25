@@ -94,8 +94,8 @@ public class RoomManager {
         Set<Integer> indexes = rooms.keySet();
         Map<Integer, Room> pageRooms = new HashMap<>();
 
-        int i = 0;
         int startIndex = page * ROOMS_PER_PAGE;
+        int i = 0;
 
         for (int index : indexes) {
             if (i >= startIndex) {
@@ -127,11 +127,9 @@ public class RoomManager {
 
             RoomMap map = RoomMap.fromInt(msg.readShort());
             RoomBall ball = RoomBall.fromInt(msg.readShort());
-
             RoomSize maxSize = RoomSize.fromInt(msg.readByte());
 
             // Check that everything is correct
-
             byte result = 0;
 
             GameServerType serverType = ServerInfo.getType(ServerManager.getServerId());
@@ -181,14 +179,12 @@ public class RoomManager {
                 synchronized (roomsLocker) {
                     // Get the room id
                     room.setId(getSmallestMissingIndex());
-
                     // Add it to the rooms list
                     addRoom(room);
                 }
 
                 // Add the player to the room
                 room.addPlayer(session);
-
                 // Notify the client to join the room
                 session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
             }
@@ -381,12 +377,11 @@ public class RoomManager {
         // If the room is valid, the player is inside it and it is in waiting state
         if (room != null && room.isPlayerIn(playerId) && room.state() == RoomState.WAITING) {
             if (!room.getSwapLocker().isPlayerLocked(playerId)) {
-                room.getSwapLocker().lockPlayer(playerId);
-
                 RoomTeam currentTeam = room.getPlayerTeam(playerId);
                 RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
 
                 if (newTeam != currentTeam) {
+                    room.getSwapLocker().lockPlayer(playerId);
                     room.sendBroadcast(MessageBuilder.swapTeam(playerId, newTeam));
                 }
             }
