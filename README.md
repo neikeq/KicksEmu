@@ -39,6 +39,8 @@ ant build.all.artifacts
 
 ### Running
 
+[Setup guide.](https://github.com/neikeq/KicksEmu/wiki/Setup)
+
 Execute `run.sh` on unix and `run.bat` on windows.
 
 If you wish to use a different configuration file, you can pass its name as first argument when running the emulator. If this argument is omitted, the default configuration will be used.
