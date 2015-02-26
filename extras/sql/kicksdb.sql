@@ -194,6 +194,45 @@ CREATE TABLE IF NOT EXISTS `levels` (
 -- Data exporting was unselected.
 
 
+-- Dumping structure for table kicksdb.ranking
+CREATE TABLE IF NOT EXISTS `ranking` (
+  `index` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `matches` int(10) unsigned NOT NULL,
+  `wins` int(10) unsigned NOT NULL,
+  `draws` int(10) unsigned NOT NULL,
+  `points` int(10) unsigned NOT NULL,
+  `mom` int(10) unsigned NOT NULL,
+  `valid_goals` int(10) unsigned NOT NULL,
+  `valid_assists` int(10) unsigned NOT NULL,
+  `valid_interception` int(10) unsigned NOT NULL,
+  `valid_shooting` int(10) unsigned NOT NULL,
+  `valid_stealing` int(10) unsigned NOT NULL,
+  `valid_tackling` int(10) unsigned NOT NULL,
+  `shooting` int(10) unsigned NOT NULL,
+  `stealing` int(10) unsigned NOT NULL,
+  `tackling` int(10) unsigned NOT NULL,
+  `total_points` int(10) unsigned NOT NULL,
+  `month_matches` int(10) unsigned NOT NULL,
+  `month_wins` int(10) unsigned NOT NULL,
+  `month_draws` int(10) unsigned NOT NULL,
+  `month_points` int(10) unsigned NOT NULL,
+  `month_mom` int(10) unsigned NOT NULL,
+  `month_valid_goals` int(10) unsigned NOT NULL,
+  `month_valid_assists` int(10) unsigned NOT NULL,
+  `month_valid_interception` int(10) unsigned NOT NULL,
+  `month_valid_shooting` int(10) unsigned NOT NULL,
+  `month_valid_stealing` int(10) unsigned NOT NULL,
+  `month_valid_tackling` int(10) unsigned NOT NULL,
+  `month_shooting` int(10) unsigned NOT NULL,
+  `month_stealing` int(10) unsigned NOT NULL,
+  `month_tackling` int(10) unsigned NOT NULL,
+  `month_total_points` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`index`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+
 -- Dumping structure for table kicksdb.servers
 CREATE TABLE IF NOT EXISTS `servers` (
   `id` smallint(6) unsigned NOT NULL,
@@ -248,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_ip` varchar(64) NOT NULL DEFAULT '',
   `creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `last_connection` timestamp NULL DEFAULT NULL,
-  `online` smallint(6) NOT NULL DEFAULT '-1',
+  `online` int(11) NOT NULL DEFAULT '-1',
   `server` smallint(6) NOT NULL DEFAULT '-1',
   `kash` int(11) unsigned NOT NULL DEFAULT '0',
   `settings_camera` tinyint(4) NOT NULL DEFAULT '5',
