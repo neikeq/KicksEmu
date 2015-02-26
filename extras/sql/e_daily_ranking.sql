@@ -115,7 +115,7 @@ CREATE EVENT daily_ranking
             -- Clear content of the ranking table before updating it
             DELETE FROM ranking;
             -- Reset AUTO_INCREMENT
-            ALTER TABLE ranking AUTO_INCREMENT = 1
+            ALTER TABLE ranking AUTO_INCREMENT = 1;
 
             SET workDone = 0;
             REPEAT
