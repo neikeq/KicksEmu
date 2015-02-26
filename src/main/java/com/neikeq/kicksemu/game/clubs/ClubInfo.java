@@ -8,7 +8,7 @@ public class ClubInfo {
 
     private static final String table = "clubs";
 
-    public static String getName(int id, Connection... con) {
+    public static String getName(int id, Connection ... con) {
         return SqlUtils.getString("name", table, id, con);
     }
 

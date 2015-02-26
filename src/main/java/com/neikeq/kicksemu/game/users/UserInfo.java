@@ -83,7 +83,7 @@ public class UserInfo {
 
     // Sql setters
 
-    public static void sumKash(int value, int id, Connection... con) {
+    public static void sumKash(int value, int id, Connection ... con) {
         SqlUtils.sumInt("kash", value, table, id, con);
     }
 

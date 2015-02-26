@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.network.packets.out;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.PlayerRanking;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
@@ -272,57 +273,57 @@ class MessageUtils {
     }
 
     public static void appendRanking(int playerId, ServerMessage msg, Connection ... con) {
-        msg.append(PlayerInfo.getRankingMatches(playerId, con));
-        msg.append(PlayerInfo.getRankingWins(playerId, con));
-        msg.append(PlayerInfo.getRankingPoints(playerId, con));
-        msg.append(PlayerInfo.getRankingMom(playerId, con));
-        msg.append(PlayerInfo.getRankingValidGoals(playerId, con));
-        msg.append(PlayerInfo.getRankingValidAssists(playerId, con));
-        msg.append(PlayerInfo.getRankingValidInterception(playerId, con));
-        msg.append(PlayerInfo.getRankingValidShooting(playerId, con));
-        msg.append(PlayerInfo.getRankingValidStealing(playerId, con));
-        msg.append(PlayerInfo.getRankingValidTackling(playerId, con));
+        msg.append(PlayerRanking.getRankingMatches(playerId, con));
+        msg.append(PlayerRanking.getRankingWins(playerId, con));
+        msg.append(PlayerRanking.getRankingPoints(playerId, con));
+        msg.append(PlayerRanking.getRankingMom(playerId, con));
+        msg.append(PlayerRanking.getRankingValidGoals(playerId, con));
+        msg.append(PlayerRanking.getRankingValidAssists(playerId, con));
+        msg.append(PlayerRanking.getRankingValidInterception(playerId, con));
+        msg.append(PlayerRanking.getRankingValidShooting(playerId, con));
+        msg.append(PlayerRanking.getRankingValidStealing(playerId, con));
+        msg.append(PlayerRanking.getRankingValidTackling(playerId, con));
         msg.appendZeros(2);
-        msg.append(PlayerInfo.getRankingAvgGoals(playerId, con));
-        msg.append(PlayerInfo.getRankingAvgAssists(playerId, con));
-        msg.append(PlayerInfo.getRankingAvgInterception(playerId, con));
-        msg.append(PlayerInfo.getRankingAvgShooting(playerId, con));
-        msg.append(PlayerInfo.getRankingAvgStealing(playerId, con));
-        msg.append(PlayerInfo.getRankingAvgTackling(playerId, con));
+        msg.append(PlayerRanking.getRankingAvgGoals(playerId, con));
+        msg.append(PlayerRanking.getRankingAvgAssists(playerId, con));
+        msg.append(PlayerRanking.getRankingAvgInterception(playerId, con));
+        msg.append(PlayerRanking.getRankingAvgShooting(playerId, con));
+        msg.append(PlayerRanking.getRankingAvgStealing(playerId, con));
+        msg.append(PlayerRanking.getRankingAvgTackling(playerId, con));
         msg.appendZeros(2);
-        msg.append(PlayerInfo.getRankingAvgVotePoints(playerId, con));
-        msg.append(PlayerInfo.getRankingShooting(playerId, con));
-        msg.append(PlayerInfo.getRankingStealing(playerId, con));
-        msg.append(PlayerInfo.getRankingTackling(playerId, con));
+        msg.append(PlayerRanking.getRankingAvgVotePoints(playerId, con));
+        msg.append(PlayerRanking.getRankingShooting(playerId, con));
+        msg.append(PlayerRanking.getRankingStealing(playerId, con));
+        msg.append(PlayerRanking.getRankingTackling(playerId, con));
         msg.appendZeros(2);
-        msg.append(PlayerInfo.getRankingTotalPoints(playerId, con));
+        msg.append(PlayerRanking.getRankingTotalPoints(playerId, con));
     }
 
     public static void appendRankingLastMonth(int playerId, ServerMessage msg, Connection ... con) {
-        msg.append(PlayerInfo.getRankingMonthMatches(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthWins(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthPoints(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthMom(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthValidGoals(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthValidAssists(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthValidInterception(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthValidShooting(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthValidStealing(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthValidTackling(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthMatches(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthWins(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthPoints(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthMom(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthValidGoals(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthValidAssists(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthValidInterception(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthValidShooting(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthValidStealing(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthValidTackling(playerId, con));
         msg.appendZeros(2);
-        msg.append(PlayerInfo.getRankingMonthAvgGoals(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthAvgAssists(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthAvgInterception(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthAvgShooting(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthAvgStealing(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthAvgTackling(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthAvgGoals(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthAvgAssists(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthAvgInterception(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthAvgShooting(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthAvgStealing(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthAvgTackling(playerId, con));
         msg.appendZeros(2);
-        msg.append(PlayerInfo.getRankingMonthAvgVotePoints(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthShooting(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthStealing(playerId, con));
-        msg.append(PlayerInfo.getRankingMonthTackling(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthAvgVotePoints(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthShooting(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthStealing(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthTackling(playerId, con));
         msg.appendZeros(2);
-        msg.append(PlayerInfo.getRankingMonthTotalPoints(playerId, con));
+        msg.append(PlayerRanking.getRankingMonthTotalPoints(playerId, con));
     }
 
     private static void appendItemInUse(Item item, ServerMessage msg) {
