@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class PlayerRanking {
 
     private static short getPlayerRanking(String rankCol, int id, Connection ... con) {
-        String query = "SELECT index FROM ranking WHERE " + rankCol + " = ?";
+        String query = "SELECT `index` FROM ranking WHERE " + rankCol + " = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
