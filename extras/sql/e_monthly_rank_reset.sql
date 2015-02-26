@@ -10,7 +10,7 @@ CREATE EVENT monthly_ranking_reset
         EVERY 1 MONTH
         STARTS DATE_SUB(LAST_DAY(DATE_ADD(NOW(), INTERVAL 1 MONTH)),
         INTERVAL DAY(LAST_DAY(DATE_ADD(NOW(), INTERVAL 1 MONTH))) - 1 DAY)
-    COMMENT 'Garbage collection'
+    COMMENT 'Monthly ranking reset'
     DO
         BEGIN
             UPDATE characters SET
