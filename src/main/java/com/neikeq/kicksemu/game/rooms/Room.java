@@ -628,7 +628,7 @@ public class Room {
     }
 
     public void resetTrainingFactor() {
-        trainingFactor = 0;
+        trainingFactor = -1;
     }
 
     public void updateTrainingFactor() {

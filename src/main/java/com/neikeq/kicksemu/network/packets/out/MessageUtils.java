@@ -224,7 +224,7 @@ class MessageUtils {
     public static void appendMatchHistory(PlayerResult playerResult, Room room, MatchResult result,
                                           ServerMessage msg, Connection ... con) {
         int id = playerResult.getPlayerId();
-        boolean training = room.getTrainingFactor() <= 0;
+        boolean training = room.getTrainingFactor() == 0;
 
         TeamResult tr = !training ? room.getPlayerTeam(id) == RoomTeam.RED ?
                 result.getRedTeam() : result.getBlueTeam() :

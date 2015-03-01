@@ -52,9 +52,8 @@ public class PlayerResult {
                 steals, tackles, votePoints, ballControl);
     }
 
-    public PlayerResult(int playerId) {
-        this(playerId, (short)0, (short)0, (short)0, (short)0,
-                (short)0, (short)0, (short)0, (short)0);
+    public PlayerResult() {
+        this(0, (short)0, (short)0, (short)0, (short)0, (short)0, (short)0, (short)0, (short)0);
     }
 
     public PlayerResult(int playerId, short goals, short assists, short blocks, short shots,

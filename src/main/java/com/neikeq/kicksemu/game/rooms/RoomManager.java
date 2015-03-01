@@ -579,91 +579,96 @@ public class RoomManager {
 
     public static void matchResult(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        msg.readInt();
+        msg.ignoreBytes(4);
 
-        if (session.getRoomId() == roomId) {
-            Room room = getRoomById(roomId);
+        if (session.getRoomId() != roomId) return;
 
-            // If match started
-            if (room.state() == RoomState.PLAYING) {
-                room.setState(RoomState.RESULT);
+        Room room = getRoomById(roomId);
 
-                MatchResult result = MatchResult.fromMessage(msg,
-                        room.redTeamSize() + room.blueTeamSize());
+        // If match started
+        if (room.state() == RoomState.PLAYING) {
+            room.setState(RoomState.RESULT);
 
-                long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
-                short gameCountdown = result.getCountdown();
+            MatchResult result = MatchResult.fromMessage(msg,
+                    room.redTeamSize() + room.blueTeamSize());
 
-                if (gameCountdown < countdown && gameCountdown - countdown > 30) {
-                    room.resetTrainingFactor();
-                }
+            boolean goldenTime = GameEvents.isGoldenTime();
 
-                try (Connection con = MySqlManager.getConnection()) {
-                    boolean goldenTime = GameEvents.isGoldenTime();
+            long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
+            short gameCountdown = result.getCountdown();
 
-                    // Reward players
-                    result.getPlayers().stream().forEach(pr -> {
-                        int playerId = pr.getPlayerId();
-                        int reward = RewardCalculator.calculateReward(pr, room,
-                                gameCountdown, (int) countdown);
+            if (gameCountdown < countdown && gameCountdown - countdown > 30) {
+                room.resetTrainingFactor();
+            }
 
-                        TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                                result.getRedTeam() : result.getBlueTeam();
+            try (Connection con = MySqlManager.getConnection()) {
+                // Reward players
+                result.getPlayers().stream().forEach(pr -> {
+                    int playerId = pr.getPlayerId();
+                    int reward = RewardCalculator.calculateReward(pr, room, gameCountdown);
 
-                        short scoredGoals = teamResult.getGoals();
+                    // If player's position is a DF branch
+                    if (Position.trunk(PlayerInfo.getPosition(playerId, con)) == Position.DF) {
+                        short scoredGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                                result.getRedTeam().getGoals() : result.getBlueTeam().getGoals();
                         short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
                                 result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
 
-                        // If player is mvp increase his rewards by 25%
-                        reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
-                        // If player position is a DF branch, his team did not lose and conceded 1
-                        // or less goals, increase his rewards by 30%
-                        reward += concededGoals <= 1 && scoredGoals >= concededGoals &&
-                                Position.trunk(PlayerInfo.getPosition(playerId, con)) ==
-                                        Position.DF ? (reward * 30) / 100 : 0;
-                        // Golden Time reward bonus
-                        reward += goldenTime ? (reward * 50) / 100 : 0;
+                        // If player's team did not lose and conceded 1 or less goals,
+                        // increase his rewards by 30%
+                        reward += concededGoals <= 1 && scoredGoals >= concededGoals ?
+                                (reward * 30) / 100 : 0;
+                    }
 
-                        pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
-                        pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
-                    });
+                    // If player is mvp increase his rewards by 25%
+                    reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+                    // Golden Time reward bonus
+                    reward += goldenTime ? (reward * 50) / 100 : 0;
 
-                    result.getPlayers().stream().forEach(pr ->
-                            room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
-                                    MessageBuilder.matchResult(result, pr, room, con))
-                    );
+                    pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
+                    pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
+                });
+
+                result.getPlayers().stream().forEach(pr ->
+                        room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
+                                MessageBuilder.matchResult(result, pr, room, con))
+                );
+
+                if (room.getObservers().size() > 0) {
+                    ServerMessage observerMsg = MessageBuilder.matchResult(result,
+                            new PlayerResult(), room, con);
 
                     room.getObservers().stream().forEach(o ->
-                        room.getPlayers().get(o).sendAndFlush(MessageBuilder.matchResult(result,
-                                        new PlayerResult(o), room, con))
-                    );
+                                    room.getPlayers().get(o).sendAndFlush(observerMsg));
+                }
 
-                    result.getPlayers().stream().forEach(pr -> {
-                        int playerId = pr.getPlayerId();
+                result.getPlayers().stream().forEach(pr -> {
+                    int playerId = pr.getPlayerId();
 
-                        PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
-                        PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
+                    PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
+                    PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
 
+                    if (pr.getExperience() > 0) {
                         short levels = CharacterManager.checkExperience(playerId, con);
 
                         if (levels > 0) {
                             room.getPlayers().get(pr.getPlayerId())
                                     .sendAndFlush(MessageBuilder.playerStats(playerId, con));
                         }
+                    }
 
+                    // If match was not in training mode, update player's history
+                    if (room.getTrainingFactor() > 0) {
                         TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
                                 result.getRedTeam() : result.getBlueTeam();
 
-                        // If match was not in training mode, update player's history
-                        if (room.getTrainingFactor() > 0) {
-                            RewardCalculator.updatePlayerHistory(pr, teamResult,
-                                    result.getMom(), con);
-                        }
-                    });
+                        RewardCalculator.updatePlayerHistory(pr, teamResult,
+                                result.getMom(), con);
+                    }
+                });
 
-                    room.getConfirmedPlayers().clear();
-                } catch (SQLException ignored) {}
-            }
+                room.getConfirmedPlayers().clear();
+            } catch (SQLException ignored) {}
         }
     }
 

@@ -9,12 +9,8 @@ import java.sql.Connection;
 public class RewardCalculator {
 
     public static int calculateReward(PlayerResult result, Room room,
-                                      short countdown, int serverCountdown) {
+                                      short countdown) {
         short votePoints = result.getVotePoints() > 100 ? 100 : result.getVotePoints();
-
-        if (countdown < serverCountdown && countdown - serverCountdown > 30) {
-            return 0;
-        }
 
         switch (room.getTrainingFactor()) {
             case 0:
