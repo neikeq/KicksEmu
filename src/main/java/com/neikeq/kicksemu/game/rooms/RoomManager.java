@@ -592,12 +592,17 @@ public class RoomManager {
             MatchResult result = MatchResult.fromMessage(msg,
                     room.redTeamSize() + room.blueTeamSize());
 
+            // Apply level gap bonus if the levels difference in room settings is less than 10
+            boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
             boolean goldenTime = GameEvents.isGoldenTime();
 
+            // Check the match countdown
             long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
             short gameCountdown = result.getCountdown();
 
-            if (gameCountdown < countdown && gameCountdown - countdown > 30) {
+            // If countdown sent by client is not valid (more than 20 secs less than server's),
+            // disable rewards and player's history updating
+            if (gameCountdown < countdown && gameCountdown - countdown > 20) {
                 room.resetTrainingFactor();
             }
 
@@ -620,21 +625,25 @@ public class RoomManager {
                                 (reward * 30) / 100 : 0;
                     }
 
+                    reward += levelGapReward ? (reward * 10) / 100 : 0;
+                    reward += goldenTime ? (reward * 50) / 100 : 0;
                     // If player is mvp increase his rewards by 25%
                     reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
-                    // Golden Time reward bonus
-                    reward += goldenTime ? (reward * 50) / 100 : 0;
 
                     pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
                 });
 
+                // Broadcast match result message after calculating rewards
                 result.getPlayers().stream().forEach(pr ->
                         room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
                                 MessageBuilder.matchResult(result, pr, room, con))
                 );
 
+                // Send match result message to observers players in the room
                 if (room.getObservers().size() > 0) {
+                    // Because observer players does not count in stats,
+                    // we pass an empty PlayerResult instance
                     ServerMessage observerMsg = MessageBuilder.matchResult(result,
                             new PlayerResult(), room, con);
 
@@ -645,12 +654,15 @@ public class RoomManager {
                 result.getPlayers().stream().forEach(pr -> {
                     int playerId = pr.getPlayerId();
 
+                    // Add the experience and points earned to the player
                     PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
                     PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
 
                     if (pr.getExperience() > 0) {
+                        // Check if player did level up and apply level up operations if needed
                         short levels = CharacterManager.checkExperience(playerId, con);
 
+                        // If player did level up, send him the updated stats points
                         if (levels > 0) {
                             room.getPlayers().get(pr.getPlayerId())
                                     .sendAndFlush(MessageBuilder.playerStats(playerId, con));
