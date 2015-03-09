@@ -138,7 +138,7 @@ function reset_stats($character, $db) {
 function reset_stats_by_id($char_id, $db) {
     $position = get_character_position($char_id, $db);
     $level = get_character_level($char_id, $db);
-    $branch_position = floor($position / 10) * 10;
+    $branch_position = $position - ($position % 10);
     $creation_stats = Constants::$creation_stats[$branch_position];
     
     set_character_stats_points($char_id, 10, $db);
