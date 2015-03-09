@@ -104,7 +104,7 @@ public class UserManager {
                 if (Position.isValidNewPosition(currentPosition, position)) {
                     PlayerInfo.setPosition(position, playerId, con);
 
-                    PlayerStats stats = CharacterUpgrade.getInstance().getStats().get(position);
+                    PlayerStats stats = CharacterUpgrade.getInstance().getUpgradeStats().get(position);
 
                     short remainStats = 0;
 

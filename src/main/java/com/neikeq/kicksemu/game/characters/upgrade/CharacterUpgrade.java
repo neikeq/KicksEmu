@@ -8,32 +8,42 @@ import java.util.Map;
 
 public class CharacterUpgrade {
 
-    private final Map<Short, PlayerStats> stats;
+    private final Map<Short, PlayerStats> creationStats;
+    private final Map<Short, PlayerStats> upgradeStats;
     private final Map<Short, PlayerStats> autoStats;
     private final Map<Integer, Integer> levelStats;
 
     private static CharacterUpgrade instance;
 
-    public void defineStats() {
-        getStats().put(Position.ST,
+    public void defineCreationStats() {
+        getCreationStats().put(Position.FW,
+                new PlayerStats(40, 30, 30, 30, 30, 20, 15, 35, 30, 20, 55, 60, 55, 30, 0, 0, 0));
+        getCreationStats().put(Position.MF,
+                new PlayerStats(40, 35, 30, 25, 30, 25, 20, 20, 15, 30, 60, 65, 55, 30, 0, 0, 0));
+        getCreationStats().put(Position.DF,
+                new PlayerStats(40, 30, 30, 25, 25, 30, 30, 35, 15, 15, 50, 60, 65, 30, 0, 0, 0));
+    }
+
+    public void defineUpgradeStats() {
+        getUpgradeStats().put(Position.ST,
                 new PlayerStats(0, 0, 0, 7, 7, 0, -10, 7, 7, -10, 0, 0, 0, 0, 0, 0, 0));
-        getStats().put(Position.CF,
+        getUpgradeStats().put(Position.CF,
                 new PlayerStats(0, 0, 7, 0, 7, 0, -10, 0, 7, -10, 0, 7, 0, 0, 0, 0, 0));
-        getStats().put(Position.WF,
+        getUpgradeStats().put(Position.WF,
                 new PlayerStats(0, 7, 0, 0, 7, 0, -10, 0, 7, -10, 7, 0, 0, 0, 0, 0, 0));
-        getStats().put(Position.AMF,
+        getUpgradeStats().put(Position.AMF,
                 new PlayerStats(0, 0, 7, 0, 7, 0, -10, 0, 0, 7, 0, 7, -10, 0, 0, 0, 0));
-        getStats().put(Position.SMF,
+        getUpgradeStats().put(Position.SMF,
                 new PlayerStats(0, 7, 0, 0, 7, 0, -10, -10, 0, 7, 7, 0, 0, 0, 0, 0, 0));
-        getStats().put(Position.CMF,
+        getUpgradeStats().put(Position.CMF,
                 new PlayerStats(0, 0, 0, 7, 7, 0, -10, -10, 0, 7, 0, 7, 0, 0, 0, 0, 0));
-        getStats().put(Position.DMF,
+        getUpgradeStats().put(Position.DMF,
                 new PlayerStats(0, 7, 0, 0, 0, 7, 0, 7, -10, -10, 0, 0, 0, 7, 0, 0, 0));
-        getStats().put(Position.SB,
+        getUpgradeStats().put(Position.SB,
                 new PlayerStats(0, 7, 7, 0, 0, 7, 0, -10, -10, 0, 7, 0, 0, 0, 0, 0, 0));
-        getStats().put(Position.CB,
+        getUpgradeStats().put(Position.CB,
                 new PlayerStats(0, 7, 0, 0, 0, 7, 7, 7, -10, -10, 0, 0, 0, 0, 0, 0, 0));
-        getStats().put(Position.SW,
+        getUpgradeStats().put(Position.SW,
                 new PlayerStats(0, 7, 0, 0, 0, 0, 7, 0, -10, -10, 0, 0, 7, 7, 0, 0, 0));
     }
 
@@ -76,12 +86,20 @@ public class CharacterUpgrade {
         getLevelStats().put(55, 2);
     }
 
+    public short statsPointsForLevel(int level) {
+        Integer result = getLevelStats().get(level);
+
+        return result == null ? 1 : result.shortValue();
+    }
+
     private CharacterUpgrade() {
-        stats = new HashMap<>();
+        creationStats = new HashMap<>();
+        upgradeStats = new HashMap<>();
         autoStats = new HashMap<>();
         levelStats = new HashMap<>();
 
-        defineStats();
+        defineCreationStats();
+        defineUpgradeStats();
         defineAutoStats();
         defineLevelStats();
     }
@@ -94,8 +112,8 @@ public class CharacterUpgrade {
         return instance;
     }
 
-    public Map<Short, PlayerStats> getStats() {
-        return stats;
+    public Map<Short, PlayerStats> getUpgradeStats() {
+        return upgradeStats;
     }
 
     public Map<Short, PlayerStats> getAutoStats() {
@@ -106,9 +124,7 @@ public class CharacterUpgrade {
         return levelStats;
     }
 
-    public short statsPointsForLevel(int level) {
-        Integer result = getLevelStats().get(level);
-
-        return result == null ? 1 : result.shortValue();
+    public Map<Short, PlayerStats> getCreationStats() {
+        return creationStats;
     }
 }

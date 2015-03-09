@@ -1,7 +1,9 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
 import com.neikeq.kicksemu.game.characters.Animation;
+import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.characters.Position;
+import com.neikeq.kicksemu.game.characters.upgrade.CharacterUpgrade;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemFree;
@@ -32,25 +34,6 @@ class CharacterValidator {
     private static final int STATS_GLOBAL = 490;
     private static final int MIN_STATS_POINTS = 0;
     private static final int MAX_STATS_POINTS = 10;
-
-    // FW, MF, DF minimum values
-    private static final byte[] MIN_RUNNING = new byte[] { 40, 40, 40 };
-    private static final byte[] MIN_ENDURANCE = new byte[] { 30, 35, 30 };
-    private static final byte[] MIN_AGILITY = new byte[] { 30, 30, 30 };
-    private static final byte[] MIN_BALL_CONTROL= new byte[] { 30, 25, 25 };
-    private static final byte[] MIN_DRIBBLING = new byte[] { 30, 30, 25 };
-    private static final byte[] MIN_STEALING = new byte[] { 20, 25, 30 };
-    private static final byte[] MIN_TACKLING = new byte[] { 15, 20, 30 };
-    private static final byte[] MIN_HEADING = new byte[] { 35, 20, 35 };
-    private static final byte[] MIN_SHORT_SHOTS = new byte[] { 30, 15, 15 };
-    private static final byte[] MIN_LONG_SHOTS = new byte[] { 20, 30, 15 };
-    private static final byte[] MIN_CROSSING = new byte[] { 55, 60, 50 };
-    private static final byte[] MIN_SHORT_PASSES = new byte[] { 60, 65, 60 };
-    private static final byte[] MIN_LONG_PASSES = new byte[] { 55, 55, 65 };
-    private static final byte[] MIN_MARKING = new byte[] { 30, 30, 30 };
-    private static final byte[] MIN_GOALKEEPING = new byte[] { 0, 0, 0 };
-    private static final byte[] MIN_PUNCHING = new byte[] { 0, 0, 0 };
-    private static final byte[] MIN_DEFENSE = new byte[] { 0, 0, 0 };
 
     public static byte validate(CharacterBase character) {
         byte result = CreationResult.SUCCESS;
@@ -104,28 +87,29 @@ class CharacterValidator {
     }
 
     private static boolean containsValidStats(CharacterBase character) {
-        int index = character.getPosition() / 10 - 1;
+        PlayerStats stats = CharacterUpgrade.getInstance().getCreationStats()
+                .get(character.getPosition());
 
         return character.getTotalStats() == STATS_GLOBAL &&
                 character.getStatsPoints() <= MAX_STATS_POINTS &&
                 character.getStatsPoints() >= MIN_STATS_POINTS &&
-                character.getStatsRunning() >= MIN_RUNNING[index] &&
-                character.getStatsEndurance() >= MIN_ENDURANCE[index] &&
-                character.getStatsAgility() >= MIN_AGILITY[index] &&
-                character.getStatsBallControl() >= MIN_BALL_CONTROL[index] &&
-                character.getStatsDribbling() >= MIN_DRIBBLING[index] &&
-                character.getStatsStealing() >= MIN_STEALING[index] &&
-                character.getStatsTackling() >= MIN_TACKLING[index] &&
-                character.getStatsHeading() >= MIN_HEADING[index] &&
-                character.getStatsShortShots() >= MIN_SHORT_SHOTS[index] &&
-                character.getStatsLongShots() >= MIN_LONG_SHOTS[index] &&
-                character.getStatsCrossing() >= MIN_CROSSING[index] &&
-                character.getStatsShortPasses() >= MIN_SHORT_PASSES[index] &&
-                character.getStatsLongPasses() >= MIN_LONG_PASSES[index] &&
-                character.getStatsMarking() >= MIN_MARKING[index] &&
-                character.getStatsGoalkeeping() >= MIN_GOALKEEPING[index] &&
-                character.getStatsPunching() >= MIN_PUNCHING[index] &&
-                character.getStatsDefense() >= MIN_DEFENSE[index];
+                character.getStatsRunning() >= stats.getRunning() &&
+                character.getStatsEndurance() >= stats.getEndurance() &&
+                character.getStatsAgility() >= stats.getAgility() &&
+                character.getStatsBallControl() >= stats.getBallControl() &&
+                character.getStatsDribbling() >= stats.getDribbling() &&
+                character.getStatsStealing() >= stats.getStealing() &&
+                character.getStatsTackling() >= stats.getTackling() &&
+                character.getStatsHeading() >= stats.getHeading() &&
+                character.getStatsShortShots() >= stats.getShortShots() &&
+                character.getStatsLongShots() >= stats.getLongShots() &&
+                character.getStatsCrossing() >= stats.getCrossing() &&
+                character.getStatsShortPasses() >= stats.getShortPasses() &&
+                character.getStatsLongPasses() >= stats.getLongPasses() &&
+                character.getStatsMarking() >= stats.getMarking() &&
+                character.getStatsGoalkeeping() >= stats.getGoalkeeping() &&
+                character.getStatsPunching() >= stats.getPunching() &&
+                character.getStatsDefense() >= stats.getDefense();
     }
 
     private static boolean containsValidItems(CharacterBase character) {
