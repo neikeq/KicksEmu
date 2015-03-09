@@ -745,6 +745,78 @@ public class PlayerInfo {
         SqlUtils.setShort("face", value, table, id, con);
     }
 
+    public static void setStatsPoints(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_points", value, table, id, con);
+    }
+
+    public static void setStatsRunning(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_running", value, table, id, con);
+    }
+
+    public static void setStatsEndurance(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_endurance", value, table, id, con);
+    }
+
+    public static void setStatsAgility(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_agility", value, table, id, con);
+    }
+
+    public static void setStatsBallControl(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_ball_control", value, table, id, con);
+    }
+
+    public static void setStatsDribbling(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_dribbling", value, table, id, con);
+    }
+
+    public static void setStatsStealing(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_stealing", value, table, id, con);
+    }
+
+    public static void setStatsTackling(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_tackling", value, table, id, con);
+    }
+
+    public static void setStatsHeading(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_heading", value, table, id, con);
+    }
+
+    public static void setStatsShortShots(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_short_shots", value, table, id, con);
+    }
+
+    public static void setStatsLongShots(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_long_shots", value, table, id, con);
+    }
+
+    public static void setStatsCrossing(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_crossing", value, table, id, con);
+    }
+
+    public static void setStatsShortPasses(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_short_passes", value, table, id, con);
+    }
+
+    public static void setStatsLongPasses(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_long_passes", value, table, id, con);
+    }
+
+    public static void setStatsMarking(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_marking", value, table, id, con);
+    }
+
+    public static void setStatsGoalkeeping(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_goalkeeping", value, table, id, con);
+    }
+
+    public static void setStatsPunching(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_punching", value, table, id, con);
+    }
+
+    public static void setStatsDefense(short value, int id, Connection ... con) {
+        SqlUtils.setShort("stats_defense", value, table, id, con);
+    }
+
     public static void sumStatsPoints(short value, int id, Connection ... con) {
         SqlUtils.sumShort("stats_points", value, table, id, con);
     }

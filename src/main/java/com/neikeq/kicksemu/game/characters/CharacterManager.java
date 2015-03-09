@@ -96,7 +96,69 @@ public class CharacterManager {
         session.close();
     }
 
-    public static short checkExperience(int playerId, Connection con) {
+    public static void resetStats(int playerId) {
+        short position = PlayerInfo.getPosition(playerId);
+        short level = PlayerInfo.getLevel(playerId);
+        short branchPosition = Position.trunk(position);
+
+        PlayerStats creationStats = CharacterUpgrade.getInstance()
+                .getUpgradeStats().get(position);
+
+        short statsPoints = 10;
+
+        PlayerInfo.setStatsRunning(creationStats.getRunning(), playerId);
+        PlayerInfo.setStatsEndurance(creationStats.getEndurance(), playerId);
+        PlayerInfo.setStatsAgility(creationStats.getAgility(), playerId);
+        PlayerInfo.setStatsBallControl(creationStats.getBallControl(), playerId);
+        PlayerInfo.setStatsDribbling(creationStats.getDribbling(), playerId);
+        PlayerInfo.setStatsStealing(creationStats.getStealing(), playerId);
+        PlayerInfo.setStatsTackling(creationStats.getTackling(), playerId);
+        PlayerInfo.setStatsHeading(creationStats.getHeading(), playerId);
+        PlayerInfo.setStatsShortShots(creationStats.getShortShots(), playerId);
+        PlayerInfo.setStatsLongShots(creationStats.getLongShots(), playerId);
+        PlayerInfo.setStatsCrossing(creationStats.getCrossing(), playerId);
+        PlayerInfo.setStatsShortPasses(creationStats.getShortPasses(), playerId);
+        PlayerInfo.setStatsLongPasses(creationStats.getLongPasses(), playerId);
+        PlayerInfo.setStatsMarking(creationStats.getMarking(), playerId);
+        PlayerInfo.setStatsGoalkeeping(creationStats.getGoalkeeping(), playerId);
+        PlayerInfo.setStatsPunching(creationStats.getPunching(), playerId);
+        PlayerInfo.setStatsDefense(creationStats.getDefense(), playerId);
+
+        if (level > 18) {
+            onPlayerLevelUp(playerId, (short)18, (short)17, branchPosition);
+            onPlayerLevelUp(playerId, level, (short)(level - 18), branchPosition);
+        } else {
+            onPlayerLevelUp(playerId, level, (short)(level - 1), branchPosition);
+        }
+
+        if (level >= 18) {
+            // Apply upgrade stats
+            PlayerStats upgradeStats = CharacterUpgrade.getInstance().getUpgradeStats().get(position);
+
+            statsPoints += PlayerInfo.sumStatsRunning(upgradeStats.getRunning(), playerId);
+            statsPoints += PlayerInfo.sumStatsEndurance(upgradeStats.getEndurance(), playerId);
+            statsPoints += PlayerInfo.sumStatsAgility(upgradeStats.getAgility(), playerId);
+            statsPoints += PlayerInfo.sumStatsBallControl(upgradeStats.getBallControl(), playerId);
+            statsPoints += PlayerInfo.sumStatsDribbling(upgradeStats.getDribbling(), playerId);
+            statsPoints += PlayerInfo.sumStatsStealing(upgradeStats.getStealing(), playerId);
+            statsPoints += PlayerInfo.sumStatsTackling(upgradeStats.getTackling(), playerId);
+            statsPoints += PlayerInfo.sumStatsHeading(upgradeStats.getHeading(), playerId);
+            statsPoints += PlayerInfo.sumStatsShortShots(upgradeStats.getShortShots(), playerId);
+            statsPoints += PlayerInfo.sumStatsLongShots(upgradeStats.getLongShots(), playerId);
+            statsPoints += PlayerInfo.sumStatsCrossing(upgradeStats.getCrossing(), playerId);
+            statsPoints += PlayerInfo.sumStatsShortPasses(upgradeStats.getShortPasses(), playerId);
+            statsPoints += PlayerInfo.sumStatsLongPasses(upgradeStats.getLongPasses(), playerId);
+            statsPoints += PlayerInfo.sumStatsMarking(upgradeStats.getMarking(), playerId);
+            statsPoints += PlayerInfo.sumStatsGoalkeeping(upgradeStats.getGoalkeeping(), playerId);
+            statsPoints += PlayerInfo.sumStatsPunching(upgradeStats.getPunching(), playerId);
+            statsPoints += PlayerInfo.sumStatsDefense(upgradeStats.getDefense(), playerId);
+        }
+
+        // Add stats point
+        PlayerInfo.sumStatsPoints(statsPoints, playerId);
+    }
+
+    public static short checkExperience(int playerId, Connection ... con) {
         short levels = 0;
         final short level = PlayerInfo.getLevel(playerId, con);
         final int experience = PlayerInfo.getExperience(playerId, con);
@@ -113,15 +175,17 @@ public class CharacterManager {
 
             if (levels > 0) {
                 PlayerInfo.setLevel(newLevel, playerId, con);
-                onPlayerLevelUp(playerId, newLevel, levels, con);
+
+                short position = PlayerInfo.getPosition(playerId, con);
+                onPlayerLevelUp(playerId, newLevel, levels, position, con);
             }
         }
 
         return levels;
     }
 
-    public static void onPlayerLevelUp(int id, short level, short levels, Connection con) {
-        short position = PlayerInfo.getPosition(id, con);
+    public static void onPlayerLevelUp(int id, short level, short levels,
+                                       short position, Connection ... con) {
         int from = level - levels;
 
         // Calculate stats points to add
