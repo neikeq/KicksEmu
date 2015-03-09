@@ -104,58 +104,78 @@ public class CharacterManager {
         PlayerStats creationStats = CharacterUpgrade.getInstance()
                 .getUpgradeStats().get(position);
 
-        short statsPoints = 10;
+        try (Connection con = MySqlManager.getConnection()) {
+            short statsPoints = 10;
 
-        PlayerInfo.setStatsRunning(creationStats.getRunning(), playerId);
-        PlayerInfo.setStatsEndurance(creationStats.getEndurance(), playerId);
-        PlayerInfo.setStatsAgility(creationStats.getAgility(), playerId);
-        PlayerInfo.setStatsBallControl(creationStats.getBallControl(), playerId);
-        PlayerInfo.setStatsDribbling(creationStats.getDribbling(), playerId);
-        PlayerInfo.setStatsStealing(creationStats.getStealing(), playerId);
-        PlayerInfo.setStatsTackling(creationStats.getTackling(), playerId);
-        PlayerInfo.setStatsHeading(creationStats.getHeading(), playerId);
-        PlayerInfo.setStatsShortShots(creationStats.getShortShots(), playerId);
-        PlayerInfo.setStatsLongShots(creationStats.getLongShots(), playerId);
-        PlayerInfo.setStatsCrossing(creationStats.getCrossing(), playerId);
-        PlayerInfo.setStatsShortPasses(creationStats.getShortPasses(), playerId);
-        PlayerInfo.setStatsLongPasses(creationStats.getLongPasses(), playerId);
-        PlayerInfo.setStatsMarking(creationStats.getMarking(), playerId);
-        PlayerInfo.setStatsGoalkeeping(creationStats.getGoalkeeping(), playerId);
-        PlayerInfo.setStatsPunching(creationStats.getPunching(), playerId);
-        PlayerInfo.setStatsDefense(creationStats.getDefense(), playerId);
+            PlayerInfo.setStatsRunning(creationStats.getRunning(), playerId, con);
+            PlayerInfo.setStatsEndurance(creationStats.getEndurance(), playerId, con);
+            PlayerInfo.setStatsAgility(creationStats.getAgility(), playerId, con);
+            PlayerInfo.setStatsBallControl(creationStats.getBallControl(), playerId, con);
+            PlayerInfo.setStatsDribbling(creationStats.getDribbling(), playerId, con);
+            PlayerInfo.setStatsStealing(creationStats.getStealing(), playerId, con);
+            PlayerInfo.setStatsTackling(creationStats.getTackling(), playerId, con);
+            PlayerInfo.setStatsHeading(creationStats.getHeading(), playerId, con);
+            PlayerInfo.setStatsShortShots(creationStats.getShortShots(), playerId, con);
+            PlayerInfo.setStatsLongShots(creationStats.getLongShots(), playerId, con);
+            PlayerInfo.setStatsCrossing(creationStats.getCrossing(), playerId, con);
+            PlayerInfo.setStatsShortPasses(creationStats.getShortPasses(), playerId, con);
+            PlayerInfo.setStatsLongPasses(creationStats.getLongPasses(), playerId, con);
+            PlayerInfo.setStatsMarking(creationStats.getMarking(), playerId, con);
+            PlayerInfo.setStatsGoalkeeping(creationStats.getGoalkeeping(), playerId, con);
+            PlayerInfo.setStatsPunching(creationStats.getPunching(), playerId, con);
+            PlayerInfo.setStatsDefense(creationStats.getDefense(), playerId, con);
 
-        if (level > 18) {
-            onPlayerLevelUp(playerId, (short)18, (short)17, branchPosition);
-            onPlayerLevelUp(playerId, level, (short)(level - 18), branchPosition);
-        } else {
-            onPlayerLevelUp(playerId, level, (short)(level - 1), branchPosition);
-        }
+            if (level > 18) {
+                onPlayerLevelUp(playerId, (short) 18, (short) 17, branchPosition, con);
+                onPlayerLevelUp(playerId, level, (short) (level - 18), branchPosition, con);
+            } else {
+                onPlayerLevelUp(playerId, level, (short) (level - 1), branchPosition, con);
+            }
 
-        if (level >= 18) {
-            // Apply upgrade stats
-            PlayerStats upgradeStats = CharacterUpgrade.getInstance().getUpgradeStats().get(position);
+            if (level >= 18) {
+                // Apply upgrade stats
+                PlayerStats upgradeStats = CharacterUpgrade.getInstance()
+                        .getUpgradeStats().get(position);
 
-            statsPoints += PlayerInfo.sumStatsRunning(upgradeStats.getRunning(), playerId);
-            statsPoints += PlayerInfo.sumStatsEndurance(upgradeStats.getEndurance(), playerId);
-            statsPoints += PlayerInfo.sumStatsAgility(upgradeStats.getAgility(), playerId);
-            statsPoints += PlayerInfo.sumStatsBallControl(upgradeStats.getBallControl(), playerId);
-            statsPoints += PlayerInfo.sumStatsDribbling(upgradeStats.getDribbling(), playerId);
-            statsPoints += PlayerInfo.sumStatsStealing(upgradeStats.getStealing(), playerId);
-            statsPoints += PlayerInfo.sumStatsTackling(upgradeStats.getTackling(), playerId);
-            statsPoints += PlayerInfo.sumStatsHeading(upgradeStats.getHeading(), playerId);
-            statsPoints += PlayerInfo.sumStatsShortShots(upgradeStats.getShortShots(), playerId);
-            statsPoints += PlayerInfo.sumStatsLongShots(upgradeStats.getLongShots(), playerId);
-            statsPoints += PlayerInfo.sumStatsCrossing(upgradeStats.getCrossing(), playerId);
-            statsPoints += PlayerInfo.sumStatsShortPasses(upgradeStats.getShortPasses(), playerId);
-            statsPoints += PlayerInfo.sumStatsLongPasses(upgradeStats.getLongPasses(), playerId);
-            statsPoints += PlayerInfo.sumStatsMarking(upgradeStats.getMarking(), playerId);
-            statsPoints += PlayerInfo.sumStatsGoalkeeping(upgradeStats.getGoalkeeping(), playerId);
-            statsPoints += PlayerInfo.sumStatsPunching(upgradeStats.getPunching(), playerId);
-            statsPoints += PlayerInfo.sumStatsDefense(upgradeStats.getDefense(), playerId);
-        }
+                statsPoints += PlayerInfo.sumStatsRunning(upgradeStats.getRunning(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsEndurance(upgradeStats.getEndurance(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsAgility(upgradeStats.getAgility(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsBallControl(upgradeStats.getBallControl(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsDribbling(upgradeStats.getDribbling(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsStealing(upgradeStats.getStealing(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsTackling(upgradeStats.getTackling(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsHeading(upgradeStats.getHeading(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsShortShots(upgradeStats.getShortShots(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsLongShots(upgradeStats.getLongShots(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsCrossing(upgradeStats.getCrossing(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsShortPasses(upgradeStats.getShortPasses(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsLongPasses(upgradeStats.getLongPasses(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsMarking(upgradeStats.getMarking(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsGoalkeeping(upgradeStats.getGoalkeeping(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsPunching(upgradeStats.getPunching(),
+                        playerId, con);
+                statsPoints += PlayerInfo.sumStatsDefense(upgradeStats.getDefense(),
+                        playerId, con);
+            }
 
-        // Add stats point
-        PlayerInfo.sumStatsPoints(statsPoints, playerId);
+            // Add stats point
+            PlayerInfo.sumStatsPoints(statsPoints, playerId, con);
+        } catch (SQLException ignored) {}
     }
 
     public static short checkExperience(int playerId, Connection ... con) {
