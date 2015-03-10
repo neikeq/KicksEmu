@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.characters.deletion;
+package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;

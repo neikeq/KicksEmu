@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.characters.creation;
 import com.neikeq.kicksemu.game.characters.Animation;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.characters.Position;
-import com.neikeq.kicksemu.game.characters.upgrade.CharacterUpgrade;
+import com.neikeq.kicksemu.game.characters.CharacterUpgrade;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemFree;

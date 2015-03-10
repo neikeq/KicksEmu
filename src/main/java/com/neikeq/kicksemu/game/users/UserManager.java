@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.users;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.Position;
-import com.neikeq.kicksemu.game.characters.upgrade.CharacterUpgrade;
+import com.neikeq.kicksemu.game.characters.CharacterUpgrade;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;

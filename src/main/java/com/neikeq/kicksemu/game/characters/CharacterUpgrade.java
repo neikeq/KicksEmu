@@ -1,7 +1,4 @@
-package com.neikeq.kicksemu.game.characters.upgrade;
-
-import com.neikeq.kicksemu.game.characters.PlayerStats;
-import com.neikeq.kicksemu.game.characters.Position;
+package com.neikeq.kicksemu.game.characters;
 
 import java.util.HashMap;
 import java.util.Map;

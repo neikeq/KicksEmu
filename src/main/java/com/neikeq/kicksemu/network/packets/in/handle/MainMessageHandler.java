@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.network.packets.in.handle;
 
-import com.neikeq.kicksemu.game.characters.deletion.CharacterRemover;
+import com.neikeq.kicksemu.game.characters.CharacterRemover;
 import com.neikeq.kicksemu.game.characters.TutorialManager;
 import com.neikeq.kicksemu.game.characters.creation.CharacterCreator;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
