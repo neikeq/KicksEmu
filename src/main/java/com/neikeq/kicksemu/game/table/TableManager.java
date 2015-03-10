@@ -15,6 +15,7 @@ public class TableManager {
     private static final Map<Integer, LearnInfo> learnTable = new HashMap<>();
     private static final Map<Integer, ItemFree> itemFreeTable = new HashMap<>();
     private static final Map<Integer, ItemInfo> itemTable = new HashMap<>();
+    private static final Map<Integer, BonusInfo> bonusTable = new HashMap<>();
     private static final Map<Integer, OptionInfo> optionTable = new HashMap<>();
     private static final Map<Short, LevelInfo> levelInfoTable = new HashMap<>();
 
@@ -50,6 +51,13 @@ public class TableManager {
 
     public static ItemInfo getItemInfo(Predicate<ItemInfo> filter) {
         Optional<ItemInfo> result = itemTable.values().stream().filter(filter).findFirst();
+
+        return result.isPresent() ? result.get() : null;
+    }
+
+    public static BonusInfo getBonusInfo(Predicate<BonusInfo> filter) {
+        Optional<BonusInfo> result = bonusTable.values().stream()
+                .filter(filter).findFirst();
 
         return result.isPresent() ? result.get() : null;
     }
@@ -107,6 +115,16 @@ public class TableManager {
         while ((line = reader.nextRow()) != null) {
             ItemInfo row = new ItemInfo(line);
             itemTable.put(row.getId(), row);
+        }
+    }
+
+    public static void initializeBonusTable(String path) {
+        TableReader reader = new TableReader(path);
+
+        Row line;
+        while ((line = reader.nextRow()) != null) {
+            BonusInfo row = new BonusInfo(line);
+            bonusTable.put(row.getType(), row);
         }
     }
 

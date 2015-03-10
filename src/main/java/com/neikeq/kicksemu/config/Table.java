@@ -10,6 +10,7 @@ public class Table {
         TableManager.initializeCeleTable(Constants.TABLE_CELE_PATH);
         TableManager.initializeLearnTable(Constants.TABLE_LEARN_PATH);
         TableManager.initializeItemTable(Constants.TABLE_ITEM_PATH);
+        TableManager.initializeBonusTable(Constants.TABLE_BONUS_PATH);
         TableManager.initializeOptionTable(Constants.TABLE_OPTION_PATH);
         TableManager.initializeLevelTable(Constants.TABLE_LEVEL_FILE);
     }

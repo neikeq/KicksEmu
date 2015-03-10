@@ -14,6 +14,7 @@ public class Constants {
     public static final String TABLE_LEARN_PATH = TABLE_DIR + "Table_Learn_File.csv";
     public static final String TABLE_ITEM_FREE_PATH = TABLE_DIR + "Table_ItemFree_File.csv";
     public static final String TABLE_ITEM_PATH = TABLE_DIR + "Table_Item_File.csv";
+    public static final String TABLE_BONUS_PATH = TABLE_DIR + "Table_Bonus_File.csv";
     public static final String TABLE_OPTION_PATH = TABLE_DIR + "Table_Option_File.csv";
     public static final String TABLE_LEVEL_FILE = TABLE_DIR + "Table_Level_File.csv";
 

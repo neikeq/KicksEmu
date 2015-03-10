@@ -12,6 +12,7 @@ import com.neikeq.kicksemu.game.inventory.Product;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.table.CeleInfo;
+import com.neikeq.kicksemu.game.table.BonusInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.game.table.LearnInfo;
@@ -291,6 +292,13 @@ public class Shop {
 
         // If there is a item with this id and the player position is valid for this item
         if (itemInfo != null && expiration != null && !isInvalidBonus) {
+            BonusInfo bonusInfo = TableManager.getBonusInfo(c ->
+                    c.getType() == itemInfo.getType());
+
+            // Ignore message if the stats bonus are not valid for this item type
+            if (bonusInfo.getBonusOne() != statsBonusOne ||
+                    bonusInfo.getBonusTwo() != statsBonusTwo) return;
+
             // If the player meets the level requirements for this item
             if (level >= itemInfo.getLevel() && isValidBonusLevel) {
                 int itemPrice = itemInfo.getPrice().getPriceFor(expiration, payment);
