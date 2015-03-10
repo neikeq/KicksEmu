@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.network.packets.in.handle;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.StatusMessage;
 import com.neikeq.kicksemu.game.chat.ChatManager;
-import com.neikeq.kicksemu.game.datagram.MatchBroadcaster;
+import com.neikeq.kicksemu.game.misc.MatchBroadcaster;
 import com.neikeq.kicksemu.game.inventory.InventoryManager;
 import com.neikeq.kicksemu.game.inventory.Shop;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsManager;

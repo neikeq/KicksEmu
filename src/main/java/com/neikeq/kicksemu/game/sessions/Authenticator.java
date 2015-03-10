@@ -4,7 +4,7 @@ import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
-import com.neikeq.kicksemu.game.moderation.BanManager;
+import com.neikeq.kicksemu.game.misc.BanManager;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserUtils;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;

@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.moderation;
+package com.neikeq.kicksemu.game.misc;
 
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;

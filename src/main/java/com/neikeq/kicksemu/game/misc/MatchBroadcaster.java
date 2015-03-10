@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.datagram;
+package com.neikeq.kicksemu.game.misc;
 
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.game.rooms.Room;

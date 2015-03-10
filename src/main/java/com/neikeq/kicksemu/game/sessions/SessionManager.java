@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.sessions;
 
-import com.neikeq.kicksemu.game.moderation.BanManager;
+import com.neikeq.kicksemu.game.misc.BanManager;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
