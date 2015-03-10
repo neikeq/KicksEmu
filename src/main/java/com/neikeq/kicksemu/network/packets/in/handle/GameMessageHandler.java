@@ -5,7 +5,7 @@ import com.neikeq.kicksemu.game.characters.StatusMessage;
 import com.neikeq.kicksemu.game.chat.ChatManager;
 import com.neikeq.kicksemu.game.datagram.MatchBroadcaster;
 import com.neikeq.kicksemu.game.inventory.InventoryManager;
-import com.neikeq.kicksemu.game.inventory.shop.Shop;
+import com.neikeq.kicksemu.game.inventory.Shop;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsManager;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredManager;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;

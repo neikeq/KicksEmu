@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.table;
 
-import com.neikeq.kicksemu.game.inventory.shop.Payment;
+import com.neikeq.kicksemu.game.inventory.Payment;
 import com.neikeq.kicksemu.utils.table.Row;
 
 public class LearnInfo {

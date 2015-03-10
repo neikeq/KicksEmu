@@ -1,16 +1,9 @@
-package com.neikeq.kicksemu.game.inventory.shop;
+package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.Position;
-import com.neikeq.kicksemu.game.inventory.Celebration;
-import com.neikeq.kicksemu.game.inventory.Expiration;
-import com.neikeq.kicksemu.game.inventory.InventoryUtils;
-import com.neikeq.kicksemu.game.inventory.Item;
-import com.neikeq.kicksemu.game.inventory.Product;
-import com.neikeq.kicksemu.game.inventory.Skill;
-import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.table.CeleInfo;
 import com.neikeq.kicksemu.game.table.BonusInfo;
 import com.neikeq.kicksemu.game.table.TableManager;

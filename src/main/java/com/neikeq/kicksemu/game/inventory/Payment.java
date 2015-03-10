@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.inventory.shop;
+package com.neikeq.kicksemu.game.inventory;
 
 public enum Payment {
     KASH,
