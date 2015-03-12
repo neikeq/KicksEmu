@@ -27,7 +27,18 @@ public class SessionInfo {
 
     public static void reduceExpiration(int sessionId) {
         String sql = "UPDATE sessions SET expiration = CURRENT_TIMESTAMP + " +
-                "INTERVAL 1 MINUTE WHERE id = ?";
+                "INTERVAL 30 SECOND WHERE id = ?";
+
+        try (Connection con = MySqlManager.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, sessionId);
+
+            stmt.executeUpdate();
+        } catch (SQLException ignored) {}
+    }
+
+    public static void removeExpiration(int sessionId) {
+        String sql = "DELETE FROM sessions WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {

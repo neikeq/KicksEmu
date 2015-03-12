@@ -28,6 +28,8 @@ public class UserManager {
         ServerMessage response = MessageBuilder.certifyExit(true);
         session.send(response);
 
+        SessionInfo.removeExpiration(session.getSessionId());
+
         session.close();
     }
 
