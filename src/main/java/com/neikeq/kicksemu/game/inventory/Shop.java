@@ -289,8 +289,11 @@ public class Shop {
                     c.getType() == itemInfo.getType());
 
             // Ignore message if the stats bonus are not valid for this item type
-            if (bonusInfo.getBonusOne() != statsBonusOne ||
-                    bonusInfo.getBonusTwo() != statsBonusTwo) return;
+            int bonusOneType = optionInfoOne == null ? 0 : optionInfoOne.getType();
+            int bonusTwoType = optionInfoTwo == null ? 0 : optionInfoTwo.getType();
+
+            if (!bonusInfo.getBonusOne().contains(bonusOneType) ||
+                    !bonusInfo.getBonusTwo().contains(bonusTwoType)) return;
 
             // If the player meets the level requirements for this item
             if (level >= itemInfo.getLevel() && isValidBonusLevel) {
