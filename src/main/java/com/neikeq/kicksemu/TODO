@@ -1,4 +1,3 @@
 - Club system.
 - Tournament system.
 - Club matchmaking.
-- Replace account and character ids with session ids for security.
