@@ -256,6 +256,17 @@ CREATE TABLE IF NOT EXISTS `servers` (
 -- Data exporting was unselected.
 
 
+-- Dumping structure for table kicksdb.sessions
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `id` int(10) NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `player_id` int(10) NOT NULL,
+  `expiration` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+
 -- Dumping structure for table kicksdb.skills
 CREATE TABLE IF NOT EXISTS `skills` (
   `player_id` int(11) unsigned NOT NULL,

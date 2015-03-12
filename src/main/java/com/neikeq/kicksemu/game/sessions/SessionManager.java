@@ -29,4 +29,11 @@ public class SessionManager {
     public static Session getSession(Channel channel) {
         return channel.attr(SESSIONS_KEY).get();
     }
+
+    public static synchronized void generateSession(Session session) {
+        int sessionId = SessionInfo.generateSessionId();
+
+        SessionInfo.insertSession(sessionId, session.getUserId(), session.getPlayerId());
+        session.setSessionId(sessionId);
+    }
 }

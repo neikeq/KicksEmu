@@ -21,6 +21,8 @@ public class Session {
 
     private int userId;
     private int playerId;
+    private int sessionId;
+
     private int roomId;
     private int udpPort;
     private int ping;
@@ -102,6 +104,10 @@ public class Session {
             setAuthenticated(false);
             setUdpAuthenticated(false);
 
+            // Reduce the session lifetime. The client has 1 minute to authenticate
+            // if switching between auth server and game server
+            SessionInfo.reduceExpiration(getSessionId());
+
             // Update user status on database
             UserInfo.setServer((short)-1, userId);
             UserInfo.setOnline(-1, userId);
@@ -121,6 +127,8 @@ public class Session {
     }
 
     public Session(Channel channel) {
+        setSessionId(-1);
+
         this.playerCache = new PlayerCache();
         this.channel = channel;
 
@@ -218,5 +226,13 @@ public class Session {
 
     public PlayerCache getPlayerCache() {
         return playerCache;
+    }
+
+    public int getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(int sessionId) {
+        this.sessionId = sessionId;
     }
 }

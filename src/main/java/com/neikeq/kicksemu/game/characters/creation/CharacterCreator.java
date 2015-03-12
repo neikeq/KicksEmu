@@ -18,28 +18,24 @@ public class CharacterCreator {
     public static void createCharacter(Session session, ClientMessage msg) {
         byte result;
 
-        int accountId = msg.readInt();
+        int accountId = session.getUserId();
 
-        if (session.getUserId() == accountId) {
-            if (UserInfo.hasEmptySlot(session.getUserId())) {
-                CharacterBase character = characterFromMessage(msg, accountId);
+        if (UserInfo.hasEmptySlot(session.getUserId())) {
+            CharacterBase character = characterFromMessage(msg, accountId);
 
-                result = CharacterValidator.validate(character);
+            result = CharacterValidator.validate(character);
 
-                if (result == CreationResult.SUCCESS) {
-                    int resultId = create(character);
+            if (result == CreationResult.SUCCESS) {
+                int resultId = create(character);
 
-                    if (resultId > 0) {
-                        setCharacterOwner(resultId, session.getUserId());
-                    } else {
-                        result = CreationResult.SYSTEM_PROBLEM;
-                    }
+                if (resultId > 0) {
+                    setCharacterOwner(resultId, session.getUserId());
+                } else {
+                    result = CreationResult.SYSTEM_PROBLEM;
                 }
-            } else {
-                result = CreationResult.CHARACTERS_LIMIT;
             }
         } else {
-            result = CreationResult.SYSTEM_PROBLEM;
+            result = CreationResult.CHARACTERS_LIMIT;
         }
 
         ServerMessage response = MessageBuilder.createCharacter(result);

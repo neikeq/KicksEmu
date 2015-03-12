@@ -8,9 +8,8 @@ import java.sql.Timestamp;
 
 public class SqlUtils {
 
-    public static byte getByte(String row, String table, int id,
-                               Connection ... con) {
-        String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
+    public static byte getByte(String column, String table, int id, Connection ... con) {
+        String query = "SELECT " + column + " FROM " + table + " WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -19,7 +18,7 @@ public class SqlUtils {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        return rs.getByte(row);
+                        return rs.getByte(column);
                     } else {
                         return -1;
                     }
@@ -34,9 +33,8 @@ public class SqlUtils {
         }
     }
 
-    public static short getShort(String row, String table, int id,
-                                 Connection ... con) {
-        String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
+    public static short getShort(String column, String table, int id, Connection ... con) {
+        String query = "SELECT " + column + " FROM " + table + " WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -45,7 +43,7 @@ public class SqlUtils {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        return rs.getShort(row);
+                        return rs.getShort(column);
                     } else {
                         return -1;
                     }
@@ -60,9 +58,8 @@ public class SqlUtils {
         }
     }
 
-    public static int getInt(String row, String table, int id,
-                             Connection ... con) {
-        String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
+    public static int getInt(String column, String table, int id, Connection ... con) {
+        String query = "SELECT " + column + " FROM " + table + " WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -71,7 +68,7 @@ public class SqlUtils {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        return rs.getInt(row);
+                        return rs.getInt(column);
                     } else {
                         return -1;
                     }
@@ -86,9 +83,8 @@ public class SqlUtils {
         }
     }
 
-    public static boolean getBoolean(String row, String table, int id,
-                                     Connection ... con) {
-        String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
+    public static boolean getBoolean(String column, String table, int id, Connection ... con) {
+        String query = "SELECT " + column + " FROM " + table + " WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -96,7 +92,7 @@ public class SqlUtils {
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
-                    return rs.next() && rs.getBoolean(row);
+                    return rs.next() && rs.getBoolean(column);
                 }
             } finally {
                 if (con.length <= 0) {
@@ -108,9 +104,8 @@ public class SqlUtils {
         }
     }
 
-    public static String getString(String row, String table, int id,
-                                   Connection ... con) {
-        String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
+    public static String getString(String column, String table, int id, Connection ... con) {
+        String query = "SELECT " + column + " FROM " + table + " WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -119,7 +114,7 @@ public class SqlUtils {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        return rs.getString(row);
+                        return rs.getString(column);
                     } else {
                         return "";
                     }
@@ -134,9 +129,9 @@ public class SqlUtils {
         }
     }
 
-    public static Timestamp getTimestamp(String row, String table, int id,
+    public static Timestamp getTimestamp(String column, String table, int id,
                                          Connection ... con) {
-        String query = "SELECT " + row + " FROM " + table + " WHERE id = ?";
+        String query = "SELECT " + column + " FROM " + table + " WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -145,7 +140,7 @@ public class SqlUtils {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        return rs.getTimestamp(row);
+                        return rs.getTimestamp(column);
                     } else {
                         return null;
                     }
@@ -160,9 +155,9 @@ public class SqlUtils {
         }
     }
 
-    public static void setByte(String row, byte value, String table, int id,
+    public static void setByte(String column, byte value, String table, int id,
                                Connection ... con) {
-        String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -180,9 +175,9 @@ public class SqlUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void setShort(String row, short value, String table, int id,
+    public static void setShort(String column, short value, String table, int id,
                                 Connection ... con) {
-        String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -200,9 +195,9 @@ public class SqlUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void setInt(String row, int value, String table, int id,
+    public static void setInt(String column, int value, String table, int id,
                               Connection ... con) {
-        String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -220,9 +215,9 @@ public class SqlUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void setBoolean(String row, boolean value, String table, int id,
+    public static void setBoolean(String column, boolean value, String table, int id,
                                   Connection ... con) {
-        String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -240,9 +235,9 @@ public class SqlUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void setString(String row, String value, String table, int id,
+    public static void setString(String column, String value, String table, int id,
                                  Connection ... con) {
-        String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -260,9 +255,9 @@ public class SqlUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void setTimestamp(String row, Timestamp value, String table, int id,
+    public static void setTimestamp(String column, Timestamp value, String table, int id,
                                     Connection ... con) {
-        String query = "UPDATE " + table + " SET " + row + " = ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -280,11 +275,11 @@ public class SqlUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void sumShort(String row, short value, String table, int id,
+    public static void sumShort(String column, short value, String table, int id,
                                 Connection ... con) {
         if (value == 0) return;
 
-        String query = "UPDATE " + table + " SET " + row + " = " + row + " + ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -302,11 +297,11 @@ public class SqlUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void sumInt(String row, int value, String table, int id,
+    public static void sumInt(String column, int value, String table, int id,
                               Connection ... con) {
         if (value == 0) return;
 
-        String query = "UPDATE " + table + " SET " + row + " = " + row + " + ? WHERE id = ?";
+        String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();

@@ -6,6 +6,7 @@ import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.characters.CharacterUpgrade;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.sessions.SessionInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
@@ -78,6 +79,7 @@ public class UserManager {
 
         if (UserInfo.hasCharacter(charId, userId) && CharacterUtils.characterExist(charId)) {
             if (!PlayerInfo.isBlocked(charId)) {
+                SessionInfo.setPlayerId(charId, session.getSessionId());
                 session.setPlayerId(charId);
             } else {
                 result = (byte)255; // System problem
@@ -91,11 +93,12 @@ public class UserManager {
     }
 
     public static void upgradeCharacter(Session session, ClientMessage msg) {
-        int userId = msg.readInt();
+        msg.readInt();
+        int userId = session.getUserId();
         int playerId = msg.readInt();
         short position = msg.readShort();
 
-        if (session.getUserId() == userId && UserInfo.hasCharacter(playerId, userId)) {
+        if (UserInfo.hasCharacter(playerId, userId)) {
             byte result = 0;
 
             try (Connection con = MySqlManager.getConnection()) {

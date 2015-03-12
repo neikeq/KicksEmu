@@ -29,13 +29,13 @@ import java.util.Map;
 
 public class MessageBuilder {
     
-    public static ServerMessage certifyLogin(int userId, byte result) {
+    public static ServerMessage certifyLogin(int sessionId, int userId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_LOGIN);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == AuthenticationResult.SUCCESS) {
-            msg.append(userId);
+            msg.append(sessionId);
 
             UserSettings settings = UserInfo.getSettings(userId);
 
@@ -57,12 +57,12 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage instantLogin(int accountId, byte result) {
+    public static ServerMessage instantLogin(int sessionId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_LOGIN);
 
         MessageUtils.appendResult(result, msg);
 
-        msg.append(accountId);
+        msg.append(sessionId);
 
         return msg;
     }

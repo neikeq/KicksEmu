@@ -193,3 +193,4 @@ END|
 delimiter ;
 
 CALL update_ranking;
+DROP PROCEDURE IF EXISTS update_ranking;

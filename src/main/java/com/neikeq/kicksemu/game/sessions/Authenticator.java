@@ -32,14 +32,17 @@ public class Authenticator {
         byte result = certifyAuthenticate(username, password, clientVersion);
 
         if (result == AuthenticationResult.SUCCESS) {
-            session.setUserId(UserUtils.getIdFromUsername(username));
             session.setAuthenticated(true);
+            session.setUserId(UserUtils.getIdFromUsername(username));
+
+            SessionManager.generateSession(session);
+
             UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
             UserInfo.setOnline(0, session.getUserId());
         }
 
-        ServerMessage response = MessageBuilder.certifyLogin(session.getUserId(), result);
-        session.send(response);
+        session.send(MessageBuilder.certifyLogin(session.getSessionId(),
+                session.getUserId(), result));
 
         if (result != AuthenticationResult.SUCCESS) {
             session.close();
@@ -91,8 +94,10 @@ public class Authenticator {
     }
 
     public static void instantLogin(Session session, ClientMessage msg) {
-        int accountId = msg.readInt();
-        int characterId = msg.readInt(2);
+        int sessionId = msg.readInt();
+
+        int accountId = SessionInfo.getUserId(sessionId);
+        int characterId = SessionInfo.getPlayerId(sessionId);
 
         byte result = instantAuthenticate(accountId);
 
@@ -100,8 +105,10 @@ public class Authenticator {
             session.setUserId(accountId);
 
             if (UserInfo.hasCharacter(characterId, session.getUserId())) {
-                session.setPlayerId(characterId);
                 session.setAuthenticated(true);
+                SessionInfo.resetExpiration(sessionId);
+                session.setPlayerId(characterId);
+
                 UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
                 UserInfo.setOnline(0, session.getUserId());
 
@@ -112,7 +119,7 @@ public class Authenticator {
             }
         }
 
-        ServerMessage response = MessageBuilder.instantLogin(accountId, result);
+        ServerMessage response = MessageBuilder.instantLogin(sessionId, result);
         session.send(response);
 
         if (result != AuthenticationResult.SUCCESS) {
@@ -120,22 +127,29 @@ public class Authenticator {
         }
     }
 
-    private static byte instantAuthenticate(int sessionId) {
+    private static byte instantAuthenticate(int accountId) {
         byte authResult;
 
         String query = "SELECT 1 FROM users WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1, sessionId);
+            stmt.setInt(1, accountId);
 
             try (ResultSet result = stmt.executeQuery()) {
                 if (result.next()) {
-                    if (!BanManager.isUserBanned(sessionId)) {
-                        if (!UserUtils.isAlreadyConnected(sessionId)) {
+                    if (!BanManager.isUserBanned(accountId)) {
+                        if (!UserUtils.isAlreadyConnected(accountId)) {
                             authResult = AuthenticationResult.SUCCESS;
                         } else {
-                            authResult = AuthenticationResult.ALREADY_CONNECTED;
+                            // Give a bit of time and try again
+                            Thread.sleep(1000);
+
+                            if (!UserUtils.isAlreadyConnected(accountId)) {
+                                authResult = AuthenticationResult.SUCCESS;
+                            } else {
+                                authResult = AuthenticationResult.ALREADY_CONNECTED;
+                            }
                         }
                     } else {
                         authResult = AuthenticationResult.ACCOUNT_BLOCKED;
@@ -143,6 +157,8 @@ public class Authenticator {
                 } else {
                     authResult = AuthenticationResult.ACCOUNT_NOT_FOUND;
                 }
+            } catch (InterruptedException e) {
+                authResult = AuthenticationResult.SYSTEM_PROBLEM;
             }
         } catch (SQLException e) {
             authResult = AuthenticationResult.AUTH_FAILURE;
@@ -152,15 +168,28 @@ public class Authenticator {
     }
 
     public static void gameLogin(Session session, ClientMessage msg) {
-        int accountId = msg.readInt();
-        int characterId = msg.readInt();
+        int sessionId = msg.readInt();
+
+        int accountId = SessionInfo.getUserId(sessionId);
+        int characterId = SessionInfo.getPlayerId(sessionId);
+
+        // If the character assigned to this session is not the same as
+        // the one specified by the client, reject the request
+        if (characterId != msg.readInt()) {
+            session.close();
+            return;
+        }
 
         byte result = gameAuthenticate(accountId, characterId);
 
         if (result == AuthenticationResult.SUCCESS) {
+            session.setAuthenticated(true);
+            SessionInfo.resetExpiration(sessionId);
+
             session.setUserId(accountId);
             session.setPlayerId(characterId);
-            session.setAuthenticated(true);
+            session.setSessionId(sessionId);
+
             UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
             UserInfo.setOnline(characterId, session.getUserId());
 
@@ -181,8 +210,19 @@ public class Authenticator {
 
         if (!ServerManager.isServerFull()) {
             if (CharacterUtils.characterExist(characterId)) {
-
                 if (PlayerInfo.getOwner(characterId) == accountId) {
+                    if (UserUtils.isAlreadyConnected(accountId)) {
+                        // Give a bit of time and try again
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ignored) {}
+
+                        if (UserUtils.isAlreadyConnected(accountId)) {
+                            // Already connected
+                            return (byte)253;
+                        }
+                    }
+
                     if (!ServerManager.isPlayerConnected(characterId)) {
                         authResult = AuthenticationResult.SUCCESS;
                     } else {

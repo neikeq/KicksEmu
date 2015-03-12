@@ -16,7 +16,8 @@ public class TutorialManager {
     private final static int REWARD_POINTS = 4000;
 
     public static void updateTutorial(Session session, ClientMessage msg) {
-        int characterId = msg.readInt();
+        int characterId = session.getPlayerId();
+
         byte dribbling = msg.readByte();
         byte passing = msg.readByte();
         byte shooting = msg.readByte();

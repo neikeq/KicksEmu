@@ -231,7 +231,7 @@ class MessageUtils {
                 new TeamResult((short)-1, (short)0, (short)0, (short)0, (short)0, (short)0,
                         (short)0, (short)0, (short)0);
 
-        PlayerResult pr = !training ? playerResult : new PlayerResult((short)-1, (short)0,
+        PlayerResult pr = !training ? playerResult : new PlayerResult(-1, (short)0,
                 (short)0, (short)0, (short)0, (short)0, (short)0, (short)0, (short)0);
 
         msg.append(PlayerInfo.getHistoryMatches(id, con) + (training ? 0 : 1));

@@ -18,31 +18,29 @@ import java.util.regex.Pattern;
 public class ChatManager {
 
     public static void chatMessage(Session session, ClientMessage msg) {
-        msg.ignoreBytes(2);
+        msg.ignoreBytes(6);
 
-        int playerId = msg.readInt();
+        int playerId = session.getPlayerId();
 
-        if (session.getPlayerId() == playerId) {
-            String name = msg.readString(15);
-            ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
-            String message = msg.readString(67);
+        String name = msg.readString(15);
+        ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
+        String message = msg.readString(67);
 
-            if (type != null && !Flood.isPlayerLocked(playerId) &&
-                    !Flood.onPlayerChat(playerId)) {
-                switch (type) {
-                    case NORMAL:
-                        handleNormalMessage(session, name, message);
-                        break;
-                    case TEAM:
-                        handleTeamMessage(session, name, message);
-                        break;
-                    case WHISPER:
-                        if (isWhisperMessage(message)) {
-                            onMessageWhisper(session, name, message);
-                        }
-                        break;
-                    default:
-                }
+        if (type != null && !Flood.isPlayerLocked(playerId) &&
+                !Flood.onPlayerChat(playerId)) {
+            switch (type) {
+                case NORMAL:
+                    handleNormalMessage(session, name, message);
+                    break;
+                case TEAM:
+                    handleTeamMessage(session, name, message);
+                    break;
+                case WHISPER:
+                    if (isWhisperMessage(message)) {
+                        onMessageWhisper(session, name, message);
+                    }
+                    break;
+                default:
             }
         }
     }

@@ -530,11 +530,12 @@ public class RoomManager {
     }
 
     public static void matchLoading(Session session, ClientMessage msg) {
-        int playerId = msg.readInt();
+        msg.readInt();
+        int playerId = session.getPlayerId();
         int roomId = msg.readShort();
         short status = msg.readShort();
 
-        if (session.getPlayerId() == playerId && session.getRoomId() == roomId) {
+        if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
             ServerMessage msgMatchLoading = MessageBuilder.matchLoading(playerId, roomId, status);
