@@ -15,6 +15,7 @@ import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerManager {
 
@@ -114,7 +115,7 @@ public class ServerManager {
 
     private ServerManager(ServerType type) {
         serverType = type;
-        players = new HashMap<>();
+        players = new ConcurrentHashMap<>();
     }
 
     public static short getServerId() {

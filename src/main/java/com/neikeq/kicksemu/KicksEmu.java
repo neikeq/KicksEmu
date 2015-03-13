@@ -3,6 +3,7 @@ package com.neikeq.kicksemu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Input;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
@@ -147,6 +148,10 @@ public class KicksEmu {
     }
 
     private void cleanNetworking() {
+        if (ServerManager.getPlayers() != null) {
+            ServerManager.getPlayers().values().stream().forEach(Session::close);
+        }
+
         if (nettyTcpServer != null) {
             nettyTcpServer.close();
         }
