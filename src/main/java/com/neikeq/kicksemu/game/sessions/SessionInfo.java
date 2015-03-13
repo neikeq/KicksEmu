@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 import com.neikeq.kicksemu.utils.RandomGenerator;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,8 +62,9 @@ public class SessionInfo {
     }
 
     public static int generateSessionId() {
-        String sql = "SELECT FLOOR(1 + RAND() * 4294967294) AS random_session_id FROM sessions" +
-                " WHERE \"random_session_id\" NOT IN (SELECT id FROM sessions) LIMIT 1";
+        String sql = "SELECT FLOOR((RAND() * 4294967295) - 2147483648) " +
+                "AS random_session_id FROM sessions WHERE \"random_session_id\" " +
+                "NOT IN (SELECT id FROM sessions) LIMIT 1";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -73,7 +75,7 @@ public class SessionInfo {
                     return RandomGenerator.randomInt();
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException | NoSuchAlgorithmException e) {
             return -1;
         }
     }
