@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 public class Authenticator {
 
-    public static void certifyLogin(Session session, ClientMessage msg) {
+    public static synchronized void certifyLogin(Session session, ClientMessage msg) {
         String username = msg.readString(30).toLowerCase();
         char[] password = msg.readChars(20);
         int clientVersion = msg.readInt();
@@ -93,7 +93,7 @@ public class Authenticator {
         return authResult;
     }
 
-    public static void instantLogin(Session session, ClientMessage msg) {
+    public static synchronized void instantLogin(Session session, ClientMessage msg) {
         int sessionId = msg.readInt();
 
         int accountId = SessionInfo.getUserId(sessionId);
@@ -167,7 +167,7 @@ public class Authenticator {
         return authResult;
     }
 
-    public static void gameLogin(Session session, ClientMessage msg) {
+    public static synchronized void gameLogin(Session session, ClientMessage msg) {
         int sessionId = msg.readInt();
 
         int accountId = SessionInfo.getUserId(sessionId);
