@@ -108,6 +108,7 @@ public class Authenticator {
                 session.setAuthenticated(true);
                 SessionInfo.resetExpiration(sessionId);
                 session.setPlayerId(characterId);
+                session.setSessionId(sessionId);
 
                 UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
                 UserInfo.setOnline(0, session.getUserId());
