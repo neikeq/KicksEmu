@@ -139,17 +139,22 @@ public class Authenticator {
             try (ResultSet result = stmt.executeQuery()) {
                 if (result.next()) {
                     if (!BanManager.isUserBanned(accountId)) {
-                        if (!UserUtils.isAlreadyConnected(accountId)) {
+                        boolean connected = UserUtils.isAlreadyConnected(accountId);
+
+                        if (connected) {
+                            // Give a bit of time and try again (max 3 times)
+                            for (int i = 0; i < 3 && connected; i++) {
+                                try {
+                                    Thread.sleep(500);
+                                    connected = UserUtils.isAlreadyConnected(accountId);
+                                } catch (InterruptedException ignored) {}
+                            }
+                        }
+
+                        if (!connected) {
                             authResult = AuthenticationResult.SUCCESS;
                         } else {
-                            // Give a bit of time and try again
-                            Thread.sleep(1000);
-
-                            if (!UserUtils.isAlreadyConnected(accountId)) {
-                                authResult = AuthenticationResult.SUCCESS;
-                            } else {
-                                authResult = AuthenticationResult.ALREADY_CONNECTED;
-                            }
+                            authResult = AuthenticationResult.ALREADY_CONNECTED;
                         }
                     } else {
                         authResult = AuthenticationResult.ACCOUNT_BLOCKED;
@@ -157,8 +162,6 @@ public class Authenticator {
                 } else {
                     authResult = AuthenticationResult.ACCOUNT_NOT_FOUND;
                 }
-            } catch (InterruptedException e) {
-                authResult = AuthenticationResult.SYSTEM_PROBLEM;
             }
         } catch (SQLException e) {
             authResult = AuthenticationResult.AUTH_FAILURE;
@@ -211,19 +214,19 @@ public class Authenticator {
         if (!ServerManager.isServerFull()) {
             if (CharacterUtils.characterExist(characterId)) {
                 if (PlayerInfo.getOwner(characterId) == accountId) {
-                    if (UserUtils.isAlreadyConnected(accountId)) {
-                        // Give a bit of time and try again
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ignored) {}
+                    boolean connected = UserUtils.isAlreadyConnected(accountId);
 
-                        if (UserUtils.isAlreadyConnected(accountId)) {
-                            // Already connected
-                            return (byte)253;
+                    if (connected) {
+                        // Give a bit of time and try again (max 3 times)
+                        for (int i = 0; i < 3 && connected; i++) {
+                            try {
+                                Thread.sleep(500);
+                                connected = UserUtils.isAlreadyConnected(accountId);
+                            } catch (InterruptedException ignored) {}
                         }
                     }
 
-                    if (!ServerManager.isPlayerConnected(characterId)) {
+                    if (!ServerManager.isPlayerConnected(characterId) && !connected) {
                         authResult = AuthenticationResult.SUCCESS;
                     } else {
                         // Already connected
