@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BanManager {
+public class Moderation {
 
     public static boolean isRemoteAddressBanned(InetSocketAddress address) {
         String query = "SELECT id FROM blacklist WHERE remote_address = ? AND expire > ? LIMIT 1";

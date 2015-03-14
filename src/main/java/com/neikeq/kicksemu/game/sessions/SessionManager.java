@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.sessions;
 
-import com.neikeq.kicksemu.game.misc.BanManager;
+import com.neikeq.kicksemu.game.misc.Moderation;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
@@ -11,7 +11,7 @@ public class SessionManager {
     private static final AttributeKey<Session> SESSIONS_KEY = AttributeKey.valueOf("sessions");
 
     public static void handleConnection(Channel channel) {
-        if (!BanManager.isRemoteAddressBanned((InetSocketAddress)channel.remoteAddress())) {
+        if (!Moderation.isRemoteAddressBanned((InetSocketAddress) channel.remoteAddress())) {
             channel.attr(SESSIONS_KEY).set(new Session(channel));
         } else {
             channel.close();

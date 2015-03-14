@@ -4,7 +4,7 @@ import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
-import com.neikeq.kicksemu.game.misc.BanManager;
+import com.neikeq.kicksemu.game.misc.Moderation;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserUtils;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -67,7 +67,7 @@ public class Authenticator {
 
                             int id = result.getInt("id");
 
-                            if (!BanManager.isUserBanned(id)) {
+                            if (!Moderation.isUserBanned(id)) {
                                 if (!UserUtils.isAlreadyConnected(id)) {
                                     authResult = AuthenticationResult.SUCCESS;
                                 } else {
@@ -139,7 +139,7 @@ public class Authenticator {
 
             try (ResultSet result = stmt.executeQuery()) {
                 if (result.next()) {
-                    if (!BanManager.isUserBanned(accountId)) {
+                    if (!Moderation.isUserBanned(accountId)) {
                         boolean connected = UserUtils.isAlreadyConnected(accountId);
 
                         if (connected) {
