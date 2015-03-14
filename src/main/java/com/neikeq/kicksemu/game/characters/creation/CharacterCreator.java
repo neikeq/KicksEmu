@@ -124,6 +124,7 @@ public class CharacterCreator {
     private static CharacterBase characterFromMessage(ClientMessage msg, int accountId) {
         CharacterBase character = new CharacterBase();
 
+        msg.readInt();
         character.setOwner(accountId);
         character.setName(msg.readString(15));
         character.setStatsPoints(msg.readShort());
