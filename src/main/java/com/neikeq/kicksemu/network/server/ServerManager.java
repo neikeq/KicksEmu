@@ -13,7 +13,6 @@ import com.neikeq.kicksemu.network.packets.in.handle.GameMessageHandler;
 import com.neikeq.kicksemu.network.packets.in.handle.MainMessageHandler;
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

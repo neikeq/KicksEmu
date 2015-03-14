@@ -58,8 +58,4 @@ public class Skill implements Product, IndexedProduct {
     public void setTimestampExpire(Timestamp timestampExpire) {
         this.timestampExpire = timestampExpire;
     }
-
-    public void setTimestampExpire(long timestampExpire) {
-        this.timestampExpire = new Timestamp(timestampExpire);
-    }
 }

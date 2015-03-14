@@ -43,20 +43,4 @@ public class UserUtils {
             return -1;
         }
     }
-
-    public static boolean accountExist(int userId) {
-        String query = "SELECT id FROM users WHERE id = ?";
-
-        try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
-            }
-
-        } catch (SQLException e) {
-            return false;
-        }
-    }
 }
