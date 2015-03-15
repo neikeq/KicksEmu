@@ -28,7 +28,7 @@ public class UserManager {
         ServerMessage response = MessageBuilder.certifyExit(true);
         session.send(response);
 
-        SessionInfo.removeExpiration(session.getSessionId());
+        SessionInfo.remove(session.getSessionId());
 
         session.close();
     }

@@ -261,7 +261,8 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `id` int(10) NOT NULL,
   `user_id` int(10) NOT NULL,
   `player_id` int(10) NOT NULL,
-  `expiration` timestamp NULL DEFAULT NULL
+  `expiration` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `hash` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.

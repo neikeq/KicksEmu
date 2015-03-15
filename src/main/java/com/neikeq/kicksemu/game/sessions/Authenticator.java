@@ -99,25 +99,37 @@ public class Authenticator {
         int accountId = SessionInfo.getUserId(sessionId);
         int characterId = SessionInfo.getPlayerId(sessionId);
 
+        String hash = SessionInfo.getHash(sessionId);
+
         byte result = instantAuthenticate(accountId);
 
-        if (result == AuthenticationResult.SUCCESS) {
-            session.setUserId(accountId);
+        boolean validHash = false;
 
-            if (UserInfo.hasCharacter(characterId, session.getUserId())) {
-                session.setAuthenticated(true);
-                SessionInfo.resetExpiration(sessionId);
-                session.setPlayerId(characterId);
-                session.setSessionId(sessionId);
+        try {
+            validHash = Password.validateAddress(session.getRemoteAddress(), hash);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException ignored) {}
 
-                UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
-                UserInfo.setOnline(0, session.getUserId());
+        if (validHash) {
+            if (result == AuthenticationResult.SUCCESS) {
+                session.setUserId(accountId);
 
-                ServerManager.addPlayer(characterId, session);
-            } else {
-                // Account does not contain such character
-                result = AuthenticationResult.ACCESS_FAILURE;
+                if (UserInfo.hasCharacter(characterId, session.getUserId())) {
+                    session.setAuthenticated(true);
+                    SessionInfo.resetExpiration(sessionId);
+                    session.setPlayerId(characterId);
+                    session.setSessionId(sessionId);
+
+                    UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
+                    UserInfo.setOnline(0, session.getUserId());
+
+                    ServerManager.addPlayer(characterId, session);
+                } else {
+                    // Account does not contain such character
+                    result = AuthenticationResult.ACCESS_FAILURE;
+                }
             }
+        } else {
+            result = AuthenticationResult.SYSTEM_PROBLEM;
         }
 
         ServerMessage response = MessageBuilder.instantLogin(sessionId, result);
@@ -177,6 +189,8 @@ public class Authenticator {
         int accountId = SessionInfo.getUserId(sessionId);
         int characterId = SessionInfo.getPlayerId(sessionId);
 
+        String hash = SessionInfo.getHash(sessionId);
+
         // If the character assigned to this session is not the same as
         // the one specified by the client, reject the request
         if (characterId != msg.readInt()) {
@@ -186,19 +200,29 @@ public class Authenticator {
 
         byte result = gameAuthenticate(accountId, characterId);
 
-        if (result == AuthenticationResult.SUCCESS) {
-            session.setAuthenticated(true);
-            SessionInfo.resetExpiration(sessionId);
+        boolean validHash = false;
 
-            session.setUserId(accountId);
-            session.setPlayerId(characterId);
-            session.setSessionId(sessionId);
+        try {
+            validHash = Password.validateAddress(session.getRemoteAddress(), hash);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException ignored) {}
 
-            UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
-            UserInfo.setOnline(characterId, session.getUserId());
+        if (validHash) {
+            if (result == AuthenticationResult.SUCCESS) {
+                session.setAuthenticated(true);
+                SessionInfo.resetExpiration(sessionId);
 
-            ServerManager.addPlayer(characterId, session);
-            LobbyManager.addPlayer(characterId);
+                session.setUserId(accountId);
+                session.setPlayerId(characterId);
+                session.setSessionId(sessionId);
+
+                UserInfo.setServer(ServerManager.getServerId(), session.getUserId());
+                UserInfo.setOnline(characterId, session.getUserId());
+
+                ServerManager.addPlayer(characterId, session);
+                LobbyManager.addPlayer(characterId);
+            }
+        } else {
+            result = AuthenticationResult.SYSTEM_PROBLEM;
         }
 
         ServerMessage response = MessageBuilder.gameLogin(result);

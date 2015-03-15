@@ -1,10 +1,14 @@
 package com.neikeq.kicksemu.game.sessions;
 
 import com.neikeq.kicksemu.game.misc.Moderation;
+import com.neikeq.kicksemu.utils.Password;
+import com.neikeq.kicksemu.utils.RandomGenerator;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
 import java.net.InetSocketAddress;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class SessionManager {
 
@@ -33,7 +37,15 @@ public class SessionManager {
     public static synchronized void generateSession(Session session) {
         int sessionId = SessionInfo.generateSessionId();
 
-        SessionInfo.insertSession(sessionId, session.getUserId(), session.getPlayerId());
+        String hash = "";
+
+        try {
+            byte[] salt = RandomGenerator.randomBytes(24);
+            byte[] addressHash = Password.hashAddress(session.getRemoteAddress(), salt);
+            hash = Password.toBase64(salt) + "$" + Password.toBase64(addressHash);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ignored) {}
+
+        SessionInfo.insertSession(sessionId, session.getUserId(), session.getPlayerId(), hash);
         session.setSessionId(sessionId);
     }
 }

@@ -11,4 +11,13 @@ public class RandomGenerator {
 
         return rand.nextInt();
     }
+
+    public static byte[] randomBytes(int length) throws NoSuchAlgorithmException {
+        byte[] bytes = new byte[length];
+
+        SecureRandom rand = SecureRandom.getInstance("SHA1PRNG");
+        rand.nextBytes(bytes);
+
+        return bytes;
+    }
 }
