@@ -281,10 +281,13 @@ public class Shop {
                 (optionInfoOne == null || optionInfoOne.isValidLevel(level, payment)) &&
                 (optionInfoTwo == null || optionInfoTwo.isValidLevel(level, payment));
 
+        boolean isValidGender = itemInfo != null &&
+                itemInfo.getGender() != PlayerInfo.getAnimation(playerId);
+
         byte result = 0;
 
         // If there is a item with this id and the player position is valid for this item
-        if (itemInfo != null && expiration != null && !isInvalidBonus) {
+        if (itemInfo != null && expiration != null && !isInvalidBonus && isValidGender) {
             BonusInfo bonusInfo = TableManager.getBonusInfo(c ->
                     c.getType() == itemInfo.getType());
 

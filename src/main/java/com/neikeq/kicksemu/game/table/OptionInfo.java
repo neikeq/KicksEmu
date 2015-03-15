@@ -40,14 +40,6 @@ public class OptionInfo {
         return value;
     }
 
-    public short getKashLevel() {
-        return kashLevel;
-    }
-
-    public short getPointsLevel() {
-        return pointsLevel;
-    }
-
     public Price getPrice() {
         return price;
     }
