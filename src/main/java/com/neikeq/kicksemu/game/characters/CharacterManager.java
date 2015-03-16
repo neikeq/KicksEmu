@@ -105,10 +105,12 @@ public class CharacterManager {
         short branchPosition = Position.trunk(position);
 
         PlayerStats creationStats = CharacterUpgrade.getInstance()
-                .getUpgradeStats().get(position);
+                .getCreationStats().get(branchPosition);
 
         try (Connection con = MySqlManager.getConnection()) {
-            short statsPoints = 10;
+            short statsPoints = 0;
+
+            PlayerInfo.setStatsPoints((short)10, playerId, con);
 
             PlayerInfo.setStatsRunning(creationStats.getRunning(), playerId, con);
             PlayerInfo.setStatsEndurance(creationStats.getEndurance(), playerId, con);
@@ -130,7 +132,7 @@ public class CharacterManager {
 
             if (level > 18) {
                 onPlayerLevelUp(playerId, (short) 18, (short) 17, branchPosition, con);
-                onPlayerLevelUp(playerId, level, (short) (level - 18), branchPosition, con);
+                onPlayerLevelUp(playerId, level, (short) (level - 18), position, con);
             } else {
                 onPlayerLevelUp(playerId, level, (short) (level - 1), branchPosition, con);
             }
@@ -177,7 +179,7 @@ public class CharacterManager {
             }
 
             // Add stats point
-            PlayerInfo.setStatsPoints(statsPoints, playerId, con);
+            PlayerInfo.sumStatsPoints(statsPoints, playerId, con);
         } catch (SQLException ignored) {}
     }
 

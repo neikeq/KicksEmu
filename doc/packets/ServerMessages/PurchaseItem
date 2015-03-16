@@ -73,3 +73,6 @@ int stats_bonus_two
 short usages_remain // Only readed for usage items
 int timestamp_expire
 bool visible // Still usable even if not visible
+// After items in use
+byte skill_slots
+

@@ -22,10 +22,13 @@ public class Price {
 
     public int getPriceFor(Expiration expiration, Payment payment) {
         switch (expiration) {
+            case USAGE_10:
             case DAYS_7:
                 return payment == Payment.KASH ? kash7 : points7;
+            case USAGE_50:
             case DAYS_30:
                 return payment == Payment.KASH ? kash30 : points30;
+            case USAGE_100:
             case DAYS_PERM:
                 return payment == Payment.KASH ? kashPerm : pointsPerm;
             default:

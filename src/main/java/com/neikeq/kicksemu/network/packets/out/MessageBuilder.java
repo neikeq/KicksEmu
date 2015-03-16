@@ -898,7 +898,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerStats(int playerId, Connection con) {
+    public static ServerMessage playerStats(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_STATS);
 
         MessageUtils.appendResult((byte)0, msg);
@@ -964,6 +964,7 @@ public class MessageBuilder {
                     PlayerInfo.getOwner(playerId), msg, con);
             MessageUtils.appendStatsBonus(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+            msg.append(PlayerInfo.getSkillSlots(playerId, con));
         }
 
         return msg;

@@ -267,6 +267,7 @@ public class Shop {
         int playerId = session.getPlayerId();
         int money = getMoneyFromPaymentMode(payment, playerId);
         short level = PlayerInfo.getLevel(playerId);
+        byte skillSlots = PlayerInfo.getSkillSlots(playerId);
 
         // Get the information about the item with the requested id
         ItemInfo itemInfo = TableManager.getItemInfo(c -> c.getId() == itemId);
@@ -288,6 +289,11 @@ public class Shop {
                 itemInfo.getGender() == PlayerInfo.getAnimation(playerId));
 
         byte result = 0;
+
+        // If the item is a face, set the expiration mode to permanent
+        if (itemInfo != null && (itemInfo.getType() == 100 || itemInfo.getType() == 204)) {
+            expiration = Expiration.DAYS_PERM;
+        }
 
         // If there is a item with this id and the player position is valid for this item
         if (itemInfo != null && expiration != null && !invalidBonus && validGender) {
@@ -314,11 +320,9 @@ public class Shop {
                         itemInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
                     if (price <= money) {
-                        int remainSlots = PlayerInfo.getSkillSlots(playerId) - SLOTS_LIMIT;
-
                         // If player is purchasing skill slots
-                        if (itemInfo.getType() == 33 && optionInfoOne != null &&
-                                optionInfoOne.getValue() <= remainSlots) {
+                        if (itemInfo.getType() != 202 || (optionInfoOne != null &&
+                                optionInfoOne.getValue() <= SLOTS_LIMIT - skillSlots)) {
                             if (!SpecialItem.isSpecialItem(itemInfo.getType())) {
                                 Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
 

@@ -205,8 +205,9 @@ public class PlayerInfo {
         byte slots = 6;
 
         while (items.hasNext()) {
+            Item item = items.next();
             OptionInfo optionInfo = TableManager.getOptionInfo(oi ->
-                    oi.getId() == items.next().getBonusOne());
+                    oi.getId() == item.getBonusOne());
 
             slots += optionInfo.getValue();
         }
@@ -613,6 +614,9 @@ public class PlayerInfo {
         String query = "SELECT * FROM skills WHERE player_id = ? AND " +
                 "(timestamp_expire > ? OR expiration = ?)";
 
+        byte slots = PlayerInfo.getSkillSlots(id, con);
+        byte slotsUsed = 0;
+
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
@@ -623,9 +627,19 @@ public class PlayerInfo {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
+                        byte selectionIndex = rs.getByte("selection_index");
+
+                        if (selectionIndex > 0) {
+                            if (slotsUsed >= slots) {
+                                selectionIndex = 0;
+                            } else {
+                                slotsUsed++;
+                            }
+                        }
+
                         Skill skill = new Skill(
                                 rs.getInt("skill_id"), rs.getInt("inventory_id"),
-                                rs.getInt("expiration"), rs.getByte("selection_index"),
+                                rs.getInt("expiration"), selectionIndex,
                                 rs.getTimestamp("timestamp_expire"), rs.getBoolean("visible"));
 
                         skills.put(skill.getInventoryId(), skill);

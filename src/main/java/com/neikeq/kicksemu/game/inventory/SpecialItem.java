@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.inventory;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 
 public class SpecialItem {
 
@@ -23,9 +24,10 @@ public class SpecialItem {
         switch (itemType) {
             case 204:
                 CharacterManager.resetStats(playerId);
+                session.sendAndFlush(MessageBuilder.playerStats(playerId));
                 break;
             case 100:
-                PlayerInfo.setFace((short)(itemId / 10 - 100000), playerId);
+                PlayerInfo.setFace((short) (itemId / 10 - 100000), playerId);
                 break;
             default:
         }

@@ -127,11 +127,15 @@ public class PlayerCache {
     public Map<Integer, Item> getItems() {
         Timestamp currentTimestamp = DateUtils.getTimestamp();
 
-        return items == null ? null : items.values().stream()
-                .filter(i -> (i.getExpiration().isUsage() && i.getRemainUsages() > 0) ||
-                        i.getTimestampExpire().after(currentTimestamp) ||
-                        i.getExpiration().isPermanent())
-                .collect(Collectors.toMap(Item::getInventoryId, i -> i));
+        if (items != null) {
+            items = items.values().stream()
+                    .filter(i -> (i.getExpiration().isUsage() && i.getRemainUsages() > 0) ||
+                            i.getTimestampExpire().after(currentTimestamp) ||
+                            i.getExpiration().isPermanent())
+                    .collect(Collectors.toMap(Item::getInventoryId, i -> i));
+        }
+
+        return items;
     }
 
     public void setItems(Map<Integer, Item> items) {
@@ -141,10 +145,14 @@ public class PlayerCache {
     public Map<Integer, Skill> getSkills() {
         Timestamp currentTimestamp = DateUtils.getTimestamp();
 
-        return skills == null ? null : skills.values().stream()
-                .filter(s -> s.getTimestampExpire().after(currentTimestamp) ||
-                        s.getExpiration().isPermanent())
-                .collect(Collectors.toMap(Skill::getInventoryId, s -> s));
+        if (skills != null) {
+            skills = skills.values().stream()
+                    .filter(s -> s.getTimestampExpire().after(currentTimestamp) ||
+                            s.getExpiration().isPermanent())
+                    .collect(Collectors.toMap(Skill::getInventoryId, s -> s));
+        }
+
+        return skills;
     }
 
     public void setSkills(Map<Integer, Skill> skills) {
@@ -154,10 +162,14 @@ public class PlayerCache {
     public Map<Integer, Celebration> getCeles() {
         Timestamp currentTimestamp = DateUtils.getTimestamp();
 
-        return celes == null ? null : celes.values().stream()
-                .filter(c -> c.getTimestampExpire().after(currentTimestamp) ||
-                        c.getExpiration().isPermanent())
-                .collect(Collectors.toMap(Celebration::getInventoryId, c -> c));
+        if (celes != null) {
+            celes = celes.values().stream()
+                    .filter(c -> c.getTimestampExpire().after(currentTimestamp) ||
+                            c.getExpiration().isPermanent())
+                    .collect(Collectors.toMap(Celebration::getInventoryId, c -> c));
+        }
+
+        return celes;
     }
 
     public void setCeles(Map<Integer, Celebration> celes) {

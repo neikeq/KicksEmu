@@ -17,7 +17,35 @@ public enum ItemType {
     NECK,
     MASK,
     MUFFLER,
-    PACKAGE;
+    PACKAGE,
+    SODA /* 201 */,
+    SKILL_SLOT  /* 202 */,
+    CHARACTER_SLOT  /* 203 */,
+    STATS_RESET  /* 204 */,
+    KASH_TICKET  /* 205 */,
+    POINTS_TICKET  /* 206 */,
+    CLUB_SPONSORSHIP  /* 209 */,
+    RANDOM_BOX  /* 210 */,
+    STATS_211,
+    STATS_212,
+    STATS_213,
+    STATS_214,
+    STATS_215,
+    STATS_216,
+    STATS_217,
+    STATS_218,
+    STATS_219,
+    STATS_220,
+    STATS_221,
+    STATS_222,
+    STATS_223,
+    CLUB_UNIFORM /* 301 */,
+    EMBLEM /* 302 */,
+    BACK_NUMBER /* 303 */,
+    CLUB_RENAME /* 304 */,
+    MEMBERS_SLOTS /* 305 */,
+    CLUB_BROADCAST /* 306 */,
+    BACK_NUMBER_COLOR /* 309 */;
 
     public int toInt() {
         switch (this) {
@@ -53,6 +81,62 @@ public enum ItemType {
                  return 125;
             case PACKAGE:
                  return 126;
+            case SODA:
+                return 201;
+            case SKILL_SLOT:
+                return 202;
+            case CHARACTER_SLOT:
+                return 203;
+            case STATS_RESET:
+                return 204;
+            case KASH_TICKET:
+                return 205;
+            case POINTS_TICKET:
+                return 206;
+            case CLUB_SPONSORSHIP:
+                return 209;
+            case RANDOM_BOX:
+                return 210;
+            case STATS_211:
+                return 211;
+            case STATS_212:
+                return 212;
+            case STATS_213:
+                return 213;
+            case STATS_214:
+                return 214;
+            case STATS_215:
+                return 215;
+            case STATS_216:
+                return 216;
+            case STATS_217:
+                return 217;
+            case STATS_218:
+                return 218;
+            case STATS_219:
+                return 219;
+            case STATS_220:
+                return 220;
+            case STATS_221:
+                return 221;
+            case STATS_222:
+                return 222;
+            case STATS_223:
+                return 223;
+            case CLUB_UNIFORM:
+                return 301;
+            case EMBLEM:
+                return 302;
+            case BACK_NUMBER:
+                return 303;
+            case CLUB_RENAME:
+                return 304;
+            case MEMBERS_SLOTS:
+                return 305;
+            case CLUB_BROADCAST:
+                return 306;
+            case BACK_NUMBER_COLOR:
+                return 309;
             default:
                 return -1;
         }
@@ -92,6 +176,62 @@ public enum ItemType {
                 return MUFFLER;
             case 126:
                 return PACKAGE;
+            case 201:
+                return SODA;
+            case 202:
+                return SKILL_SLOT;
+            case 203:
+                return CHARACTER_SLOT;
+            case 204:
+                return STATS_RESET;
+            case 205:
+                return KASH_TICKET;
+            case 206:
+                return POINTS_TICKET;
+            case 209:
+                return CLUB_SPONSORSHIP;
+            case 210:
+                return RANDOM_BOX;
+            case 211:
+                return STATS_211;
+            case 212:
+                return STATS_212;
+            case 213:
+                return STATS_213;
+            case 214:
+                return STATS_214;
+            case 215:
+                return STATS_215;
+            case 216:
+                return STATS_216;
+            case 217:
+                return STATS_217;
+            case 218:
+                return STATS_218;
+            case 219:
+                return STATS_219;
+            case 220:
+                return STATS_220;
+            case 221:
+                return STATS_221;
+            case 222:
+                return STATS_222;
+            case 223:
+                return STATS_223;
+            case 301:
+                return CLUB_UNIFORM;
+            case 302:
+                return EMBLEM;
+            case 303:
+                return BACK_NUMBER;
+            case 304:
+                return CLUB_RENAME;
+            case 305:
+                return MEMBERS_SLOTS;
+            case 306:
+                return CLUB_BROADCAST;
+            case 309:
+                return BACK_NUMBER_COLOR;
             default:
                 return null;
         }
