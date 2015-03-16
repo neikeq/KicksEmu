@@ -653,9 +653,6 @@ public class RoomManager {
                                 if (bonusTwo != null) {
                                     bonusTwo.applyBonus(reward, experience, points);
                                 }
-
-                                i.setRemainUsages((short) (i.getRemainUsages() - 1));
-                                PlayerInfo.setInventoryItem(i, playerId, con);
                             });
 
                     pr.setExperience(points.get() * Configuration.getInt("game.rewards.exp"));
@@ -704,6 +701,14 @@ public class RoomManager {
 
                         RewardCalculator.updatePlayerHistory(pr, teamResult,
                                 result.getMom(), con);
+
+                        // Decrease by 1 the remain usage of usage items
+                        PlayerInfo.getInventoryItems(playerId, con).values().stream()
+                                .filter(i -> i.getExpiration().isUsage() && i.isSelected())
+                                .forEach(i -> {
+                                    i.setRemainUsages((short) (i.getRemainUsages() - 1));
+                                    PlayerInfo.setInventoryItem(i, playerId, con);
+                                });
                     }
                 });
 
