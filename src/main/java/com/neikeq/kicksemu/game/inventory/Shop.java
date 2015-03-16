@@ -274,20 +274,20 @@ public class Shop {
         OptionInfo optionInfoOne = TableManager.getOptionInfo(c -> c.getId() == statsBonusOne);
         OptionInfo optionInfoTwo = TableManager.getOptionInfo(c -> c.getId() == statsBonusTwo);
 
-        boolean isInvalidBonus = (optionInfoOne == null && statsBonusOne != 0) ||
+        boolean invalidBonus = (optionInfoOne == null && statsBonusOne != 0) ||
                 (optionInfoTwo == null && statsBonusTwo != 0);
 
-        boolean isValidBonusLevel =
+        boolean validBonusLevel =
                 (optionInfoOne == null || optionInfoOne.isValidLevel(level, payment)) &&
                 (optionInfoTwo == null || optionInfoTwo.isValidLevel(level, payment));
 
-        boolean isValidGender = itemInfo != null &&
-                itemInfo.getGender() != PlayerInfo.getAnimation(playerId);
+        boolean validGender = itemInfo != null && (itemInfo.getGender() == 0 ||
+                itemInfo.getGender() == PlayerInfo.getAnimation(playerId));
 
         byte result = 0;
 
         // If there is a item with this id and the player position is valid for this item
-        if (itemInfo != null && expiration != null && !isInvalidBonus && isValidGender) {
+        if (itemInfo != null && expiration != null && !invalidBonus && validGender) {
             BonusInfo bonusInfo = TableManager.getBonusInfo(c ->
                     c.getType() == itemInfo.getType());
 
@@ -299,7 +299,7 @@ public class Shop {
                     !bonusInfo.getBonusTwo().contains(bonusTwoType)) return;
 
             // If the player meets the level requirements for this item
-            if (level >= itemInfo.getLevel() && isValidBonusLevel) {
+            if (level >= itemInfo.getLevel() && validBonusLevel) {
                 int itemPrice = itemInfo.getPrice().getPriceFor(expiration, payment);
                 itemPrice += optionInfoOne == null ? 0 :
                         optionInfoOne.getPrice().getPriceFor(expiration, payment);
