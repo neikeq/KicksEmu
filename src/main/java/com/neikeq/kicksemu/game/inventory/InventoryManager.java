@@ -21,7 +21,7 @@ public class InventoryManager {
         Skill skill = (Skill) InventoryUtils.getByIdFromMap(skills, skillId);
 
         byte slots = PlayerInfo.getSkillSlots(playerId);
-        byte skillsInUse = (byte)skills.values().stream()
+        byte skillsInUse = (byte) skills.values().stream()
                 .filter(s -> s.getSelectionIndex() > 0).count();
 
         // If skill exists and skill is not yet activated

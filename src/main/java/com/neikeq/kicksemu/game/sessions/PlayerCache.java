@@ -127,9 +127,10 @@ public class PlayerCache {
     public Map<Integer, Item> getItems() {
         Timestamp currentTimestamp = DateUtils.getTimestamp();
 
-        return items.values().stream()
+        return items == null ? null : items.values().stream()
                 .filter(i -> (i.getExpiration().isUsage() && i.getRemainUsages() > 0) ||
-                        i.getTimestampExpire().after(currentTimestamp))
+                        i.getTimestampExpire().after(currentTimestamp) ||
+                        i.getExpiration().isPermanent())
                 .collect(Collectors.toMap(Item::getInventoryId, i -> i));
     }
 
@@ -140,8 +141,9 @@ public class PlayerCache {
     public Map<Integer, Skill> getSkills() {
         Timestamp currentTimestamp = DateUtils.getTimestamp();
 
-        return skills.values().stream()
-                .filter(s -> s.getTimestampExpire().after(currentTimestamp))
+        return skills == null ? null : skills.values().stream()
+                .filter(s -> s.getTimestampExpire().after(currentTimestamp) ||
+                        s.getExpiration().isPermanent())
                 .collect(Collectors.toMap(Skill::getInventoryId, s -> s));
     }
 
@@ -150,7 +152,12 @@ public class PlayerCache {
     }
 
     public Map<Integer, Celebration> getCeles() {
-        return celes;
+        Timestamp currentTimestamp = DateUtils.getTimestamp();
+
+        return celes == null ? null : celes.values().stream()
+                .filter(c -> c.getTimestampExpire().after(currentTimestamp) ||
+                        c.getExpiration().isPermanent())
+                .collect(Collectors.toMap(Celebration::getInventoryId, c -> c));
     }
 
     public void setCeles(Map<Integer, Celebration> celes) {
