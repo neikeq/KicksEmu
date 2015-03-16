@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -196,6 +197,23 @@ public class PlayerInfo {
         return defaultShoes;
     }
 
+    public static byte getSkillSlots(int id, Connection ... con) {
+        Iterator<Item> items = getInventoryItems(id, con).values().stream()
+                .filter(item -> item.getId() == 2021010).iterator();
+
+        // Default and minimum skill slots is 6
+        byte slots = 6;
+
+        while (items.hasNext()) {
+            OptionInfo optionInfo = TableManager.getOptionInfo(oi ->
+                    oi.getId() == items.next().getBonusOne());
+
+            slots += optionInfo.getValue();
+        }
+
+        return slots;
+    }
+
     public static Item getItemInUseByType(ItemType type, int id, Connection ... con) {
         Optional<Item> result = getInventoryItems(id, con).values().stream().filter(item -> {
             ItemInfo itemInfo = TableManager.getItemInfo(i -> i.getId() == item.getId());
@@ -359,9 +377,9 @@ public class PlayerInfo {
 
         getInventoryItems(id, con).values().stream().filter(Item::isSelected).forEach(item -> {
             OptionInfo optionInfoOne = TableManager.getOptionInfo(of ->
-                    of.getId() == item.getStatsBonusOne());
+                    of.getId() == item.getBonusOne());
             OptionInfo optionInfoTwo = TableManager.getOptionInfo(of ->
-                    of.getId() == item.getStatsBonusTwo());
+                    of.getId() == item.getBonusTwo());
 
             if (optionInfoOne != null) {
                 CharacterUtils.sumStatsByIndex(optionInfoOne.getType() - 10,
@@ -1008,8 +1026,8 @@ public class PlayerInfo {
                 stmt.setInt(2, item.getInventoryId());
                 stmt.setInt(3, item.getId());
                 stmt.setInt(4, item.getExpiration().toInt());
-                stmt.setInt(5, item.getStatsBonusOne());
-                stmt.setInt(6, item.getStatsBonusTwo());
+                stmt.setInt(5, item.getBonusOne());
+                stmt.setInt(6, item.getBonusTwo());
                 stmt.setShort(7, item.getRemainUsages());
                 stmt.setTimestamp(8, item.getTimestampExpire());
                 stmt.setBoolean(9, item.isSelected());
@@ -1032,8 +1050,8 @@ public class PlayerInfo {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, item.getStatsBonusOne());
-                stmt.setInt(2, item.getStatsBonusTwo());
+                stmt.setInt(1, item.getBonusOne());
+                stmt.setInt(2, item.getBonusTwo());
                 stmt.setShort(3, item.getRemainUsages());
                 stmt.setTimestamp(4, item.getTimestampExpire());
                 stmt.setBoolean(5, item.isSelected());
@@ -1152,25 +1170,6 @@ public class PlayerInfo {
                 stmt.setTimestamp(2, cele.getTimestampExpire());
                 stmt.setInt(3, id);
                 stmt.setInt(4, cele.getInventoryId());
-
-                stmt.executeUpdate();
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
-            }
-        } catch (SQLException ignored) {}
-    }
-
-    public static void removeInventoryCele(Celebration cele, int id, Connection ... con) {
-        String query = "DELETE FROM ceres WHERE player_id=? AND inventory_id=?";
-
-        try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
-
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, id);
-                stmt.setInt(2, cele.getInventoryId());
 
                 stmt.executeUpdate();
             } finally {

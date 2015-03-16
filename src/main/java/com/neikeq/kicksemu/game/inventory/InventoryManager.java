@@ -20,13 +20,21 @@ public class InventoryManager {
         Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
         Skill skill = (Skill) InventoryUtils.getByIdFromMap(skills, skillId);
 
+        byte slots = PlayerInfo.getSkillSlots(playerId);
+        byte skillsInUse = (byte)skills.values().stream()
+                .filter(s -> s.getSelectionIndex() > 0).count();
+
         // If skill exists and skill is not yet activated
         if (skill != null && skill.getSelectionIndex() <= 0) {
-            // Activate skill
-            newIndex = InventoryUtils.getSmallestMissingIndex(skills.values());
-            skill.setSelectionIndex(newIndex);
+            if (slots > skillsInUse) {
+                // Activate skill
+                newIndex = InventoryUtils.getSmallestMissingIndex(skills.values());
+                skill.setSelectionIndex(newIndex);
 
-            PlayerInfo.setInventorySkill(skill, playerId);
+                PlayerInfo.setInventorySkill(skill, playerId);
+            } else {
+                result = -3; // Skill slots are full
+            }
         } else {
             result = -2; // Skill does not exists
         }

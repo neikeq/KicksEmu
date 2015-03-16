@@ -4,8 +4,11 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.utils.DateUtils;
 
+import java.sql.Timestamp;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PlayerCache {
 
@@ -122,7 +125,12 @@ public class PlayerCache {
     }
 
     public Map<Integer, Item> getItems() {
-        return items;
+        Timestamp currentTimestamp = DateUtils.getTimestamp();
+
+        return items.values().stream()
+                .filter(i -> (i.getExpiration().isUsage() && i.getRemainUsages() > 0) ||
+                        i.getTimestampExpire().after(currentTimestamp))
+                .collect(Collectors.toMap(Item::getInventoryId, i -> i));
     }
 
     public void setItems(Map<Integer, Item> items) {
@@ -130,7 +138,11 @@ public class PlayerCache {
     }
 
     public Map<Integer, Skill> getSkills() {
-        return skills;
+        Timestamp currentTimestamp = DateUtils.getTimestamp();
+
+        return skills.values().stream()
+                .filter(s -> s.getTimestampExpire().after(currentTimestamp))
+                .collect(Collectors.toMap(Skill::getInventoryId, s -> s));
     }
 
     public void setSkills(Map<Integer, Skill> skills) {

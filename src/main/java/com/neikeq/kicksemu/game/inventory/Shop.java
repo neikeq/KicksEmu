@@ -25,6 +25,8 @@ import java.util.Map;
 
 public class Shop {
 
+    private static final byte SLOTS_LIMIT = 12;
+
     public static void purchaseSkill(Session session, ClientMessage msg) {
         Payment payment = Payment.fromInt(msg.readByte());
         int price = msg.readInt();
@@ -269,7 +271,8 @@ public class Shop {
         // Get the information about the item with the requested id
         ItemInfo itemInfo = TableManager.getItemInfo(c -> c.getId() == itemId);
 
-        if (itemInfo != null && (itemInfo.getType() < 101 || itemInfo.getType() > 200)) return;
+        // Avoid purchasing club items
+        if (itemInfo != null && (itemInfo.getType() <= 209 && itemInfo.getType() >= 205)) return;
 
         OptionInfo optionInfoOne = TableManager.getOptionInfo(c -> c.getId() == statsBonusOne);
         OptionInfo optionInfoTwo = TableManager.getOptionInfo(c -> c.getId() == statsBonusTwo);
@@ -311,24 +314,39 @@ public class Shop {
                         itemInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
                     if (price <= money) {
-                        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+                        int remainSlots = PlayerInfo.getSkillSlots(playerId) - SLOTS_LIMIT;
 
-                        // Initialize item with the requested data
-                        int id = InventoryUtils.getSmallestMissingId(items.values());
+                        // If player is purchasing skill slots
+                        if (itemInfo.getType() == 33 && optionInfoOne != null &&
+                                optionInfoOne.getValue() <= remainSlots) {
+                            if (!SpecialItem.isSpecialItem(itemInfo.getType())) {
 
-                        Item item = new Item(itemId, id, expiration.toInt(),
-                                statsBonusOne, statsBonusTwo, (short)0,
-                                InventoryUtils.expirationToTimestamp(expiration),
-                                false, true);
+                                    Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
 
-                        // Add it to the player's inventory
-                        items.put(id, item);
-                        // Activate item
-                        CharacterUtils.updateItemsInUse(item, playerId);
-                        // Update player's inventory
-                        PlayerInfo.addInventoryItem(item, playerId);
-                        // Deduct the price from the player's money
-                        sumMoneyToPaymentMode(payment, playerId, -price);
+                                    // Initialize item with the requested data
+                                    int id = InventoryUtils.getSmallestMissingId(items.values());
+
+                                    Item item = new Item(itemId, id, expiration.toInt(),
+                                            statsBonusOne, statsBonusTwo, (short) 0,
+                                            InventoryUtils.expirationToTimestamp(expiration),
+                                            false, true);
+
+                                    // Add it to the player's inventory
+                                    items.put(id, item);
+                                    // Activate item
+                                    CharacterUtils.updateItemsInUse(item, playerId);
+                                    // Update player's inventory
+                                    PlayerInfo.addInventoryItem(item, playerId);
+                            } else {
+                                SpecialItem.handle(itemId, itemInfo.getType(), session);
+                            }
+
+                            // Deduct the price from the player's money
+                            sumMoneyToPaymentMode(payment, playerId, -price);
+                        } else {
+                            // Skill slots limit
+                            result = (byte) -10;
+                        }
                     } else {
                         // Not enough money
                         result = (byte) (payment == Payment.KASH ? -8 : -5);

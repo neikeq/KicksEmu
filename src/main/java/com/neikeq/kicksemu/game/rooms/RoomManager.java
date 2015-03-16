@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.Position;
+import com.neikeq.kicksemu.game.inventory.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
@@ -20,6 +21,7 @@ import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.utils.MutableInteger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -613,6 +615,8 @@ public class RoomManager {
                     int playerId = pr.getPlayerId();
                     int reward = RewardCalculator.calculateReward(pr, room, gameCountdown);
 
+                    int appliedReward = reward;
+
                     // If player's position is a DF branch
                     if (Position.trunk(PlayerInfo.getPosition(playerId, con)) == Position.DF) {
                         short scoredGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
@@ -622,17 +626,39 @@ public class RoomManager {
 
                         // If player's team did not lose and conceded 1 or less goals,
                         // increase his rewards by 30%
-                        reward += concededGoals <= 1 && scoredGoals >= concededGoals ?
+                        appliedReward += concededGoals <= 1 && scoredGoals >= concededGoals ?
                                 (reward * 30) / 100 : 0;
                     }
 
-                    reward += levelGapReward ? (reward * 10) / 100 : 0;
-                    reward += goldenTime ? (reward * 50) / 100 : 0;
+                    appliedReward += levelGapReward ? (reward * 10) / 100 : 0;
+                    appliedReward += goldenTime ? (reward * 50) / 100 : 0;
                     // If player is mvp increase his rewards by 25%
-                    reward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+                    appliedReward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
 
-                    pr.setExperience(reward * Configuration.getInt("game.rewards.exp"));
-                    pr.setPoints(reward * Configuration.getInt("game.rewards.point"));
+                    final MutableInteger points = new MutableInteger(appliedReward);
+                    final MutableInteger experience = new MutableInteger(appliedReward);
+
+                    // Apply item reward bonuses
+                    PlayerInfo.getInventoryItems(playerId, con).values().stream()
+                            .filter(i -> i.getExpiration().isUsage()).forEach(i -> {
+                        Soda bonusOne = Soda.fromId(i.getBonusOne());
+
+                        if (bonusOne != null) {
+                            bonusOne.applyBonus(reward, experience, points);
+                        }
+
+                        Soda bonusTwo = Soda.fromId(i.getBonusTwo());
+
+                        if (bonusTwo != null) {
+                            bonusTwo.applyBonus(reward, experience, points);
+                        }
+
+                        i.setRemainUsages((short) (i.getRemainUsages() - 1));
+                        PlayerInfo.setInventoryItem(i, playerId, con);
+                    });
+
+                    pr.setExperience(points.get() * Configuration.getInt("game.rewards.exp"));
+                    pr.setPoints(experience.get() * Configuration.getInt("game.rewards.point"));
                 });
 
                 // Broadcast match result message after calculating rewards

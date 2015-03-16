@@ -294,15 +294,14 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage skillList(Map<Integer, Skill> skills, byte result) {
+    public static ServerMessage skillList(Map<Integer, Skill> skills, byte slots, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SKILL_LIST);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            int amount = skills.size();
-            msg.append((byte)(amount + (6 - (amount % 6))));
-            msg.append((short)amount);
+            msg.append(slots);
+            msg.append((short)skills.size());
 
             for (Skill skill : skills.values()) {
                 MessageUtils.appendInventorySkill(skill, msg);

@@ -12,6 +12,17 @@ public enum Expiration {
         return this == DAYS_PERM;
     }
 
+    public boolean isUsage() {
+        switch (this) {
+            case USAGE_10:
+            case USAGE_50:
+            case USAGE_100:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static Expiration fromInt(int value) {
         switch (value) {
             case 9200007:
