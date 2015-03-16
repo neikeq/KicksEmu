@@ -199,7 +199,7 @@ public class PlayerInfo {
 
     public static byte getSkillSlots(int id, Connection ... con) {
         Iterator<Item> items = getInventoryItems(id, con).values().stream()
-                .filter(item -> item.getId() == 2021010).iterator();
+                .filter(i -> i.getId() == 2021010 && i.isSelected()).iterator();
 
         // Default and minimum skill slots is 6
         byte slots = 6;

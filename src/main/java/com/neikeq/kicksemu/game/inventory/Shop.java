@@ -320,23 +320,22 @@ public class Shop {
                         if (itemInfo.getType() == 33 && optionInfoOne != null &&
                                 optionInfoOne.getValue() <= remainSlots) {
                             if (!SpecialItem.isSpecialItem(itemInfo.getType())) {
+                                Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
 
-                                    Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+                                // Initialize item with the requested data
+                                int id = InventoryUtils.getSmallestMissingId(items.values());
 
-                                    // Initialize item with the requested data
-                                    int id = InventoryUtils.getSmallestMissingId(items.values());
+                                Item item = new Item(itemId, id, expiration.toInt(),
+                                        statsBonusOne, statsBonusTwo, (short) 0,
+                                        InventoryUtils.expirationToTimestamp(expiration),
+                                        false, true);
 
-                                    Item item = new Item(itemId, id, expiration.toInt(),
-                                            statsBonusOne, statsBonusTwo, (short) 0,
-                                            InventoryUtils.expirationToTimestamp(expiration),
-                                            false, true);
-
-                                    // Add it to the player's inventory
-                                    items.put(id, item);
-                                    // Activate item
-                                    CharacterUtils.updateItemsInUse(item, playerId);
-                                    // Update player's inventory
-                                    PlayerInfo.addInventoryItem(item, playerId);
+                                // Add it to the player's inventory
+                                items.put(id, item);
+                                // Activate item
+                                CharacterUtils.updateItemsInUse(item, playerId);
+                                // Update player's inventory
+                                PlayerInfo.addInventoryItem(item, playerId);
                             } else {
                                 SpecialItem.handle(itemId, itemInfo.getType(), session);
                             }

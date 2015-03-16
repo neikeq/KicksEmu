@@ -640,22 +640,23 @@ public class RoomManager {
 
                     // Apply item reward bonuses
                     PlayerInfo.getInventoryItems(playerId, con).values().stream()
-                            .filter(i -> i.getExpiration().isUsage()).forEach(i -> {
-                        Soda bonusOne = Soda.fromId(i.getBonusOne());
+                            .filter(i -> i.getExpiration().isUsage() && i.isSelected())
+                            .forEach(i -> {
+                                Soda bonusOne = Soda.fromId(i.getBonusOne());
 
-                        if (bonusOne != null) {
-                            bonusOne.applyBonus(reward, experience, points);
-                        }
+                                if (bonusOne != null) {
+                                    bonusOne.applyBonus(reward, experience, points);
+                                }
 
-                        Soda bonusTwo = Soda.fromId(i.getBonusTwo());
+                                Soda bonusTwo = Soda.fromId(i.getBonusTwo());
 
-                        if (bonusTwo != null) {
-                            bonusTwo.applyBonus(reward, experience, points);
-                        }
+                                if (bonusTwo != null) {
+                                    bonusTwo.applyBonus(reward, experience, points);
+                                }
 
-                        i.setRemainUsages((short) (i.getRemainUsages() - 1));
-                        PlayerInfo.setInventoryItem(i, playerId, con);
-                    });
+                                i.setRemainUsages((short) (i.getRemainUsages() - 1));
+                                PlayerInfo.setInventoryItem(i, playerId, con);
+                            });
 
                     pr.setExperience(points.get() * Configuration.getInt("game.rewards.exp"));
                     pr.setPoints(experience.get() * Configuration.getInt("game.rewards.point"));
