@@ -101,6 +101,62 @@ public class CharacterUtils {
                 return PlayerInfo.getItemMuffler(playerId);
             case PACKAGE:
                 return PlayerInfo.getItemPackage(playerId);
+            case SODA:
+                return PlayerInfo.getItemInUseByType(ItemType.SODA, playerId);
+            case SKILL_SLOT:
+                return PlayerInfo.getItemInUseByType(ItemType.SKILL_SLOT, playerId);
+            case CHARACTER_SLOT:
+                return PlayerInfo.getItemInUseByType(ItemType.CHARACTER_SLOT, playerId);
+            case STATS_RESET:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_RESET, playerId);
+            case KASH_TICKET:
+                return PlayerInfo.getItemInUseByType(ItemType.KASH_TICKET, playerId);
+            case POINTS_TICKET:
+                return PlayerInfo.getItemInUseByType(ItemType.POINTS_TICKET, playerId);
+            case CLUB_SPONSORSHIP:
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_SPONSORSHIP, playerId);
+            case RANDOM_BOX:
+                return PlayerInfo.getItemInUseByType(ItemType.RANDOM_BOX, playerId);
+            case STATS_211:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_211, playerId);
+            case STATS_212:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_212, playerId);
+            case STATS_213:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_213, playerId);
+            case STATS_214:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_214, playerId);
+            case STATS_215:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_215, playerId);
+            case STATS_216:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_216, playerId);
+            case STATS_217:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_217, playerId);
+            case STATS_218:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_218, playerId);
+            case STATS_219:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_219, playerId);
+            case STATS_220:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_220, playerId);
+            case STATS_221:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_221, playerId);
+            case STATS_222:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_222, playerId);
+            case STATS_223:
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_223, playerId);
+            case CLUB_UNIFORM:
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_UNIFORM, playerId);
+            case EMBLEM:
+                return PlayerInfo.getItemInUseByType(ItemType.EMBLEM, playerId);
+            case BACK_NUMBER:
+                return PlayerInfo.getItemInUseByType(ItemType.BACK_NUMBER, playerId);
+            case CLUB_RENAME:
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_RENAME, playerId);
+            case MEMBERS_SLOTS:
+                return PlayerInfo.getItemInUseByType(ItemType.MEMBERS_SLOTS, playerId);
+            case CLUB_BROADCAST:
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_BROADCAST, playerId);
+            case BACK_NUMBER_COLOR:
+                return PlayerInfo.getItemInUseByType(ItemType.BACK_NUMBER_COLOR, playerId);
             default:
                 return null;
         }
