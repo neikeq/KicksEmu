@@ -655,8 +655,8 @@ public class RoomManager {
                                 }
                             });
 
-                    pr.setExperience(points.get() * Configuration.getInt("game.rewards.exp"));
-                    pr.setPoints(experience.get() * Configuration.getInt("game.rewards.point"));
+                    pr.setExperience(experience.get() * Configuration.getInt("game.rewards.exp"));
+                    pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
                 });
 
                 // Broadcast match result message after calculating rewards
