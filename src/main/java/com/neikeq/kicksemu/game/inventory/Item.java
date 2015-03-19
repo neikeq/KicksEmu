@@ -12,7 +12,7 @@ public class Item implements Product {
     private Expiration expiration;
     private int bonusOne;
     private int bonusTwo;
-    private short remainUsages;
+    private short usages;
     private Timestamp timestampExpire;
     private boolean selected;
     private boolean visible;
@@ -22,13 +22,13 @@ public class Item implements Product {
     }
 
     public Item(int id, int inventoryId, int expiration, int bonusOne, int bonusTwo,
-                short remainUsages, Timestamp expire, boolean selected, boolean visible) {
+                short usages, Timestamp expire, boolean selected, boolean visible) {
         this.id = id;
         this.inventoryId = inventoryId;
         this.expiration = Expiration.fromInt(expiration);
         this.bonusOne = bonusOne;
         this.bonusTwo = bonusTwo;
-        this.remainUsages = remainUsages;
+        this.usages = usages;
         this.timestampExpire = expire;
         this.setSelected(selected);
         this.visible = visible;
@@ -68,12 +68,12 @@ public class Item implements Product {
         return bonusTwo;
     }
 
-    public short getRemainUsages() {
-        return remainUsages;
+    public short getUsages() {
+        return usages;
     }
 
-    public void setRemainUsages(short value) {
-        remainUsages += value;
+    public void setUsages(short value) {
+        usages += value;
     }
 
     public Timestamp getTimestampExpire() {

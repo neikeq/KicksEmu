@@ -69,9 +69,15 @@ class MessageUtils {
         msg.append(item.getExpiration() != null ? item.getExpiration().toInt() : 0);
         msg.append(item.getBonusOne());
         msg.append(item.getBonusTwo());
-        msg.append(item.getRemainUsages());
-        msg.append(item.getExpiration() != null && item.getExpiration().isPermanent() ?
-                0 : (int) (item.getTimestampExpire().getTime() / 1000));
+        msg.append(item.getUsages());
+
+        if (item.getExpiration() != null &&
+                (item.getExpiration().isPermanent() || item.getExpiration().isUsage())) {
+            msg.append(0);
+        } else {
+            msg.append((int) (item.getTimestampExpire().getTime() / 1000));
+        }
+
         msg.append(item.isVisible());
     }
 

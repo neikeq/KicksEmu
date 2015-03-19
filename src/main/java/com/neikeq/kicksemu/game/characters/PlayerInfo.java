@@ -1046,7 +1046,7 @@ public class PlayerInfo {
                 stmt.setInt(4, item.getExpiration().toInt());
                 stmt.setInt(5, item.getBonusOne());
                 stmt.setInt(6, item.getBonusTwo());
-                stmt.setShort(7, item.getRemainUsages());
+                stmt.setShort(7, item.getUsages());
                 stmt.setTimestamp(8, item.getTimestampExpire());
                 stmt.setBoolean(9, item.isSelected());
                 stmt.setBoolean(10, item.isVisible());
@@ -1070,7 +1070,7 @@ public class PlayerInfo {
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, item.getBonusOne());
                 stmt.setInt(2, item.getBonusTwo());
-                stmt.setShort(3, item.getRemainUsages());
+                stmt.setShort(3, item.getUsages());
                 stmt.setTimestamp(4, item.getTimestampExpire());
                 stmt.setBoolean(5, item.isSelected());
                 stmt.setInt(6, id);

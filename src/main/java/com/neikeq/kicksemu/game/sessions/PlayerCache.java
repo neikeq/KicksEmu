@@ -129,7 +129,7 @@ public class PlayerCache {
 
         if (items != null) {
             items = items.values().stream()
-                    .filter(i -> (i.getExpiration().isUsage() && i.getRemainUsages() > 0) ||
+                    .filter(i -> (i.getExpiration().isUsage() && i.getUsages() > 0) ||
                             i.getTimestampExpire().after(currentTimestamp) ||
                             i.getExpiration().isPermanent())
                     .collect(Collectors.toMap(Item::getInventoryId, i -> i));
