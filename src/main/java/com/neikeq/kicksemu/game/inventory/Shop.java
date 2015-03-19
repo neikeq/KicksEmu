@@ -330,7 +330,7 @@ public class Shop {
                                 int id = InventoryUtils.getSmallestMissingId(items.values());
 
                                 Item item = new Item(itemId, id, expiration.toInt(),
-                                        statsBonusOne, statsBonusTwo, (short) 0,
+                                        statsBonusOne, statsBonusTwo, expiration.getUsages(),
                                         InventoryUtils.expirationToTimestamp(expiration),
                                         false, true);
 

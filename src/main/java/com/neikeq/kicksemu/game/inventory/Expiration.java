@@ -23,6 +23,19 @@ public enum Expiration {
         }
     }
 
+    public short getUsages() {
+        switch (this) {
+            case USAGE_10:
+                return 10;
+            case USAGE_50:
+                return 50;
+            case USAGE_100:
+                return 100;
+            default:
+                return 0;
+        }
+    }
+
     public static Expiration fromInt(int value) {
         switch (value) {
             case 9200007:
@@ -34,13 +47,10 @@ public enum Expiration {
             case 9200999:
             case 9201999:
                 return DAYS_PERM;
-            case 9100010:
             case 9101010:
                 return USAGE_10;
-            case 9100050:
             case 9101050:
                 return USAGE_50;
-            case 9100100:
             case 9101100:
                 return USAGE_100;
             default:
