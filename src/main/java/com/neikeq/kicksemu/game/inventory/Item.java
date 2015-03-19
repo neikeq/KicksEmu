@@ -72,7 +72,7 @@ public class Item implements Product {
         return usages;
     }
 
-    public void setUsages(short value) {
+    public void sumUsages(short value) {
         usages += value;
     }
 

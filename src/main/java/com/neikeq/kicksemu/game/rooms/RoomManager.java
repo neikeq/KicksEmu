@@ -706,7 +706,7 @@ public class RoomManager {
                         PlayerInfo.getInventoryItems(playerId, con).values().stream()
                                 .filter(i -> i.getExpiration().isUsage() && i.isSelected())
                                 .forEach(i -> {
-                                    i.setUsages((short) (i.getUsages() - 1));
+                                    i.sumUsages((short) -1);
                                     PlayerInfo.setInventoryItem(i, playerId, con);
                                 });
                     }
