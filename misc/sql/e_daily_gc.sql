@@ -13,7 +13,9 @@ CREATE EVENT daily_gc
     DO
         BEGIN
             -- Remove expired items
-            DELETE FROM items WHERE expiration <> 9201999 AND timestamp_expire <= CURRENT_TIMESTAMP;
+            DELETE FROM items WHERE
+             ((expiration = 9201007 OR expiration = 9201030) AND timestamp_expire <= CURRENT_TIMESTAMP)
+             OR ((expiration = 9101010 OR expiration = 9101050 OR expiration = 9101100) AND usages <= 0);
             -- Remove expired skills
             DELETE FROM skills WHERE expiration <> 9201999 AND timestamp_expire <= CURRENT_TIMESTAMP;
             -- Remove expired ceremonies

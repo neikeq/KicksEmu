@@ -529,7 +529,8 @@ public class PlayerInfo {
 
         String query = "SELECT * FROM items WHERE player_id = ? AND (" +
                 "((expiration = ? OR expiration = ? OR expiration = ?) AND usages > 0) OR " +
-                "(timestamp_expire > ? OR expiration = ?))";
+                "((expiration = ? OR expiration = ?) AND timestamp_expire > ?) " +
+                "OR expiration = ?)";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -539,8 +540,10 @@ public class PlayerInfo {
                 stmt.setInt(2, Expiration.USAGE_10.toInt());
                 stmt.setInt(3, Expiration.USAGE_50.toInt());
                 stmt.setInt(4, Expiration.USAGE_100.toInt());
-                stmt.setTimestamp(5, DateUtils.getTimestamp());
-                stmt.setInt(6, Expiration.DAYS_PERM.toInt());
+                stmt.setInt(5, Expiration.DAYS_7.toInt());
+                stmt.setInt(6, Expiration.DAYS_30.toInt());
+                stmt.setTimestamp(7, DateUtils.getTimestamp());
+                stmt.setInt(8, Expiration.DAYS_PERM.toInt());
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {

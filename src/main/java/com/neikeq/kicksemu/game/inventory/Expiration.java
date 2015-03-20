@@ -23,6 +23,17 @@ public enum Expiration {
         }
     }
 
+    public boolean isDays() {
+        switch (this) {
+            case DAYS_7:
+            case DAYS_30:
+            case DAYS_PERM:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public short getUsages() {
         switch (this) {
             case USAGE_10:
