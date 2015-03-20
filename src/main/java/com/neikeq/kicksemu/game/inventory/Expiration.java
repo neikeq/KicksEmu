@@ -8,6 +8,21 @@ public enum Expiration {
     USAGE_50,
     USAGE_100;
 
+    public byte getType() {
+        switch (this) {
+            case DAYS_7:
+            case DAYS_30:
+            case DAYS_PERM:
+                return 1;
+            case USAGE_10:
+            case USAGE_50:
+            case USAGE_100:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
     public boolean isPermanent() {
         return this == DAYS_PERM;
     }

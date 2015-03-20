@@ -51,6 +51,9 @@ public class Shop {
 
         // If there is a skill with this id and the player position is valid for this skill
         if (skillInfo != null && expiration != null) {
+            // Reject request if expiration is not based on days
+            if (expiration.getType() != 1) return;
+
             // If the player meets the level requirements for this skill
             if (level >= skillInfo.getLevel()) {
                 int skillPrice = skillInfo.getPrice().getPriceFor(expiration, payment);
@@ -125,6 +128,9 @@ public class Shop {
 
         // If there is a cele with this id and the player position is valid for this cele
         if (celeInfo != null && expiration != null) {
+            // Reject request if expiration is not based on days
+            if (expiration.getType() != 1) return;
+
             // If the player meets the level requirements for this cele
             if (level >= celeInfo.getLevel()) {
                 int celePrice = celeInfo.getPrice().getPriceFor(expiration, payment);
@@ -299,6 +305,9 @@ public class Shop {
         if (itemInfo != null && expiration != null && !invalidBonus && validGender) {
             BonusInfo bonusInfo = TableManager.getBonusInfo(c ->
                     c.getType() == itemInfo.getType());
+
+            // Check if the expiration type is allowed for this item
+            if (expiration.getType() != bonusInfo.getType()) return;
 
             // Ignore message if the stats bonus are not valid for this item type
             int bonusOneType = optionInfoOne == null ? 0 : optionInfoOne.getType();
