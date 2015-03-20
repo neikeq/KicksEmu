@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.inventory;
 
-import com.neikeq.kicksemu.utils.MutableInteger;
+import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 public enum Soda {
 

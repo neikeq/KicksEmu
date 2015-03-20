@@ -71,7 +71,7 @@ public class CharacterManager {
         session.send(msg);
     }
 
-    private static void sendSkillList(Session session) {
+    public static void sendSkillList(Session session) {
         int playerId = session.getPlayerId();
 
         Map<Integer, Skill> items = PlayerInfo.getInventorySkills(session.getPlayerId());

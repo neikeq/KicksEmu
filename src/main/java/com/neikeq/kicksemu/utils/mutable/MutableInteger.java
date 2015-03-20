@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.utils;
+package com.neikeq.kicksemu.utils.mutable;
 
 public class MutableInteger {
 

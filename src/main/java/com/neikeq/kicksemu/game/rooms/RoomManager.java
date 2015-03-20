@@ -21,7 +21,8 @@ import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.GameEvents;
-import com.neikeq.kicksemu.utils.MutableInteger;
+import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
+import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -683,13 +684,15 @@ public class RoomManager {
                     PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
                     PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
 
+                    short levels = 0;
+
                     if (pr.getExperience() > 0) {
                         // Check if player did level up and apply level up operations if needed
-                        short levels = CharacterManager.checkExperience(playerId, con);
+                        levels = CharacterManager.checkExperience(playerId, con);
 
                         // If player did level up, send him the updated stats points
                         if (levels > 0) {
-                            room.getPlayers().get(pr.getPlayerId())
+                            room.getPlayers().get(playerId)
                                     .sendAndFlush(MessageBuilder.playerStats(playerId, con));
                         }
                     }
@@ -702,13 +705,28 @@ public class RoomManager {
                         RewardCalculator.updatePlayerHistory(pr, teamResult,
                                 result.getMom(), con);
 
+                        MutableBoolean expired = new MutableBoolean(false);
+
                         // Decrease by 1 the remain usage of usage items
                         PlayerInfo.getInventoryItems(playerId, con).values().stream()
                                 .filter(i -> i.getExpiration().isUsage() && i.isSelected())
-                                .forEach(i -> {
-                                    i.sumUsages((short) -1);
-                                    PlayerInfo.setInventoryItem(i, playerId, con);
+                                .forEach(item -> {
+                                    item.sumUsages((short) -1);
+                                    PlayerInfo.setInventoryItem(item, playerId, con);
+
+                                    if (item.getUsages() <= 0) {
+                                        expired.set(true);
+                                    }
                                 });
+
+                        if (expired.get()) {
+                            CharacterManager.sendItemList(room.getPlayers().get(playerId));
+
+                            if (levels <= 0) {
+                                room.getPlayers().get(playerId)
+                                        .sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                            }
+                        }
                     }
                 });
 
