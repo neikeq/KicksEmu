@@ -13,13 +13,13 @@ public class ChatUtils {
 
     public static void sendServerMessage(Session session, String message) {
         ServerMessage response = MessageBuilder.chatMessage(0, "",
-                ChatMessageType.SERVER_MESSAGE, message);
+                MessageType.SERVER_MESSAGE, message);
         session.sendAndFlush(response);
     }
 
     public static void sendServerNotice(Session session, String notice) {
         ServerMessage response = MessageBuilder.chatMessage(0, "",
-                ChatMessageType.SERVER_NOTICE, notice);
+                MessageType.SERVER_NOTICE, notice);
         session.sendAndFlush(response);
     }
 }

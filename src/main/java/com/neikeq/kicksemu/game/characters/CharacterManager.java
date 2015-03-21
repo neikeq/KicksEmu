@@ -104,7 +104,7 @@ public class CharacterManager {
         short level = PlayerInfo.getLevel(playerId);
         short branchPosition = Position.trunk(position);
 
-        PlayerStats creationStats = CharacterUpgrade.getInstance()
+        PlayerStats creationStats = StatsInfo.getInstance()
                 .getCreationStats().get(branchPosition);
 
         try (Connection con = MySqlManager.getConnection()) {
@@ -139,7 +139,7 @@ public class CharacterManager {
 
             if (level >= 18) {
                 // Apply upgrade stats
-                PlayerStats upgradeStats = CharacterUpgrade.getInstance()
+                PlayerStats upgradeStats = StatsInfo.getInstance()
                         .getUpgradeStats().get(position);
 
                 statsPoints += PlayerInfo.sumStatsRunning(upgradeStats.getRunning(),
@@ -217,11 +217,11 @@ public class CharacterManager {
         short statsPoints = 0;
 
         for (int i = from; i < level; i++) {
-            statsPoints += CharacterUpgrade.getInstance().statsPointsForLevel(i+1);
+            statsPoints += StatsInfo.getInstance().statsPointsForLevel(i+1);
         }
 
         // Add auto stats
-        PlayerStats autoStats = CharacterUpgrade.getInstance().getAutoStats().get(position);
+        PlayerStats autoStats = StatsInfo.getInstance().getAutoStats().get(position);
 
         statsPoints += PlayerInfo.sumStatsRunning(autoStats.getRunning() * levels, id, con);
         statsPoints += PlayerInfo.sumStatsEndurance(autoStats.getEndurance() * levels, id, con);

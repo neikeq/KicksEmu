@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.users;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.Position;
-import com.neikeq.kicksemu.game.characters.CharacterUpgrade;
+import com.neikeq.kicksemu.game.characters.StatsInfo;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.sessions.SessionInfo;
@@ -109,7 +109,7 @@ public class UserManager {
                 if (Position.isValidNewPosition(currentPosition, position)) {
                     PlayerInfo.setPosition(position, playerId, con);
 
-                    PlayerStats stats = CharacterUpgrade.getInstance().getUpgradeStats().get(position);
+                    PlayerStats stats = StatsInfo.getInstance().getUpgradeStats().get(position);
 
                     short remainStats = 0;
 

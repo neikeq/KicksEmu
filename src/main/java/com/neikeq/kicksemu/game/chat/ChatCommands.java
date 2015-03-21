@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CommandHandler {
+public class ChatCommands {
 
     private static Map<String, InputHandler> commands;
 
@@ -173,14 +173,14 @@ public class CommandHandler {
 
     private static void defineCommands() {
         commands = new LinkedHashMap<>();
-        commands.put("host", CommandHandler::onMaster);
-        commands.put("progress", CommandHandler::onProgress);
-        commands.put("who", CommandHandler::onWho);
-        commands.put("kick", CommandHandler::onKick);
-        commands.put("punish", CommandHandler::onPunish);
-        commands.put("notice", CommandHandler::onNotice);
-        commands.put("observer", (s, a) -> CommandHandler.onObserver(s));
-        commands.put("visible", (s, a) -> CommandHandler.onVisible(s));
+        commands.put("host", ChatCommands::onMaster);
+        commands.put("progress", ChatCommands::onProgress);
+        commands.put("who", ChatCommands::onWho);
+        commands.put("kick", ChatCommands::onKick);
+        commands.put("punish", ChatCommands::onPunish);
+        commands.put("notice", ChatCommands::onNotice);
+        commands.put("observer", (s, a) -> ChatCommands.onObserver(s));
+        commands.put("visible", (s, a) -> ChatCommands.onVisible(s));
     }
 
     @FunctionalInterface

@@ -23,7 +23,7 @@ public class ChatManager {
         int playerId = session.getPlayerId();
 
         String name = msg.readString(15);
-        ChatMessageType type = ChatMessageType.fromInt(msg.readByte());
+        MessageType type = MessageType.fromInt(msg.readByte());
         String message = msg.readString(67);
 
         if (type != null && !Flood.isPlayerLocked(playerId) &&
@@ -52,8 +52,8 @@ public class ChatManager {
             if (!message.isEmpty()) {
                 Lobby lobby = session.getCurrentLobby();
 
-                ChatMessageType type = PlayerInfo.isModerator(playerId) ?
-                        ChatMessageType.MODERATOR : ChatMessageType.NORMAL;
+                MessageType type = PlayerInfo.isModerator(playerId) ?
+                        MessageType.MODERATOR : MessageType.NORMAL;
 
                 lobby.getPlayers().stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(playerId))
@@ -74,7 +74,7 @@ public class ChatManager {
 
         if (PlayerInfo.getName(playerId).equals(name)) {
             if (!message.isEmpty()) {
-                ChatMessageType type = ChatMessageType.TEAM;
+                MessageType type = MessageType.TEAM;
 
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
@@ -91,18 +91,18 @@ public class ChatManager {
         int playerId = session.getPlayerId();
 
         if (PlayerInfo.getName(playerId).equals(name)) {
-            ChatMessageType type = ChatMessageType.WHISPER_TO;
+            MessageType type = MessageType.WHISPER_TO;
 
             String target = retrieveTargetFromWhisper(message);
             String whisper = retrieveMessageFromWhisper(message);
 
             if (target.isEmpty()) {
-                type = ChatMessageType.INVALID_PLAYER;
+                type = MessageType.INVALID_PLAYER;
             } else if (target.equals(name)) {
-                type = ChatMessageType.CANNOT_SELF_WHISPER;
+                type = MessageType.CANNOT_SELF_WHISPER;
             }
 
-            if (type == ChatMessageType.WHISPER_TO) {
+            if (type == MessageType.WHISPER_TO) {
                 int targetId = CharacterUtils.getCharacterIdByName(target);
                 Session targetSession = ServerManager.getSessionById(targetId);
 
@@ -112,13 +112,13 @@ public class ChatManager {
                     if (UserInfo.getSettings(targetSession.getUserId()).getWhispers() &&
                             !PlayerInfo.getIgnoredList(targetId) .containsPlayer(playerId)) {
                         ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
-                                ChatMessageType.WHISPER_FROM, whisper);
+                                MessageType.WHISPER_FROM, whisper);
                         targetSession.sendAndFlush(msgWhisper);
                     } else {
-                        type = ChatMessageType.WHISPERS_DISABLED;
+                        type = MessageType.WHISPERS_DISABLED;
                     }
                 } else {
-                    type = ChatMessageType.INVALID_PLAYER;
+                    type = MessageType.INVALID_PLAYER;
                 }
             }
 
@@ -134,7 +134,7 @@ public class ChatManager {
 
         if (clubId > 0 && PlayerInfo.getName(playerId).equals(name)) {
             if (!message.isEmpty()) {
-                ChatMessageType type = ChatMessageType.CLUB;
+                MessageType type = MessageType.CLUB;
 
                 ServerManager.getPlayers().values().stream()
                         .filter(s -> PlayerInfo.getClubId(s.getPlayerId()) == clubId)
@@ -152,7 +152,7 @@ public class ChatManager {
         } else if (isTeamMessage(message)) {
             onMessageTeam(session, name, message.substring(1));
         } else if (isCommandMessage(message)) {
-            CommandHandler.handle(session, message.substring(1));
+            ChatCommands.handle(session, message.substring(1));
         } else {
             onMessageNormal(session, name, message);
         }
@@ -164,7 +164,7 @@ public class ChatManager {
         } else if (isWhisperMessage(message)) {
             onMessageWhisper(session, name, message);
         } else if (isCommandMessage(message)) {
-            CommandHandler.handle(session, message.substring(1));
+            ChatCommands.handle(session, message.substring(1));
         } else {
             onMessageTeam(session, name, message);
         }

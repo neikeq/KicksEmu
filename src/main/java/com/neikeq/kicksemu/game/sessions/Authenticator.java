@@ -31,7 +31,7 @@ public class Authenticator {
 
         byte result = certifyAuthenticate(username, password, clientVersion);
 
-        if (result == AuthenticationResult.SUCCESS) {
+        if (result == AuthResult.SUCCESS) {
             session.setAuthenticated(true);
             session.setUserId(UserUtils.getIdFromUsername(username));
 
@@ -44,7 +44,7 @@ public class Authenticator {
         session.send(MessageBuilder.certifyLogin(session.getSessionId(),
                 session.getUserId(), result));
 
-        if (result != AuthenticationResult.SUCCESS) {
+        if (result != AuthResult.SUCCESS) {
             session.close();
         }
     }
@@ -69,25 +69,25 @@ public class Authenticator {
 
                             if (!Moderation.isUserBanned(id)) {
                                 if (!UserUtils.isAlreadyConnected(id)) {
-                                    authResult = AuthenticationResult.SUCCESS;
+                                    authResult = AuthResult.SUCCESS;
                                 } else {
-                                    authResult = AuthenticationResult.ALREADY_CONNECTED;
+                                    authResult = AuthResult.ALREADY_CONNECTED;
                                 }
                             } else {
-                                authResult = AuthenticationResult.ACCOUNT_BLOCKED;
+                                authResult = AuthResult.ACCOUNT_BLOCKED;
                             }
                         } else {
-                            authResult = AuthenticationResult.INVALID_PASSWORD;
+                            authResult = AuthResult.INVALID_PASSWORD;
                         }
                     } else {
-                        authResult = AuthenticationResult.ACCOUNT_NOT_FOUND;
+                        authResult = AuthResult.ACCOUNT_NOT_FOUND;
                     }
                 }
             } catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-                authResult = AuthenticationResult.AUTH_FAILURE;
+                authResult = AuthResult.AUTH_FAILURE;
             }
         } else {
-            authResult = AuthenticationResult.CLIENT_VERSION;
+            authResult = AuthResult.CLIENT_VERSION;
         }
 
         return authResult;
@@ -110,7 +110,7 @@ public class Authenticator {
         } catch (InvalidKeySpecException | NoSuchAlgorithmException ignored) {}
 
         if (validHash) {
-            if (result == AuthenticationResult.SUCCESS) {
+            if (result == AuthResult.SUCCESS) {
                 session.setUserId(accountId);
 
                 if (UserInfo.hasCharacter(characterId, session.getUserId())) {
@@ -125,17 +125,17 @@ public class Authenticator {
                     ServerManager.addPlayer(characterId, session);
                 } else {
                     // Account does not contain such character
-                    result = AuthenticationResult.ACCESS_FAILURE;
+                    result = AuthResult.ACCESS_FAILURE;
                 }
             }
         } else {
-            result = AuthenticationResult.SYSTEM_PROBLEM;
+            result = AuthResult.SYSTEM_PROBLEM;
         }
 
         ServerMessage response = MessageBuilder.instantLogin(sessionId, result);
         session.send(response);
 
-        if (result != AuthenticationResult.SUCCESS) {
+        if (result != AuthResult.SUCCESS) {
             session.close();
         }
     }
@@ -165,19 +165,19 @@ public class Authenticator {
                         }
 
                         if (!connected) {
-                            authResult = AuthenticationResult.SUCCESS;
+                            authResult = AuthResult.SUCCESS;
                         } else {
-                            authResult = AuthenticationResult.ALREADY_CONNECTED;
+                            authResult = AuthResult.ALREADY_CONNECTED;
                         }
                     } else {
-                        authResult = AuthenticationResult.ACCOUNT_BLOCKED;
+                        authResult = AuthResult.ACCOUNT_BLOCKED;
                     }
                 } else {
-                    authResult = AuthenticationResult.ACCOUNT_NOT_FOUND;
+                    authResult = AuthResult.ACCOUNT_NOT_FOUND;
                 }
             }
         } catch (SQLException e) {
-            authResult = AuthenticationResult.AUTH_FAILURE;
+            authResult = AuthResult.AUTH_FAILURE;
         }
 
         return authResult;
@@ -207,7 +207,7 @@ public class Authenticator {
         } catch (InvalidKeySpecException | NoSuchAlgorithmException ignored) {}
 
         if (validHash) {
-            if (result == AuthenticationResult.SUCCESS) {
+            if (result == AuthResult.SUCCESS) {
                 session.setAuthenticated(true);
                 SessionInfo.resetExpiration(sessionId);
 
@@ -222,13 +222,13 @@ public class Authenticator {
                 LobbyManager.addPlayer(characterId);
             }
         } else {
-            result = AuthenticationResult.SYSTEM_PROBLEM;
+            result = AuthResult.SYSTEM_PROBLEM;
         }
 
         ServerMessage response = MessageBuilder.gameLogin(result);
         session.send(response);
 
-        if (result != AuthenticationResult.SUCCESS) {
+        if (result != AuthResult.SUCCESS) {
             session.close();
         }
     }
@@ -252,7 +252,7 @@ public class Authenticator {
                     }
 
                     if (!ServerManager.isPlayerConnected(characterId) && !connected) {
-                        authResult = AuthenticationResult.SUCCESS;
+                        authResult = AuthResult.SUCCESS;
                     } else {
                         // Already connected
                         authResult = (byte)253;

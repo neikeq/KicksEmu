@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.chat;
 
-public enum ChatMessageType {
+public enum MessageType {
     NORMAL,
     TEAM,
     WHISPER,
@@ -18,7 +18,7 @@ public enum ChatMessageType {
     CANNOT_SELF_WHISPER,
     WHISPERS_DISABLED;
 
-    public static ChatMessageType fromInt(int value) {
+    public static MessageType fromInt(int value) {
         switch (value) {
             case 0:
                 return NORMAL;

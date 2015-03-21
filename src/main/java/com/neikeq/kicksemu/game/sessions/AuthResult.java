@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.sessions;
 
-public class AuthenticationResult {
+public class AuthResult {
 
     public static final byte SUCCESS = (byte)0;
     public static final byte ACCOUNT_BLOCKED = (byte)247;

@@ -1,7 +1,7 @@
 package com.neikeq.kicksemu.network.packets.out;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.chat.ChatMessageType;
+import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
@@ -13,7 +13,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
-import com.neikeq.kicksemu.game.sessions.AuthenticationResult;
+import com.neikeq.kicksemu.game.sessions.AuthResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserSettings;
@@ -34,7 +34,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult(result, msg);
 
-        if (result == AuthenticationResult.SUCCESS) {
+        if (result == AuthResult.SUCCESS) {
             msg.append(sessionId);
 
             UserSettings settings = UserInfo.getSettings(userId);
@@ -467,7 +467,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage chatMessage(int playerId, String name,
-                                            ChatMessageType messageType, String message) {
+                                            MessageType messageType, String message) {
         ServerMessage msg = new ServerMessage(MessageId.CHAT_MESSAGE);
 
         MessageUtils.appendResult((byte)0, msg);

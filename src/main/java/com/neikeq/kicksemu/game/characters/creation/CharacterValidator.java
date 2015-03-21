@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.characters.creation;
 import com.neikeq.kicksemu.game.characters.Animation;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
 import com.neikeq.kicksemu.game.characters.Position;
-import com.neikeq.kicksemu.game.characters.CharacterUpgrade;
+import com.neikeq.kicksemu.game.characters.StatsInfo;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemFree;
@@ -87,7 +87,7 @@ class CharacterValidator {
     }
 
     private static boolean containsValidStats(CharacterBase character) {
-        PlayerStats stats = CharacterUpgrade.getInstance().getCreationStats()
+        PlayerStats stats = StatsInfo.getInstance().getCreationStats()
                 .get(character.getPosition());
 
         return character.getTotalStats() == STATS_GLOBAL &&

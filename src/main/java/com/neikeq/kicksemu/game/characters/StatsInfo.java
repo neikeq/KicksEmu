@@ -3,14 +3,14 @@ package com.neikeq.kicksemu.game.characters;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CharacterUpgrade {
+public class StatsInfo {
 
     private final Map<Short, PlayerStats> creationStats;
     private final Map<Short, PlayerStats> upgradeStats;
     private final Map<Short, PlayerStats> autoStats;
     private final Map<Integer, Integer> levelStats;
 
-    private static CharacterUpgrade instance;
+    private static StatsInfo instance;
 
     public void defineCreationStats() {
         getCreationStats().put(Position.FW,
@@ -89,7 +89,7 @@ public class CharacterUpgrade {
         return result == null ? 1 : result.shortValue();
     }
 
-    private CharacterUpgrade() {
+    private StatsInfo() {
         creationStats = new HashMap<>();
         upgradeStats = new HashMap<>();
         autoStats = new HashMap<>();
@@ -101,9 +101,9 @@ public class CharacterUpgrade {
         defineLevelStats();
     }
 
-    public static CharacterUpgrade getInstance() {
+    public static StatsInfo getInstance() {
         if (instance == null) {
-            instance = new CharacterUpgrade();
+            instance = new StatsInfo();
         }
 
         return instance;
