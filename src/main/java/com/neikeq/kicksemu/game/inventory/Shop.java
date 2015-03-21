@@ -307,7 +307,7 @@ public class Shop {
                     c.getType() == itemInfo.getType());
 
             // Check if the expiration type is allowed for this item
-            if (expiration.getType() != bonusInfo.getType()) return;
+            if (expiration.getType() != bonusInfo.getExpirationType()) return;
 
             // Ignore message if the stats bonus are not valid for this item type
             int bonusOneType = optionInfoOne == null ? 0 : optionInfoOne.getType();
