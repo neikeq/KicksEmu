@@ -17,6 +17,7 @@ public class TutorialManager {
 
     public static void updateTutorial(Session session, ClientMessage msg) {
         int characterId = session.getPlayerId();
+        msg.ignoreBytes(4);
 
         byte dribbling = msg.readByte();
         byte passing = msg.readByte();
