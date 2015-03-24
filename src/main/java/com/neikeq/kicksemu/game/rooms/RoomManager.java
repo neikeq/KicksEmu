@@ -184,10 +184,10 @@ public class RoomManager {
                     room.setId(getSmallestMissingIndex());
                     // Add it to the rooms list
                     addRoom(room);
+                    // Add the player to the room
+                    room.addPlayer(session);
                 }
 
-                // Add the player to the room
-                room.addPlayer(session);
                 // Notify the client to join the room
                 session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
             }
@@ -233,7 +233,7 @@ public class RoomManager {
             session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
         } else {
             // Notify the player that no room were found
-            session.sendAndFlush(MessageBuilder.quickJoinRoom((byte) -2));
+            session.send(MessageBuilder.quickJoinRoom((byte) -2));
         }
     }
 
@@ -478,8 +478,7 @@ public class RoomManager {
 
                     if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
                         room.getConfirmedPlayers().clear();
-                        ServerMessage msgAllConfirmed = MessageBuilder.startCountDown((byte)1);
-                        room.sendBroadcast(msgAllConfirmed);
+                        room.sendBroadcast(MessageBuilder.startCountDown((byte)1));
                     }
                     break;
                 case -1:
@@ -756,7 +755,7 @@ public class RoomManager {
             room.sendBroadcast(MessageBuilder.unknown2());
 
             if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
-                room.sendBroadcast(MessageBuilder.nextTip("", (byte)0));
+                room.sendBroadcast(MessageBuilder.nextTip("", (byte) 0));
             }
         }
     }

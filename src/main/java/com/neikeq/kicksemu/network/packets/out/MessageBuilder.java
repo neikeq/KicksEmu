@@ -544,7 +544,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage roomPlayerInfo(Session session, Room room, Connection con) {
+    public static ServerMessage roomPlayerInfo(Session session, Room room, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_PLAYER_INFO);
 
         if (session != null) {

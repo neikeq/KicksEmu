@@ -306,8 +306,7 @@ public class Room {
         int playerId = session.getPlayerId();
 
         // Send the room info to the client
-        ServerMessage msgRoomInfo = MessageBuilder.roomInfo(this);
-        session.send(msgRoomInfo);
+        session.send(MessageBuilder.roomInfo(this));
 
         // Send to the client information about players inside the room
         sendRoomPlayersInfo(session);
@@ -324,8 +323,7 @@ public class Room {
 
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
-        ServerMessage msgPlayerLeaved = MessageBuilder.leaveRoom(playerId, reason);
-        sendBroadcast(msgPlayerLeaved);
+        sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
 
         // If the countdown started, cancel it
         if (state() == RoomState.COUNT_DOWN) {

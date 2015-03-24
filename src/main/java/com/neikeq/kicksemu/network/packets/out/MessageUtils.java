@@ -208,7 +208,8 @@ class MessageUtils {
         msg.append(PlayerInfo.getHistoryTotalPoints(playerId, con));
     }
 
-    public static void appendHistoryLastMonth(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendHistoryLastMonth(int playerId,
+                                              ServerMessage msg, Connection ... con) {
         msg.append(PlayerInfo.getHistoryMonthMatches(playerId, con));
         msg.append(PlayerInfo.getHistoryMonthWins(playerId, con));
         msg.append(PlayerInfo.getHistoryMonthDraws(playerId, con));
@@ -305,7 +306,8 @@ class MessageUtils {
         msg.append(PlayerRanking.getRankingTotalPoints(playerId, con));
     }
 
-    public static void appendRankingLastMonth(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendRankingLastMonth(int playerId,
+                                              ServerMessage msg, Connection ... con) {
         msg.append(PlayerRanking.getRankingMonthMatches(playerId, con));
         msg.append(PlayerRanking.getRankingMonthWins(playerId, con));
         msg.append(PlayerRanking.getRankingMonthPoints(playerId, con));
@@ -356,7 +358,8 @@ class MessageUtils {
         appendItemInUse(PlayerInfo.getItemPackage(playerId, con), msg);
     }
 
-    public static void appendInventoryItemsInUse(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendInventoryItemsInUse(int playerId,
+                                                 ServerMessage msg, Connection ... con) {
         appendInventoryItem(PlayerInfo.getItemHead(playerId, con), msg);
         appendInventoryItem(PlayerInfo.getItemGlasses(playerId, con), msg);
         appendInventoryItem(PlayerInfo.getItemShirts(playerId, con), msg);
@@ -374,7 +377,8 @@ class MessageUtils {
         appendInventoryItem(PlayerInfo.getItemPackage(playerId, con), msg);
     }
 
-    public static void appendInventorySkillsInUse(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendInventorySkillsInUse(int playerId, ServerMessage msg,
+                                                  Connection ... con) {
         Skill[] skills = PlayerInfo.getInventorySkills(playerId, con).values().stream()
                 .filter(s -> s.getSelectionIndex() > 0).toArray(Skill[]::new);
 
@@ -383,7 +387,8 @@ class MessageUtils {
         }
     }
 
-    public static void appendInventoryCelebrationsInUse(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendInventoryCelebrationsInUse(int playerId, ServerMessage msg,
+                                                        Connection ... con) {
         Celebration[] celebrations = PlayerInfo.getInventoryCelebration(playerId, con).values()
                 .stream().filter(c -> c.getSelectionIndex() > 0).toArray(Celebration[]::new);
 
