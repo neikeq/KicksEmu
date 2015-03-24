@@ -13,40 +13,13 @@ It uses Netty framework for networking and Apache DBCP for MySql connection pool
 * commons-pool2
 * opencsv-3.1
 
-### Building
+### Usage
 
-Requires **JDK 8**.
+Check [Building](https://github.com/neikeq/KicksEmu/wiki/Building) and [Setup guide](https://github.com/neikeq/KicksEmu/wiki/Setup-Guide).
 
-##### Ant
+### Todo List
 
-Build sources:
-
-```
-ant build.modules
-```
-
-Build jar artifacts:
-
-```
-ant build.all.artifacts
-```
-
-##### Intellij IDEA
-
-* Project file: `KicksEmu.iml`.<br>
-* The project was created using version 14.0 of the IDE.<br>
-* Make sure the `Project language level` in `Project Structure > Project Settings > Project` is set to 8 or higher.
-
-### Running
-
-[Setup guide.](https://github.com/neikeq/KicksEmu/wiki/Setup)
-
-Execute `run.sh` on unix and `run.bat` on windows.
-
-If you wish to use a different configuration file, you can pass its name as first argument when running the emulator. If this argument is omitted, the default configuration will be used.
-
-You can find a short description about the repository directories
-[here](https://github.com/neikeq/KicksEmu/wiki/Directory-Tree).
+You can find a list of todo tasks [here](https://github.com/neikeq/KicksEmu/wiki/Todo-List).
 
 [Visit the wiki](https://github.com/neikeq/KicksEmu/wiki) for more information
 
