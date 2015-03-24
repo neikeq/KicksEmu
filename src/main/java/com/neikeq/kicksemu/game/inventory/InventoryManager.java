@@ -201,24 +201,28 @@ public class InventoryManager {
         if (items.containsKey(inventoryId)) {
             Item item = items.get(inventoryId);
 
-            ItemInfo itemInfo = TableManager.getItemInfo(ii -> ii.getId() == item.getId());
+            if (item.getExpiration().isPermanent()) {
+                ItemInfo itemInfo = TableManager.getItemInfo(ii -> ii.getId() == item.getId());
 
-            OptionInfo bonusOne = TableManager.getOptionInfo(oi ->
-                    oi.getId() == item.getBonusOne());
-            OptionInfo bonusTwo = TableManager.getOptionInfo(oi ->
-                    oi.getId() == item.getBonusTwo());
+                OptionInfo bonusOne = TableManager.getOptionInfo(oi ->
+                        oi.getId() == item.getBonusOne());
+                OptionInfo bonusTwo = TableManager.getOptionInfo(oi ->
+                        oi.getId() == item.getBonusTwo());
 
-            int itemPrice = InventoryUtils.getItemPrice(itemInfo, item.getExpiration(),
-                    Payment.POINTS, bonusOne, bonusTwo);
+                int itemPrice = InventoryUtils.getItemPrice(itemInfo, item.getExpiration(),
+                        Payment.POINTS, bonusOne, bonusTwo);
 
-            // If the specified refund is valid
-            if (refund == itemPrice / 10) {
-                PlayerInfo.removeInventoryItem(item, playerId);
-                items.remove(item.getInventoryId());
+                // If the specified refund is valid
+                if (refund == itemPrice / 10) {
+                    PlayerInfo.removeInventoryItem(item, playerId);
+                    items.remove(item.getInventoryId());
 
-                PlayerInfo.sumPoints(refund, playerId);
+                    PlayerInfo.sumPoints(refund, playerId);
+                } else {
+                    result = -3; // Invalid refund
+                }
             } else {
-                result = -3; // Invalid refund
+                result = -4; // The item is not permanent
             }
         } else {
             result = -2; // Item does not exists
