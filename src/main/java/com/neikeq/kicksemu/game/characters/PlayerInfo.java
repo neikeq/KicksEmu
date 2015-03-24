@@ -1088,6 +1088,24 @@ public class PlayerInfo {
         } catch (SQLException ignored) {}
     }
 
+    public static void removeInventoryItem(Item item, int id, Connection ... con) {
+        String query = "DELETE FROM items WHERE player_id = ? AND inventory_id = ?";
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.setInt(2, item.getInventoryId());
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
     public static void addInventoryTraining(Training training, int id, Connection ... con) {
         String query = "INSERT INTO learns VALUES(?,?,?,?)";
 

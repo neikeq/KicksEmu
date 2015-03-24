@@ -885,7 +885,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerProgress(int playerId, Connection con) {
+    public static ServerMessage playerProgress(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_PROGRESS);
 
         MessageUtils.appendResult((byte)0, msg);
@@ -933,7 +933,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage addStatsPoints(int playerId, byte result, Connection con) {
+    public static ServerMessage addStatsPoints(int playerId, byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.ADD_STATS_POINTS);
 
         MessageUtils.appendResult(result, msg);
@@ -954,17 +954,35 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseItem(int playerId, byte result, Connection con) {
+    public static ServerMessage purchaseItem(int playerId, byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_ITEM);
 
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId,
-                    PlayerInfo.getOwner(playerId), msg, con);
+            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg, con);
             MessageUtils.appendStatsBonus(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
             msg.append(PlayerInfo.getSkillSlots(playerId, con));
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage resellItem(int playerId, int inventoryId, int refund,
+                                           byte result, Connection ... con) {
+        ServerMessage msg = new ServerMessage(MessageId.RESELL_ITEM);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg, con);
+            MessageUtils.appendStatsBonus(playerId, msg, con);
+            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+            msg.append(PlayerInfo.getSkillSlots(playerId, con));
+            msg.appendZeros(3);
+            msg.append(refund);
+            msg.append(inventoryId);
         }
 
         return msg;

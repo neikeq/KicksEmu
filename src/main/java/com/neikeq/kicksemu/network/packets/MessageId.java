@@ -60,6 +60,7 @@ public class MessageId {
     public static final int UNKNOWN1 = 2409;
     public static final int UNKNOWN2 = 2411;
     public static final int PURCHASE_ITEM = 2600;
+    public static final int RESELL_ITEM = 2601;
     public static final int ACTIVATE_ITEM = 2603;
     public static final int DEACTIVATE_ITEM = 2604;
     public static final int PURCHASE_LEARN = 2610;

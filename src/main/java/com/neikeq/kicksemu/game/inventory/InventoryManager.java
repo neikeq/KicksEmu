@@ -3,6 +3,9 @@ package com.neikeq.kicksemu.game.inventory;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.table.ItemInfo;
+import com.neikeq.kicksemu.game.table.OptionInfo;
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 
@@ -182,5 +185,43 @@ public class InventoryManager {
         }
 
         return result;
+    }
+
+    public static void resellItem(Session session, ClientMessage msg) {
+        int playerId = session.getPlayerId();
+        int inventoryId = msg.readInt();
+        int refund = msg.readInt();
+
+        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+
+        byte result = 0;
+
+        if (items.containsKey(inventoryId)) {
+            Item item = items.get(inventoryId);
+
+            ItemInfo itemInfo = TableManager.getItemInfo(ii -> ii.getId() == item.getId());
+
+            OptionInfo bonusOne = TableManager.getOptionInfo(oi ->
+                    oi.getId() == item.getBonusOne());
+            OptionInfo bonusTwo = TableManager.getOptionInfo(oi ->
+                    oi.getId() == item.getBonusTwo());
+
+            int itemPrice = InventoryUtils.getItemPrice(itemInfo, item.getExpiration(),
+                    Payment.POINTS, bonusOne, bonusTwo);
+
+            // If the specified refund is valid
+            if (refund == itemPrice / 10) {
+                PlayerInfo.removeInventoryItem(item, playerId);
+                items.remove(item.getInventoryId());
+
+                PlayerInfo.sumPoints(refund, playerId);
+            } else {
+                result = -3; // Invalid refund
+            }
+        } else {
+            result = -2; // Item does not exists
+        }
+
+        session.send(MessageBuilder.resellItem(playerId, inventoryId, refund, result));
     }
 }

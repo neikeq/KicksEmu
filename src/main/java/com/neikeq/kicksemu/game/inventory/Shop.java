@@ -318,11 +318,8 @@ public class Shop {
 
             // If the player meets the level requirements for this item
             if (level >= itemInfo.getLevel() && validBonusLevel) {
-                int itemPrice = itemInfo.getPrice().getPriceFor(expiration, payment);
-                itemPrice += optionInfoOne == null ? 0 :
-                        optionInfoOne.getPrice().getPriceFor(expiration, payment);
-                itemPrice += optionInfoTwo == null ? 0 :
-                        optionInfoTwo.getPrice().getPriceFor(expiration, payment);
+                int itemPrice = InventoryUtils.getItemPrice(itemInfo, expiration,
+                        payment, optionInfoOne, optionInfoTwo);
 
                 // If the price sent by the client is valid
                 if (itemPrice != -1 && itemPrice == price &&

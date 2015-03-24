@@ -1,0 +1,10 @@
+// ResellItem
+// Tcp
+
+Id: 2601
+Size: 12
+
+int packet_id
+int inventory_id
+// The refund must be equivalent to the item's price divided by 10
+int refund_points

@@ -1,8 +1,8 @@
-// PurchaseItem
+// ResellItem
 // Tcp
 
-Id: 2600
-Size: 489
+Id: 2601
+Size: 500
 
 Data:
 int packet_id
@@ -75,3 +75,6 @@ int timestamp_expire
 bool visible // Still usable even if not visible
 // After items in use
 byte skill_slots
+char[3] unknown
+int refund_points
+int inventory_id

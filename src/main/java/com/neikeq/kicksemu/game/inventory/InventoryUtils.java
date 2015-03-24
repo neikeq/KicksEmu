@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.inventory;
 
+import com.neikeq.kicksemu.game.table.ItemInfo;
+import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
@@ -7,6 +9,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InventoryUtils {
+
+    public static int getItemPrice(ItemInfo itemInfo, Expiration expiration, Payment payment,
+                                   OptionInfo bonusOne, OptionInfo bonusTwo) {
+        // Basic price without bonuses
+        int price = itemInfo.getPrice().getPriceFor(expiration, payment);
+
+        // Add the price for the first bonus
+        price += bonusOne == null ? 0 :
+                bonusOne.getPrice().getPriceFor(expiration, payment);
+
+        // Add the price for the second bonus
+        price += bonusTwo == null ? 0 :
+                bonusTwo.getPrice().getPriceFor(expiration, payment);
+
+        return price;
+    }
 
     public static Timestamp expirationToTimestamp(Expiration expiration) {
         if (expiration == Expiration.DAYS_PERM) {
