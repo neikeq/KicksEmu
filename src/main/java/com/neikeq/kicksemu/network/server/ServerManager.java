@@ -59,7 +59,7 @@ public class ServerManager {
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
             return ServerUtils.insertServer(serverBase);
         } else {
-            return ServerUtils.updateServer(serverBase);
+            return !ServerInfo.isOnline(serverId) && ServerUtils.updateServer(serverBase);
         }
     }
 
