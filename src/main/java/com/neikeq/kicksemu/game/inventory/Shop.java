@@ -25,6 +25,7 @@ import java.util.Map;
 
 public class Shop {
 
+    private static final int SLOTS_ITEM_TYPE = 202;
     private static final byte SLOTS_LIMIT = 12;
 
     public static void purchaseSkill(Session session, ClientMessage msg) {
@@ -66,7 +67,7 @@ public class Shop {
                         Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
 
                         // If the item is not already purchased
-                        if (!alreadyPurchased(skillId, skills.values())) {
+                        if (notAlreadyPurchased(skillId, skills.values())) {
                             // Initialize skill with the requested data
                             int id = InventoryUtils.getSmallestMissingId(skills.values());
                             byte index = InventoryUtils.getSmallestMissingIndex(skills.values());
@@ -135,16 +136,15 @@ public class Shop {
             if (level >= celeInfo.getLevel()) {
                 int celePrice = celeInfo.getPrice().getPriceFor(expiration, payment);
 
+                Map<Integer, Celebration> celes = PlayerInfo.getInventoryCelebration(playerId);
+
                 // If the price sent by the client is valid
                 if (celePrice != -1 && celePrice == price &&
                         celeInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
                     if (price <= money) {
-                        Map<Integer, Celebration> celes =
-                                PlayerInfo.getInventoryCelebration(playerId);
-
                         // If the item is not already purchased
-                        if (!alreadyPurchased(celeId, celes.values())) {
+                        if (notAlreadyPurchased(celeId, celes.values())) {
                             // Initialize cele with the requested data
                             int id = InventoryUtils.getSmallestMissingId(celes.values());
                             byte index = InventoryUtils.getSmallestMissingIndex(celes.values());
@@ -219,7 +219,7 @@ public class Shop {
                         Map<Integer, Training> learns = PlayerInfo.getInventoryTraining(playerId);
 
                         // If the item is not already purchased
-                        if (!alreadyPurchased(learnId, learns.values())) {
+                        if (notAlreadyPurchased(learnId, learns.values())) {
                             // Initialize learn with the requested data
                             int id = InventoryUtils.getSmallestMissingId(learns.values());
 
@@ -321,44 +321,47 @@ public class Shop {
                 int itemPrice = InventoryUtils.getItemPrice(itemInfo, expiration,
                         payment, optionInfoOne, optionInfoTwo);
 
+                // Player has enough space for purchasing more slots
+                boolean canPurchaseSlots =  optionInfoOne != null &&
+                        optionInfoOne.getValue() <= SLOTS_LIMIT - skillSlots;
+
+                Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+
                 // If the price sent by the client is valid
                 if (itemPrice != -1 && itemPrice == price &&
                         itemInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
-                    if (price <= money) {
-                        // If player is purchasing skill slots
-                        if (itemInfo.getType() != 202 || (optionInfoOne != null &&
-                                optionInfoOne.getValue() <= SLOTS_LIMIT - skillSlots)) {
-                            if (!SpecialItem.isSpecialItem(itemInfo.getType())) {
-                                Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
-
-                                // Initialize item with the requested data
-                                int id = InventoryUtils.getSmallestMissingId(items.values());
-
-                                Item item = new Item(itemId, id, expiration.toInt(),
-                                        statsBonusOne, statsBonusTwo, expiration.getUsages(),
-                                        InventoryUtils.expirationToTimestamp(expiration),
-                                        false, true);
-
-                                // Add it to the player's inventory
-                                items.put(id, item);
-                                // Activate item
-                                CharacterUtils.updateItemsInUse(item, playerId);
-                                // Update player's inventory
-                                PlayerInfo.addInventoryItem(item, playerId);
-                            } else {
-                                SpecialItem.handle(itemId, itemInfo.getType(), session);
-                            }
-
-                            // Deduct the price from the player's money
-                            sumMoneyToPaymentMode(payment, playerId, -price);
-                        } else {
-                            // Skill slots limit
-                            result = (byte) -10;
-                        }
-                    } else {
+                    if (price > money) {
                         // Not enough money
                         result = (byte) (payment == Payment.KASH ? -8 : -5);
+                    } else if (items.size() >= InventoryManager.MAX_INVENTORY_ITEMS) {
+                        // Inventory is full
+                        result = (byte) -10;
+                    } else if (itemInfo.getType() != SLOTS_ITEM_TYPE || canPurchaseSlots) {
+                        if (!SpecialItem.isSpecialItem(itemInfo.getType())) {
+                            // Initialize item with the requested data
+                            int id = InventoryUtils.getSmallestMissingId(items.values());
+
+                            Item item = new Item(itemId, id, expiration.toInt(),
+                                    statsBonusOne, statsBonusTwo, expiration.getUsages(),
+                                    InventoryUtils.expirationToTimestamp(expiration),
+                                    false, true);
+
+                            // Add it to the player's inventory
+                            items.put(id, item);
+                            // Activate item
+                            CharacterUtils.updateItemsInUse(item, playerId);
+                            // Update player's inventory
+                            PlayerInfo.addInventoryItem(item, playerId);
+                        } else {
+                            SpecialItem.handle(itemId, itemInfo.getType(), session);
+                        }
+
+                        // Deduct the price from the player's money
+                        sumMoneyToPaymentMode(payment, playerId, -price);
+                    } else {
+                        // Skill slots limit
+                        result = (byte) -12;
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
@@ -384,8 +387,8 @@ public class Shop {
         } catch (SQLException ignored) {}
     }
 
-    private static boolean alreadyPurchased(int id, Collection<? extends Product> product) {
-        return product.stream().filter(p -> p.getId() == id).findFirst().isPresent();
+    private static boolean notAlreadyPurchased(int id, Collection<? extends Product> product) {
+        return !product.stream().filter(p -> p.getId() == id).findFirst().isPresent();
     }
 
     private static int getMoneyFromPaymentMode(Payment payment, int playerId) {

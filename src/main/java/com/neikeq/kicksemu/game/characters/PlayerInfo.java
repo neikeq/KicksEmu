@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Expiration;
+import com.neikeq.kicksemu.game.inventory.InventoryManager;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.inventory.Skill;
@@ -530,7 +531,7 @@ public class PlayerInfo {
         String query = "SELECT * FROM items WHERE player_id = ? AND (" +
                 "((expiration = ? OR expiration = ? OR expiration = ?) AND usages > 0) OR " +
                 "((expiration = ? OR expiration = ?) AND timestamp_expire > ?) " +
-                "OR expiration = ?)";
+                "OR expiration = ?) LIMIT " + InventoryManager.MAX_INVENTORY_ITEMS;
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();

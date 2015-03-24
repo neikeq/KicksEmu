@@ -13,6 +13,8 @@ import java.util.Map;
 
 public class InventoryManager {
 
+    public static final short MAX_INVENTORY_ITEMS = 70;
+
     public static void activateSkill(Session session, ClientMessage msg) {
         int playerId = session.getPlayerId();
         int skillId = msg.readInt();
