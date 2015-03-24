@@ -12,7 +12,11 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.handle.GameMessageHandler;
 import com.neikeq.kicksemu.network.packets.in.handle.MainMessageHandler;
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -59,7 +63,7 @@ public class ServerManager {
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
             return ServerUtils.insertServer(serverBase);
         } else {
-            return !ServerInfo.isOnline(serverId) && ServerUtils.updateServer(serverBase);
+            return ServerUtils.updateServer(serverBase);
         }
     }
 
@@ -78,6 +82,17 @@ public class ServerManager {
             getPlayers().remove(characterId);
             updateConnectedUsers();
         }
+    }
+
+    public static void cleanPossibleConnectedUsers() {
+        String sql = "UPDATE users SET online = -1, server = -1 WHERE server = ?";
+
+        try (Connection con = MySqlManager.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setShort(1, getServerId());
+
+            stmt.executeUpdate();
+        } catch (SQLException ignored) {}
     }
 
     private static void updateConnectedUsers() {

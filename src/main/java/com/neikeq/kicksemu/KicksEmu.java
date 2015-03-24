@@ -67,6 +67,8 @@ public class KicksEmu {
                 handleFatalError("Could not initialize Server Manager.");
             }
 
+            ServerManager.cleanPossibleConnectedUsers();
+
             // Initialize Tcp Server
             Output.println(Localization.get("net.init"));
 
@@ -144,7 +146,10 @@ public class KicksEmu {
     }
 
     private void cleanDatabase() {
-        ServerInfo.setOnline(false, ServerManager.getServerId());
+        short serverId = ServerManager.getServerId();
+
+        ServerInfo.setOnline(false, serverId);
+        ServerInfo.setConnectedUsers((short) 0, serverId);
     }
 
     private void cleanNetworking() {
