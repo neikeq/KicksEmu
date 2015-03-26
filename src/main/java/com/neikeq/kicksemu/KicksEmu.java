@@ -148,8 +148,10 @@ public class KicksEmu {
     private void cleanDatabase() {
         short serverId = ServerManager.getServerId();
 
-        ServerInfo.setOnline(false, serverId);
-        ServerInfo.setConnectedUsers((short) 0, serverId);
+        if (serverId > 0) {
+            ServerInfo.setOnline(false, serverId);
+            ServerInfo.setConnectedUsers((short) 0, serverId);
+        }
     }
 
     private void cleanNetworking() {
