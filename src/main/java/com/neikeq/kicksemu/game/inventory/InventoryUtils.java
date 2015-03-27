@@ -62,7 +62,7 @@ public class InventoryUtils {
             }
         }
 
-        return 1;
+        return -1;
     }
 
     public static Product getByIdFromMap(Map<Integer, ? extends Product> products, int id) {

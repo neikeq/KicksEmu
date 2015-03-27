@@ -7,6 +7,7 @@ import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -134,7 +135,8 @@ public class PlayerCache {
                             (i.getExpiration().isDays() &&
                                     i.getTimestampExpire().after(currentTimestamp)) ||
                             i.getExpiration().isPermanent())
-                    .collect(Collectors.toMap(Item::getInventoryId, i -> i));
+                    .collect(Collectors.toMap(Item::getInventoryId, i -> i,
+                            (i1, i2) -> null, LinkedHashMap::new));
         }
 
         return items;
@@ -151,7 +153,8 @@ public class PlayerCache {
             skills = skills.values().stream()
                     .filter(s -> s.getTimestampExpire().after(currentTimestamp) ||
                             s.getExpiration().isPermanent())
-                    .collect(Collectors.toMap(Skill::getInventoryId, s -> s));
+                    .collect(Collectors.toMap(Skill::getInventoryId, s -> s,
+                            (s1, s2) -> null, LinkedHashMap::new));
         }
 
         return skills;
@@ -168,7 +171,8 @@ public class PlayerCache {
             celes = celes.values().stream()
                     .filter(c -> c.getTimestampExpire().after(currentTimestamp) ||
                             c.getExpiration().isPermanent())
-                    .collect(Collectors.toMap(Celebration::getInventoryId, c -> c));
+                    .collect(Collectors.toMap(Celebration::getInventoryId, c -> c,
+                            (c1, c2) -> null, LinkedHashMap::new));
         }
 
         return celes;

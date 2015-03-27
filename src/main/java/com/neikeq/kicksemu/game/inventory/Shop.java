@@ -263,8 +263,8 @@ public class Shop {
         int price = msg.readInt();
         int itemId = msg.readInt();
         Expiration expiration = Expiration.fromInt(msg.readInt());
-        int statsBonusOne = msg.readInt();
-        int statsBonusTwo = msg.readInt();
+        int bonusOne = msg.readInt();
+        int bonusTwo = msg.readInt();
 
         // If the payment mode is invalid, ignore the request
         if (payment == null || payment == Payment.BOTH) return;
@@ -281,11 +281,11 @@ public class Shop {
         // Avoid purchasing club items
         if (itemInfo != null && (itemInfo.getType() <= 209 && itemInfo.getType() >= 205)) return;
 
-        OptionInfo optionInfoOne = TableManager.getOptionInfo(c -> c.getId() == statsBonusOne);
-        OptionInfo optionInfoTwo = TableManager.getOptionInfo(c -> c.getId() == statsBonusTwo);
+        OptionInfo optionInfoOne = TableManager.getOptionInfo(c -> c.getId() == bonusOne);
+        OptionInfo optionInfoTwo = TableManager.getOptionInfo(c -> c.getId() == bonusTwo);
 
-        boolean invalidBonus = (optionInfoOne == null && statsBonusOne != 0) ||
-                (optionInfoTwo == null && statsBonusTwo != 0);
+        boolean invalidBonus = (optionInfoOne == null && bonusOne != 0) ||
+                (optionInfoTwo == null && bonusTwo != 0);
 
         boolean validBonusLevel =
                 (optionInfoOne == null || optionInfoOne.isValidLevel(level, payment)) &&
@@ -343,7 +343,7 @@ public class Shop {
                             int id = InventoryUtils.getSmallestMissingId(items.values());
 
                             Item item = new Item(itemId, id, expiration.toInt(),
-                                    statsBonusOne, statsBonusTwo, expiration.getUsages(),
+                                    bonusOne, bonusTwo, expiration.getUsages(),
                                     InventoryUtils.expirationToTimestamp(expiration),
                                     false, true);
 

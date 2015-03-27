@@ -23,8 +23,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -522,11 +522,15 @@ public class PlayerInfo {
     public static Map<Integer, Item> getInventoryItems(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
 
-        if (s != null && s.getPlayerCache().getItems() != null) {
-            return s.getPlayerCache().getItems();
+        if (s != null) {
+            Map<Integer, Item> items = s.getPlayerCache().getItems();
+
+            if (items != null) {
+                return items;
+            }
         }
 
-        Map<Integer, Item> items = new HashMap<>();
+        Map<Integer, Item> items = new LinkedHashMap<>();
 
         String query = "SELECT * FROM items WHERE player_id = ? AND (" +
                 "((expiration = ? OR expiration = ? OR expiration = ?) AND usages > 0) OR " +
@@ -574,11 +578,15 @@ public class PlayerInfo {
     public static Map<Integer, Training> getInventoryTraining(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
 
-        if (s != null && s.getPlayerCache().getLearns() != null) {
-            return s.getPlayerCache().getLearns();
+        if (s != null) {
+            Map<Integer, Training> learns = s.getPlayerCache().getLearns();
+
+            if (learns != null) {
+                return learns;
+            }
         }
 
-        Map<Integer, Training> learns = new HashMap<>();
+        Map<Integer, Training> learns = new LinkedHashMap<>();
 
         String query = "SELECT * FROM learns WHERE player_id = ?";
 
@@ -613,11 +621,15 @@ public class PlayerInfo {
     public static Map<Integer, Skill> getInventorySkills(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
 
-        if (s != null && s.getPlayerCache().getSkills() != null) {
-            return s.getPlayerCache().getSkills();
+        if (s != null) {
+            Map<Integer, Skill> skills = s.getPlayerCache().getSkills();
+
+            if (skills != null) {
+                return skills;
+            }
         }
 
-        Map<Integer, Skill> skills = new HashMap<>();
+        Map<Integer, Skill> skills = new LinkedHashMap<>();
 
         String query = "SELECT * FROM skills WHERE player_id = ? AND " +
                 "(timestamp_expire > ? OR expiration = ?)";
@@ -670,11 +682,15 @@ public class PlayerInfo {
     public static Map<Integer, Celebration> getInventoryCelebration(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
 
-        if (s != null && s.getPlayerCache().getCeles() != null) {
-            return s.getPlayerCache().getCeles();
+        if (s != null) {
+            Map<Integer, Celebration> celes = s.getPlayerCache().getCeles();
+
+            if (celes != null) {
+                return celes;
+            }
         }
 
-        Map<Integer, Celebration> celes = new HashMap<>();
+        Map<Integer, Celebration> celes = new LinkedHashMap<>();
 
         String query = "SELECT * FROM ceres WHERE player_id = ? AND " +
                 "(timestamp_expire > ? OR expiration = ?)";
