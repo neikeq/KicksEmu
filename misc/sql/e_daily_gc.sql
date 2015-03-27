@@ -21,9 +21,9 @@ CREATE EVENT daily_gc
             -- Remove expired ceremonies
             DELETE FROM ceres WHERE expiration <> 9201999 AND timestamp_expire <= CURRENT_TIMESTAMP;
             -- Remove expired bans
-            DELETE FROM bans WHERE (expire <= CURRENT_TIMESTAMP);
+            DELETE FROM bans WHERE expire <= CURRENT_TIMESTAMP;
             -- Remove expired entries in blacklists
-            DELETE FROM blacklist WHERE (expire <= CURRENT_TIMESTAMP);
+            DELETE FROM blacklist WHERE expire <= CURRENT_TIMESTAMP;
         END |
 
 delimiter ;

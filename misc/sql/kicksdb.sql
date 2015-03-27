@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `bonus_one` int(11) unsigned NOT NULL,
   `bonus_two` int(11) unsigned NOT NULL,
   `usages` smallint(6) unsigned NOT NULL,
-  `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `selected` bit(1) NOT NULL,
   `visible` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
