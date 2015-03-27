@@ -588,150 +588,150 @@ public class RoomManager {
 
         Room room = getRoomById(roomId);
 
-        // If match started
-        if (room.state() == RoomState.PLAYING) {
-            room.setState(RoomState.RESULT);
+        // If match was not playing
+        if (room.state() != RoomState.PLAYING) return;
 
-            MatchResult result = MatchResult.fromMessage(msg,
-                    room.redTeamSize() + room.blueTeamSize());
+        room.setState(RoomState.RESULT);
 
-            // Apply level gap bonus if the levels difference in room settings is less than 10
-            boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
-            boolean goldenTime = GameEvents.isGoldenTime();
+        MatchResult result = MatchResult.fromMessage(msg,
+                room.redTeamSize() + room.blueTeamSize());
 
-            // Check the match countdown
-            long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
-            short gameCountdown = result.getCountdown();
+        // Apply level gap bonus if the levels difference in room settings is less than 10
+        boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
+        boolean goldenTime = GameEvents.isGoldenTime();
 
-            // If countdown sent by client is not valid (more than 20 secs less than server's),
-            // disable rewards and player's history updating
-            if (gameCountdown < countdown && gameCountdown - countdown > 20) {
-                room.resetTrainingFactor();
+        // Check the match countdown
+        long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
+        short gameCountdown = result.getCountdown();
+
+        // If countdown sent by client is not valid (more than 20 secs less than server's),
+        // disable rewards and player's history updating
+        if (gameCountdown < countdown && gameCountdown - countdown > 20) {
+            room.resetTrainingFactor();
+        }
+
+        try (Connection con = MySqlManager.getConnection()) {
+            // Reward players
+            result.getPlayers().stream().forEach(pr -> {
+                int playerId = pr.getPlayerId();
+                int reward = RewardCalculator.calculateReward(pr, room, gameCountdown);
+
+                int appliedReward = reward;
+
+                // If player's position is a DF branch
+                if (Position.trunk(PlayerInfo.getPosition(playerId, con)) == Position.DF) {
+                    short scoredGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                            result.getRedTeam().getGoals() : result.getBlueTeam().getGoals();
+                    short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                            result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
+
+                    // If player's team did not lose and conceded 1 or less goals,
+                    // increase his rewards by 30%
+                    appliedReward += concededGoals <= 1 && scoredGoals >= concededGoals ?
+                            (reward * 30) / 100 : 0;
+                }
+
+                appliedReward += levelGapReward ? (reward * 10) / 100 : 0;
+                appliedReward += goldenTime ? (reward * 50) / 100 : 0;
+                // If player is mvp increase his rewards by 25%
+                appliedReward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+
+                final MutableInteger points = new MutableInteger(appliedReward);
+                final MutableInteger experience = new MutableInteger(appliedReward);
+
+                // Apply item reward bonuses
+                PlayerInfo.getInventoryItems(playerId, con).values().stream()
+                        .filter(i -> i.getExpiration().isUsage() && i.isSelected())
+                        .forEach(i -> {
+                            Soda bonusOne = Soda.fromId(i.getBonusOne());
+
+                            if (bonusOne != null) {
+                                bonusOne.applyBonus(reward, experience, points);
+                            }
+
+                            Soda bonusTwo = Soda.fromId(i.getBonusTwo());
+
+                            if (bonusTwo != null) {
+                                bonusTwo.applyBonus(reward, experience, points);
+                            }
+                        });
+
+                pr.setExperience(experience.get() * Configuration.getInt("game.rewards.exp"));
+                pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
+            });
+
+            // Broadcast match result message after calculating rewards
+            result.getPlayers().stream().forEach(pr ->
+                    room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
+                            MessageBuilder.matchResult(result, pr, room, con))
+            );
+
+            // Send match result message to observers players in the room
+            if (room.getObservers().size() > 0) {
+                // Because observer players does not count in stats,
+                // we pass an empty PlayerResult instance
+                ServerMessage observerMsg = MessageBuilder.matchResult(result,
+                        new PlayerResult(), room, con);
+
+                room.getObservers().stream().forEach(o ->
+                                room.getPlayers().get(o).sendAndFlush(observerMsg));
             }
 
-            try (Connection con = MySqlManager.getConnection()) {
-                // Reward players
-                result.getPlayers().stream().forEach(pr -> {
-                    int playerId = pr.getPlayerId();
-                    int reward = RewardCalculator.calculateReward(pr, room, gameCountdown);
+            result.getPlayers().stream().forEach(pr -> {
+                int playerId = pr.getPlayerId();
 
-                    int appliedReward = reward;
+                // Add the experience and points earned to the player
+                PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
+                PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
 
-                    // If player's position is a DF branch
-                    if (Position.trunk(PlayerInfo.getPosition(playerId, con)) == Position.DF) {
-                        short scoredGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                                result.getRedTeam().getGoals() : result.getBlueTeam().getGoals();
-                        short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                                result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
+                short levels = 0;
 
-                        // If player's team did not lose and conceded 1 or less goals,
-                        // increase his rewards by 30%
-                        appliedReward += concededGoals <= 1 && scoredGoals >= concededGoals ?
-                                (reward * 30) / 100 : 0;
+                if (pr.getExperience() > 0) {
+                    // Check if player did level up and apply level up operations if needed
+                    levels = CharacterManager.checkExperience(playerId, con);
+
+                    // If player did level up, send him the updated stats points
+                    if (levels > 0) {
+                        room.getPlayers().get(playerId)
+                                .sendAndFlush(MessageBuilder.playerStats(playerId, con));
                     }
+                }
 
-                    appliedReward += levelGapReward ? (reward * 10) / 100 : 0;
-                    appliedReward += goldenTime ? (reward * 50) / 100 : 0;
-                    // If player is mvp increase his rewards by 25%
-                    appliedReward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
+                // If match was not in training mode, update player's history
+                if (room.getTrainingFactor() > 0) {
+                    TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                            result.getRedTeam() : result.getBlueTeam();
 
-                    final MutableInteger points = new MutableInteger(appliedReward);
-                    final MutableInteger experience = new MutableInteger(appliedReward);
+                    RewardCalculator.updatePlayerHistory(pr, teamResult,
+                            result.getMom(), con);
 
-                    // Apply item reward bonuses
+                    MutableBoolean expired = new MutableBoolean(false);
+
+                    // Decrease by 1 the remain usage of usage items
                     PlayerInfo.getInventoryItems(playerId, con).values().stream()
                             .filter(i -> i.getExpiration().isUsage() && i.isSelected())
-                            .forEach(i -> {
-                                Soda bonusOne = Soda.fromId(i.getBonusOne());
+                            .forEach(item -> {
+                                item.sumUsages((short) -1);
+                                PlayerInfo.setInventoryItem(item, playerId, con);
 
-                                if (bonusOne != null) {
-                                    bonusOne.applyBonus(reward, experience, points);
-                                }
-
-                                Soda bonusTwo = Soda.fromId(i.getBonusTwo());
-
-                                if (bonusTwo != null) {
-                                    bonusTwo.applyBonus(reward, experience, points);
+                                if (item.getUsages() <= 0) {
+                                    expired.set(true);
                                 }
                             });
 
-                    pr.setExperience(experience.get() * Configuration.getInt("game.rewards.exp"));
-                    pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
-                });
+                    if (expired.get()) {
+                        CharacterManager.sendItemList(room.getPlayers().get(playerId));
+                    }
 
-                // Broadcast match result message after calculating rewards
-                result.getPlayers().stream().forEach(pr ->
-                        room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
-                                MessageBuilder.matchResult(result, pr, room, con))
-                );
-
-                // Send match result message to observers players in the room
-                if (room.getObservers().size() > 0) {
-                    // Because observer players does not count in stats,
-                    // we pass an empty PlayerResult instance
-                    ServerMessage observerMsg = MessageBuilder.matchResult(result,
-                            new PlayerResult(), room, con);
-
-                    room.getObservers().stream().forEach(o ->
-                                    room.getPlayers().get(o).sendAndFlush(observerMsg));
+                    if (levels <= 0) {
+                        room.getPlayers().get(playerId)
+                                .sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                    }
                 }
+            });
 
-                result.getPlayers().stream().forEach(pr -> {
-                    int playerId = pr.getPlayerId();
-
-                    // Add the experience and points earned to the player
-                    PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
-                    PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
-
-                    short levels = 0;
-
-                    if (pr.getExperience() > 0) {
-                        // Check if player did level up and apply level up operations if needed
-                        levels = CharacterManager.checkExperience(playerId, con);
-
-                        // If player did level up, send him the updated stats points
-                        if (levels > 0) {
-                            room.getPlayers().get(playerId)
-                                    .sendAndFlush(MessageBuilder.playerStats(playerId, con));
-                        }
-                    }
-
-                    // If match was not in training mode, update player's history
-                    if (room.getTrainingFactor() > 0) {
-                        TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                                result.getRedTeam() : result.getBlueTeam();
-
-                        RewardCalculator.updatePlayerHistory(pr, teamResult,
-                                result.getMom(), con);
-
-                        MutableBoolean expired = new MutableBoolean(false);
-
-                        // Decrease by 1 the remain usage of usage items
-                        PlayerInfo.getInventoryItems(playerId, con).values().stream()
-                                .filter(i -> i.getExpiration().isUsage() && i.isSelected())
-                                .forEach(item -> {
-                                    item.sumUsages((short) -1);
-                                    PlayerInfo.setInventoryItem(item, playerId, con);
-
-                                    if (item.getUsages() <= 0) {
-                                        expired.set(true);
-                                    }
-                                });
-
-                        if (expired.get()) {
-                            CharacterManager.sendItemList(room.getPlayers().get(playerId));
-
-                            if (levels <= 0) {
-                                room.getPlayers().get(playerId)
-                                        .sendAndFlush(MessageBuilder.playerStats(playerId, con));
-                            }
-                        }
-                    }
-                });
-
-                room.getConfirmedPlayers().clear();
-            } catch (SQLException ignored) {}
-        }
+            room.getConfirmedPlayers().clear();
+        } catch (SQLException ignored) {}
     }
 
     public static void unknown1(Session session, ClientMessage msg) {
