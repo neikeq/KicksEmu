@@ -25,6 +25,8 @@ public class KicksEmu {
     private NettyTcpServer nettyTcpServer;
     private NettyUdpServer nettyUdpServer;
 
+    private boolean initialized = false;
+
     private static KicksEmu instance;
 
     /** @param args command line arguments */
@@ -109,6 +111,8 @@ public class KicksEmu {
 
         long endTime = (System.nanoTime() - startTime) / 1000000;
 
+        initialized = true;
+
         // Print success notification including elapsed time
         Output.println(Localization.get("init.success", Long.toString(endTime)), Level.INFO);
 
@@ -148,7 +152,7 @@ public class KicksEmu {
     private void cleanDatabase() {
         short serverId = ServerManager.getServerId();
 
-        if (serverId > 0) {
+        if (serverId > 0 && initialized) {
             ServerInfo.setOnline(false, serverId);
             ServerInfo.setConnectedUsers((short) 0, serverId);
         }
