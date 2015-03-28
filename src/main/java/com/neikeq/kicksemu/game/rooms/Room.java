@@ -33,10 +33,10 @@ public class Room {
     private String name;
     private String password;
 
-    private RoomState state;
     private RoomMap map;
     private RoomBall ball;
     private RoomType type;
+    private RoomState state;
     private RoomSize maxSize;
     private RoomMode roomMode;
 

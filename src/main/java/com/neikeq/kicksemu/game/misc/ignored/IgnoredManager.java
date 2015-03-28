@@ -9,15 +9,14 @@ import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 
 public class IgnoredManager {
 
-    private static final int IGNORED_LIST_LIMIT = 30;
+    private static final int IGNORED_LIST_LIMIT = 10;
 
     public static void ignoreList(Session session, ClientMessage msg) {
         byte page = msg.readByte();
 
         IgnoredList ignoredPlayers = PlayerInfo.getIgnoredList(session.getPlayerId());
 
-        ServerMessage response = MessageBuilder.ignoredList(ignoredPlayers.fromPage(page), page);
-        session.send(response);
+        session.send(MessageBuilder.ignoredList(ignoredPlayers.getIgnoredPlayers(), page));
     }
 
     public static void blockPlayer(Session session, ClientMessage msg) {

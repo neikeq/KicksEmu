@@ -30,18 +30,6 @@ public class IgnoredList {
         return ignoredPlayers.size();
     }
 
-    public List<Integer> fromPage(byte page) {
-        List<Integer> players = new ArrayList<>();
-
-        int index = page * 10;
-
-        for (int i = index; i < index + 10 && i < ignoredPlayers.size(); i++) {
-            players.add(ignoredPlayers.get(i));
-        }
-
-        return players;
-    }
-
     public static IgnoredList fromString(String strPlayers, int id) {
         IgnoredList ignoredList = new IgnoredList();
 
@@ -78,6 +66,10 @@ public class IgnoredList {
         }
 
         return strPlayers;
+    }
+
+    public List<Integer> getIgnoredPlayers() {
+        return ignoredPlayers;
     }
 
     private IgnoredList() {
