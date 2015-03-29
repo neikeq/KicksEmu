@@ -13,22 +13,22 @@ import java.sql.Timestamp;
 
 public class UserInfo {
 
-    private static final String table = "users";
+    private static final String TABLE = "users";
 
     // Sql getters
 
     public static String getPassword(int id, Connection ... con) {
-        return SqlUtils.getString("password", table, id, con);
+        return SqlUtils.getString("password", TABLE, id, con);
     }
 
     public static int getKash(int id, Connection ... con) {
-        return SqlUtils.getInt("kash", table, id, con);
+        return SqlUtils.getInt("kash", TABLE, id, con);
     }
 
     public static UserSettings getSettings(int id) {
         String query = "SELECT settings_camera, settings_names, vol_effects, vol_music," +
                 " settings_invites, settings_shadows, settings_whispers, settings_country" +
-                " FROM " + table + " WHERE id = ?";
+                " FROM " + TABLE + " WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -58,57 +58,57 @@ public class UserInfo {
     }
 
     public static Timestamp getLastCharDeletion(int id, Connection ... con) {
-        return SqlUtils.getTimestamp("last_char_deletion", table, id, con);
+        return SqlUtils.getTimestamp("last_char_deletion", TABLE, id, con);
     }
 
     public static int getSlotOne(int id, Connection ... con) {
-        return SqlUtils.getInt("slot_one", table, id, con);
+        return SqlUtils.getInt("slot_one", TABLE, id, con);
     }
 
     public static int getSlotTwo(int id, Connection ... con) {
-        return SqlUtils.getInt("slot_two", table, id, con);
+        return SqlUtils.getInt("slot_two", TABLE, id, con);
     }
 
     public static int getOnline(int id, Connection ... con) {
-        return SqlUtils.getInt("online", table, id, con);
+        return SqlUtils.getInt("online", TABLE, id, con);
     }
 
     public static short getServer(int id, Connection ... con) {
-        return SqlUtils.getShort("server", table, id, con);
+        return SqlUtils.getShort("server", TABLE, id, con);
     }
 
     public static int getSlotThree(int id, Connection ... con) {
-        return SqlUtils.getInt("slot_three", table, id, con);
+        return SqlUtils.getInt("slot_three", TABLE, id, con);
     }
 
     // Sql setters
 
     public static void sumKash(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("kash", value, table, id, con);
+        SqlUtils.sumInt("kash", value, TABLE, id, con);
     }
 
     public static void setLastCharDeletion(Date value, int id, Connection ... con) {
-        SqlUtils.setTimestamp("last_char_deletion", DateUtils.toTimestamp(value), table, id, con);
+        SqlUtils.setTimestamp("last_char_deletion", DateUtils.toTimestamp(value), TABLE, id, con);
     }
 
     public static void setSlotOne(int value, int id, Connection ... con) {
-        SqlUtils.setInt("slot_one", value, table, id, con);
+        SqlUtils.setInt("slot_one", value, TABLE, id, con);
     }
 
     public static void setSlotTwo(int value, int id, Connection ... con) {
-        SqlUtils.setInt("slot_two", value, table, id, con);
+        SqlUtils.setInt("slot_two", value, TABLE, id, con);
     }
 
     public static void setSlotThree(int value, int id, Connection ... con) {
-        SqlUtils.setInt("slot_three", value, table, id, con);
+        SqlUtils.setInt("slot_three", value, TABLE, id, con);
     }
 
     public static void setOnline(int value, int id, Connection ... con) {
-        SqlUtils.setInt("online", value, table, id, con);
+        SqlUtils.setInt("online", value, TABLE, id, con);
     }
 
     public static void setServer(short value, int id, Connection ... con) {
-        SqlUtils.setShort("server", value, table, id, con);
+        SqlUtils.setShort("server", value, TABLE, id, con);
     }
 
     public static void setSettings(UserSettings settings, int id) {
