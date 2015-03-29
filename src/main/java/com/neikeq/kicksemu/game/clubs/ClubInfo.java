@@ -12,6 +12,10 @@ public class ClubInfo {
         return SqlUtils.getString("name", TABLE, id, con);
     }
 
+    public static int getClubPoints(int id, Connection ... con) {
+        return SqlUtils.getInt("club_points", TABLE, id, con);
+    }
+
     public static boolean isUniformActive(int id, Connection ... con) {
         return SqlUtils.getBoolean("uniform_active", TABLE, id, con);
     }
@@ -50,6 +54,10 @@ public class ClubInfo {
 
     public static void setName(String value, int id, Connection ... con) {
         SqlUtils.setString("name", value, TABLE, id, con);
+    }
+
+    public static void sumClubPoints(int value, int id, Connection ... con) {
+        SqlUtils.sumInt("club_points", value, TABLE, id, con);
     }
 
     public static void setUniformActive(boolean value, int id, Connection ... con) {

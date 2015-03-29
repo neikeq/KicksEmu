@@ -143,6 +143,7 @@ CREATE TABLE IF NOT EXISTS `clubs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   `description` text NOT NULL,
+  `club_points` int(10) unsigned NOT NULL DEFAULT '0',
   `membership_mode` enum('APPROVED','IMMEDIATE','DISCONTINUED') NOT NULL,
   `uniform_active` bit(1) NOT NULL DEFAULT b'0',
   `uniform_home_shirts` int(11) unsigned DEFAULT NULL,
