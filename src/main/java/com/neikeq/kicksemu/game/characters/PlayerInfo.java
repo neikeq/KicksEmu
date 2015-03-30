@@ -17,7 +17,6 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
-import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,13 +31,17 @@ public class PlayerInfo {
 
     private static final String TABLE = "characters";
 
-    private static final String ITEM_ACTIVE = "(" +
-            "((expiration = ? OR expiration = ? OR expiration = ?) AND usages > 0) OR " +
-            "((expiration = ? OR expiration = ?) AND timestamp_expire > ?) OR " +
-            "expiration = ?" +
-            ")";
+    private static final String ITEM_ACTIVE = String.format("(" +
+            "((expiration = %d OR expiration = %d OR expiration = %d) AND usages > 0) OR" +
+            "((expiration = %d OR expiration = %d) AND timestamp_expire > CURRENT_TIMESTAMP) OR" +
+            " expiration = %d)",
+            Expiration.USAGE_10.toInt(), Expiration.USAGE_50.toInt(), Expiration.USAGE_100.toInt(),
+            Expiration.DAYS_7.toInt(), Expiration.DAYS_30.toInt(),
+            Expiration.DAYS_PERM.toInt());
 
-    private static final String PRODUCT_ACTIVE = "(timestamp_expire > ? OR expiration = ?)";
+    private static final String PRODUCT_ACTIVE = String.format(
+            "(timestamp_expire > CURRENT_TIMESTAMP OR expiration = %d)",
+            Expiration.DAYS_PERM.toInt());
 
     // Sql getters
 
@@ -548,13 +551,6 @@ public class PlayerInfo {
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
-                stmt.setInt(2, Expiration.USAGE_10.toInt());
-                stmt.setInt(3, Expiration.USAGE_50.toInt());
-                stmt.setInt(4, Expiration.USAGE_100.toInt());
-                stmt.setInt(5, Expiration.DAYS_7.toInt());
-                stmt.setInt(6, Expiration.DAYS_30.toInt());
-                stmt.setTimestamp(7, DateUtils.getTimestamp());
-                stmt.setInt(8, Expiration.DAYS_PERM.toInt());
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
@@ -647,8 +643,6 @@ public class PlayerInfo {
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
-                stmt.setTimestamp(2, DateUtils.getTimestamp());
-                stmt.setInt(3, Expiration.DAYS_PERM.toInt());
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
@@ -704,8 +698,6 @@ public class PlayerInfo {
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
-                stmt.setTimestamp(2, DateUtils.getTimestamp());
-                stmt.setInt(3, Expiration.DAYS_PERM.toInt());
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
