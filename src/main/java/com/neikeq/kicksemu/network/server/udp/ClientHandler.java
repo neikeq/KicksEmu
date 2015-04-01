@@ -37,7 +37,11 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
                     // If room is playing, broadcast an update with the new port
                     if (room != null && room.isPlaying()) {
-                        room.sendBroadcast(MessageBuilder.hostInfo(room));
+                        if (room.getHost() == playerId) {
+                            room.sendBroadcast(MessageBuilder.hostInfo(room));
+                        } else {
+                            // TODO update player's port
+                        }
                     }
                 }
             }

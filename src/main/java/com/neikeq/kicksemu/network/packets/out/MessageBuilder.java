@@ -1239,4 +1239,35 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage updateRoomPlayer(int playerId, Connection ... con) {
+        ServerMessage msg = new ServerMessage(MessageId.UPDATE_ROOM_PLAYER);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        int ownerId = PlayerInfo.getOwner(playerId, con);
+
+        msg.append(playerId);
+        msg.append(true);
+
+        MessageUtils.appendCharacterInfo(playerId, ownerId, msg, con);
+        msg.appendZeros(2);
+
+        msg.append(PlayerInfo.getAnimation(playerId, con));
+        msg.append(PlayerInfo.getFace(playerId, con));
+
+        MessageUtils.appendDefaultClothes(playerId, msg, con);
+
+        msg.append(PlayerInfo.getPosition(playerId, con));
+        msg.appendZeros(1);
+        msg.append((short) 0);
+        msg.appendZeros(3);
+        msg.append((byte)0);
+        msg.append((byte)0);
+        msg.append((byte)0);
+
+        MessageUtils.appendStats(playerId, msg, con);
+
+        return msg;
+    }
 }

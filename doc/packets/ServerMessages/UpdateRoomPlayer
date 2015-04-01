@@ -1,0 +1,39 @@
+// UpdateRoomPlayer
+// Tcp
+
+Id: 2412
+Size: 72
+
+Data:
+int packet_id
+byte reason
+byte response
+int player_id
+bool unknown
+short level
+int experience
+short stats_points
+int kash
+int points
+char[8] unknown
+short tickets_kash
+short tickets_points
+short unknown
+short animation // Boy: 1, Girl: 2
+short face
+int default_head
+int default_shirts
+int default_pants
+int default_shoes
+short position
+byte unknown
+short club_icon // Member: 0, Manager: 256 ??, Captain: 556 ??
+char[3] unknown
+/*
+ * Rank values:
+ * Stars: 1 to 5
+ * Gems: 6 to 10
+ */
+byte rank_yellow
+byte rank_green
+byte rank_red

@@ -60,6 +60,7 @@ public class MessageId {
     public static final int MATCH_FORCED_RESULT = 2408;
     public static final int UNKNOWN1 = 2409;
     public static final int UNKNOWN2 = 2411;
+    public static final int UPDATE_ROOM_PLAYER = 2412;
     public static final int PURCHASE_ITEM = 2600;
     public static final int RESELL_ITEM = 2601;
     public static final int ACTIVATE_ITEM = 2603;

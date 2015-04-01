@@ -683,6 +683,8 @@ public class RoomManager {
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
 
+                Session playerSession = room.getPlayers().get(playerId);
+
                 // Add the experience and points earned to the player
                 PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
                 PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
@@ -693,11 +695,8 @@ public class RoomManager {
                     // Check if player did level up and apply level up operations if needed
                     levels = CharacterManager.checkExperience(playerId, con);
 
-                    // If player did level up, send him the updated stats points
-                    if (levels > 0) {
-                        room.getPlayers().get(playerId)
-                                .sendAndFlush(MessageBuilder.playerStats(playerId, con));
-                    }
+                    room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
+                    playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));
                 }
 
                 // If match was not in training mode, update player's history
@@ -723,12 +722,7 @@ public class RoomManager {
                             });
 
                     if (expired.get()) {
-                        CharacterManager.sendItemList(room.getPlayers().get(playerId));
-                    }
-
-                    if (levels <= 0) {
-                        room.getPlayers().get(playerId)
-                                .sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                        CharacterManager.sendItemList(playerSession);
                     }
                 }
             });
