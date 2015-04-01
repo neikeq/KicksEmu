@@ -64,6 +64,26 @@ public class PlayerStats {
         this.defense = (short) defense;
     }
 
+    public PlayerStats(PlayerStats stats) {
+        this.running = stats.getRunning();
+        this.endurance = stats.getEndurance();
+        this.agility = stats.getAgility();
+        this.ballControl = stats.getBallControl();
+        this.dribbling = stats.getDribbling();
+        this.stealing = stats.getStealing();
+        this.tackling = stats.getTackling();
+        this.heading = stats.getHeading();
+        this.shortShots = stats.getShortShots();
+        this.longShots = stats.getLongShots();
+        this.crossing = stats.getCrossing();
+        this.shortPasses = stats.getShortPasses();
+        this.longPasses = stats.getLongPasses();
+        this.marking = stats.getMarking();
+        this.goalkeeping = stats.getGoalkeeping();
+        this.punching = stats.getPunching();
+        this.defense = stats.getDefense();
+    }
+
     public short getRunning() {
         return running;
     }

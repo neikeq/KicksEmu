@@ -801,6 +801,46 @@ public class PlayerInfo {
         SqlUtils.setShort("stats_points", value, TABLE, id, con);
     }
 
+    public static void setStats(PlayerStats stats, int id, Connection ... con) {
+        String query = "UPDATE " + TABLE + " SET stats_running = ?, stats_endurance = ?, " +
+                "stats_agility = ?, stats_ball_control = ?, stats_dribbling = ?," +
+                "stats_stealing = ?, stats_tackling = ?, stats_heading = ?, " +
+                "stats_short_shots = ?, stats_long_shots = ?, stats_crossing = ?, " +
+                "stats_short_passes = ?, stats_long_passes = ?, stats_marking = ?," +
+                "stats_goalkeeping = ?, stats_punching = ?, stats_defense = ? WHERE id = ?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setShort(1, stats.getRunning());
+                stmt.setShort(2, stats.getEndurance());
+                stmt.setShort(3, stats.getAgility());
+                stmt.setShort(4, stats.getBallControl());
+                stmt.setShort(5, stats.getDribbling());
+                stmt.setShort(6, stats.getStealing());
+                stmt.setShort(7, stats.getTackling());
+                stmt.setShort(8, stats.getHeading());
+                stmt.setShort(9, stats.getShortShots());
+                stmt.setShort(10, stats.getLongShots());
+                stmt.setShort(11, stats.getCrossing());
+                stmt.setShort(12, stats.getShortPasses());
+                stmt.setShort(13, stats.getLongPasses());
+                stmt.setShort(14, stats.getMarking());
+                stmt.setShort(15, stats.getGoalkeeping());
+                stmt.setShort(16, stats.getPunching());
+                stmt.setShort(17, stats.getDefense());
+                stmt.setInt(18, id);
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
     public static void setStatsRunning(short value, int id, Connection ... con) {
         SqlUtils.setShort("stats_running", value, TABLE, id, con);
     }
