@@ -1,13 +1,14 @@
 // PlayerStats
 // Tcp
 
-Id: 2906
-Size: 40
+Id: 2413
+Size: 44
 
 Data:
 int packet_id
 byte reason
 byte response
+int player_id
 // Stats
 short stats_points
 short running

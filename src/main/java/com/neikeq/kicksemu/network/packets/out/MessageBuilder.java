@@ -909,6 +909,18 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage playerBonusStats(int playerId, Connection ... con) {
+        ServerMessage msg = new ServerMessage(MessageId.PLAYER_BONUS_STATS);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(playerId);
+
+        MessageUtils.appendStatsBonus(playerId, msg, con);
+
+        return msg;
+    }
+
     public static ServerMessage unknown1() {
         ServerMessage msg = new ServerMessage(MessageId.UNKNOWN1);
 
@@ -1251,20 +1263,6 @@ public class MessageBuilder {
         msg.append(true);
 
         MessageUtils.appendCharacterInfo(playerId, ownerId, msg, con);
-        msg.appendZeros(2);
-
-        msg.append(PlayerInfo.getAnimation(playerId, con));
-        msg.append(PlayerInfo.getFace(playerId, con));
-
-        MessageUtils.appendDefaultClothes(playerId, msg, con);
-
-        msg.append(PlayerInfo.getPosition(playerId, con));
-        msg.appendZeros(1);
-        msg.append((short) 0);
-        msg.appendZeros(3);
-        msg.append((byte)0);
-        msg.append((byte)0);
-        msg.append((byte)0);
 
         MessageUtils.appendStats(playerId, msg, con);
 

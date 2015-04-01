@@ -689,14 +689,16 @@ public class RoomManager {
                 PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
                 PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
 
-                short levels = 0;
-
                 if (pr.getExperience() > 0) {
                     // Check if player did level up and apply level up operations if needed
-                    levels = CharacterManager.checkExperience(playerId, con);
+                    short levels = CharacterManager.checkExperience(playerId, con);
 
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
-                    playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                    room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
+
+                    if (levels > 0) {
+                        playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                    }
                 }
 
                 // If match was not in training mode, update player's history
