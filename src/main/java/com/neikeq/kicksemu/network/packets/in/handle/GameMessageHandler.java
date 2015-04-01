@@ -15,6 +15,7 @@ import com.neikeq.kicksemu.game.sessions.Authenticator;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
+import com.neikeq.kicksemu.network.server.udp.UdpPing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +38,8 @@ public class GameMessageHandler extends MessageHandler {
         events = new HashMap<>();
 
         events.put(MessageId.GAME_LOGIN, Authenticator::gameLogin);
-        events.put(MessageId.UDP_CHECK, (s, msg) -> Authenticator.udpAuthentication(s));
+        events.put(MessageId.UDP_AUTHENTICATE, (s, msg) -> Authenticator.udpAuthentication(s));
+        events.put(MessageId.UDP_PING, (s, msg) -> UdpPing.udpPing(s));
         events.put(MessageId.GAME_EXIT, (s, msg) -> CharacterManager.gameExit(s));
         events.put(MessageId.UDP_CONFIRM, (s, msg) -> Authenticator.udpConfirm(s));
         events.put(MessageId.PLAYER_INFO, (s, msg) -> CharacterManager.playerInfo(s));

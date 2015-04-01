@@ -11,7 +11,9 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.Password;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +23,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class Authenticator {
 
@@ -289,6 +293,10 @@ public class Authenticator {
 
         if (!result) {
             session.close();
+        } else if (session.getUdpPingFuture() == null) {
+            ScheduledFuture<?> udpPingFuture = session.getChannel().eventLoop()
+                    .scheduleAtFixedRate(new UdpPing(session), 5, 5, TimeUnit.SECONDS);
+            session.setUdpPingFuture(udpPingFuture);
         }
     }
 
@@ -296,6 +304,7 @@ public class Authenticator {
         if (session != null) {
             synchronized (session.getLocker()) {
                 session.setUdpAuthenticated(true);
+                session.setLastPingResponse(DateUtils.currentTimeMillis());
                 session.getLocker().notify();
             }
         }

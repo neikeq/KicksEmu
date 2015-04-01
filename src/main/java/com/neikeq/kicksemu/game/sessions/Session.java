@@ -13,11 +13,14 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 import io.netty.channel.Channel;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ScheduledFuture;
 
 public class Session {
 
     private final Channel channel;
     private final PlayerCache playerCache;
+
+    private ScheduledFuture<?> udpPingFuture;
 
     private int userId;
     private int playerId;
@@ -28,6 +31,8 @@ public class Session {
     private int ping;
 
     private byte pingState;
+
+    private long lastPingResponse;
 
     private boolean authenticated;
     private boolean udpAuthenticated;
@@ -99,6 +104,11 @@ public class Session {
             getChannel().close();
         }
 
+        // Close Udp Ping schedule
+        if (getUdpPingFuture() != null && !getUdpPingFuture().isCancelled()) {
+            getUdpPingFuture().cancel(true);
+        }
+
         // If session information were not yet cleared
         if (authenticated) {
             setAuthenticated(false);
@@ -138,6 +148,8 @@ public class Session {
 
         setAuthenticated(false);
         setUdpAuthenticated(false);
+
+        setLastPingResponse(0);
     }
 
     public boolean isAuthenticated() {
@@ -234,5 +246,21 @@ public class Session {
 
     public void setSessionId(int sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public long getLastPingResponse() {
+        return lastPingResponse;
+    }
+
+    public void setLastPingResponse(long lastPingResponse) {
+        this.lastPingResponse = lastPingResponse;
+    }
+
+    public ScheduledFuture<?> getUdpPingFuture() {
+        return udpPingFuture;
+    }
+
+    public void setUdpPingFuture(ScheduledFuture<?> udpPingFuture) {
+        this.udpPingFuture = udpPingFuture;
     }
 }

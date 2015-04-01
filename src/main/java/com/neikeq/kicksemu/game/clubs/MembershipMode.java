@@ -4,5 +4,5 @@ public enum MembershipMode {
 
     APPROVED,
     IMMEDIATE,
-    DISCONTINUED;
+    DISCONTINUED
 }

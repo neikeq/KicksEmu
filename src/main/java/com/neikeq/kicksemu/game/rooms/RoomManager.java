@@ -19,6 +19,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.GameEvents;
 import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
@@ -497,8 +498,9 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            ServerMessage msgHostInfo = MessageBuilder.hostInfo(room);
-            room.sendBroadcast(msgHostInfo);
+            if (room.getHost() == session.getPlayerId()) {
+                room.sendBroadcast(MessageBuilder.hostInfo(room));
+            }
         }
     }
 
@@ -540,8 +542,7 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            ServerMessage msgMatchLoading = MessageBuilder.matchLoading(playerId, roomId, status);
-            room.sendBroadcast(msgMatchLoading);
+            room.sendBroadcast(MessageBuilder.matchLoading(playerId, roomId, status));
         }
     }
 
@@ -554,6 +555,10 @@ public class RoomManager {
 
             if (!room.getConfirmedPlayers().contains(playerId)) {
                 room.getConfirmedPlayers().add(playerId);
+
+                // Instead of waiting 5 seconds (or not), we send an udp ping immediately to
+                // the client so we can update his udp port (if changed) before match starts
+                UdpPing.sendUdpPing(session);
             }
 
             if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {

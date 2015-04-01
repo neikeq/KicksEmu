@@ -1148,11 +1148,11 @@ public class MessageBuilder {
     }
 
     public static ServerMessage tcpPing() {
-        ServerMessage msg = new ServerMessage(MessageId.TCP_PING);
+        return new ServerMessage(MessageId.TCP_PING);
+    }
 
-        MessageUtils.appendResult((byte)0, msg);
-
-        return msg;
+    public static ServerMessage udpPing() {
+        return new ServerMessage(MessageId.UDP_PING);
     }
 
     public static ServerMessage playerDetails(int playerId, byte result) {
