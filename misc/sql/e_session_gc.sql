@@ -9,6 +9,7 @@ CREATE EVENT session_gc
     ON SCHEDULE
         EVERY 1 HOUR
         STARTS CURRENT_TIMESTAMP + INTERVAL 1 HOUR
+        ON COMPLETION PRESERVE
     COMMENT 'Sessions garbage collection'
     DO
         BEGIN

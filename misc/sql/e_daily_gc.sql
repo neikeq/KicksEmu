@@ -9,6 +9,7 @@ CREATE EVENT daily_gc
     ON SCHEDULE
         EVERY 1 DAY
         STARTS CURDATE() + INTERVAL 1 DAY
+        ON COMPLETION PRESERVE
     COMMENT 'Garbage collection'
     DO
         BEGIN

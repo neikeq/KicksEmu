@@ -9,6 +9,7 @@ CREATE EVENT daily_ranking
     ON SCHEDULE
         EVERY 1 DAY
         STARTS CURDATE() + INTERVAL 1 DAY
+        ON COMPLETION PRESERVE
     COMMENT 'Daily ranking update'
     DO
         BEGIN
