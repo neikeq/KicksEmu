@@ -47,6 +47,7 @@ public class MessageId {
     public static final int LOBBY_LIST = 2318;
     public static final int INVITE_PLAYER = 2319;
     public static final int CHAT_MESSAGE = 2320;
+    public static final int SET_OBSERVER = 2321;
     public static final int START_COUNT_DOWN = 2399;
     public static final int HOST_INFO = 2400;
     public static final int COUNT_DOWN = 2401;

@@ -1,0 +1,12 @@
+// SetObserver
+// Tcp
+
+Id: 2321
+Size: 12
+
+Data:
+int packet_id
+byte reason
+byte response
+int player_id
+short observer // 2 bytes boolean

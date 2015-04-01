@@ -361,14 +361,12 @@ public class RoomManager {
                 room.setMaxLevel(maxLevel);
                 room.setMaxSize(maxSize);
 
-                ServerMessage msgRoomSettings = MessageBuilder.roomSettings(room, result);
-                room.sendBroadcast(msgRoomSettings);
+                room.sendBroadcast(MessageBuilder.roomSettings(room, result));
             }
         }
 
         if (result != 0) {
-            ServerMessage msgRoomSettings = MessageBuilder.roomSettings(room, result);
-            session.send(msgRoomSettings);
+            session.send(MessageBuilder.roomSettings(room, result));
         }
     }
 

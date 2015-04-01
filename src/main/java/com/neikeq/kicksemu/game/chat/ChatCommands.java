@@ -9,6 +9,7 @@ import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
@@ -150,9 +151,19 @@ public class ChatCommands {
     }
 
     private static void onObserver(Session session) {
-        if (PlayerInfo.isModerator(session.getPlayerId())) {
+        int playerId = session.getPlayerId();
+
+        if (PlayerInfo.isModerator(playerId)) {
             boolean observer = !session.isObserver();
             session.setObserver(observer);
+
+            if (session.getRoomId() > 0) {
+                Room room = RoomManager.getRoomById(session.getRoomId());
+
+                if (room != null) {
+                    room.sendBroadcast(MessageBuilder.setObserver(playerId, observer));
+                }
+            }
 
             ChatUtils.sendServerMessage(session,
                     "Observer mode " + (observer ? "enabled." : "disabled."));

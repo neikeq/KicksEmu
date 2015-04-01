@@ -1228,4 +1228,15 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage setObserver(int playerId, boolean observer) {
+        ServerMessage msg = new ServerMessage(MessageId.SET_OBSERVER);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.append(playerId);
+        msg.append(observer, 2);
+
+        return msg;
+    }
 }
