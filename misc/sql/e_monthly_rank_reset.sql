@@ -31,7 +31,7 @@ CREATE EVENT monthly_ranking_reset
             history_month_tackling = 0,
             history_month_total_points = 0;
 
-            UPDATE characters SET
+            UPDATE ranking SET
             month_matches = 0,
             month_wins = 0,
             month_draws = 0,
