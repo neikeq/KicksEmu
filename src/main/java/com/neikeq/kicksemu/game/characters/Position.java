@@ -32,4 +32,8 @@ public class Position {
                 return false;
         }
     }
+
+    public static boolean isAdvancedPosition(short position) {
+        return position != FW && position != MF && position != DF;
+    }
 }

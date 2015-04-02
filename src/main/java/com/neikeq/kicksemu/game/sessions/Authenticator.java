@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.sessions;
 import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
+import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.misc.Moderation;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -210,7 +211,8 @@ public class Authenticator {
             validHash = Password.validateAddress(session.getRemoteAddress(), hash);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException ignored) {}
 
-        if (validHash) {
+        if (validHash && (PlayerInfo.getLevel(characterId) < 18 ||
+                Position.isAdvancedPosition(PlayerInfo.getPosition(characterId)))) {
             if (result == AuthResult.SUCCESS) {
                 session.setAuthenticated(true);
                 SessionInfo.resetExpiration(sessionId);
