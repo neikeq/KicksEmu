@@ -126,23 +126,25 @@ class MessageUtils {
     }
 
     public static void appendStats(int playerId, ServerMessage msg, Connection ... con) {
-        msg.append(PlayerInfo.getStatsRunning(playerId, con));
-        msg.append(PlayerInfo.getStatsEndurance(playerId, con));
-        msg.append(PlayerInfo.getStatsAgility(playerId, con));
-        msg.append(PlayerInfo.getStatsBallControl(playerId, con));
-        msg.append(PlayerInfo.getStatsDribbling(playerId, con));
-        msg.append(PlayerInfo.getStatsStealing(playerId, con));
-        msg.append(PlayerInfo.getStatsTackling(playerId, con));
-        msg.append(PlayerInfo.getStatsHeading(playerId, con));
-        msg.append(PlayerInfo.getStatsShortShots(playerId, con));
-        msg.append(PlayerInfo.getStatsLongShots(playerId, con));
-        msg.append(PlayerInfo.getStatsCrossing(playerId, con));
-        msg.append(PlayerInfo.getStatsShortPasses(playerId, con));
-        msg.append(PlayerInfo.getStatsLongPasses(playerId, con));
-        msg.append(PlayerInfo.getStatsMarking(playerId, con));
-        msg.append(PlayerInfo.getStatsGoalkeeping(playerId, con));
-        msg.append(PlayerInfo.getStatsPunching(playerId, con));
-        msg.append(PlayerInfo.getStatsDefense(playerId, con));
+        PlayerStats stats = PlayerInfo.getStats(playerId, con);
+
+        msg.append(stats.getRunning());
+        msg.append(stats.getEndurance());
+        msg.append(stats.getAgility());
+        msg.append(stats.getBallControl());
+        msg.append(stats.getDribbling());
+        msg.append(stats.getStealing());
+        msg.append(stats.getTackling());
+        msg.append(stats.getHeading());
+        msg.append(stats.getShortShots());
+        msg.append(stats.getLongShots());
+        msg.append(stats.getCrossing());
+        msg.append(stats.getShortPasses());
+        msg.append(stats.getLongPasses());
+        msg.append(stats.getMarking());
+        msg.append(stats.getGoalkeeping());
+        msg.append(stats.getPunching());
+        msg.append(stats.getDefense());
     }
 
     public static void appendStatsTraining(int playerId, ServerMessage msg, Connection ... con) {

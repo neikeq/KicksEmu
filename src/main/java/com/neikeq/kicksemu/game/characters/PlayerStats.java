@@ -20,6 +20,16 @@ public class PlayerStats {
     private short punching;
     private short defense;
 
+    public static PlayerStats fromArray(short[] stats) {
+        if (stats.length < 17) {
+            return null;
+        }
+
+        return new PlayerStats(stats[0], stats[1], stats[2], stats[3], stats[4],
+                stats[5], stats[6], stats[7], stats[8], stats[9], stats[10], stats[11],
+                stats[12], stats[13], stats[14], stats[15], stats[16]);
+    }
+
     public PlayerStats() {
         this.running = 0;
         this.endurance = 0;

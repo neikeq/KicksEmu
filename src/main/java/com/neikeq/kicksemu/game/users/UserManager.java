@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.users;
 
+import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.Position;
@@ -11,6 +12,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -109,29 +111,15 @@ public class UserManager {
                 if (Position.isValidNewPosition(currentPosition, position)) {
                     PlayerInfo.setPosition(position, playerId, con);
 
-                    PlayerStats stats = StatsInfo.getInstance().getUpgradeStats().get(position);
+                    MutableInteger statsPoints = new MutableInteger(0);
 
-                    short remainStats = 0;
+                    PlayerStats stats = PlayerInfo.getStats(playerId, con);
 
-                    remainStats += PlayerInfo.sumStatsRunning(stats.getRunning(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsEndurance(stats.getEndurance(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsAgility(stats.getAgility(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsBallControl(stats.getBallControl(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsDribbling(stats.getDribbling(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsStealing(stats.getStealing(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsTackling(stats.getTackling(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsHeading(stats.getHeading(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsShortShots(stats.getShortShots(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsLongShots(stats.getLongShots(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsCrossing(stats.getCrossing(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsShortPasses(stats.getShortPasses(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsLongPasses(stats.getLongPasses(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsMarking(stats.getMarking(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsGoalkeeping(stats.getGoalkeeping(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsPunching(stats.getPunching(), playerId, con);
-                    remainStats += PlayerInfo.sumStatsDefense(stats.getDefense(), playerId, con);
+                    CharacterManager.sumStats(StatsInfo.getInstance()
+                            .getUpgradeStats().get(position), 1, stats, statsPoints);
 
-                    PlayerInfo.sumStatsPoints(remainStats, playerId, con);
+                    PlayerInfo.setStats(stats, playerId, con);
+                    PlayerInfo.sumStatsPoints((short)statsPoints.get(), playerId, con);
 
                 } else {
                     result = -1;

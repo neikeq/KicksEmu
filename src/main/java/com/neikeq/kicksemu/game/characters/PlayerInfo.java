@@ -300,74 +300,51 @@ public class PlayerInfo {
         return SqlUtils.getShort("stats_points", TABLE, id, con);
     }
 
-    // Stats
+    public static PlayerStats getStats(int id, Connection ... con) {
+        String query = "SELECT stats_running, stats_endurance,  stats_agility, " +
+                "stats_ball_control, stats_dribbling, stats_stealing, stats_tackling, " +
+                "stats_heading,  stats_short_shots, stats_long_shots, stats_crossing, " +
+                "stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping, " +
+                "stats_punching, stats_defense FROM " + TABLE + " WHERE id = ?";
 
-    public static short getStatsRunning(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_running", TABLE, id, con);
-    }
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
-    public static short getStatsEndurance(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_endurance", TABLE, id, con);
-    }
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
 
-    public static short getStatsAgility(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_agility", TABLE, id, con);
-    }
-
-    public static short getStatsBallControl(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_ball_control", TABLE, id, con);
-    }
-
-    public static short getStatsDribbling(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_dribbling", TABLE, id, con);
-    }
-
-    public static short getStatsStealing(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_stealing", TABLE, id, con);
-    }
-
-    public static short getStatsTackling(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_tackling", TABLE, id, con);
-    }
-
-    public static short getStatsHeading(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_heading", TABLE, id, con);
-    }
-
-    public static short getStatsShortShots(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_short_shots", TABLE, id, con);
-    }
-
-    public static short getStatsLongShots(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_long_shots", TABLE, id, con);
-    }
-
-    public static short getStatsCrossing(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_crossing", TABLE, id, con);
-    }
-
-    public static short getStatsShortPasses(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_short_passes", TABLE, id, con);
-    }
-
-    public static short getStatsLongPasses(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_long_passes", TABLE, id, con);
-    }
-
-    public static short getStatsMarking(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_marking", TABLE, id, con);
-    }
-
-    public static short getStatsGoalkeeping(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_goalkeeping", TABLE, id, con);
-    }
-
-    public static short getStatsPunching(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_punching", TABLE, id, con);
-    }
-
-    public static short getStatsDefense(int id, Connection ... con) {
-        return SqlUtils.getShort("stats_defense", TABLE, id, con);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new PlayerStats(
+                                rs.getShort("stats_running"),
+                                rs.getShort("stats_endurance"),
+                                rs.getShort("stats_agility"),
+                                rs.getShort("stats_ball_control"),
+                                rs.getShort("stats_dribbling"),
+                                rs.getShort("stats_stealing"),
+                                rs.getShort("stats_tackling"),
+                                rs.getShort("stats_heading"),
+                                rs.getShort("stats_short_shots"),
+                                rs.getShort("stats_long_shots"),
+                                rs.getShort("stats_crossing"),
+                                rs.getShort("stats_short_passes"),
+                                rs.getShort("stats_long_passes"),
+                                rs.getShort("stats_marking"),
+                                rs.getShort("stats_goalkeeping"),
+                                rs.getShort("stats_punching"),
+                                rs.getShort("stats_defense"));
+                    } else {
+                        return new PlayerStats();
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            return new PlayerStats();
+        }
     }
 
     public static PlayerStats getTrainingStats(int id, Connection ... con) {
@@ -841,178 +818,8 @@ public class PlayerInfo {
         } catch (SQLException ignored) {}
     }
 
-    public static void setStatsRunning(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_running", value, TABLE, id, con);
-    }
-
-    public static void setStatsEndurance(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_endurance", value, TABLE, id, con);
-    }
-
-    public static void setStatsAgility(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_agility", value, TABLE, id, con);
-    }
-
-    public static void setStatsBallControl(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_ball_control", value, TABLE, id, con);
-    }
-
-    public static void setStatsDribbling(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_dribbling", value, TABLE, id, con);
-    }
-
-    public static void setStatsStealing(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_stealing", value, TABLE, id, con);
-    }
-
-    public static void setStatsTackling(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_tackling", value, TABLE, id, con);
-    }
-
-    public static void setStatsHeading(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_heading", value, TABLE, id, con);
-    }
-
-    public static void setStatsShortShots(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_short_shots", value, TABLE, id, con);
-    }
-
-    public static void setStatsLongShots(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_long_shots", value, TABLE, id, con);
-    }
-
-    public static void setStatsCrossing(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_crossing", value, TABLE, id, con);
-    }
-
-    public static void setStatsShortPasses(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_short_passes", value, TABLE, id, con);
-    }
-
-    public static void setStatsLongPasses(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_long_passes", value, TABLE, id, con);
-    }
-
-    public static void setStatsMarking(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_marking", value, TABLE, id, con);
-    }
-
-    public static void setStatsGoalkeeping(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_goalkeeping", value, TABLE, id, con);
-    }
-
-    public static void setStatsPunching(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_punching", value, TABLE, id, con);
-    }
-
-    public static void setStatsDefense(short value, int id, Connection ... con) {
-        SqlUtils.setShort("stats_defense", value, TABLE, id, con);
-    }
-
     public static void sumStatsPoints(short value, int id, Connection ... con) {
         SqlUtils.sumShort("stats_points", value, TABLE, id, con);
-    }
-
-    public static short sumStatsRunning(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsRunning(id, con), value);
-        SqlUtils.sumShort("stats_running", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsEndurance(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsEndurance(id, con), value);
-        SqlUtils.sumShort("stats_endurance", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsAgility(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsAgility(id, con), value);
-        SqlUtils.sumShort("stats_agility", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsBallControl(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsBallControl(id, con), value);
-        SqlUtils.sumShort("stats_ball_control", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsDribbling(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsDribbling(id, con), value);
-        SqlUtils.sumShort("stats_dribbling", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsStealing(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsStealing(id, con), value);
-        SqlUtils.sumShort("stats_stealing", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsTackling(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsTackling(id, con), value);
-        SqlUtils.sumShort("stats_tackling", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsHeading(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsHeading(id, con), value);
-        SqlUtils.sumShort("stats_heading", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsShortShots(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsShortShots(id, con), value);
-        SqlUtils.sumShort("stats_short_shots", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsLongShots(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsLongShots(id, con), value);
-        SqlUtils.sumShort("stats_long_shots", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsCrossing(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsCrossing(id, con), value);
-        SqlUtils.sumShort("stats_crossing", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsShortPasses(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsShortPasses(id, con), value);
-        SqlUtils.sumShort("stats_short_passes", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsLongPasses(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsLongPasses(id, con), value);
-        SqlUtils.sumShort("stats_long_passes", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsMarking(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsMarking(id, con), value);
-        SqlUtils.sumShort("stats_marking", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsGoalkeeping(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsGoalkeeping(id, con), value);
-        SqlUtils.sumShort("stats_goalkeeping", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsPunching(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsPunching(id, con), value);
-        SqlUtils.sumShort("stats_punching", add, TABLE, id, con);
-        return (short)(value - add);
-    }
-
-    public static short sumStatsDefense(int value, int id, Connection ... con) {
-        short add = CharacterUtils.statsUpToHundred(PlayerInfo.getStatsDefense(id, con), value);
-        SqlUtils.sumShort("stats_defense", add, TABLE, id, con);
-        return (short)(value - add);
     }
 
     public static void sumHistoryMatches(int value, int id, Connection ... con) {

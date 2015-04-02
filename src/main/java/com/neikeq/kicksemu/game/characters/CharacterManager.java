@@ -120,43 +120,8 @@ public class CharacterManager {
 
             if (level >= 18) {
                 // Apply upgrade stats
-                PlayerStats upgradeStats = StatsInfo.getInstance()
-                        .getUpgradeStats().get(position);
-
-                newStats.sumRunning(sumStatsUpToHundred(upgradeStats.getRunning(),
-                        newStats.getRunning(), statsPoints));
-                newStats.sumEndurance(sumStatsUpToHundred(upgradeStats.getEndurance(),
-                        newStats.getEndurance(), statsPoints));
-                newStats.sumAgility(sumStatsUpToHundred(upgradeStats.getAgility(),
-                        newStats.getAgility(), statsPoints));
-                newStats.sumBallControl(sumStatsUpToHundred(upgradeStats.getBallControl(),
-                        newStats.getBallControl(), statsPoints));
-                newStats.sumDribbling(sumStatsUpToHundred(upgradeStats.getDribbling(),
-                        newStats.getDribbling(), statsPoints));
-                newStats.sumStealing(sumStatsUpToHundred(upgradeStats.getStealing(),
-                        newStats.getStealing(), statsPoints));
-                newStats.sumTackling(sumStatsUpToHundred(upgradeStats.getTackling(),
-                        newStats.getTackling(), statsPoints));
-                newStats.sumHeading(sumStatsUpToHundred(upgradeStats.getHeading(),
-                        newStats.getHeading(), statsPoints));
-                newStats.sumShortShots(sumStatsUpToHundred(upgradeStats.getShortShots(),
-                        newStats.getShortShots(), statsPoints));
-                newStats.sumLongShots(sumStatsUpToHundred(upgradeStats.getLongShots(),
-                        newStats.getLongShots(), statsPoints));
-                newStats.sumCrossing(sumStatsUpToHundred(upgradeStats.getCrossing(),
-                        newStats.getCrossing(), statsPoints));
-                newStats.sumShortPasses(sumStatsUpToHundred(upgradeStats.getShortPasses(),
-                        newStats.getShortPasses(), statsPoints));
-                newStats.sumLongShots(sumStatsUpToHundred(upgradeStats.getLongPasses(),
-                        newStats.getLongPasses(), statsPoints));
-                newStats.sumMarking(sumStatsUpToHundred(upgradeStats.getMarking(),
-                        newStats.getMarking(), statsPoints));
-                newStats.sumGoalkeeping(sumStatsUpToHundred(upgradeStats.getGoalkeeping(),
-                        newStats.getGoalkeeping(), statsPoints));
-                newStats.sumPunching(sumStatsUpToHundred(upgradeStats.getPunching(),
-                        newStats.getPunching(), statsPoints));
-                newStats.sumDefense(sumStatsUpToHundred(upgradeStats.getDefense(),
-                        newStats.getDefense(), statsPoints));
+                sumStats(StatsInfo.getInstance().getUpgradeStats().get(position),
+                        1, newStats, statsPoints);
             }
 
             // Set new stats
@@ -198,35 +163,23 @@ public class CharacterManager {
         int from = level - levels;
 
         // Calculate stats points to add
-        short statsPoints = 0;
+        MutableInteger statsPoints = new MutableInteger(0);
 
         for (int i = from; i < level; i++) {
-            statsPoints += StatsInfo.getInstance().statsPointsForLevel(i+1);
+            statsPoints.sum(StatsInfo.getInstance().statsPointsForLevel(i + 1));
         }
 
-        // Add auto stats
-        PlayerStats autoStats = StatsInfo.getInstance().getAutoStats().get(position);
+        PlayerStats stats = PlayerInfo.getStats(id, con);
 
-        statsPoints += PlayerInfo.sumStatsRunning(autoStats.getRunning() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsEndurance(autoStats.getEndurance() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsAgility(autoStats.getAgility() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsBallControl(autoStats.getBallControl() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsDribbling(autoStats.getDribbling() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsStealing(autoStats.getStealing() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsTackling(autoStats.getTackling() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsHeading(autoStats.getHeading() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsShortShots(autoStats.getShortShots() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsLongShots(autoStats.getLongShots() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsCrossing(autoStats.getCrossing() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsShortPasses(autoStats.getShortPasses() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsLongPasses(autoStats.getLongPasses() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsMarking(autoStats.getMarking() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsGoalkeeping(autoStats.getGoalkeeping() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsPunching(autoStats.getPunching() * levels, id, con);
-        statsPoints += PlayerInfo.sumStatsDefense(autoStats.getDefense() * levels, id, con);
+        // Add auto stats
+        sumStats(StatsInfo.getInstance().getAutoStats().get(position),
+                levels, stats, statsPoints);
+
+        // Set new stats
+        PlayerInfo.setStats(stats, id, con);
 
         // Add stats point
-        PlayerInfo.sumStatsPoints(statsPoints, id, con);
+        PlayerInfo.sumStatsPoints((short)statsPoints.get(), id, con);
     }
 
     private static void onPlayerLevelUp(int level, int levels, short position,
@@ -241,42 +194,8 @@ public class CharacterManager {
         }
 
         // Add auto stats
-        PlayerStats autoStats = StatsInfo.getInstance().getAutoStats().get(position);
-
-        stats.sumRunning(sumStatsUpToHundred(autoStats.getRunning() * levels,
-                stats.getRunning(), statsPoints));
-        stats.sumEndurance(sumStatsUpToHundred(autoStats.getEndurance() * levels,
-                stats.getEndurance(), statsPoints));
-        stats.sumAgility(sumStatsUpToHundred(autoStats.getAgility() * levels,
-                stats.getAgility(), statsPoints));
-        stats.sumBallControl(sumStatsUpToHundred(autoStats.getBallControl() * levels,
-                stats.getBallControl(), statsPoints));
-        stats.sumDribbling(sumStatsUpToHundred(autoStats.getDribbling() * levels,
-                stats.getDribbling(), statsPoints));
-        stats.sumStealing(sumStatsUpToHundred(autoStats.getStealing() * levels,
-                stats.getStealing(), statsPoints));
-        stats.sumTackling(sumStatsUpToHundred(autoStats.getTackling() * levels,
-                stats.getTackling(), statsPoints));
-        stats.sumHeading(sumStatsUpToHundred(autoStats.getHeading() * levels,
-                stats.getHeading(), statsPoints));
-        stats.sumShortShots(sumStatsUpToHundred(autoStats.getShortShots() * levels,
-                stats.getShortShots(), statsPoints));
-        stats.sumLongShots(sumStatsUpToHundred(autoStats.getLongShots() * levels,
-                stats.getLongShots(), statsPoints));
-        stats.sumCrossing(sumStatsUpToHundred(autoStats.getCrossing() * levels,
-                stats.getCrossing(), statsPoints));
-        stats.sumShortPasses(sumStatsUpToHundred(autoStats.getShortPasses() * levels,
-                stats.getShortPasses(), statsPoints));
-        stats.sumLongShots(sumStatsUpToHundred(autoStats.getLongPasses() * levels,
-                stats.getLongPasses(), statsPoints));
-        stats.sumMarking(sumStatsUpToHundred(autoStats.getMarking() * levels,
-                stats.getMarking(), statsPoints));
-        stats.sumGoalkeeping(sumStatsUpToHundred(autoStats.getGoalkeeping() * levels,
-                stats.getGoalkeeping(), statsPoints));
-        stats.sumPunching(sumStatsUpToHundred(autoStats.getPunching() * levels,
-                stats.getPunching(), statsPoints));
-        stats.sumDefense(sumStatsUpToHundred(autoStats.getDefense() * levels,
-                stats.getDefense(), statsPoints));
+        sumStats(StatsInfo.getInstance().getAutoStats().get(position),
+                levels, stats, statsPoints);
 
         statPoints.sum(statsPoints);
     }
@@ -301,7 +220,7 @@ public class CharacterManager {
             total += values[i];
 
             if (values[i] < 0) {
-                result = (byte)254; // Invalid value
+                result = (byte) 254; // Invalid value
                 break;
             }
         }
@@ -313,27 +232,15 @@ public class CharacterManager {
             if (result == 0) {
                 short statsPoints = PlayerInfo.getStatsPoints(playerId, con);
 
+                MutableInteger remain = new MutableInteger(0);
+                PlayerStats stats = PlayerInfo.getStats(playerId, con);
+
                 // If player have enough points
                 if (total <= statsPoints) {
-                    total -= PlayerInfo.sumStatsRunning(values[0], playerId, con);
-                    total -= PlayerInfo.sumStatsEndurance(values[1], playerId, con);
-                    total -= PlayerInfo.sumStatsAgility(values[2], playerId, con);
-                    total -= PlayerInfo.sumStatsBallControl(values[3], playerId, con);
-                    total -= PlayerInfo.sumStatsDribbling(values[4], playerId, con);
-                    total -= PlayerInfo.sumStatsStealing(values[5], playerId, con);
-                    total -= PlayerInfo.sumStatsTackling(values[6], playerId, con);
-                    total -= PlayerInfo.sumStatsHeading(values[7], playerId, con);
-                    total -= PlayerInfo.sumStatsShortShots(values[8], playerId, con);
-                    total -= PlayerInfo.sumStatsLongShots(values[9], playerId, con);
-                    total -= PlayerInfo.sumStatsCrossing(values[10], playerId, con);
-                    total -= PlayerInfo.sumStatsShortPasses(values[11], playerId, con);
-                    total -= PlayerInfo.sumStatsLongPasses(values[12], playerId, con);
-                    total -= PlayerInfo.sumStatsMarking(values[13], playerId, con);
-                    total -= PlayerInfo.sumStatsGoalkeeping(values[14], playerId, con);
-                    total -= PlayerInfo.sumStatsPunching(values[15], playerId, con);
-                    total -= PlayerInfo.sumStatsDefense(values[16], playerId, con);
+                    sumStats(PlayerStats.fromArray(values), 1, stats, remain);
 
-                    PlayerInfo.sumStatsPoints((short) -total, playerId, con);
+                    PlayerInfo.setStats(stats, playerId, con);
+                    PlayerInfo.sumStatsPoints((short) -(total - remain.get()), playerId, con);
                 } else {
                     result = (byte) 253; // Not enough stats points
                 }
@@ -341,5 +248,43 @@ public class CharacterManager {
 
             session.sendAndFlush(MessageBuilder.addStatsPoints(playerId, result, con));
         } catch (SQLException ignored) {}
+    }
+
+    public static void sumStats(PlayerStats add, int factor, PlayerStats stats,
+                                MutableInteger statsPoints) {
+        stats.sumRunning(sumStatsUpToHundred(add.getRunning() * factor,
+                stats.getRunning(), statsPoints));
+        stats.sumEndurance(sumStatsUpToHundred(add.getEndurance() * factor,
+                stats.getEndurance(), statsPoints));
+        stats.sumAgility(sumStatsUpToHundred(add.getAgility() * factor,
+                stats.getAgility(), statsPoints));
+        stats.sumBallControl(sumStatsUpToHundred(add.getBallControl() * factor,
+                stats.getBallControl(), statsPoints));
+        stats.sumDribbling(sumStatsUpToHundred(add.getDribbling() * factor,
+                stats.getDribbling(), statsPoints));
+        stats.sumStealing(sumStatsUpToHundred(add.getStealing() * factor,
+                stats.getStealing(), statsPoints));
+        stats.sumTackling(sumStatsUpToHundred(add.getTackling() * factor,
+                stats.getTackling(), statsPoints));
+        stats.sumHeading(sumStatsUpToHundred(add.getHeading() * factor,
+                stats.getHeading(), statsPoints));
+        stats.sumShortShots(sumStatsUpToHundred(add.getShortShots() * factor,
+                stats.getShortShots(), statsPoints));
+        stats.sumLongShots(sumStatsUpToHundred(add.getLongShots() * factor,
+                stats.getLongShots(), statsPoints));
+        stats.sumCrossing(sumStatsUpToHundred(add.getCrossing() * factor,
+                stats.getCrossing(), statsPoints));
+        stats.sumShortPasses(sumStatsUpToHundred(add.getShortPasses() * factor,
+                stats.getShortPasses(), statsPoints));
+        stats.sumLongShots(sumStatsUpToHundred(add.getLongPasses() * factor,
+                stats.getLongPasses(), statsPoints));
+        stats.sumMarking(sumStatsUpToHundred(add.getMarking() * factor,
+                stats.getMarking(), statsPoints));
+        stats.sumGoalkeeping(sumStatsUpToHundred(add.getGoalkeeping() * factor,
+                stats.getGoalkeeping(), statsPoints));
+        stats.sumPunching(sumStatsUpToHundred(add.getPunching() * factor,
+                stats.getPunching(), statsPoints));
+        stats.sumDefense(sumStatsUpToHundred(add.getDefense() * factor,
+                stats.getDefense(), statsPoints));
     }
 }
