@@ -683,8 +683,6 @@ public class RoomManager {
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
 
-                Session playerSession = room.getPlayers().get(playerId);
-
                 // Add the experience and points earned to the player
                 PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
                 PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
@@ -697,9 +695,14 @@ public class RoomManager {
                     room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
 
                     if (levels > 0) {
-                        playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                        room.getPlayers().get(playerId)
+                                .sendAndFlush(MessageBuilder.playerStats(playerId, con));
                     }
                 }
+            });
+
+            result.getPlayers().stream().forEach(pr -> {
+                int playerId = pr.getPlayerId();
 
                 // If match was not in training mode, update player's history
                 if (room.getTrainingFactor() > 0) {
@@ -724,7 +727,7 @@ public class RoomManager {
                             });
 
                     if (expired.get()) {
-                        CharacterManager.sendItemList(playerSession);
+                        CharacterManager.sendItemList(room.getPlayers().get(playerId));
                     }
                 }
             });

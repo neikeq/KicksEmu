@@ -4,8 +4,10 @@ import com.neikeq.kicksemu.game.characters.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.PlayerRanking;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
+import com.neikeq.kicksemu.game.characters.TutorialState;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
+import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
@@ -31,10 +33,12 @@ class MessageUtils {
     }
 
     public static void appendTutorialInfo(int playerId, ServerMessage msg, Connection ... con) {
-        msg.append(PlayerInfo.getTutorialDribbling(playerId, con));
-        msg.append(PlayerInfo.getTutorialPassing(playerId, con));
-        msg.append(PlayerInfo.getTutorialShooting(playerId, con));
-        msg.append(PlayerInfo.getTutorialDefense(playerId, con));
+        TutorialState tutorialState = PlayerInfo.getTutorialState(playerId, con);
+
+        msg.append(tutorialState.getDribbling());
+        msg.append(tutorialState.getPassing());
+        msg.append(tutorialState.getShooting());
+        msg.append(tutorialState.getDefense());
     }
 
     public static void appendCharacterInfo(int playerId, int ownerId,
@@ -52,10 +56,12 @@ class MessageUtils {
     }
 
     public static void appendDefaultClothes(int playerId, ServerMessage msg, Connection ... con) {
-        msg.append(PlayerInfo.getDefaultHead(playerId, con));
-        msg.append(PlayerInfo.getDefaultShirts(playerId, con));
-        msg.append(PlayerInfo.getDefaultPants(playerId, con));
-        msg.append(PlayerInfo.getDefaultShoes(playerId, con));
+        DefaultClothes defaultClothes = PlayerInfo.getDefaultClothes(playerId, con);
+
+        msg.append(defaultClothes.getHead());
+        msg.append(defaultClothes.getShirts());
+        msg.append(defaultClothes.getPants());
+        msg.append(defaultClothes.getShoes());
     }
 
     public static void appendInventoryItem(Item item, ServerMessage msg) {

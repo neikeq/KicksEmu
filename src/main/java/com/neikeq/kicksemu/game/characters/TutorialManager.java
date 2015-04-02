@@ -30,25 +30,28 @@ public class TutorialManager {
         if (UserInfo.hasCharacter(characterId, session.getUserId())) {
             if (areValid(dribbling, passing, shooting, defense)) {
                 try (Connection con = MySqlManager.getConnection()) {
-                    byte storedDribbling = PlayerInfo.getTutorialDribbling(characterId, con);
-                    byte storedPassing = PlayerInfo.getTutorialPassing(characterId, con);
-                    byte storedShooting = PlayerInfo.getTutorialShooting(characterId, con);
-                    byte storedDefense = PlayerInfo.getTutorialDefense(characterId, con);
+                    TutorialState tutorialState = PlayerInfo.getTutorialState(characterId, con);
 
-                    if (!compare(dribbling, storedDribbling)) {
-                        PlayerInfo.setTutorialDribbling(dribbling, characterId, con);
+                    boolean updated;
+
+                    if (updated = !compare(dribbling, tutorialState.getDribbling())) {
+                        tutorialState.setDribbling(dribbling);
                     }
 
-                    if (!compare(passing, storedPassing)) {
-                        PlayerInfo.setTutorialPassing(passing, characterId, con);
+                    if (updated |= !compare(passing, tutorialState.getPassing())) {
+                        tutorialState.setPassing(passing);
                     }
 
-                    if (!compare(shooting, storedShooting)) {
-                        PlayerInfo.setTutorialShooting(shooting, characterId, con);
+                    if (updated |= !compare(shooting, tutorialState.getShooting())) {
+                        tutorialState.setShooting(shooting);
                     }
 
-                    if (!compare(defense, storedDefense)) {
-                        PlayerInfo.setTutorialDefense(defense, characterId, con);
+                    if (updated |= !compare(defense, tutorialState.getDefense())) {
+                        tutorialState.setDefense(defense);
+                    }
+
+                    if (updated) {
+                        PlayerInfo.setTutorialState(tutorialState, characterId, con);
                     }
 
                     if (checkForReward(characterId, dribbling, passing, shooting, defense)) {

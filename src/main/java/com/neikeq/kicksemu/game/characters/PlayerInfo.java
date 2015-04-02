@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.inventory.Celebration;
+import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Expiration;
 import com.neikeq.kicksemu.game.inventory.InventoryManager;
 import com.neikeq.kicksemu.game.inventory.Item;
@@ -43,7 +44,7 @@ public class PlayerInfo {
             "(timestamp_expire > CURRENT_TIMESTAMP OR expiration = %d)",
             Expiration.DAYS_PERM.toInt());
 
-    // Sql getters
+    // getters
 
     public static int getOwner(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
@@ -109,20 +110,33 @@ public class PlayerInfo {
         return SqlUtils.getShort("quest_matches_left", TABLE, id, con);
     }
 
-    public static byte getTutorialDribbling(int id, Connection ... con) {
-        return SqlUtils.getByte("tutorial_dribbling", TABLE, id, con);
-    }
+    public static TutorialState getTutorialState(int id, Connection ... con) {
+        String query = "SELECT tutorial_dribbling, tutorial_passing, tutorial_shooting, " +
+                "tutorial_defense FROM " + TABLE + " WHERE id = ?";
 
-    public static byte getTutorialPassing(int id, Connection ... con) {
-        return SqlUtils.getByte("tutorial_passing", TABLE, id, con);
-    }
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
-    public static byte getTutorialShooting(int id, Connection ... con) {
-        return SqlUtils.getByte("tutorial_shooting", TABLE, id, con);
-    }
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
 
-    public static byte getTutorialDefense(int id, Connection ... con) {
-        return SqlUtils.getByte("tutorial_defense", TABLE, id, con);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new TutorialState(
+                                rs.getByte("tutorial_dribbling"), rs.getByte("tutorial_passing"),
+                                rs.getByte("tutorial_shooting"), rs.getByte("tutorial_defense"));
+                    } else {
+                        return new TutorialState();
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            return new TutorialState();
+        }
     }
 
     public static boolean getReceivedReward(int id, Connection ... con) {
@@ -161,52 +175,33 @@ public class PlayerInfo {
         return SqlUtils.getShort("face", TABLE, id, con);
     }
 
-    public static int getDefaultHead(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        int defaultHead = s != null && s.getPlayerCache().getDefaultHead() != null ?
-                s.getPlayerCache().getDefaultHead() : SqlUtils.getInt("default_head", TABLE, id, con);
+    public static DefaultClothes getDefaultClothes(int id, Connection ... con) {
+        String query = "SELECT default_head, default_shirts, default_pants, " +
+                "default_shoes FROM " + TABLE + " WHERE id = ?";
 
-        if (s != null) {
-            s.getPlayerCache().setDefaultHead(defaultHead);
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new DefaultClothes(
+                                rs.getInt("default_head"), rs.getInt("default_shirts"),
+                                rs.getInt("default_pants"), rs.getInt("default_shoes"));
+                    } else {
+                        return new DefaultClothes(-1, -1, -1, -1);
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            return new DefaultClothes(-1, -1, -1, -1);
         }
-
-        return defaultHead;
-    }
-
-    public static int getDefaultShirts(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        int defaultShirts = s != null && s.getPlayerCache().getDefaultShirts() != null ?
-                s.getPlayerCache().getDefaultShirts() : SqlUtils.getInt("default_shirts", TABLE, id, con);
-
-        if (s != null) {
-            s.getPlayerCache().setDefaultShirts(defaultShirts);
-        }
-
-        return defaultShirts;
-    }
-
-    public static int getDefaultPants(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        int defaultPants = s != null && s.getPlayerCache().getDefaultPants() != null ?
-                s.getPlayerCache().getDefaultPants() : SqlUtils.getInt("default_pants", TABLE, id, con);
-
-        if (s != null) {
-            s.getPlayerCache().setDefaultPants(defaultPants);
-        }
-
-        return defaultPants;
-    }
-
-    public static int getDefaultShoes(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        int defaultShoes = s != null && s.getPlayerCache().getDefaultShoes() != null ?
-                s.getPlayerCache().getDefaultShoes() : SqlUtils.getInt("default_shoes", TABLE, id, con);
-
-        if (s != null) {
-            s.getPlayerCache().setDefaultShoes(defaultShoes);
-        }
-
-        return defaultShoes;
     }
 
     public static byte getSkillSlots(int id, Connection ... con) {
@@ -377,8 +372,6 @@ public class PlayerInfo {
         return bonusStats;
     }
 
-    // History
-
     public static PlayerHistory getHistory(int id, Connection ... con) {
         String query = "SELECT history_matches, history_wins, history_draws, history_MOM, " +
                 "history_valid_goals, history_valid_assists, history_valid_interception, " +
@@ -468,8 +461,6 @@ public class PlayerInfo {
             return new PlayerHistory();
         }
     }
-
-    // Others
 
     public static String getStatusMessage(int id, Connection ... con) {
         return SqlUtils.getString("status_message", TABLE, id, con);
@@ -676,7 +667,7 @@ public class PlayerInfo {
         return IgnoredList.fromString(SqlUtils.getString("ignored_list", TABLE, id, con), id);
     }
 
-    // Sql setters
+    // setters
 
     public static void setBlocked(boolean value, int id, Connection ... con) {
         SqlUtils.setBoolean("blocked", value, TABLE, id, con);
@@ -702,20 +693,27 @@ public class PlayerInfo {
         SqlUtils.setShort("quest_matches_left", value, TABLE, id, con);
     }
 
-    public static void setTutorialDribbling(byte value, int id, Connection ... con) {
-        SqlUtils.setByte("tutorial_dribbling", value, TABLE, id, con);
-    }
+    public static void setTutorialState(TutorialState tutorial, int id, Connection ... con) {
+        String query = "UPDATE " + TABLE + " SET tutorial_dribbling=?, tutorial_passing=?, " +
+                "tutorial_shooting=?, tutorial_defense=? WHERE id=?";
 
-    public static void setTutorialPassing(byte value, int id, Connection ... con) {
-        SqlUtils.setByte("tutorial_passing", value, TABLE, id, con);
-    }
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
-    public static void setTutorialShooting(byte value, int id, Connection ... con) {
-        SqlUtils.setByte("tutorial_shooting", value, TABLE, id, con);
-    }
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setByte(1, tutorial.getDribbling());
+                stmt.setByte(2, tutorial.getPassing());
+                stmt.setByte(3, tutorial.getShooting());
+                stmt.setByte(4, tutorial.getDefense());
+                stmt.setInt(5, id);
 
-    public static void setTutorialDefense(byte value, int id, Connection ... con) {
-        SqlUtils.setByte("tutorial_defense", value, TABLE, id, con);
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 
     public static void setReceivedReward(boolean value, int id, Connection ... con) {

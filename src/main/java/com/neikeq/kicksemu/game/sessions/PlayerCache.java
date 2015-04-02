@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.sessions;
 
 import com.neikeq.kicksemu.game.inventory.Celebration;
+import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
@@ -16,6 +17,7 @@ public class PlayerCache {
     private Integer owner;
     private Integer clubId;
 
+    private DefaultClothes defaultClothes;
     private Integer defaultHead;
     private Integer defaultShirts;
     private Integer defaultPants;
@@ -188,5 +190,13 @@ public class PlayerCache {
 
     public void setLearns(Map<Integer, Training> learns) {
         this.learns = learns;
+    }
+
+    public DefaultClothes getDefaultClothes() {
+        return defaultClothes;
+    }
+
+    public void setDefaultClothes(DefaultClothes defaultClothes) {
+        this.defaultClothes = defaultClothes;
     }
 }
