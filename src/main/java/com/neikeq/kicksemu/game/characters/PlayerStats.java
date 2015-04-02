@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.characters;
 
+import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+
 public class PlayerStats {
 
     private short running;
@@ -19,6 +21,51 @@ public class PlayerStats {
     private short goalkeeping;
     private short punching;
     private short defense;
+
+    private static short sumStatsUpToHundred(int value, short current, MutableInteger statsPoints) {
+        short add = CharacterUtils.statsUpToHundred(current, value);
+        statsPoints.sum(value - add);
+
+        return add;
+    }
+
+    public static void sumStats(PlayerStats add, int factor, PlayerStats stats,
+                                MutableInteger statsPoints) {
+        stats.sumRunning(sumStatsUpToHundred(add.getRunning() * factor,
+                stats.getRunning(), statsPoints));
+        stats.sumEndurance(sumStatsUpToHundred(add.getEndurance() * factor,
+                stats.getEndurance(), statsPoints));
+        stats.sumAgility(sumStatsUpToHundred(add.getAgility() * factor,
+                stats.getAgility(), statsPoints));
+        stats.sumBallControl(sumStatsUpToHundred(add.getBallControl() * factor,
+                stats.getBallControl(), statsPoints));
+        stats.sumDribbling(sumStatsUpToHundred(add.getDribbling() * factor,
+                stats.getDribbling(), statsPoints));
+        stats.sumStealing(sumStatsUpToHundred(add.getStealing() * factor,
+                stats.getStealing(), statsPoints));
+        stats.sumTackling(sumStatsUpToHundred(add.getTackling() * factor,
+                stats.getTackling(), statsPoints));
+        stats.sumHeading(sumStatsUpToHundred(add.getHeading() * factor,
+                stats.getHeading(), statsPoints));
+        stats.sumShortShots(sumStatsUpToHundred(add.getShortShots() * factor,
+                stats.getShortShots(), statsPoints));
+        stats.sumLongShots(sumStatsUpToHundred(add.getLongShots() * factor,
+                stats.getLongShots(), statsPoints));
+        stats.sumCrossing(sumStatsUpToHundred(add.getCrossing() * factor,
+                stats.getCrossing(), statsPoints));
+        stats.sumShortPasses(sumStatsUpToHundred(add.getShortPasses() * factor,
+                stats.getShortPasses(), statsPoints));
+        stats.sumLongPasses(sumStatsUpToHundred(add.getLongPasses() * factor,
+                stats.getLongPasses(), statsPoints));
+        stats.sumMarking(sumStatsUpToHundred(add.getMarking() * factor,
+                stats.getMarking(), statsPoints));
+        stats.sumGoalkeeping(sumStatsUpToHundred(add.getGoalkeeping() * factor,
+                stats.getGoalkeeping(), statsPoints));
+        stats.sumPunching(sumStatsUpToHundred(add.getPunching() * factor,
+                stats.getPunching(), statsPoints));
+        stats.sumDefense(sumStatsUpToHundred(add.getDefense() * factor,
+                stats.getDefense(), statsPoints));
+    }
 
     public static PlayerStats fromArray(short[] stats) {
         if (stats.length < 17) {

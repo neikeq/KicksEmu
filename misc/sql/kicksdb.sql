@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `tutorial_defense` tinyint(4) unsigned NOT NULL DEFAULT '0',
   `received_reward` bit(1) NOT NULL DEFAULT b'0',
   `experience` int(11) unsigned NOT NULL DEFAULT '0',
-  `points` int(11) unsigned NOT NULL DEFAULT '4000',
+  `points` int(11) unsigned NOT NULL DEFAULT '0',
   `animation` smallint(6) unsigned NOT NULL,
   `face` smallint(6) unsigned NOT NULL,
   `default_head` int(10) unsigned NOT NULL,

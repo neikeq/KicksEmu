@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.game.users;
 
-import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.Position;
@@ -38,6 +37,14 @@ public class UserManager {
     public static void instantExit(Session session) {
         ServerMessage response = MessageBuilder.instantExit();
         session.send(response);
+
+        session.close();
+    }
+
+    public static void gameExit(Session session) {
+        int playerId = session.getPlayerId();
+
+        session.send(MessageBuilder.gameExit(session.getRemoteAddress(), playerId));
 
         session.close();
     }
@@ -115,7 +122,7 @@ public class UserManager {
 
                     PlayerStats stats = PlayerInfo.getStats(playerId, con);
 
-                    CharacterManager.sumStats(StatsInfo.getInstance()
+                    PlayerStats.sumStats(StatsInfo.getInstance()
                             .getUpgradeStats().get(position), 1, stats, statsPoints);
 
                     PlayerInfo.setStats(stats, playerId, con);
