@@ -701,10 +701,15 @@ public class RoomManager {
                     }
                 }
 
+
+                TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                        result.getRedTeam() : result.getBlueTeam();
+
+                RewardCalculator.updatePlayerHistory(pr, teamResult,
+                        result.getMom(), con);
+
                 // If match was not in training mode, update player's history
                 if (room.getTrainingFactor() > 0) {
-                    TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                            result.getRedTeam() : result.getBlueTeam();
 
                     RewardCalculator.updatePlayerHistory(pr, teamResult,
                             result.getMom(), con);

@@ -316,22 +316,14 @@ public class PlayerInfo {
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return new PlayerStats(
-                                rs.getShort("stats_running"),
-                                rs.getShort("stats_endurance"),
-                                rs.getShort("stats_agility"),
-                                rs.getShort("stats_ball_control"),
-                                rs.getShort("stats_dribbling"),
-                                rs.getShort("stats_stealing"),
-                                rs.getShort("stats_tackling"),
-                                rs.getShort("stats_heading"),
-                                rs.getShort("stats_short_shots"),
-                                rs.getShort("stats_long_shots"),
-                                rs.getShort("stats_crossing"),
-                                rs.getShort("stats_short_passes"),
-                                rs.getShort("stats_long_passes"),
-                                rs.getShort("stats_marking"),
-                                rs.getShort("stats_goalkeeping"),
-                                rs.getShort("stats_punching"),
+                                rs.getShort("stats_running"), rs.getShort("stats_endurance"),
+                                rs.getShort("stats_agility"), rs.getShort("stats_ball_control"),
+                                rs.getShort("stats_dribbling"), rs.getShort("stats_stealing"),
+                                rs.getShort("stats_tackling"), rs.getShort("stats_heading"),
+                                rs.getShort("stats_short_shots"), rs.getShort("stats_long_shots"),
+                                rs.getShort("stats_crossing"), rs.getShort("stats_short_passes"),
+                                rs.getShort("stats_long_passes"), rs.getShort("stats_marking"),
+                                rs.getShort("stats_goalkeeping"), rs.getShort("stats_punching"),
                                 rs.getShort("stats_defense"));
                     } else {
                         return new PlayerStats();
@@ -387,118 +379,94 @@ public class PlayerInfo {
 
     // History
 
-    public static int getHistoryMatches(int id, Connection ... con) {
-        return SqlUtils.getInt("history_matches", TABLE, id, con);
+    public static PlayerHistory getHistory(int id, Connection ... con) {
+        String query = "SELECT history_matches, history_wins, history_draws, history_MOM, " +
+                "history_valid_goals, history_valid_assists, history_valid_interception, " +
+                "history_valid_shooting, history_valid_stealing, history_valid_tackling, " +
+                "history_shooting, history_stealing, history_tackling, history_total_points " +
+                "FROM " + TABLE + " WHERE id = ?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new PlayerHistory(
+                                rs.getInt("history_matches"),
+                                rs.getInt("history_wins"),
+                                rs.getInt("history_draws"),
+                                rs.getInt("history_MOM"),
+                                rs.getInt("history_valid_goals"),
+                                rs.getInt("history_valid_assists"),
+                                rs.getInt("history_valid_interception"),
+                                rs.getInt("history_valid_shooting"),
+                                rs.getInt("history_valid_stealing"),
+                                rs.getInt("history_valid_tackling"),
+                                rs.getInt("history_shooting"),
+                                rs.getInt("history_stealing"),
+                                rs.getInt("history_tackling"),
+                                rs.getInt("history_total_points"));
+                    } else {
+                        return new PlayerHistory();
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            return new PlayerHistory();
+        }
     }
 
-    public static int getHistoryWins(int id, Connection ... con) {
-        return SqlUtils.getInt("history_wins", TABLE, id, con);
-    }
+    public static PlayerHistory getMonthHistory(int id, Connection ... con) {
+        String query = "SELECT history_month_matches, history_month_wins, " +
+                "history_month_draws, history_month_MOM, history_month_valid_goals, " +
+                "history_month_valid_assists, history_month_valid_interception, " +
+                "history_month_valid_shooting, history_month_valid_stealing, " +
+                "history_month_valid_tackling, history_month_shooting, " +
+                "history_month_stealing, history_month_tackling, history_month_total_points " +
+                "FROM " + TABLE + " WHERE id = ?";
 
-    public static int getHistoryDraws(int id, Connection ... con) {
-        return SqlUtils.getInt("history_draws", TABLE, id, con);
-    }
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
-    public static int getHistoryMom(int id, Connection ... con) {
-        return SqlUtils.getInt("history_MOM", TABLE, id, con);
-    }
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
 
-    public static int getHistoryValidGoals(int id, Connection ... con) {
-        return SqlUtils.getInt("history_valid_goals", TABLE, id, con);
-    }
-
-    public static int getHistoryValidAssists(int id, Connection ... con) {
-        return SqlUtils.getInt("history_valid_assists", TABLE, id, con);
-    }
-
-    public static int getHistoryValidInterception(int id, Connection ... con) {
-        return SqlUtils.getInt("history_valid_interception", TABLE, id, con);
-    }
-
-    public static int getHistoryValidShooting(int id, Connection ... con) {
-        return SqlUtils.getInt("history_valid_shooting", TABLE, id, con);
-    }
-
-    public static int getHistoryValidStealing(int id, Connection ... con) {
-        return SqlUtils.getInt("history_valid_stealing", TABLE, id, con);
-    }
-
-    public static int getHistoryValidTackling(int id, Connection ... con) {
-        return SqlUtils.getInt("history_valid_tackling", TABLE, id, con);
-    }
-
-    public static int getHistoryShooting(int id, Connection ... con) {
-        return SqlUtils.getInt("history_shooting", TABLE, id, con);
-    }
-
-    public static int getHistoryStealing(int id, Connection ... con) {
-        return SqlUtils.getInt("history_stealing", TABLE, id, con);
-    }
-
-    public static int getHistoryTackling(int id, Connection ... con) {
-        return SqlUtils.getInt("history_tackling", TABLE, id, con);
-    }
-
-    public static int getHistoryTotalPoints(int id, Connection ... con) {
-        return SqlUtils.getInt("history_total_points", TABLE, id, con);
-    }
-
-    // History Last Month
-
-    public static int getHistoryMonthMatches(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_matches", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthWins(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_wins", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthDraws(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_draws", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthMom(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_MOM", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthValidGoals(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_valid_goals", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthValidAssists(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_valid_assists", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthValidInterception(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_valid_interception", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthValidShooting(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_valid_shooting", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthValidStealing(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_valid_stealing", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthValidTackling(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_valid_tackling", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthShooting(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_shooting", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthStealing(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_stealing", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthTackling(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_tackling", TABLE, id, con);
-    }
-
-    public static int getHistoryMonthTotalPoints(int id, Connection ... con) {
-        return SqlUtils.getInt("history_month_total_points", TABLE, id, con);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new PlayerHistory(
+                                rs.getInt("history_month_matches"),
+                                rs.getInt("history_month_wins"),
+                                rs.getInt("history_month_draws"),
+                                rs.getInt("history_month_MOM"),
+                                rs.getInt("history_month_valid_goals"),
+                                rs.getInt("history_month_valid_assists"),
+                                rs.getInt("history_month_valid_interception"),
+                                rs.getInt("history_month_valid_shooting"),
+                                rs.getInt("history_month_valid_stealing"),
+                                rs.getInt("history_month_valid_tackling"),
+                                rs.getInt("history_month_shooting"),
+                                rs.getInt("history_month_stealing"),
+                                rs.getInt("history_month_tackling"),
+                                rs.getInt("history_month_total_points"));
+                    } else {
+                        return new PlayerHistory();
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            return new PlayerHistory();
+        }
     }
 
     // Others
@@ -818,78 +786,81 @@ public class PlayerInfo {
         } catch (SQLException ignored) {}
     }
 
+    public static void sumHistory(PlayerHistory history, int id, Connection ... con) {
+        String query = "UPDATE " + TABLE + " SET history_matches = history_matches + ?, " +
+                "history_wins = history_wins + ?, history_draws = history_draws + ?, " +
+                "history_MOM = history_MOM + ?, history_valid_goals = history_valid_goals + ?, " +
+                "history_valid_assists = history_valid_assists + ?, " +
+                "history_valid_interception = history_valid_interception + ?, " +
+                "history_valid_shooting = history_valid_shooting + ?, " +
+                "history_valid_stealing = history_valid_stealing + ?, " +
+                "history_valid_tackling = history_valid_tackling + ?, " +
+                "history_shooting = history_shooting + ?, " +
+                "history_stealing = history_stealing + ?, " +
+                "history_tackling = history_tackling + ?, " +
+                "history_total_points = history_total_points + ?, " +
+                "history_month_matches = history_month_matches + ?, " +
+                "history_month_wins = history_month_wins + ?, " +
+                "history_month_draws = history_month_draws + ?, " +
+                "history_month_MOM = history_month_MOM + ?, " +
+                "history_month_valid_goals = history_month_valid_goals + ?, " +
+                "history_month_valid_assists = history_month_valid_assists + ?, " +
+                "history_month_valid_interception = history_month_valid_interception + ?, " +
+                "history_month_valid_shooting = history_month_valid_shooting + ?, " +
+                "history_month_valid_stealing = history_month_valid_stealing + ?, " +
+                "history_month_valid_tackling = history_month_valid_tackling + ?, " +
+                "history_month_shooting = history_month_shooting + ?, " +
+                "history_month_stealing = history_month_stealing + ?, " +
+                "history_month_tackling = history_month_tackling + ?, " +
+                "history_month_total_points = history_month_total_points + ? WHERE id = ?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, history.getMatches());
+                stmt.setInt(2, history.getWins());
+                stmt.setInt(3, history.getDraws());
+                stmt.setInt(4, history.getMom());
+                stmt.setInt(5, history.getValidGoals());
+                stmt.setInt(6, history.getValidAssists());
+                stmt.setInt(7, history.getValidInterception());
+                stmt.setInt(8, history.getValidShooting());
+                stmt.setInt(9, history.getValidStealing());
+                stmt.setInt(10, history.getValidTackling());
+                stmt.setInt(11, history.getShooting());
+                stmt.setInt(12, history.getStealing());
+                stmt.setInt(13, history.getTackling());
+                stmt.setInt(14, history.getTotalPoints());
+
+                stmt.setInt(15, history.getMatches());
+                stmt.setInt(16, history.getWins());
+                stmt.setInt(17, history.getDraws());
+                stmt.setInt(18, history.getMom());
+                stmt.setInt(19, history.getValidGoals());
+                stmt.setInt(20, history.getValidAssists());
+                stmt.setInt(21, history.getValidInterception());
+                stmt.setInt(22, history.getValidShooting());
+                stmt.setInt(23, history.getValidStealing());
+                stmt.setInt(24, history.getValidTackling());
+                stmt.setInt(25, history.getShooting());
+                stmt.setInt(26, history.getStealing());
+                stmt.setInt(27, history.getTackling());
+                stmt.setInt(28, history.getTotalPoints());
+
+                stmt.setInt(29, id);
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
+    }
+
     public static void sumStatsPoints(short value, int id, Connection ... con) {
         SqlUtils.sumShort("stats_points", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryMatches(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_matches", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_matches", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryWins(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_wins", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_wins", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryDraws(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_draws", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_draws", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryMom(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_MOM", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_MOM", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryValidGoals(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_valid_goals", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_valid_goals", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryValidAssists(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_valid_assists", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_valid_assists", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryValidInterception(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_valid_interception", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_valid_interception", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryValidShooting(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_valid_shooting", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_valid_shooting", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryValidStealing(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_valid_stealing", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_valid_stealing", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryValidTackling(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_valid_tackling", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_valid_tackling", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryShooting(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_shooting", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_shooting", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryStealing(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_stealing", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_stealing", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryTackling(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_tackling", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_tackling", value, TABLE, id, con);
-    }
-
-    public static void sumHistoryTotalPoints(int value, int id, Connection ... con) {
-        SqlUtils.sumInt("history_total_points", value, TABLE, id, con);
-        SqlUtils.sumInt("history_month_total_points", value, TABLE, id, con);
     }
 
     public static void setStatusMessage(String value, int id, Connection ... con) {

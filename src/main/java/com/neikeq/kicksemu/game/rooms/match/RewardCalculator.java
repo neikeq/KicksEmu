@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.match;
 
 import com.neikeq.kicksemu.config.Configuration;
+import com.neikeq.kicksemu.game.characters.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 
@@ -35,28 +36,32 @@ public class RewardCalculator {
                                            int mvp, Connection con) {
         int playerId = result.getPlayerId();
 
-        PlayerInfo.sumHistoryMatches(1, playerId, con);
+        PlayerHistory sumHistory = new PlayerHistory();
+
+        sumHistory.sumMatches(1);
 
         switch (teamResult.getResult()) {
             case 0:
-                PlayerInfo.sumHistoryDraws(1, playerId, con);
+                sumHistory.sumDraws(1);
                 break;
             case 1:
-                PlayerInfo.sumHistoryWins(1, playerId, con);
+                sumHistory.sumWins(1);
                 break;
             default:
         }
 
         if (playerId == mvp) {
-            PlayerInfo.sumHistoryMom(1, playerId, con);
+            sumHistory.sumMom(1);
         }
 
-        PlayerInfo.sumHistoryValidGoals(result.getGoals(), playerId, con);
-        PlayerInfo.sumHistoryValidAssists(result.getAssists(), playerId, con);
-        PlayerInfo.sumHistoryValidInterception(result.getBlocks(), playerId, con);
-        PlayerInfo.sumHistoryValidShooting(result.getShots(), playerId, con);
-        PlayerInfo.sumHistoryValidStealing(result.getSteals(), playerId, con);
-        PlayerInfo.sumHistoryValidTackling(result.getTackles(), playerId, con);
-        PlayerInfo.sumHistoryTotalPoints(result.getVotePoints(), playerId, con);
+        sumHistory.sumValidGoals(result.getGoals());
+        sumHistory.sumValidAssists(result.getAssists());
+        sumHistory.sumValidInterception(result.getBlocks());
+        sumHistory.sumValidShooting(result.getShots());
+        sumHistory.sumValidStealing(result.getSteals());
+        sumHistory.sumValidTackling(result.getTackles());
+        sumHistory.sumTotalPoints(result.getVotePoints());
+
+        PlayerInfo.sumHistory(sumHistory, playerId, con);
     }
 }

@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.network.packets.out;
 
+import com.neikeq.kicksemu.game.characters.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
@@ -368,7 +369,7 @@ public class MessageBuilder {
 
             // History
             MessageUtils.appendHistory(playerId, msg, con);
-            MessageUtils.appendHistoryLastMonth(playerId, msg, con);
+            MessageUtils.appendHistoryMonth(playerId, msg, con);
 
             // Ranking
             MessageUtils.appendRanking(playerId, msg, con);
@@ -1179,61 +1180,58 @@ public class MessageBuilder {
             msg.append(PlayerInfo.getLevel(playerId));
             msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId)), 15);
 
-            int historyMatches = PlayerInfo.getHistoryMatches(playerId);
-            int historyWins = PlayerInfo.getHistoryWins(playerId);
-            int historyDraws = PlayerInfo.getHistoryDraws(playerId);
-            int historyLoses = historyMatches - (historyWins + historyDraws);
-            short historyMonthMatches = (short) PlayerInfo.getHistoryMonthMatches(playerId);
-            short historyMonthWins = (short) PlayerInfo.getHistoryMonthWins(playerId);
-            short historyMonthDraws = (short) PlayerInfo.getHistoryMonthDraws(playerId);
-            short historyMonthLoses = (short) (historyMonthMatches -
-                    (historyMonthWins + historyMonthDraws));
+            PlayerHistory history = PlayerInfo.getHistory(playerId);
+            PlayerHistory monthHistory = PlayerInfo.getMonthHistory(playerId);
+
+            int historyLoses = history.getMatches() - (history.getWins() + history.getDraws());
+            short historyMonthLoses = (short) (monthHistory.getMatches() -
+                    (monthHistory.getWins() + monthHistory.getDraws()));
 
             // Matches history
-            msg.append(historyWins);
-            msg.append(historyDraws);
+            msg.append(history.getWins());
+            msg.append(history.getDraws());
             msg.append(historyLoses);
-            msg.append(historyMonthWins);
-            msg.append(historyMonthDraws);
+            msg.append((short) monthHistory.getWins());
+            msg.append((short) monthHistory.getDraws());
             msg.append(historyMonthLoses);
 
             // TODO Fix History and Last Month History writing to PlayerDetails message
 
             // History
-            msg.append((short)historyMatches);
-            msg.append((short)historyWins);
-            msg.append((short)historyDraws);
-            msg.append((short)PlayerInfo.getHistoryMom(playerId));
-            msg.append((short)PlayerInfo.getHistoryValidGoals(playerId));
-            msg.append((short)PlayerInfo.getHistoryValidAssists(playerId));
-            msg.append((short)PlayerInfo.getHistoryValidInterception(playerId));
-            msg.append((short)PlayerInfo.getHistoryValidShooting(playerId));
-            msg.append((short)PlayerInfo.getHistoryValidStealing(playerId));
-            msg.append((short)PlayerInfo.getHistoryValidTackling(playerId));
+            msg.append((short) history.getMatches());
+            msg.append((short) history.getWins());
+            msg.append((short) history.getDraws());
+            msg.append((short) history.getMom());
+            msg.append((short) history.getValidGoals());
+            msg.append((short) history.getValidAssists());
+            msg.append((short) history.getValidInterception());
+            msg.append((short) history.getValidShooting());
+            msg.append((short) history.getValidStealing());
+            msg.append((short) history.getValidTackling());
             msg.appendZeros(2);
-            msg.append((short)PlayerInfo.getHistoryShooting(playerId));
-            msg.append((short)PlayerInfo.getHistoryStealing(playerId));
-            msg.append((short)PlayerInfo.getHistoryTackling(playerId));
+            msg.append((short) history.getShooting());
+            msg.append((short) history.getStealing());
+            msg.append((short) history.getTackling());
             msg.appendZeros(2);
-            msg.append((short)PlayerInfo.getHistoryTotalPoints(playerId));
+            msg.append((short) history.getTotalPoints());
 
             // History Last Month
-            msg.append(historyMonthMatches);
-            msg.append(historyMonthWins);
-            msg.append(historyMonthDraws);
-            msg.append((short)PlayerInfo.getHistoryMonthMom(playerId));
-            msg.append((short)PlayerInfo.getHistoryMonthValidGoals(playerId));
-            msg.append((short)PlayerInfo.getHistoryMonthValidAssists(playerId));
-            msg.append((short)PlayerInfo.getHistoryMonthValidInterception(playerId));
-            msg.append((short)PlayerInfo.getHistoryMonthValidShooting(playerId));
-            msg.append((short)PlayerInfo.getHistoryMonthValidStealing(playerId));
-            msg.append((short) PlayerInfo.getHistoryMonthValidTackling(playerId));
+            msg.append((short) monthHistory.getMatches());
+            msg.append((short) monthHistory.getWins());
+            msg.append((short) monthHistory.getDraws());
+            msg.append((short) monthHistory.getMom());
+            msg.append((short) monthHistory.getValidGoals());
+            msg.append((short) monthHistory.getValidAssists());
+            msg.append((short) monthHistory.getValidInterception());
+            msg.append((short) monthHistory.getValidShooting());
+            msg.append((short) monthHistory.getValidStealing());
+            msg.append((short) monthHistory.getValidTackling());
             msg.appendZeros(2);
-            msg.append((short)PlayerInfo.getHistoryMonthShooting(playerId));
-            msg.append((short)PlayerInfo.getHistoryMonthStealing(playerId));
-            msg.append((short) PlayerInfo.getHistoryMonthTackling(playerId));
+            msg.append((short) monthHistory.getShooting());
+            msg.append((short) monthHistory.getStealing());
+            msg.append((short) monthHistory.getTackling());
             msg.appendZeros(2);
-            msg.append((short) PlayerInfo.getHistoryMonthTotalPoints(playerId));
+            msg.append((short) monthHistory.getTotalPoints());
 
             // TODO Add club info
         }
