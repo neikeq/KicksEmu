@@ -68,9 +68,13 @@ public class Shop {
 
                         // If the item is not already purchased
                         if (notAlreadyPurchased(skillId, skills.values())) {
+                            byte skillsInUse = (byte)skills.values().stream()
+                                    .filter(s -> s.getSelectionIndex() > 0).count();
+
                             // Initialize skill with the requested data
                             int id = InventoryUtils.getSmallestMissingId(skills.values());
-                            byte index = InventoryUtils.getSmallestMissingIndex(skills.values());
+                            byte index = skillsInUse >= PlayerInfo.getSkillSlots(playerId) ? 0 :
+                                    InventoryUtils.getSmallestMissingIndex(skills.values());
 
                             skill = new Skill(skillId, id, expiration.toInt(), index,
                                     InventoryUtils.expirationToTimestamp(expiration), true);
