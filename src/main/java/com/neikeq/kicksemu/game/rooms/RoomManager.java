@@ -683,6 +683,8 @@ public class RoomManager {
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
 
+                Session playerSession = room.getPlayers().get(playerId);
+
                 // Add the experience and points earned to the player
                 PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
                 PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
@@ -694,9 +696,10 @@ public class RoomManager {
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                     room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
 
+                    playerSession.sendAndFlush(MessageBuilder.playerProgress(playerId, con));
+
                     if (levels > 0) {
-                        room.getPlayers().get(playerId)
-                                .sendAndFlush(MessageBuilder.playerStats(playerId, con));
+                        playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));
                     }
                 }
             });
