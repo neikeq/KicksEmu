@@ -4,6 +4,8 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.rooms.Room;
+import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -231,6 +233,14 @@ public class CharacterManager {
             }
 
             session.sendAndFlush(MessageBuilder.addStatsPoints(playerId, result, con));
+
+            if (session.getRoomId() > 0) {
+                Room room = RoomManager.getRoomById(session.getRoomId());
+
+                if (room != null) {
+                    room.sendBroadcast(MessageBuilder.updateRoomPlayer(session.getPlayerId(), con));
+                }
+            }
         } catch (SQLException ignored) {}
     }
 }
