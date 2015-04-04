@@ -438,7 +438,7 @@ public class Room {
     /** Returns true if there are not enough players to play a real match */
     public boolean isTraining() {
         return getPlayers().values().stream().filter(s -> !observers.contains(s.getPlayerId()))
-                .collect(Collectors.toList()).size() < 6 || redTeamSize() != blueTeamSize();
+                .count() < 6 || redTeamSize() != blueTeamSize();
     }
 
     public Room() {
@@ -584,13 +584,11 @@ public class Room {
     }
 
     public int redTeamSize() {
-        return getRedTeam().stream().filter(id -> !observers.contains(id))
-                .collect(Collectors.toList()).size();
+        return (int)getRedTeam().stream().filter(id -> !observers.contains(id)).count();
     }
 
     public int blueTeamSize() {
-        return getBlueTeam().stream().filter(id -> !observers.contains(id))
-                .collect(Collectors.toList()).size();
+        return (int)getBlueTeam().stream().filter(id -> !observers.contains(id)).count();
     }
 
     public RoomLobby getRoomLobby() {
