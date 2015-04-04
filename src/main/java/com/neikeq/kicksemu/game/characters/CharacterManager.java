@@ -137,7 +137,7 @@ public class CharacterManager {
             short newLevel = newLevelInfo.getLevel();
 
             if (newLevel > level) {
-                levels += newLevel - level;
+                levels = (short)(newLevel - level);
             }
 
             if (levels > 0) {

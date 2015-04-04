@@ -657,27 +657,9 @@ public class RoomManager {
                                 bonusTwo.applyBonus(reward, experience, points);
                             }
                         });
-
                 pr.setExperience(experience.get() * Configuration.getInt("game.rewards.exp"));
                 pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
             });
-
-            // Broadcast match result message after calculating rewards
-            result.getPlayers().stream().forEach(pr ->
-                    room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
-                            MessageBuilder.matchResult(result, pr, room, con))
-            );
-
-            // Send match result message to observers players in the room
-            if (room.getObservers().size() > 0) {
-                // Because observer players does not count in stats,
-                // we pass an empty PlayerResult instance
-                ServerMessage observerMsg = MessageBuilder.matchResult(result,
-                        new PlayerResult(), room, con);
-
-                room.getObservers().stream().forEach(o ->
-                                room.getPlayers().get(o).sendAndFlush(observerMsg));
-            }
 
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
@@ -702,6 +684,23 @@ public class RoomManager {
                     }
                 }
             });
+
+            // Broadcast match result message after calculating rewards
+            result.getPlayers().stream().forEach(pr ->
+                            room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
+                                    MessageBuilder.matchResult(result, pr, room, con))
+            );
+
+            // Send match result message to observers players in the room
+            if (room.getObservers().size() > 0) {
+                // Because observer players does not count in stats,
+                // we pass an empty PlayerResult instance
+                ServerMessage observerMsg = MessageBuilder.matchResult(result,
+                        new PlayerResult(), room, con);
+
+                room.getObservers().stream().forEach(o ->
+                        room.getPlayers().get(o).sendAndFlush(observerMsg));
+            }
 
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();

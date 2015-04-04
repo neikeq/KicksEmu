@@ -26,9 +26,8 @@ public class TableManager {
     }
 
     public static LevelInfo getLevelInfo(Predicate<LevelInfo> filter) {
-        Optional<LevelInfo> result = levelInfoTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+        return levelInfoTable.values().stream().filter(filter)
+                .reduce((previous, current) -> current).get();
     }
 
     public static CeleInfo getCeleInfo(Predicate<CeleInfo> filter) {
