@@ -1,8 +1,12 @@
 package com.neikeq.kicksemu.game.clubs;
 
+import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ClubInfo {
 
@@ -20,36 +24,37 @@ public class ClubInfo {
         return SqlUtils.getBoolean("uniform_active", TABLE, id, con);
     }
 
-    public static int getUniformHomeShirts(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_home_shirts", TABLE, id, con);
-    }
+    public static ClubUniform getUniform(int id, Connection ... con) {
+        String query = "SELECT uniform_home_shirts, uniform_home_pants, " +
+                "uniform_home_socks, uniform_home_wrist, uniform_away_shirts, " +
+                "uniform_away_pants, uniform_away_socks, uniform_away_wrist " +
+                "FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
-    public static int getUniformHomePants(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_home_pants", TABLE, id, con);
-    }
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
-    public static int getUniformHomeSocks(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_home_socks", TABLE, id, con);
-    }
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
 
-    public static int getUniformHomeWrist(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_home_wrist", TABLE, id, con);
-    }
-
-    public static int getUniformAwayShirts(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_away_shirts", TABLE, id, con);
-    }
-
-    public static int getUniformAwayPants(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_away_pants", TABLE, id, con);
-    }
-
-    public static int getUniformAwaySocks(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_away_socks", TABLE, id, con);
-    }
-
-    public static int getUniformAwayWrist(int id, Connection ... con) {
-        return SqlUtils.getInt("uniform_away_wrist", TABLE, id, con);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new ClubUniform(
+                                rs.getInt("uniform_home_shirts"), rs.getInt("uniform_home_pants"),
+                                rs.getInt("uniform_home_socks"), rs.getInt("uniform_home_wrist"),
+                                rs.getInt("uniform_away_shirts"), rs.getInt("uniform_away_pants"),
+                                rs.getInt("uniform_away_socks"), rs.getInt("uniform_away_wrist"));
+                    } else {
+                        return new ClubUniform();
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            return new ClubUniform();
+        }
     }
 
     public static void setName(String value, int id, Connection ... con) {

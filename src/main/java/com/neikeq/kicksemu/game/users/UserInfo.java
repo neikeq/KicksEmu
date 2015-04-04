@@ -28,7 +28,7 @@ public class UserInfo {
     public static UserSettings getSettings(int id) {
         String query = "SELECT settings_camera, settings_names, vol_effects, vol_music," +
                 " settings_invites, settings_shadows, settings_whispers, settings_country" +
-                " FROM " + TABLE + " WHERE id = ?";
+                " FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -115,7 +115,7 @@ public class UserInfo {
         String query = "UPDATE users SET settings_camera = ?, settings_names = ?," +
                 " vol_effects = ?, vol_music = ?, settings_invites = ?," +
                 " settings_shadows = ?, settings_whispers = ?, settings_country = ?" +
-                " WHERE id = ?";
+                " WHERE id = ? LIMIT 1;";
 
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {

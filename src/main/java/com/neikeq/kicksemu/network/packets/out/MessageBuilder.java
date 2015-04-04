@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.network.packets.out;
 
 import com.neikeq.kicksemu.game.characters.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.QuestState;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
@@ -121,7 +122,7 @@ public class MessageBuilder {
 
             msg.appendZeros(3);
 
-            MessageUtils.appendCharacterInfo(playerId, ownerId, msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
 
             msg.appendZeros(2);
 
@@ -355,8 +356,7 @@ public class MessageBuilder {
 
             msg.appendZeros(24);
 
-            MessageUtils.appendCharacterInfo(playerId,
-                    PlayerInfo.getOwner(playerId, con), msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
 
             msg.appendZeros(2);
 
@@ -598,7 +598,7 @@ public class MessageBuilder {
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.append((short)session.getUdpPort());
 
-            MessageUtils.appendCharacterInfo(playerId, ownerId, msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
             msg.appendZeros(2);
 
             msg.append(PlayerInfo.getAnimation(playerId, con));
@@ -920,9 +920,11 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.append(PlayerInfo.getCurrentQuest(playerId, con));
+        QuestState questState = PlayerInfo.getQuestState(playerId, con);
+
+        msg.append(questState.getCurrentQuest());
         msg.append(PlayerInfo.getLevel(playerId, con));
-        msg.append(PlayerInfo.getRemainingQuestMatches(playerId, con));
+        msg.append(questState.getRemainMatches());
         msg.append(PlayerInfo.getPoints(playerId, con));
 
         return msg;
@@ -1002,7 +1004,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
             MessageUtils.appendStatsBonus(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
             msg.append(PlayerInfo.getSkillSlots(playerId, con));
@@ -1018,7 +1020,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
             MessageUtils.appendStatsBonus(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
             msg.append(PlayerInfo.getSkillSlots(playerId, con));
@@ -1065,7 +1067,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
             MessageUtils.appendStatsTraining(playerId, msg, con);
             MessageUtils.appendInventoryTraining(learn, msg);
         }
@@ -1080,8 +1082,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId,
-                    PlayerInfo.getOwner(playerId), msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
             MessageUtils.appendInventorySkill(skill, msg);
         }
 
@@ -1120,7 +1121,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, PlayerInfo.getOwner(playerId), msg, con);
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
             MessageUtils.appendInventoryCelebration(cele, msg);
         }
 
@@ -1284,12 +1285,10 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
-        int ownerId = PlayerInfo.getOwner(playerId, con);
-
         msg.append(playerId);
         msg.append(true);
 
-        MessageUtils.appendCharacterInfo(playerId, ownerId, msg, con);
+        MessageUtils.appendCharacterInfo(playerId, msg, con);
 
         MessageUtils.appendStats(playerId, msg, con);
 

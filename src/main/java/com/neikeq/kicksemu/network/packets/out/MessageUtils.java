@@ -4,8 +4,10 @@ import com.neikeq.kicksemu.game.characters.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.PlayerRanking;
 import com.neikeq.kicksemu.game.characters.PlayerStats;
+import com.neikeq.kicksemu.game.characters.QuestState;
 import com.neikeq.kicksemu.game.characters.TutorialState;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
+import com.neikeq.kicksemu.game.clubs.ClubUniform;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Item;
@@ -16,9 +18,12 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
-import com.neikeq.kicksemu.game.users.UserInfo;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 class MessageUtils {
 
@@ -28,8 +33,10 @@ class MessageUtils {
     }
 
     public static void appendQuestInfo(int playerId, ServerMessage msg, Connection ... con) {
-        msg.append(PlayerInfo.getCurrentQuest(playerId, con));
-        msg.append(PlayerInfo.getRemainingQuestMatches(playerId, con));
+        QuestState questState = PlayerInfo.getQuestState(playerId, con);
+
+        msg.append(questState.getCurrentQuest());
+        msg.append(questState.getRemainMatches());
     }
 
     public static void appendTutorialInfo(int playerId, ServerMessage msg, Connection ... con) {
@@ -41,18 +48,34 @@ class MessageUtils {
         msg.append(tutorialState.getDefense());
     }
 
-    public static void appendCharacterInfo(int playerId, int ownerId,
-                                           ServerMessage msg, Connection ... con) {
-        msg.append(PlayerInfo.getLevel(playerId, con));
-        msg.append(PlayerInfo.getExperience(playerId, con));
-        msg.append(PlayerInfo.getStatsPoints(playerId, con));
+    public static void appendCharacterInfo(int playerId, ServerMessage msg, Connection ... con) {
+        String query = "SELECT level, experience, stats_points, owner, points, " +
+                "tickets_kash, tickets_points FROM characters WHERE id = ? LIMIT 1;";
 
-        msg.append(UserInfo.getKash(ownerId));
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
-        msg.append(PlayerInfo.getPoints(playerId, con));
-        msg.appendZeros(8);
-        msg.append(PlayerInfo.getTicketsKash(playerId, con));
-        msg.append(PlayerInfo.getTicketsPoints(playerId, con));
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, playerId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        msg.append(rs.getShort("level"));
+                        msg.append(rs.getInt("experience"));
+                        msg.append(rs.getShort("stats_points"));
+                        msg.append(rs.getInt("owner"));
+                        msg.append(rs.getInt("points"));
+                        msg.appendZeros(8);
+                        msg.append(rs.getShort("tickets_kash"));
+                        msg.append(rs.getShort("tickets_points"));
+                    }
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 
     public static void appendDefaultClothes(int playerId, ServerMessage msg, Connection ... con) {
@@ -412,14 +435,16 @@ class MessageUtils {
     }
 
     public static void appendClubUniform(int clubId, ServerMessage msg, Connection ... con) {
-        msg.append(ClubInfo.getUniformHomeShirts(clubId, con));
-        msg.append(ClubInfo.getUniformHomePants(clubId, con));
-        msg.append(ClubInfo.getUniformHomeSocks(clubId, con));
-        msg.append(ClubInfo.getUniformHomeWrist(clubId, con));
+        ClubUniform clubUniform = ClubInfo.getUniform(clubId, con);
 
-        msg.append(ClubInfo.getUniformAwayShirts(clubId, con));
-        msg.append(ClubInfo.getUniformAwayPants(clubId, con));
-        msg.append(ClubInfo.getUniformAwaySocks(clubId, con));
-        msg.append(ClubInfo.getUniformAwayWrist(clubId, con));
+        msg.append(clubUniform.getHomeShirts());
+        msg.append(clubUniform.getHomePants());
+        msg.append(clubUniform.getHomeSocks());
+        msg.append(clubUniform.getHomeWrist());
+
+        msg.append(clubUniform.getAwayShirts());
+        msg.append(clubUniform.getAwayPants());
+        msg.append(clubUniform.getAwaySocks());
+        msg.append(clubUniform.getAwayWrist());
     }
 }

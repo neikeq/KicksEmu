@@ -667,8 +667,7 @@ public class RoomManager {
                 Session playerSession = room.getPlayers().get(playerId);
 
                 // Add the experience and points earned to the player
-                PlayerInfo.sumPoints(pr.getPoints(), playerId, con);
-                PlayerInfo.sumExperience(pr.getExperience(), playerId, con);
+                PlayerInfo.sumMoney(pr.getExperience(), pr.getPoints(), playerId, con);
 
                 if (pr.getExperience() > 0) {
                     // Check if player did level up and apply level up operations if needed
