@@ -37,9 +37,8 @@ public class MainLobby implements Lobby {
         return players;
     }
 
-    public List<Integer> getVisiblePlayers(Connection con) {
-        return players.stream().filter(id ->
-                !PlayerInfo.isModerator(id, con) || PlayerInfo.isVisible(id, con)
-        ).collect(Collectors.toList());
+    public List<Integer> getVisiblePlayers(Connection ... con) {
+        return players.stream().filter(id -> PlayerInfo.isVisibleInLobby(id, con))
+                .collect(Collectors.toList());
     }
 }

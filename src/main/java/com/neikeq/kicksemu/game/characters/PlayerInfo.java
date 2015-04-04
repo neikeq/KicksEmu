@@ -86,6 +86,29 @@ public class PlayerInfo {
         return SqlUtils.getBoolean("blocked", TABLE, id, con);
     }
 
+    public static boolean isVisibleInLobby(int id, Connection ... con) {
+        String query = "SELECT moderator, visible FROM " + TABLE + " WHERE id = ?";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, id);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    return rs.next() &&
+                            (!rs.getBoolean("moderator") || rs.getBoolean("visible"));
+                }
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
     public static boolean isModerator(int id, Connection ... con) {
         return SqlUtils.getBoolean("moderator", TABLE, id, con);
     }

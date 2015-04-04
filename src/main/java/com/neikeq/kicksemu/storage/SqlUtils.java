@@ -8,28 +8,22 @@ import java.sql.Timestamp;
 
 public class SqlUtils {
 
-    public static byte getByte(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table + " WHERE id = ?";
+    public static void repeatSetInt(PreparedStatement stmt, Integer ... values) throws SQLException {
+        int count = 1;
 
-        try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+        for (Integer value : values) {
+            stmt.setInt(count, value);
+            count++;
+        }
+    }
 
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, id);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getByte(column);
-                    } else {
-                        return -1;
-                    }
-                }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
-            }
-        } catch (SQLException e) {
-            return -1;
+    public static void repeatSetInt(PreparedStatement stmt, int startIndex,
+                                    Integer ... values) throws SQLException {
+        int count = startIndex;
+
+        for (Integer value : values) {
+            stmt.setInt(count, value);
+            count++;
         }
     }
 
@@ -153,26 +147,6 @@ public class SqlUtils {
         } catch (SQLException e) {
             return null;
         }
-    }
-
-    public static void setByte(String column, byte value, String table, int id,
-                               Connection ... con) {
-        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ?";
-
-        try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
-
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setByte(1, value);
-                stmt.setInt(2, id);
-
-                stmt.executeUpdate();
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
-            }
-        } catch (SQLException ignored) {}
     }
 
     public static void setShort(String column, short value, String table, int id,

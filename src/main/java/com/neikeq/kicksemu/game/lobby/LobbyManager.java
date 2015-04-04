@@ -3,7 +3,6 @@ package com.neikeq.kicksemu.game.lobby;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
@@ -42,8 +41,10 @@ public class LobbyManager {
                 }
             }
 
-            ServerMessage response = MessageBuilder.lobbyList(players, page, (byte)0, con);
-            session.send(response);
+            Integer[] playersArray = new Integer[players.size()];
+
+            session.send(MessageBuilder.lobbyList(players.toArray(playersArray),
+                    page, (byte)0, con));
         } catch (SQLException ignored) {}
     }
 

@@ -20,11 +20,17 @@ import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserSettings;
 import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.SqlUtils;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.utils.Strings;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +101,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage characterInfo(int playerId, int ownerId,
-                                              short slot, Connection con) {
+                                              short slot, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.CHARACTER_INFO);
 
         boolean blocked = PlayerInfo.isBlocked(playerId, con);
@@ -328,7 +334,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerInfo(int playerId, byte result, Connection con) {
+    public static ServerMessage playerInfo(int playerId, byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_INFO);
 
         MessageUtils.appendResult(result, msg);
@@ -383,7 +389,8 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage lobbyList(List<Integer> players, byte page, byte result, Connection con) {
+    public static ServerMessage lobbyList(Integer[] players, byte page,
+                                          byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.LOBBY_LIST);
 
         MessageUtils.appendResult(result, msg);
@@ -391,13 +398,35 @@ public class MessageBuilder {
         if (result == 0) {
             msg.append(page);
 
-            for (Integer playerId : players) {
-                msg.append(true);
-                msg.append(playerId);
-                msg.append(PlayerInfo.getName(playerId, con), 15);
-                msg.append(PlayerInfo.getLevel(playerId, con));
-                msg.append((byte)PlayerInfo.getPosition(playerId, con));
-                msg.append(PlayerInfo.getStatusMessage(playerId, con), 35);
+            try {
+                Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+                String array = Strings.repeatAndSplit("?", ", ", players.length);
+
+                String query = "SELECT name, level, position, status_message FROM characters" +
+                        " WHERE id IN(" + array + ") ORDER BY FIELD(id, " + array + ")";
+
+                try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                    SqlUtils.repeatSetInt(stmt, players);
+                    SqlUtils.repeatSetInt(stmt, players.length + 1, players);
+
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        for (int i = 0; rs.next(); i++) {
+                            msg.append(true);
+                            msg.append(players[i]);
+                            msg.append(rs.getString("name"), 15);
+                            msg.append(rs.getShort("level"));
+                            msg.append((byte) rs.getShort("position"));
+                            msg.append(rs.getString("status_message"), 35);
+                        }
+                    }
+                } finally {
+                    if (con.length <= 0) {
+                        connection.close();
+                    }
+                }
+            } catch (SQLException ignored) {
+                System.out.println(ignored.getMessage());
             }
         }
 

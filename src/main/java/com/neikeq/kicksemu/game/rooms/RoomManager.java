@@ -257,8 +257,7 @@ public class RoomManager {
 
         Map<Integer, Room> pageRooms = getRoomsFromPage(page);
 
-        ServerMessage response = MessageBuilder.roomList(pageRooms, page, (byte) 0);
-        session.send(response);
+        session.send(MessageBuilder.roomList(pageRooms, page, (byte) 0));
     }
 
     public static void roomMap(Session session, ClientMessage msg) {
