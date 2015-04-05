@@ -18,6 +18,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
+import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
@@ -63,7 +64,7 @@ class MessageUtils {
                         msg.append(rs.getShort("level"));
                         msg.append(rs.getInt("experience"));
                         msg.append(rs.getShort("stats_points"));
-                        msg.append(rs.getInt("owner"));
+                        msg.append(UserInfo.getKash(rs.getInt("owner")));
                         msg.append(rs.getInt("points"));
                         msg.appendZeros(8);
                         msg.append(rs.getShort("tickets_kash"));
