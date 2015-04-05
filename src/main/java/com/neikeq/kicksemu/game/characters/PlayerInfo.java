@@ -764,15 +764,15 @@ public class PlayerInfo {
     }
 
     public static void sumMoney(int experience, int points, int id, Connection ... con) {
-        String query = "UPDATE " + TABLE + " SET experience = ?, points = ?" +
+        String query = "UPDATE " + TABLE + " SET experience += ?, points += ?" +
                 " WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, experience);
-                stmt.setInt(2, points);
+                stmt.setInt(1, experience >= 0 ? experience : 0);
+                stmt.setInt(2, points >= 0 ? points : 0);
                 stmt.setInt(3, id);
 
                 stmt.executeUpdate();
