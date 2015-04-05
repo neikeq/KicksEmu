@@ -612,6 +612,10 @@ public class RoomManager {
             room.resetTrainingFactor();
         }
 
+        if (result.getCountdown() <= 0) {
+            room.sendBroadcast(MessageBuilder.startMatch((byte) 0));
+        }
+
         try (Connection con = MySqlManager.getConnection()) {
             // Reward players
             result.getPlayers().stream().forEach(pr -> {
