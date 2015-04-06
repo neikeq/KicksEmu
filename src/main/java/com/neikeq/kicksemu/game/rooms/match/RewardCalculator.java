@@ -14,7 +14,7 @@ public class RewardCalculator {
         short votePoints = result.getVotePoints() > 100 ? 100 : result.getVotePoints();
 
         switch (room.getTrainingFactor()) {
-            case 0:
+            case -1:
                 if (Configuration.getBoolean("game.rewards.practice") &&
                         countdown <= 0 && result.getGoals() >= 3) {
                     return (int)(12 * (float)(votePoints / 10));

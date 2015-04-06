@@ -21,7 +21,9 @@ import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.utils.ThreadUtils;
 import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
@@ -560,7 +562,7 @@ public class RoomManager {
 
             if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
                 room.setState(RoomState.PLAYING);
-                room.setTimeStart(System.nanoTime());
+                room.setTimeStart(DateUtils.currentTimeMillis());
                 room.sendBroadcast(MessageBuilder.playerReady((byte)0));
             }
         }
@@ -570,20 +572,12 @@ public class RoomManager {
         int roomId = msg.readShort();
 
         if (session.getRoomId() == roomId) {
-            Room room = getRoomById(roomId);
-
-            byte result = 0;
-
-            if (room.getConfirmedPlayers().size() < room.getPlayers().size()) {
-                result = -1;
-            }
-
-            session.send(MessageBuilder.startMatch(result));
+            session.send(MessageBuilder.startMatch((byte) 0));
         }
     }
 
     public static void matchResult(Session session, ClientMessage msg) {
-        int roomId = msg.readShort();
+        final int roomId = msg.readShort();
         msg.ignoreBytes(4);
 
         if (session.getRoomId() != roomId) return;
@@ -599,21 +593,18 @@ public class RoomManager {
                 room.redTeamSize() + room.blueTeamSize());
 
         // Apply level gap bonus if the levels difference in room settings is less than 10
-        boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
-        boolean goldenTime = GameEvents.isGoldenTime();
+        final boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
+        final boolean goldenTime = GameEvents.isGoldenTime();
 
         // Check the match countdown
-        long countdown = 300 - ((System.nanoTime() - room.getTimeStart()) / 1000000000);
-        short gameCountdown = result.getCountdown();
+        final long startTime = DateUtils.currentTimeMillis();
+        final long countdown = 300 - ((startTime - room.getTimeStart()) / 1000);
+        final short gameCountdown = result.getCountdown();
 
         // If countdown sent by client is not valid (more than 20 secs less than server's),
         // disable rewards and player's history updating
         if (gameCountdown < countdown && gameCountdown - countdown > 20) {
             room.resetTrainingFactor();
-        }
-
-        if (result.getCountdown() <= 0) {
-            room.sendBroadcast(MessageBuilder.startMatch((byte) 0));
         }
 
         try (Connection con = MySqlManager.getConnection()) {
@@ -645,22 +636,25 @@ public class RoomManager {
                 final MutableInteger points = new MutableInteger(appliedReward);
                 final MutableInteger experience = new MutableInteger(appliedReward);
 
-                // Apply item reward bonuses
-                PlayerInfo.getInventoryItems(playerId, con).values().stream()
-                        .filter(i -> i.getExpiration().isUsage() && i.isSelected())
-                        .forEach(i -> {
-                            Soda bonusOne = Soda.fromId(i.getBonusOne());
+                if (room.getTrainingFactor() > 0) {
+                    // Apply item reward bonuses
+                    PlayerInfo.getInventoryItems(playerId, con).values().stream()
+                            .filter(i -> i.getExpiration().isUsage() && i.isSelected())
+                            .forEach(i -> {
+                                Soda bonusOne = Soda.fromId(i.getBonusOne());
 
-                            if (bonusOne != null) {
-                                bonusOne.applyBonus(reward, experience, points);
-                            }
+                                if (bonusOne != null) {
+                                    bonusOne.applyBonus(reward, experience, points);
+                                }
 
-                            Soda bonusTwo = Soda.fromId(i.getBonusTwo());
+                                Soda bonusTwo = Soda.fromId(i.getBonusTwo());
 
-                            if (bonusTwo != null) {
-                                bonusTwo.applyBonus(reward, experience, points);
-                            }
-                        });
+                                if (bonusTwo != null) {
+                                    bonusTwo.applyBonus(reward, experience, points);
+                                }
+                            });
+                }
+
                 pr.setExperience(experience.get() * Configuration.getInt("game.rewards.exp"));
                 pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
             });
@@ -687,6 +681,13 @@ public class RoomManager {
                     }
                 }
             });
+
+            final long delay = DateUtils.currentTimeMillis() - startTime;
+            final int minDelay = 1000;
+
+            if (delay < minDelay) {
+                ThreadUtils.sleep(minDelay - delay);
+            }
 
             // Broadcast match result message after calculating rewards
             result.getPlayers().stream().forEach(pr ->

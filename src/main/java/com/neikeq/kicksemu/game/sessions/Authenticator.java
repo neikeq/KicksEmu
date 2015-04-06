@@ -16,6 +16,7 @@ import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.Password;
+import com.neikeq.kicksemu.utils.ThreadUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -161,11 +162,9 @@ public class Authenticator {
 
                         if (connected) {
                             // Give a bit of time and try again (max 3 times)
-                            for (int i = 0; i < 3 && connected; i++) {
-                                try {
-                                    Thread.sleep(500);
-                                    connected = UserUtils.isAlreadyConnected(accountId);
-                                } catch (InterruptedException ignored) {}
+                            for (int i = 0; i < 4 && connected; i++) {
+                                ThreadUtils.sleep(500);
+                                connected = UserUtils.isAlreadyConnected(accountId);
                             }
                         }
 
@@ -249,11 +248,9 @@ public class Authenticator {
 
                     if (connected) {
                         // Give a bit of time and try again (max 3 times)
-                        for (int i = 0; i < 3 && connected; i++) {
-                            try {
-                                Thread.sleep(500);
-                                connected = UserUtils.isAlreadyConnected(accountId);
-                            } catch (InterruptedException ignored) {}
+                        for (int i = 0; i < 4 && connected; i++) {
+                            ThreadUtils.sleep(500);
+                            connected = UserUtils.isAlreadyConnected(accountId);
                         }
                     }
 

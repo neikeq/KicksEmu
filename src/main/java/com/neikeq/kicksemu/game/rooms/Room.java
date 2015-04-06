@@ -8,6 +8,7 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.ThreadUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -167,8 +168,8 @@ public class Room {
                             MessageBuilder.matchResult(null, null, null, con))
                     );
 
-                    Thread.sleep(3000);
-                } catch (InterruptedException | SQLException ignored) {}
+                    ThreadUtils.sleep(3000);
+                } catch (SQLException ignored) {}
 
                 setState(RoomState.WAITING);
                 sendBroadcast(MessageBuilder.unknown1());
@@ -179,9 +180,7 @@ public class Room {
                 sendBroadcast(MessageBuilder.cancelLoading());
                 break;
             case RESULT:
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ignored) {}
+                ThreadUtils.sleep(3000);
 
                 setState(RoomState.WAITING);
                 sendBroadcast(MessageBuilder.unknown1());
