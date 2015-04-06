@@ -297,7 +297,7 @@ public class Authenticator {
             session.close();
         } else if (session.getUdpPingFuture() == null) {
             ScheduledFuture<?> udpPingFuture = session.getChannel().eventLoop()
-                    .scheduleAtFixedRate(new UdpPing(session), 5, 5, TimeUnit.SECONDS);
+                    .scheduleAtFixedRate(new UdpPing(session), 10, 10, TimeUnit.SECONDS);
             session.setUdpPingFuture(udpPingFuture);
         }
     }
