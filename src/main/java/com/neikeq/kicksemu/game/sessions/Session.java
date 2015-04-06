@@ -48,7 +48,7 @@ public class Session {
      */
     public synchronized void send(ServerMessage msg) {
         if (getChannel().isOpen() && getChannel().isWritable()) {
-            getChannel().write(msg.getByteBuf(), getChannel().voidPromise());
+            getChannel().write(msg.getByteBuf());
         }
     }
 
