@@ -572,7 +572,16 @@ public class RoomManager {
         int roomId = msg.readShort();
 
         if (session.getRoomId() == roomId) {
-            session.send(MessageBuilder.startMatch((byte) 0));
+            Room room = getRoomById(roomId);
+
+            byte result = 0;
+
+            if (room.state() == RoomState.LOADING &&
+                    room.getConfirmedPlayers().size() < room.getPlayers().size()) {
+                result = -1;
+            }
+
+            session.send(MessageBuilder.startMatch(result));
         }
     }
 
