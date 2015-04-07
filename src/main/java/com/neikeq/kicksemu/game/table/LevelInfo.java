@@ -6,11 +6,13 @@ public class LevelInfo {
 
     private final short level;
     private final int experience;
+    private final int experienceGap;
 
     public LevelInfo(Row row) {
         row.nextColumn();
         level = Short.valueOf(row.nextColumn());
         experience = Integer.valueOf(row.nextColumn());
+        experienceGap = Integer.valueOf(row.nextColumn());
     }
 
     public short getLevel() {
@@ -19,6 +21,10 @@ public class LevelInfo {
 
     public int getExperience() {
         return experience;
+    }
+
+    public int getExperienceGap() {
+        return experienceGap;
     }
 }
 

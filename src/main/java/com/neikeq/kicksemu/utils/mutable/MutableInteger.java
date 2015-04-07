@@ -20,11 +20,19 @@ public class MutableInteger {
         this.value = value.get();
     }
 
-    public void sum(int add) {
-        this.value += add;
+    public void add(int value) {
+        this.value += value;
     }
 
-    public void sum(MutableInteger add) {
-        this.value += add.get();
+    public void add(MutableInteger value) {
+        this.value += value.get();
+    }
+
+    public void mult(int add) {
+        this.value *= add;
+    }
+
+    public void mult(MutableInteger add) {
+        this.value *= add.get();
     }
 }

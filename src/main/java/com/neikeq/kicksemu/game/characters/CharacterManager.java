@@ -125,10 +125,9 @@ public class CharacterManager {
         } catch (SQLException ignored) {}
     }
 
-    public static short checkExperience(int playerId, Connection ... con) {
+    public static short checkExperience(int playerId, int experience, Connection ... con) {
         short levels = 0;
         final short level = PlayerInfo.getLevel(playerId, con);
-        final int experience = PlayerInfo.getExperience(playerId, con);
 
         LevelInfo newLevelInfo = TableManager.getLevelInfo(li ->
                 li.getLevel() > level && li.getExperience() <= experience);
@@ -159,7 +158,7 @@ public class CharacterManager {
         MutableInteger statsPoints = new MutableInteger(0);
 
         for (int i = from; i < level; i++) {
-            statsPoints.sum(StatsInfo.getInstance().statsPointsForLevel(i + 1));
+            statsPoints.add(StatsInfo.getInstance().statsPointsForLevel(i + 1));
         }
 
         PlayerStats stats = PlayerInfo.getStats(id, con);
@@ -183,14 +182,14 @@ public class CharacterManager {
         MutableInteger statsPoints = new MutableInteger(0);
 
         for (int i = from; i < level; i++) {
-            statsPoints.sum(StatsInfo.getInstance().statsPointsForLevel(i + 1));
+            statsPoints.add(StatsInfo.getInstance().statsPointsForLevel(i + 1));
         }
 
         // Add auto stats
         PlayerStats.sumStats(StatsInfo.getInstance().getAutoStats().get(position),
                 levels, stats, statsPoints);
 
-        statPoints.sum(statsPoints);
+        statPoints.add(statsPoints);
     }
 
     public static void addStatsPoints(Session session, ClientMessage msg) {

@@ -3,12 +3,15 @@ package com.neikeq.kicksemu.game.table;
 import com.neikeq.kicksemu.utils.table.Row;
 import com.neikeq.kicksemu.utils.table.TableReader;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 public class TableManager {
+
+    public static int EXPERIENCE_LIMIT;
 
     private static final Map<Integer, SkillInfo> skillsTable = new HashMap<>();
     private static final Map<Integer, CeleInfo> celesTable = new HashMap<>();
@@ -147,5 +150,9 @@ public class TableManager {
             LevelInfo row = new LevelInfo(line);
             levelInfoTable.put(row.getLevel(), row);
         }
+
+        LevelInfo lastLevel = levelInfoTable.get(Collections.max(levelInfoTable.keySet()));
+
+        EXPERIENCE_LIMIT = lastLevel.getExperience() + lastLevel.getExperienceGap();
     }
 }

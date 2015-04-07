@@ -14,6 +14,7 @@ import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.servers.GameServerType;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -664,12 +665,18 @@ public class RoomManager {
                             });
                 }
 
-                pr.setExperience(experience.get() * Configuration.getInt("game.rewards.exp"));
-                pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
-            });
+                // Avoid the player to earn more experience than the limit
+                experience.mult(Configuration.getInt("game.rewards.exp"));
 
-            result.getPlayers().stream().forEach(pr -> {
-                int playerId = pr.getPlayerId();
+                int currentExp = PlayerInfo.getExperience(pr.getPlayerId(), con);
+
+                if (currentExp + experience.get() > TableManager.EXPERIENCE_LIMIT) {
+                    experience.set(TableManager.EXPERIENCE_LIMIT - currentExp);
+                }
+
+                // Update the definitive experience and points rewards for this player
+                pr.setExperience(experience.get());
+                pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
 
                 Session playerSession = room.getPlayers().get(playerId);
 
@@ -678,7 +685,7 @@ public class RoomManager {
 
                 if (pr.getExperience() > 0) {
                     // Check if player did level up and apply level up operations if needed
-                    short levels = CharacterManager.checkExperience(playerId, con);
+                    short levels = CharacterManager.checkExperience(playerId, currentExp, con);
 
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                     room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
