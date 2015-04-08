@@ -685,7 +685,8 @@ public class RoomManager {
 
                 if (pr.getExperience() > 0) {
                     // Check if player did level up and apply level up operations if needed
-                    short levels = CharacterManager.checkExperience(playerId, currentExp, con);
+                    short levels = CharacterManager.checkExperience(playerId,
+                            currentExp + experience.get(), con);
 
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                     room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
