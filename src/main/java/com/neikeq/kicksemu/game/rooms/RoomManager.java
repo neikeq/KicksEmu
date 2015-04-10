@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.rooms;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
 import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.inventory.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
@@ -620,13 +621,18 @@ public class RoomManager {
 
         try (Connection con = MySqlManager.getConnection()) {
             // Calculate average level
-            int avgLevel = 0;
-            for (PlayerResult playerResult : result.getPlayers()) {
-                int playerId = playerResult.getPlayerId();
-                avgLevel += PlayerInfo.getLevel(playerId, con);
-            }
+            PlayerLevelCache levelCache = new PlayerLevelCache();
+            MutableInteger roomAvgLevel = new MutableInteger(0);
+            MutableInteger avgLevel = new MutableInteger(0);
 
-            final int roomAvgLevel = avgLevel / result.getPlayers().size();
+            if (levelExpWeightingFlag) {
+                result.getPlayers().stream().forEach(pr -> {
+                    int playerId = pr.getPlayerId();
+                    avgLevel.add(levelCache.getPlayerLevel(playerId, con));
+                });
+
+                roomAvgLevel.add(avgLevel.get() / result.getPlayers().size());
+            }
 
             // Reward players
             result.getPlayers().stream().forEach(pr -> {
@@ -648,16 +654,18 @@ public class RoomManager {
                             (reward * 30) / 100 : 0;
                 }
 
-                int lvl = PlayerInfo.getLevel(playerId, con);
-                int diff = roomAvgLevel - lvl;
-                boolean levelExpWeighting = (diff > 0 && levelExpWeightingFlag);
+                if (levelExpWeightingFlag) {
+                    int lvl = levelCache.getPlayerLevel(playerId, con);
+                    int diff = roomAvgLevel.get() - lvl;
+                    boolean levelExpWeighting = (diff > 0);
 
-                if (levelExpWeighting) {
-                    diff = diff * 2;
-                    if (diff > 75) diff = 75;
+                    if (levelExpWeighting) {
+                        diff = diff * 2;
+                        if (diff > 75) diff = 75;
+                    }
+                    appliedReward += levelExpWeighting ? (reward * (diff)) / 100: 0;
                 }
 
-                appliedReward += levelExpWeighting ? (reward * (diff)) / 100: 0;
                 appliedReward += levelGapReward ? (reward * 10) / 100 : 0;
                 appliedReward += goldenTime ? (reward * 50) / 100 : 0;
                 // If player is mvp increase his rewards by 25%
@@ -706,6 +714,7 @@ public class RoomManager {
                 if (pr.getExperience() > 0) {
                     // Check if player did level up and apply level up operations if needed
                     short levels = CharacterManager.checkExperience(playerId,
+                            levelCache.getPlayerLevel(playerId, con),
                             currentExp + experience.get(), con);
 
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));

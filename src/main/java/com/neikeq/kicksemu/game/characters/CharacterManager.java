@@ -125,9 +125,9 @@ public class CharacterManager {
         } catch (SQLException ignored) {}
     }
 
-    public static short checkExperience(int playerId, int experience, Connection ... con) {
+    public static short checkExperience(int playerId, short level,
+                                        int experience, Connection ... con) {
         short levels = 0;
-        final short level = PlayerInfo.getLevel(playerId, con);
 
         LevelInfo newLevelInfo = TableManager.getLevelInfo(li ->
                 li.getLevel() > level && li.getExperience() <= experience);
