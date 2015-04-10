@@ -606,6 +606,7 @@ public class RoomManager {
         // Apply level gap bonus if the levels difference in room settings is less than 10
         final boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
         final boolean goldenTime = GameEvents.isGoldenTime();
+        final boolean levelExpWeightingFlag = Configuration.getBoolean("game.match.levelExpWeighting");
 
         // Check the match countdown
         final long startTime = DateUtils.currentTimeMillis();
@@ -619,7 +620,19 @@ public class RoomManager {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
+            // Calculate average level
             PlayerLevelCache levelCache = new PlayerLevelCache();
+            MutableInteger roomAvgLevel = new MutableInteger(0);
+            MutableInteger avgLevel = new MutableInteger(0);
+
+            if (levelExpWeightingFlag) {
+                result.getPlayers().stream().forEach(pr -> {
+                    int playerId = pr.getPlayerId();
+                    avgLevel.add(levelCache.getPlayerLevel(playerId, con));
+                });
+
+                roomAvgLevel.add(avgLevel.get() / result.getPlayers().size());
+            }
 
             // Reward players
             result.getPlayers().stream().forEach(pr -> {
@@ -639,6 +652,18 @@ public class RoomManager {
                     // increase his rewards by 30%
                     appliedReward += concededGoals <= 1 && scoredGoals >= concededGoals ?
                             (reward * 30) / 100 : 0;
+                }
+
+                if (levelExpWeightingFlag) {
+                    int lvl = levelCache.getPlayerLevel(playerId, con);
+                    int diff = roomAvgLevel.get() - lvl;
+                    boolean levelExpWeighting = (diff > 0);
+
+                    if (levelExpWeighting) {
+                        diff = diff * 2;
+                        if (diff > 75) diff = 75;
+                    }
+                    appliedReward += levelExpWeighting ? (reward * (diff)) / 100: 0;
                 }
 
                 appliedReward += levelGapReward ? (reward * 10) / 100 : 0;
