@@ -605,6 +605,7 @@ public class RoomManager {
         // Apply level gap bonus if the levels difference in room settings is less than 10
         final boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
         final boolean goldenTime = GameEvents.isGoldenTime();
+        final boolean levelExpWeightingFlag = Configuration.getBoolean("game.match.levelExpWeighting");
 
         // Check the match countdown
         final long startTime = DateUtils.currentTimeMillis();
@@ -618,6 +619,15 @@ public class RoomManager {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
+            // Calculate average level
+            int avgLevel = 0;
+            for (PlayerResult playerResult : result.getPlayers()) {
+                int playerId = playerResult.getPlayerId();
+                avgLevel += PlayerInfo.getLevel(playerId, con);
+            }
+
+            final int roomAvgLevel = avgLevel / result.getPlayers().size();
+
             // Reward players
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
@@ -638,6 +648,16 @@ public class RoomManager {
                             (reward * 30) / 100 : 0;
                 }
 
+                int lvl = PlayerInfo.getLevel(playerId, con);
+                int diff = roomAvgLevel - lvl;
+                boolean levelExpWeighting = (diff > 0 && levelExpWeightingFlag);
+
+                if (levelExpWeighting) {
+                    diff = diff * 2;
+                    if (diff > 75) diff = 75;
+                }
+
+                appliedReward += levelExpWeighting ? (reward * (diff)) / 100: 0;
                 appliedReward += levelGapReward ? (reward * 10) / 100 : 0;
                 appliedReward += goldenTime ? (reward * 50) / 100 : 0;
                 // If player is mvp increase his rewards by 25%
