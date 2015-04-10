@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.rooms;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
 import com.neikeq.kicksemu.game.characters.Position;
 import com.neikeq.kicksemu.game.inventory.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
@@ -618,6 +619,8 @@ public class RoomManager {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
+            PlayerLevelCache levelCache = new PlayerLevelCache();
+
             // Reward players
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
@@ -686,6 +689,7 @@ public class RoomManager {
                 if (pr.getExperience() > 0) {
                     // Check if player did level up and apply level up operations if needed
                     short levels = CharacterManager.checkExperience(playerId,
+                            levelCache.getPlayerLevel(playerId, con),
                             currentExp + experience.get(), con);
 
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
