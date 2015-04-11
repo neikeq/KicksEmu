@@ -15,6 +15,7 @@ import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -59,8 +60,8 @@ public class ChatCommands {
     }
 
     private static void onProgress(Session session, String... args) {
-        String expNeeded;
         int playerId = session.getPlayerId();
+        DecimalFormat df = new DecimalFormat("#,###,###");
 
         try (Connection con = MySqlManager.getConnection()) {
             short playerLvl = PlayerInfo.getLevel(playerId, con);
@@ -73,9 +74,8 @@ public class ChatCommands {
             LevelInfo lvlInfo = TableManager.getLevelInfo(c -> c.getLevel() == askedLvl);
             int expForAskedLvl = lvlInfo.getExperience();
             final int exp = PlayerInfo.getExperience(playerId, con);
-            expNeeded = String.valueOf(expForAskedLvl - exp);
 
-            ChatUtils.sendServerMessage(session, expNeeded + " to reach Lv " + askedLvl);
+            ChatUtils.sendServerMessage(session, df.format(expForAskedLvl - exp) + " to reach Lv " + askedLvl);
         } catch (SQLException | NumberFormatException ignored) {}
     }
 
