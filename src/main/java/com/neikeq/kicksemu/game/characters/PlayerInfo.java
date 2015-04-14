@@ -122,7 +122,23 @@ public class PlayerInfo {
     }
 
     public static short getPosition(int id, Connection ... con) {
-        return SqlUtils.getShort("position", TABLE, id, con);
+        Session s = ServerManager.getSessionById(id);
+
+        if (s != null) {
+            Short position = s.getPlayerCache().getPosition();
+
+            if (position != null) {
+                return position;
+            }
+        }
+
+        short position = SqlUtils.getShort("position", TABLE, id, con);
+
+        if (s != null) {
+            s.getPlayerCache().setPosition(position);
+        }
+
+        return position;
     }
 
     public static QuestState getQuestState(int id, Connection ... con) {
@@ -219,6 +235,18 @@ public class PlayerInfo {
     }
 
     public static DefaultClothes getDefaultClothes(int id, Connection ... con) {
+        Session s = ServerManager.getSessionById(id);
+
+        DefaultClothes defaultClothes = null;
+
+        if (s != null) {
+            defaultClothes = s.getPlayerCache().getDefaultClothes();
+
+            if (defaultClothes != null) {
+                return defaultClothes;
+            }
+        }
+
         String query = "SELECT default_head, default_shirts, default_pants, " +
                 "default_shoes FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
@@ -230,11 +258,11 @@ public class PlayerInfo {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        return new DefaultClothes(
+                        defaultClothes = new DefaultClothes(
                                 rs.getInt("default_head"), rs.getInt("default_shirts"),
                                 rs.getInt("default_pants"), rs.getInt("default_shoes"));
                     } else {
-                        return new DefaultClothes(-1, -1, -1, -1);
+                        defaultClothes = new DefaultClothes(-1, -1, -1, -1);
                     }
                 }
             } finally {
@@ -243,8 +271,14 @@ public class PlayerInfo {
                 }
             }
         } catch (SQLException e) {
-            return new DefaultClothes(-1, -1, -1, -1);
+            defaultClothes = new DefaultClothes(-1, -1, -1, -1);
         }
+
+        if (s != null) {
+            s.getPlayerCache().setDefaultClothes(defaultClothes);
+        }
+
+        return defaultClothes;
     }
 
     public static byte getSkillSlots(int id, Connection ... con) {
