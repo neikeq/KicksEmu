@@ -49,7 +49,8 @@ CREATE TABLE IF NOT EXISTS `ceres` (
   `expiration` int(11) unsigned NOT NULL,
   `selection_index` tinyint(4) unsigned NOT NULL,
   `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `visible` bit(1) NOT NULL
+  `visible` bit(1) NOT NULL,
+  PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -156,6 +157,19 @@ CREATE TABLE IF NOT EXISTS `clubs` (
   `uniform_away_pants` int(11) unsigned DEFAULT NULL,
   `uniform_away_socks` int(11) unsigned DEFAULT NULL,
   `uniform_away_wrist` int(11) unsigned DEFAULT NULL,
+  `creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table kicksdb.club_members
+CREATE TABLE IF NOT EXISTS `club_members` (
+  `id` int(11) unsigned NOT NULL,
+  `player_id` int(11) unsigned NOT NULL,
+  `role` enum('MEMBER','MANAGER') NOT NULL,
+  `back_number` smallint(6) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -173,7 +187,8 @@ CREATE TABLE IF NOT EXISTS `items` (
   `usages` smallint(6) unsigned NOT NULL,
   `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `selected` bit(1) NOT NULL,
-  `visible` bit(1) NOT NULL
+  `visible` bit(1) NOT NULL,
+  PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -184,7 +199,8 @@ CREATE TABLE IF NOT EXISTS `learns` (
   `player_id` int(11) DEFAULT NULL,
   `inventory_id` int(11) DEFAULT NULL,
   `learn_id` int(11) DEFAULT NULL,
-  `visible` bit(1) DEFAULT NULL
+  `visible` bit(1) DEFAULT NULL,
+   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -268,7 +284,8 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `user_id` int(10) NOT NULL,
   `player_id` int(10) NOT NULL,
   `expiration` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `hash` varchar(255) NOT NULL
+  `hash` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -282,7 +299,8 @@ CREATE TABLE IF NOT EXISTS `skills` (
   `expiration` int(11) unsigned NOT NULL,
   `selection_index` tinyint(4) unsigned NOT NULL,
   `timestamp_expire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `visible` bit(1) NOT NULL
+  `visible` bit(1) NOT NULL,
+  PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -291,6 +309,7 @@ CREATE TABLE IF NOT EXISTS `skills` (
 -- Dumping structure for table kicksdb.status
 CREATE TABLE IF NOT EXISTS `status` (
   `online_users` int(11) unsigned NOT NULL DEFAULT '0'
+  PRIMARY KEY (`online_users`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
