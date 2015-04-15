@@ -18,12 +18,9 @@ public class PlayerCache {
     private Integer clubId;
 
     private DefaultClothes defaultClothes;
-    private Integer defaultHead;
-    private Integer defaultShirts;
-    private Integer defaultPants;
-    private Integer defaultShoes;
 
     private Short animation;
+    private Short position;
 
     private String name;
 
@@ -35,11 +32,9 @@ public class PlayerCache {
     public void clear() {
         owner = null;
         clubId = null;
-        defaultHead = null;
-        defaultShirts = null;
-        defaultPants = null;
-        defaultShoes = null;
+        defaultClothes = null;
         animation = null;
+        position = null;
         name = null;
 
         if (items != null) {
@@ -77,38 +72,6 @@ public class PlayerCache {
 
     public void setClubId(Integer clubId) {
         this.clubId = clubId;
-    }
-
-    public Integer getDefaultHead() {
-        return defaultHead;
-    }
-
-    public void setDefaultHead(Integer defaultHead) {
-        this.defaultHead = defaultHead;
-    }
-
-    public Integer getDefaultShirts() {
-        return defaultShirts;
-    }
-
-    public void setDefaultShirts(Integer defaultShirts) {
-        this.defaultShirts = defaultShirts;
-    }
-
-    public Integer getDefaultPants() {
-        return defaultPants;
-    }
-
-    public void setDefaultPants(Integer defaultPants) {
-        this.defaultPants = defaultPants;
-    }
-
-    public Integer getDefaultShoes() {
-        return defaultShoes;
-    }
-
-    public void setDefaultShoes(Integer defaultShoes) {
-        this.defaultShoes = defaultShoes;
     }
 
     public Short getAnimation() {
@@ -198,5 +161,13 @@ public class PlayerCache {
 
     public void setDefaultClothes(DefaultClothes defaultClothes) {
         this.defaultClothes = defaultClothes;
+    }
+
+    public Short getPosition() {
+        return position;
+    }
+
+    public void setPosition(Short position) {
+        this.position = position;
     }
 }
