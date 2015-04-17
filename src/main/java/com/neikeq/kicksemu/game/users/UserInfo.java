@@ -49,11 +49,11 @@ public class UserInfo {
 
                     return settings;
                 } else {
-                    return null;
+                    return new UserSettings();
                 }
             }
         } catch (SQLException e) {
-            return null;
+            return new UserSettings();
         }
     }
 

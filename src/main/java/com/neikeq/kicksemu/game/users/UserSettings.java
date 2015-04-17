@@ -22,6 +22,17 @@ public class UserSettings {
         private static final byte front3 = 7;
     }
 
+    public UserSettings() {
+        camera = CameraValues.front2;
+        shadows = false;
+        names = 2;
+        volEffects = 7;
+        volMusic = 7;
+        invites = true;
+        whispers = true;
+        country = 0;
+    }
+
     public static UserSettings fromMessage(ClientMessage msg) {
         UserSettings settings = new UserSettings();
 
