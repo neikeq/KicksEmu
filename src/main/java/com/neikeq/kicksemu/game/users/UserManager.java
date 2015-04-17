@@ -35,9 +35,6 @@ public class UserManager {
     }
 
     public static void instantExit(Session session) {
-        ServerMessage response = MessageBuilder.instantExit();
-        session.send(response);
-
         session.close();
     }
 

@@ -88,19 +88,6 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage instantExit() {
-        ServerMessage msg = new ServerMessage(MessageId.INSTANT_EXIT);
-
-        MessageUtils.appendResult((byte)0, msg);
-
-        msg.appendZeros(2);
-
-        // Request the client to close the connection
-        msg.write(0, (short)-1);
-
-        return msg;
-    }
-
     public static ServerMessage characterInfo(int playerId, int ownerId,
                                               short slot, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.CHARACTER_INFO);
