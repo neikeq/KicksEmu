@@ -78,12 +78,25 @@ public class MessageBuilder {
     public static ServerMessage certifyExit(boolean result) {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_EXIT);
 
-        MessageUtils.appendResult((byte)(result ? 0 : 255), msg);
+        MessageUtils.appendResult((byte) (result ? 0 : 255), msg);
 
         if (result) {
             // Request the client to close the connection
             msg.write(0, (short)-1);
         }
+
+        return msg;
+    }
+
+    public static ServerMessage instantExit() {
+        ServerMessage msg = new ServerMessage(MessageId.INSTANT_EXIT);
+
+        MessageUtils.appendResult((byte)0, msg);
+
+        msg.appendZeros(2);
+
+        // Request the client to close the connection
+        msg.write(0, (short)-1);
 
         return msg;
     }
@@ -920,7 +933,7 @@ public class MessageBuilder {
     public static ServerMessage playerStats(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_STATS);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         msg.append(PlayerInfo.getStatsPoints(playerId, con));
         MessageUtils.appendStats(playerId, msg, con);

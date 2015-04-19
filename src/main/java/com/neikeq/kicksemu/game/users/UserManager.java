@@ -26,8 +26,7 @@ public class UserManager {
     }
 
     public static void certifyExit(Session session) {
-        ServerMessage response = MessageBuilder.certifyExit(true);
-        session.send(response);
+        session.send(MessageBuilder.certifyExit(true));
 
         SessionInfo.remove(session.getSessionId());
 
@@ -35,6 +34,8 @@ public class UserManager {
     }
 
     public static void instantExit(Session session) {
+        session.send(MessageBuilder.instantExit());
+
         session.close();
     }
 
