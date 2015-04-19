@@ -84,6 +84,7 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.RESELL_ITEM, InventoryManager::resellItem);
         events.put(MessageId.DEACTIVATE_ITEM, InventoryManager::deactivateItem);
         events.put(MessageId.ACTIVATE_ITEM, InventoryManager::activateItem);
+        events.put(MessageId.MERGE_ITEM, InventoryManager::mergeItem);
         events.put(MessageId.PURCHASE_LEARN, Shop::purchaseLearn);
         events.put(MessageId.PURCHASE_SKILL, Shop::purchaseSkill);
         events.put(MessageId.ACTIVATE_SKILL, InventoryManager::activateSkill);

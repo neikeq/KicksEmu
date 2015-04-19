@@ -4,10 +4,8 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
-import com.neikeq.kicksemu.game.table.TableManager;
 
 import java.sql.Connection;
-import java.util.Collections;
 
 public class RewardCalculator {
 

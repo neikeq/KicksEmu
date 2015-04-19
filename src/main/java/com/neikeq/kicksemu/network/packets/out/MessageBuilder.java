@@ -96,7 +96,7 @@ public class MessageBuilder {
         msg.appendZeros(2);
 
         // Request the client to close the connection
-        msg.write(0, (short)-1);
+        msg.write(0, (short) -1);
 
         return msg;
     }
@@ -1291,6 +1291,21 @@ public class MessageBuilder {
         MessageUtils.appendCharacterInfo(playerId, msg, con);
 
         MessageUtils.appendStats(playerId, msg, con);
+
+        return msg;
+    }
+
+    public static ServerMessage mergeItem(int playerId, int inventoryId,
+                                          short usages, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.MERGE_ITEM);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            MessageUtils.appendStatsBonus(playerId, msg);
+            msg.append(inventoryId);
+            msg.append(usages);
+        }
 
         return msg;
     }

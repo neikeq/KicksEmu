@@ -11,8 +11,9 @@ import java.util.List;
 public class StatusMessage {
 
     // List of censured words
-    private static final List<String> censuredWords =
-            Arrays.asList();
+    private static final List<String> censuredWords = Arrays.asList(new String[] {
+            // Censured words go here
+    });
 
     public static void statusMessage(Session session, ClientMessage msg) {
         String statusMessage = msg.readString(35);

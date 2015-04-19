@@ -80,10 +80,6 @@ public class Item implements Product {
         return timestampExpire;
     }
 
-    public void setTimestampExpire(Timestamp timestampExpire) {
-        this.timestampExpire = timestampExpire;
-    }
-
     public boolean isSelected() {
         return selected;
     }

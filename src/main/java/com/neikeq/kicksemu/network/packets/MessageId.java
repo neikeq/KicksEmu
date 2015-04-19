@@ -66,6 +66,7 @@ public class MessageId {
     public static final int RESELL_ITEM = 2601;
     public static final int ACTIVATE_ITEM = 2603;
     public static final int DEACTIVATE_ITEM = 2604;
+    public static final int MERGE_ITEM = 2606;
     public static final int PURCHASE_LEARN = 2610;
     public static final int PURCHASE_SKILL = 2620;
     public static final int ACTIVATE_SKILL = 2621;

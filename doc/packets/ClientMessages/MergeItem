@@ -1,0 +1,8 @@
+// MergeItem
+// Tcp
+
+Id: 2606
+Size: 8
+
+int packet_id
+int inventory_id

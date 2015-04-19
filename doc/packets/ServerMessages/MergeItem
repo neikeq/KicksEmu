@@ -1,0 +1,36 @@
+// MergeItem
+// Tcp
+
+Id: 2606
+Size: 46
+
+Data:
+int packet_id
+byte reason
+/*
+ * System problem: -1
+ * Item does not exists: -2
+ */
+byte response
+// ...
+// Bonus points
+short bonus_running
+short bonus_endurance
+short bonus_agility
+short bonus_ball_control
+short bonus_dribbling
+short bonus_stealing
+short bonus_tackling
+short bonus_heading
+short bonus_short_shots
+short bonus_long_shots
+short bonus_crossing
+short bonus_short_passes
+short bonus_long_passes
+short bonus_marking
+short bonus_goalkeeping
+short bonus_punching
+short bonus_defense
+// Merged item info
+int inventory_id
+short usages

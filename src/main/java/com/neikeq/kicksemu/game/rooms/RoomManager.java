@@ -623,9 +623,10 @@ public class RoomManager {
             // Calculate average level
             PlayerLevelCache levelCache = new PlayerLevelCache();
             MutableInteger roomAvgLevel = new MutableInteger(0);
-            MutableInteger avgLevel = new MutableInteger(0);
 
             if (levelExpWeightingFlag) {
+                MutableInteger avgLevel = new MutableInteger(0);
+
                 result.getPlayers().stream().forEach(pr -> {
                     int playerId = pr.getPlayerId();
                     avgLevel.add(levelCache.getPlayerLevel(playerId, con));
@@ -663,6 +664,7 @@ public class RoomManager {
                         diff = diff * 2;
                         if (diff > 75) diff = 75;
                     }
+
                     appliedReward += levelExpWeighting ? (reward * (diff)) / 100: 0;
                 }
 
