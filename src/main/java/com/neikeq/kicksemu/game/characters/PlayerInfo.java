@@ -73,7 +73,8 @@ public class PlayerInfo {
     public static int getClubId(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
         int clubId = s != null && s.getPlayerCache().getClubId() != null ?
-                s.getPlayerCache().getClubId() : SqlUtils.getInt("club_id", TABLE, id, con);
+                s.getPlayerCache().getClubId() :
+                SqlUtils.getInt("club_id", "club_members", id, con);
 
         if (s != null) {
             s.getPlayerCache().setClubId(clubId);

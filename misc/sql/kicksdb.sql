@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `blocked` bit(1) NOT NULL DEFAULT b'0',
   `moderator` bit(1) NOT NULL DEFAULT b'0',
   `visible` bit(1) NOT NULL DEFAULT b'0',
-  `club_id` int(10) unsigned NOT NULL DEFAULT '0',
   `quest_current` smallint(6) unsigned NOT NULL DEFAULT '1',
   `quest_matches_left` smallint(6) unsigned NOT NULL DEFAULT '5',
   `tutorial_dribbling` tinyint(4) unsigned NOT NULL DEFAULT '0',
