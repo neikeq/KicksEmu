@@ -6,7 +6,7 @@ require_once "constants.ajax.php";
 
 function ban_user($username, $expire, $reason, $db) {
     $user_id = get_user_id($username, $db);
-    
+
     $stmt = $db->prepare("INSERT INTO bans(user_id, expire, reason) VALUES(?,?,?)");
     $stmt->bind_param("iss", $user_id, $expire, $reason);
     $stmt->execute();
@@ -18,51 +18,51 @@ function ban_user($username, $expire, $reason, $db) {
 
 function add_points($character, $value, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $stmt = $db->prepare("UPDATE characters SET points=points+? WHERE id=?");
     $stmt->bind_param("ii", $value, $char_id);
     $stmt->execute();
     $result = $stmt->fetch();
     $stmt->close();
-    
+
     return $result;
 }
 
 function add_kash($username, $value, $db) {
     $user_id = get_user_id($username, $db);
-    
+
     $stmt = $db->prepare("UPDATE users SET kash=kash+? WHERE id=?");
     $stmt->bind_param("ii", $value, $user_id);
     $stmt->execute();
     $result = $stmt->fetch();
     $stmt->close();
-    
+
     return $result;
 }
 
 function add_experience($character, $value, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $stmt = $db->prepare("UPDATE characters SET experience=experience+? WHERE id=?");
     $stmt->bind_param("ii", $value, $char_id);
     $stmt->execute();
     $result = $stmt->fetch();
     $stmt->close();
-    
+
     check_character_experience($char_id, $db);
-    
+
     return $result;
 }
 
 function add_item($character, $item_id, $expiration, $bonus_one,
                   $bonus_two, $usages, $timestamp, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $result = 0;
-    
+
     if ($char_id > 0 && !already_purchased($char_id, $item_id, "items", "item_id", $db)) {
         $inventory_id = next_inventory_id($char_id, "items", $db);
-        
+
         $stmt = $db->prepare("INSERT INTO items VALUES(?,?,?,?,?,?,?,?,?,?)");
         $stmt->bind_param("iiiiiiisii", $char_id, $inventory_id, $item_id, $expiration,
                           $bonus_one, $bonus_two, $usages, $timestamp, $s = 0, $v = 1);
@@ -70,18 +70,18 @@ function add_item($character, $item_id, $expiration, $bonus_one,
         $result = $stmt->fetch();
         $stmt->close();
     }
-    
+
     return $result;
 }
 
 function add_skill($character, $skill_id, $expiration, $timestamp, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $result = 0;
-    
+
     if ($char_id > 0 && !already_purchased($char_id, $skill_id, "skills", "skill_id", $db)) {
         $inventory_id = next_inventory_id($char_id, "skills", $db);
-        
+
         $stmt = $db->prepare("INSERT INTO skills VALUES(?,?,?,?,?,?,?)");
         $stmt->bind_param("iiiiisi", $char_id, $inventory_id, $skill_id,
                           $expiration, $s = 0, $timestamp, $v = 1);
@@ -89,18 +89,18 @@ function add_skill($character, $skill_id, $expiration, $timestamp, $db) {
         $result = $stmt->fetch();
         $stmt->close();
     }
-    
+
     return $result;
 }
 
 function add_cere($character, $cere_id, $expiration, $timestamp, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $result = 0;
-    
+
     if ($char_id > 0 && !already_purchased($char_id, $cere_id, "ceres", "cere_id", $db)) {
         $inventory_id = next_inventory_id($char_id, "ceres", $db);
-        
+
         $stmt = $db->prepare("INSERT INTO ceres VALUES(?,?,?,?,?,?,?)");
         $stmt->bind_param("iiiiisi", $char_id, $inventory_id, $cere_id,
                           $expiration, $s = 0, $timestamp, $v = 1);
@@ -108,25 +108,25 @@ function add_cere($character, $cere_id, $expiration, $timestamp, $db) {
         $result = $stmt->fetch();
         $stmt->close();
     }
-    
+
     return $result;
 }
 
 function add_learn($character, $learn_id, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $result = 0;
-    
+
     if ($char_id > 0 && !already_purchased($char_id, $learn_id, "learns", "learn_id", $db)) {
         $inventory_id = next_inventory_id($char_id, "learns", $db);
-        
+
         $stmt = $db->prepare("INSERT INTO learns VALUES(?,?,?,?)");
         $stmt->bind_param("iiii", $char_id, $inventory_id, $learn_id, $v = 1);
         $stmt->execute();
         $result = $stmt->fetch();
         $stmt->close();
     }
-    
+
     return $result;
 }
 
@@ -139,21 +139,21 @@ function reset_stats_by_id($char_id, $db) {
     $position = get_character_position($char_id, $db);
     $level = get_character_level($char_id, $db);
     $branch_position = $position - ($position % 10);
-    $creation_stats = Constants::$creation_stats[$branch_position];
-    
+    $creation_stats = Constants::creation_stats[$branch_position];
+
     set_character_stats_points($char_id, 10, $db);
-    
+
     for ($i = 0; $i < 17; $i++) {
         set_character_stats_by_index($char_id, $creation_stats[$i], $i, $db);
     }
-    
+
     if ($level > 18) {
         on_character_level_up($char_id, 18, 17, $branch_position, $db);
         on_character_level_up($char_id, $level, $level - 18, $position, $db);
     } else {
         on_character_level_up($char_id, $level, $level - 1, $branch_position, $db);
     }
-    
+
     if ($level >= 18) {
         apply_upgrade_stats($char_id, $position, $db);
     }
@@ -167,22 +167,22 @@ function reset_stats_global($reason, $db) {
     $stmt->execute();
 
     $chars = array();
-    
+
     while ($stmt->fetch()) {
         array_push($chars, $char_id);
     }
-    
+
     $stmt->close();
-    
+
     for ($i = 0; $i < count($chars); $i++) {
         $result |= reset_stats_by_id($chars[$i], $db);
     }
-    
+
     return $result;
 }
 
 function apply_upgrade_stats($char_id, $position, $db) {
-    $position_stats = Constants::$upgrade_stats[$position];
+    $position_stats = Constants::upgrade_stats[$position];
     $remain_stats = 0;
 
     for ($i = 0; $i < 17; $i++) {
@@ -195,24 +195,24 @@ function apply_upgrade_stats($char_id, $position, $db) {
 
 function change_position($character, $position, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $stmt = $db->prepare("UPDATE characters SET position=? WHERE id=?");
-    $stmt->bind_param("ii", Constants::$positions[strtoupper($position)], $char_id);
+    $stmt->bind_param("ii", Constants::positions[strtoupper($position)], $char_id);
     $stmt->execute();
     $result = $stmt->fetch();
     $stmt->close();
-    
+
     $result |= reset_stats_by_id($char_id, $db);
     $result |= remove_all_character_skills($char_id, $db);
-    
+
     return $result;
 }
 
 function change_name($character, $new_name, $db) {
     $char_id = get_character_id($character, $db);
-    
+
     $result = false;
-    
+
     if (!character_exists($new_name, $db)) {
         $stmt = $db->prepare("UPDATE characters SET name=? WHERE id=?");
         $stmt->bind_param("si", $new_name, $char_id);
@@ -220,7 +220,7 @@ function change_name($character, $new_name, $db) {
         $result = $stmt->fetch();
         $stmt->close();
     }
-    
+
     return $result;
 }
 

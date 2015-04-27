@@ -36,7 +36,7 @@ This is a registration form example, but users should not be allowed to join.
         <div class="content">            
             <div class="page_content">
                 <div class="block_content" id="login_content">
-                    <h3>Login</h3>
+                    <h3>Sign-up</h3>
                     
                      <form class="admin_form" action="includes/register.inc.php" method="post">
                         <input class="textbox" type="text" id="username"
