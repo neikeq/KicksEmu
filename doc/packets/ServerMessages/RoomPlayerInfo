@@ -34,7 +34,8 @@ int default_pants
 int default_shoes
 short position
 byte unknown
-short club_icon // Member: 0, Manager: 256 ??, Captain: 556 ??
+bool is_club_member // to know if must display club name
+byte club_icon // Member: 0, Manager: 1, Captain: 2
 char[3] unknown
 /*
  * Rank values:

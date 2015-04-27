@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.QuestState;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
@@ -560,8 +561,7 @@ public class MessageBuilder {
             msg.append((byte)room.getType().toInt());
             msg.append((short)room.getId());
             msg.append(room.getName(), 45);
-            msg.append(room.getPassword(), 4);
-            msg.appendZeros(1);
+            msg.append(room.getPassword(), 5);
             msg.append(room.getMaster());
             msg.append((byte)room.getRoomMode().toInt());
             msg.append(room.getMinLevel());
@@ -580,12 +580,13 @@ public class MessageBuilder {
         if (session != null) {
             int playerId = session.getPlayerId();
             int ownerId = PlayerInfo.getOwner(playerId, con);
+            int clubId = PlayerInfo.getClubId(playerId, con);
 
             msg.append(true, 2);
             msg.append(playerId);
             msg.append(PlayerInfo.getName(playerId, con), 15);
 
-            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId, con)), 15);
+            msg.append(ClubInfo.getName(clubId, con), 15);
 
             msg.append((short)(room.getRedTeam().contains(playerId) ? 0 : 1));
 
@@ -596,7 +597,7 @@ public class MessageBuilder {
             msg.append(session.getPing() < 100, 2);
 
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-            msg.append((short)session.getUdpPort());
+            msg.append((short) session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
             msg.appendZeros(2);
@@ -608,7 +609,9 @@ public class MessageBuilder {
 
             msg.append(PlayerInfo.getPosition(playerId, con));
             msg.appendZeros(1);
-            msg.append((short) 0);
+            msg.append(clubId > 0); // is club member
+            msg.append((byte) MemberInfo.getRole(playerId, con).toInt());
+
             msg.appendZeros(3);
             msg.append((byte)0);
             msg.append((byte)0);
