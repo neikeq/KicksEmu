@@ -1,9 +1,9 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
-import com.neikeq.kicksemu.game.characters.Animation;
-import com.neikeq.kicksemu.game.characters.PlayerStats;
-import com.neikeq.kicksemu.game.characters.Position;
-import com.neikeq.kicksemu.game.characters.StatsInfo;
+import com.neikeq.kicksemu.game.characters.types.Animation;
+import com.neikeq.kicksemu.game.characters.types.PlayerStats;
+import com.neikeq.kicksemu.game.characters.types.Position;
+import com.neikeq.kicksemu.game.characters.types.StatsInfo;
 import com.neikeq.kicksemu.game.inventory.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemFree;

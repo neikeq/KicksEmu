@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
-import com.neikeq.kicksemu.game.characters.Animation;
+import com.neikeq.kicksemu.game.characters.types.Animation;
 
 class CharacterBase {
 

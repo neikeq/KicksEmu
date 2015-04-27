@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
-import com.neikeq.kicksemu.game.characters.Animation;
+import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;

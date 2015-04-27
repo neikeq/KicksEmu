@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.network.packets.out;
 
-import com.neikeq.kicksemu.game.characters.PlayerHistory;
+import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.QuestState;
 import com.neikeq.kicksemu.game.chat.MessageType;

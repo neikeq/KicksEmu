@@ -1,11 +1,11 @@
 package com.neikeq.kicksemu.network.packets.out;
 
-import com.neikeq.kicksemu.game.characters.PlayerHistory;
+import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.characters.PlayerRanking;
-import com.neikeq.kicksemu.game.characters.PlayerStats;
+import com.neikeq.kicksemu.game.characters.types.PlayerRanking;
+import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.characters.QuestState;
-import com.neikeq.kicksemu.game.characters.TutorialState;
+import com.neikeq.kicksemu.game.characters.types.TutorialState;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.clubs.ClubUniform;
 import com.neikeq.kicksemu.game.inventory.Celebration;

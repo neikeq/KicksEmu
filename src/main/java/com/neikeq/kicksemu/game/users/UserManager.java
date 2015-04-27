@@ -2,9 +2,9 @@ package com.neikeq.kicksemu.game.users;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
-import com.neikeq.kicksemu.game.characters.Position;
-import com.neikeq.kicksemu.game.characters.StatsInfo;
-import com.neikeq.kicksemu.game.characters.PlayerStats;
+import com.neikeq.kicksemu.game.characters.types.Position;
+import com.neikeq.kicksemu.game.characters.types.StatsInfo;
+import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.sessions.SessionInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -115,6 +115,7 @@ public class UserManager {
 
                 if (Position.isValidNewPosition(currentPosition, position)) {
                     PlayerInfo.setPosition(position, playerId, con);
+                    session.getPlayerCache().setPosition(position);
 
                     MutableInteger statsPoints = new MutableInteger(0);
 
@@ -131,8 +132,7 @@ public class UserManager {
                 }
             } catch (SQLException ignored) {}
 
-            ServerMessage response = MessageBuilder.upgradeCharacter(result);
-            session.send(response);
+            session.send(MessageBuilder.upgradeCharacter(result));
         }
     }
 }
