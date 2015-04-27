@@ -202,16 +202,6 @@ CREATE TABLE IF NOT EXISTS `learns` (
 -- Data exporting was unselected.
 
 
--- Dumping structure for table kicksdb.levels
-CREATE TABLE IF NOT EXISTS `levels` (
-  `level` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `experience` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`level`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- Data exporting was unselected.
-
-
 -- Dumping structure for table kicksdb.ranking
 CREATE TABLE IF NOT EXISTS `ranking` (
   `index` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -302,7 +292,7 @@ CREATE TABLE IF NOT EXISTS `skills` (
 
 -- Dumping structure for table kicksdb.status
 CREATE TABLE IF NOT EXISTS `status` (
-  `online_users` int(11) unsigned NOT NULL DEFAULT '0'
+  `online_users` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`online_users`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
