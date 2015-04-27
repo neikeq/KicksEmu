@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.characters;
+package com.neikeq.kicksemu.game.characters.types;
 
 public class QuestState {
 

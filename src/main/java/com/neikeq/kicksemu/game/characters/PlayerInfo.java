@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
+import com.neikeq.kicksemu.game.characters.types.QuestState;
 import com.neikeq.kicksemu.game.characters.types.TutorialState;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.DefaultClothes;

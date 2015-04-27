@@ -2,7 +2,7 @@ package com.neikeq.kicksemu.network.packets.out;
 
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.characters.QuestState;
+import com.neikeq.kicksemu.game.characters.types.QuestState;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
