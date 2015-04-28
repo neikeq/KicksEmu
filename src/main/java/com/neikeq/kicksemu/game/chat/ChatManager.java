@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.chat;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.Lobby;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
@@ -130,14 +131,14 @@ public class ChatManager {
 
     private static void onMessageClub(Session session, String name, String message) {
         int playerId = session.getPlayerId();
-        int clubId = PlayerInfo.getClubId(playerId);
+        int clubId = MemberInfo.getClubId(playerId);
 
         if (clubId > 0 && PlayerInfo.getName(playerId).equals(name)) {
             if (!message.isEmpty()) {
                 MessageType type = MessageType.CLUB;
 
                 ServerManager.getPlayers().values().stream()
-                        .filter(s -> PlayerInfo.getClubId(s.getPlayerId()) == clubId)
+                        .filter(s -> MemberInfo.getClubId(s.getPlayerId()) == clubId)
                         .forEach(s -> s.sendAndFlush(MessageBuilder.chatMessage(playerId,
                                 name, type, message)));
             }

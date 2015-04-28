@@ -74,19 +74,6 @@ public class PlayerInfo {
         return name;
     }
 
-    public static int getClubId(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        int clubId = s != null && s.getPlayerCache().getClubId() != null ?
-                s.getPlayerCache().getClubId() :
-                SqlUtils.getInt("club_id", "club_members", id, con);
-
-        if (s != null) {
-            s.getPlayerCache().setClubId(clubId);
-        }
-
-        return clubId;
-    }
-
     public static boolean isBlocked(int id, Connection ... con) {
         return SqlUtils.getBoolean("blocked", TABLE, id, con);
     }

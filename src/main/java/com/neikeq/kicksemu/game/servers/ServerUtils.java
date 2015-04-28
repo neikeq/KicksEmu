@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.servers;
 import com.neikeq.kicksemu.config.Tips;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.ClubManager;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -36,7 +37,7 @@ public class ServerUtils {
         byte result = 0;
 
         // TODO Check if character can access private server... Reject code is 251
-        int clubId = PlayerInfo.getClubId(playerId);
+        int clubId = MemberInfo.getClubId(playerId);
 
         if (ServerInfo.getType(serverId) == GameServerType.CLUB &&
                 (clubId <= 0 || !ClubManager.clubExist(clubId))) {

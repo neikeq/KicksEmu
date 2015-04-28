@@ -342,13 +342,15 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
+            int clubId = MemberInfo.getClubId(playerId, con);
+
             msg.append(playerId);
 
             msg.appendZeros(54);
 
             msg.append(PlayerInfo.getName(playerId, con), 15);
 
-            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId, con)), 15);
+            msg.append(ClubInfo.getName(clubId), 15);
 
             msg.append(PlayerInfo.getStatusMessage(playerId, con), 35);
 
@@ -384,7 +386,7 @@ public class MessageBuilder {
 
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
 
-            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), msg, con);
+            MessageUtils.appendClubUniform(clubId, msg, con);
         }
 
         return msg;
@@ -580,7 +582,7 @@ public class MessageBuilder {
         if (session != null) {
             int playerId = session.getPlayerId();
             int ownerId = PlayerInfo.getOwner(playerId, con);
-            int clubId = PlayerInfo.getClubId(playerId, con);
+            int clubId = MemberInfo.getClubId(playerId, con);
 
             msg.append(true, 2);
             msg.append(playerId);
@@ -623,7 +625,7 @@ public class MessageBuilder {
             MessageUtils.appendStatsBonus(playerId, msg, con);
 
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
-            MessageUtils.appendClubUniform(PlayerInfo.getClubId(playerId, con), msg, con);
+            MessageUtils.appendClubUniform(clubId, msg, con);
             MessageUtils.appendInventorySkillsInUse(playerId, msg, con);
             MessageUtils.appendInventoryCelebrationsInUse(playerId, msg, con);
         }
@@ -1211,7 +1213,7 @@ public class MessageBuilder {
             msg.append(PlayerInfo.getName(playerId), 15);
             msg.append(PlayerInfo.getPosition(playerId));
             msg.append(PlayerInfo.getLevel(playerId));
-            msg.append(ClubInfo.getName(PlayerInfo.getClubId(playerId)), 15);
+            msg.append(ClubInfo.getName(MemberInfo.getClubId(playerId)), 15);
 
             PlayerHistory history = PlayerInfo.getHistory(playerId);
             PlayerHistory monthHistory = PlayerInfo.getMonthHistory(playerId);

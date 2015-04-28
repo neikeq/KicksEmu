@@ -8,6 +8,10 @@ public class MemberInfo {
 
     private static final String TABLE = "club_members";
 
+    public static int getClubId(int id, Connection ... con) {
+        return SqlUtils.getInt("club_id", TABLE, id, con);
+    }
+
     public static MemberRole getRole(int id, Connection... con) {
         String role = SqlUtils.getString("role", TABLE, id, con);
         return role.isEmpty() ? MemberRole.MEMBER : MemberRole.valueOf(role);

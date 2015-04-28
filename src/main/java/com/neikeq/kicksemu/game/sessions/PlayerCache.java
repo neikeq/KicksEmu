@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class PlayerCache {
 
     private Integer owner;
-    private Integer clubId;
 
     private DefaultClothes defaultClothes;
 
@@ -31,7 +30,6 @@ public class PlayerCache {
 
     public void clear() {
         owner = null;
-        clubId = null;
         defaultClothes = null;
         animation = null;
         position = null;
@@ -64,14 +62,6 @@ public class PlayerCache {
 
     public void setOwner(Integer owner) {
         this.owner = owner;
-    }
-
-    public Integer getClubId() {
-        return clubId;
-    }
-
-    public void setClubId(Integer clubId) {
-        this.clubId = clubId;
     }
 
     public Short getAnimation() {
