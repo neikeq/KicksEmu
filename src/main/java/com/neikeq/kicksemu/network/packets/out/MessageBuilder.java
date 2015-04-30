@@ -1339,7 +1339,7 @@ public class MessageBuilder {
             }
         }
 
-        msg.append(ClubInfo.getClubPoints(clubId));
+        msg.append(clubId > 0 ? ClubInfo.getClubPoints(clubId) : 0);
 
         return msg;
     }
