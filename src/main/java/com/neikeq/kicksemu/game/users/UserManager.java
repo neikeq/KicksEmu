@@ -76,8 +76,7 @@ public class UserManager {
             result = (byte)255;
         }
 
-        ServerMessage response = MessageBuilder.updateSettings(result);
-        session.send(response);
+        session.send(MessageBuilder.updateSettings(result));
     }
 
     public static void choiceCharacter(Session session, ClientMessage msg) {
@@ -97,8 +96,7 @@ public class UserManager {
             result = (byte)254; // Character does not exist
         }
 
-        ServerMessage response = MessageBuilder.choiceCharacter(charId, result);
-        session.send(response);
+        session.send(MessageBuilder.choiceCharacter(charId, result));
     }
 
     public static void upgradeCharacter(Session session, ClientMessage msg) {

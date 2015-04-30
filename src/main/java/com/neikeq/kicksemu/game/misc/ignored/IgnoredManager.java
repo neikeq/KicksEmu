@@ -47,8 +47,7 @@ public class IgnoredManager {
             result = (byte)254; // Player not found
         }
 
-        ServerMessage response = MessageBuilder.blockPlayer(targetId, result);
-        session.send(response);
+        session.send(MessageBuilder.blockPlayer(targetId, result));
     }
 
     public static void unblockPlayer(Session session, ClientMessage msg) {
@@ -67,7 +66,6 @@ public class IgnoredManager {
             result = (byte) 252; // Player not found
         }
 
-        ServerMessage response = MessageBuilder.unblockPlayer(result);
-        session.send(response);
+        session.send(MessageBuilder.unblockPlayer(result));
     }
 }

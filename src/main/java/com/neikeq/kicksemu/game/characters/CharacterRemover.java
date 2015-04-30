@@ -50,8 +50,7 @@ public class CharacterRemover {
 
         String removalDate = DateUtils.dateToString(UserInfo.getLastCharDeletion(userId));
 
-        ServerMessage response = MessageBuilder.removeCharacter(charId, removalDate, result);
-        session.send(response);
+        session.send(MessageBuilder.removeCharacter(charId, removalDate, result));
     }
 
     private static boolean limitTimeExpired(int userId) {

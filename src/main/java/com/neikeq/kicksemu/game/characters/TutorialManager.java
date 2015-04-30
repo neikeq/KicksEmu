@@ -64,9 +64,8 @@ public class TutorialManager {
             result = (byte)255; // System problem
         }
 
-        ServerMessage response = MessageBuilder.updateTutorial(dribbling, passing,
-                shooting, defense, reward, result);
-        session.send(response);
+        session.send(MessageBuilder.updateTutorial(dribbling, passing,
+                shooting, defense, reward, result));
     }
 
     private static boolean areValid(byte dribbling, byte passing, byte shooting, byte defense) {

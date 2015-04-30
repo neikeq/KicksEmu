@@ -81,7 +81,6 @@ public class ChatManager {
 
                 if (room != null && room.isPlayerIn(playerId)) {
                     ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
-
                     room.sendTeamBroadcast(msg, room.getPlayerTeam(playerId), playerId);
                 }
             }
@@ -123,9 +122,7 @@ public class ChatManager {
                 }
             }
 
-            ServerMessage response = MessageBuilder.chatMessage(playerId, target,
-                    type, whisper);
-            session.sendAndFlush(response);
+            session.sendAndFlush(MessageBuilder.chatMessage(playerId, target, type, whisper));
         }
     }
 

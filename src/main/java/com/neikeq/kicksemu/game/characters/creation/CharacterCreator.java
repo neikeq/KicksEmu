@@ -38,8 +38,7 @@ public class CharacterCreator {
             result = CreationResult.CHARACTERS_LIMIT;
         }
 
-        ServerMessage response = MessageBuilder.createCharacter(result);
-        session.send(response);
+        session.send(MessageBuilder.createCharacter(result));
     }
 
     private static int create(CharacterBase character) {

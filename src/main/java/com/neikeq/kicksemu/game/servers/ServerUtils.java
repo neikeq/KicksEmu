@@ -24,8 +24,7 @@ public class ServerUtils {
 
         byte result = (byte)(servers == null ? 255 : 0);
 
-        ServerMessage response = MessageBuilder.serverList(servers, result);
-        session.send(response);
+        session.send(MessageBuilder.serverList(servers, result));
     }
 
     public static void serverInfo(Session session, ClientMessage msg) {
@@ -53,8 +52,7 @@ public class ServerUtils {
             result = -2;
         }
 
-        ServerMessage response = MessageBuilder.serverInfo(serverId, result);
-        session.send(response);
+        session.send(MessageBuilder.serverInfo(serverId, result));
     }
 
     private static List<Short> getServerList(short filter) {
@@ -151,7 +149,6 @@ public class ServerUtils {
     }
 
     public static void nextTip(Session session) {
-        ServerMessage response = MessageBuilder.nextTip(Tips.getNext(), (byte)0);
-        session.send(response);
+        session.send(MessageBuilder.nextTip(Tips.getNext(), (byte)0));
     }
 }

@@ -16,8 +16,7 @@ public class FriendsManager {
 
         FriendsList friends = PlayerInfo.getFriendsList(session.getPlayerId());
 
-        ServerMessage response = MessageBuilder.friendList(friends.fromPage(page), page);
-        session.send(response);
+        session.send(MessageBuilder.friendList(friends.fromPage(page), page));
     }
 
     public static void friendRequest(Session session, ClientMessage msg) {
@@ -51,8 +50,7 @@ public class FriendsManager {
         }
 
         if (result != 0) {
-            ServerMessage response = MessageBuilder.friendRequest(playerId, result);
-            session.sendAndFlush(response);
+            session.sendAndFlush(MessageBuilder.friendRequest(playerId, result));
         }
     }
 
@@ -99,8 +97,7 @@ public class FriendsManager {
         }
 
         if (result != (byte)253) {
-            ServerMessage response = MessageBuilder.friendResponse(result);
-            session.sendAndFlush(response);
+            session.sendAndFlush(MessageBuilder.friendResponse(result));
         }
     }
 
@@ -126,7 +123,6 @@ public class FriendsManager {
             result = (byte) 254; // Player not found
         }
 
-        ServerMessage response = MessageBuilder.deleteFriend(result);
-        session.send(response);
+        session.send(MessageBuilder.deleteFriend(result));
     }
 }

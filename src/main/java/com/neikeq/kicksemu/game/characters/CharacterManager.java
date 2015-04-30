@@ -14,7 +14,6 @@ import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
@@ -44,8 +43,7 @@ public class CharacterManager {
 
     private static void sendPlayerInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
-            ServerMessage msg = MessageBuilder.playerInfo(session.getPlayerId(), (byte) 0, con);
-            session.send(msg);
+            session.send(MessageBuilder.playerInfo(session.getPlayerId(), (byte) 0, con));
         } catch (SQLException ignored) {}
     }
 
@@ -73,8 +71,7 @@ public class CharacterManager {
     private static void sendTrainingList(Session session) {
         Map<Integer, Training> trainings = PlayerInfo.getInventoryTraining(session.getPlayerId());
 
-        ServerMessage msg = MessageBuilder.trainingList(trainings, (byte) 0);
-        session.send(msg);
+        session.send(MessageBuilder.trainingList(trainings, (byte) 0));
     }
 
     private static void sendSkillList(Session session) {
@@ -84,16 +81,14 @@ public class CharacterManager {
 
         byte slots = PlayerInfo.getSkillSlots(playerId);
 
-        ServerMessage msg = MessageBuilder.skillList(items, slots, (byte) 0);
-        session.send(msg);
+        session.send(MessageBuilder.skillList(items, slots, (byte) 0));
     }
 
     private static void sendCelebrationList(Session session) {
         Map<Integer, Celebration> items =
                 PlayerInfo.getInventoryCelebration(session.getPlayerId());
 
-        ServerMessage msg = MessageBuilder.celebrationList(items, (byte) 0);
-        session.send(msg);
+        session.send(MessageBuilder.celebrationList(items, (byte) 0));
     }
 
     public static void resetStats(int playerId) {

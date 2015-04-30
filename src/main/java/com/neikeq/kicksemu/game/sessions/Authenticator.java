@@ -10,7 +10,6 @@ import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserUtils;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -138,8 +137,7 @@ public class Authenticator {
             result = AuthResult.SYSTEM_PROBLEM;
         }
 
-        ServerMessage response = MessageBuilder.instantLogin(sessionId, result);
-        session.send(response);
+        session.send(MessageBuilder.instantLogin(sessionId, result));
 
         if (result != AuthResult.SUCCESS) {
             session.close();
@@ -230,8 +228,7 @@ public class Authenticator {
             result = AuthResult.SYSTEM_PROBLEM;
         }
 
-        ServerMessage response = MessageBuilder.gameLogin(result);
-        session.send(response);
+        session.send(MessageBuilder.gameLogin(result));
 
         if (result != AuthResult.SUCCESS) {
             session.close();
@@ -287,8 +284,7 @@ public class Authenticator {
 
         boolean result = session.isUdpAuthenticated();
 
-        ServerMessage response = MessageBuilder.udpConfirm(result);
-        session.send(response);
+        session.send(MessageBuilder.udpConfirm(result));
 
         if (!result) {
             session.close();

@@ -106,9 +106,8 @@ public class Shop {
             result = -1;
         }
 
-        try (Connection con = MySqlManager.getConnection()){
-            ServerMessage response = MessageBuilder.purchaseSkill(playerId, skill, result, con);
-            session.send(response);
+        try (Connection con = MySqlManager.getConnection()) {
+            session.send(MessageBuilder.purchaseSkill(playerId, skill, result, con));
         } catch (SQLException ignored) {}
     }
 
@@ -185,8 +184,7 @@ public class Shop {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
-            ServerMessage response = MessageBuilder.purchaseCele(playerId, cele, result, con);
-            session.send(response);
+            session.send(MessageBuilder.purchaseCele(playerId, cele, result, con));
         } catch (SQLException ignored) {}
     }
 
@@ -257,8 +255,7 @@ public class Shop {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
-            ServerMessage response = MessageBuilder.purchaseLearn(playerId, learn, result, con);
-            session.send(response);
+            session.send(MessageBuilder.purchaseLearn(playerId, learn, result, con));
         } catch (SQLException ignored) {}
     }
 

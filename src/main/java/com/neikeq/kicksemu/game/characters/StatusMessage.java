@@ -28,8 +28,7 @@ public class StatusMessage {
             PlayerInfo.setStatusMessage(statusMessage, session.getPlayerId());
         }
 
-        ServerMessage response = MessageBuilder.changeStatusMessage(statusMessage, result);
-        session.send(response);
+        session.send(MessageBuilder.changeStatusMessage(statusMessage, result));
     }
 
     private static boolean containsCensuredWord(String message) {

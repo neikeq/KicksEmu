@@ -286,17 +286,14 @@ public class Room {
             setState(RoomState.COUNT_DOWN);
             getConfirmedPlayers().clear();
 
-            ServerMessage msgStartCountDown = MessageBuilder.startCountDown((byte) -1);
-            sendBroadcast(msgStartCountDown);
+            sendBroadcast(MessageBuilder.startCountDown((byte) -1));
         }
     }
 
     public void cancelCountDown() {
         synchronized (locker) {
             setState(RoomState.WAITING);
-
-            ServerMessage msgStopCountDown = MessageBuilder.cancelCountDown();
-            sendBroadcast(msgStopCountDown);
+            sendBroadcast(MessageBuilder.cancelCountDown());
         }
     }
 
@@ -541,8 +538,7 @@ public class Room {
     public void setMaster(int master) {
         this.master = master;
 
-        ServerMessage msgRoomMaster = MessageBuilder.roomMaster(master);
-        sendBroadcast(msgRoomMaster);
+        sendBroadcast(MessageBuilder.roomMaster(master));
     }
 
     public boolean isPlaying() {

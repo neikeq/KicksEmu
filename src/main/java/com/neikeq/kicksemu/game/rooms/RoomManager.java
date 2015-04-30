@@ -156,8 +156,7 @@ public class RoomManager {
             }
 
             // Send the validation result to the client
-            ServerMessage response = MessageBuilder.createRoom((short)0, result);
-            session.send(response);
+            session.send(MessageBuilder.createRoom((short)0, result));
 
             // If everything is correct, create the room
             if (result == 0) {
@@ -277,8 +276,7 @@ public class RoomManager {
                 room.setMap(map);
 
                 // Notify players in room that map changed
-                ServerMessage msgRoomMap = MessageBuilder.roomMap(mapId);
-                room.sendBroadcast(msgRoomMap);
+                room.sendBroadcast(MessageBuilder.roomMap(mapId));
             }
         }
     }
@@ -296,8 +294,7 @@ public class RoomManager {
                 room.setBall(ball);
 
                 // Notify players in room that ball changed
-                ServerMessage msgRoomBall = MessageBuilder.roomBall(ballId);
-                room.sendBroadcast(msgRoomBall);
+                room.sendBroadcast(MessageBuilder.roomBall(ballId));
             }
         }
     }
@@ -420,8 +417,7 @@ public class RoomManager {
 
         // If there is something wrong, notify the client
         if (result != 0) {
-            ServerMessage response = MessageBuilder.kickPlayer(result);
-            session.send(response);
+            session.send(MessageBuilder.kickPlayer(result));
         }
     }
 
@@ -458,8 +454,7 @@ public class RoomManager {
 
             // If there is something wrong, notify the client
             if (result != 0) {
-                ServerMessage response = MessageBuilder.invitePlayer(result, null, "");
-                session.sendAndFlush(response);
+                session.sendAndFlush(MessageBuilder.invitePlayer(result, null, ""));
             }
         }
     }
@@ -517,8 +512,7 @@ public class RoomManager {
                 room.updateTrainingFactor();
             }
 
-            ServerMessage msgCountDown = MessageBuilder.countDown(count);
-            room.sendBroadcast(msgCountDown);
+            room.sendBroadcast(MessageBuilder.countDown(count));
         }
     }
 
@@ -733,6 +727,7 @@ public class RoomManager {
             final long delay = DateUtils.currentTimeMillis() - startTime;
             final int minDelay = 1000;
 
+            // This fixed delay is necessary to avoid golden goal bug
             if (delay < minDelay) {
                 ThreadUtils.sleep(minDelay - delay);
             }

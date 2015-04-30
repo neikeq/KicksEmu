@@ -12,14 +12,12 @@ public class ChatUtils {
     }
 
     public static void sendServerMessage(Session session, String message) {
-        ServerMessage response = MessageBuilder.chatMessage(0, "",
-                MessageType.SERVER_MESSAGE, message);
-        session.sendAndFlush(response);
+        session.sendAndFlush(MessageBuilder.chatMessage(0, "",
+                MessageType.SERVER_MESSAGE, message));
     }
 
     public static void sendServerNotice(Session session, String notice) {
-        ServerMessage response = MessageBuilder.chatMessage(0, "",
-                MessageType.SERVER_NOTICE, notice);
-        session.sendAndFlush(response);
+        session.sendAndFlush(MessageBuilder.chatMessage(0, "",
+                MessageType.SERVER_NOTICE, notice));
     }
 }
