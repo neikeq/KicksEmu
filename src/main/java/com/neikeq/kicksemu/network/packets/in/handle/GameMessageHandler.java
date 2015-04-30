@@ -108,22 +108,22 @@ public class GameMessageHandler extends MessageHandler {
         certifyEvents.add(MessageId.GAME_LOGIN);
     }
 
-    public boolean handle(Session session, ClientMessage msg) {
+    public boolean handleFails(Session session, ClientMessage msg) {
         int messageId = msg.getMessageId();
 
         if (session.isAuthenticated() || certifyEvents.contains(messageId)) {
 
-            if (!super.handle(session, msg)) {
+            if (super.handleFails(session, msg)) {
                 MessageEventHandler event = events.get(messageId);
 
                 if (event != null) {
                     event.handle(session, msg);
                 } else {
-                    return false;
+                    return true;
                 }
             }
         }
 
-        return true;
+        return false;
     }
 }

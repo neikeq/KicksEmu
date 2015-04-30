@@ -61,7 +61,7 @@ public class Room {
         byte result = 0;
 
         synchronized (locker) {
-            if (!isFull()) {
+            if (notFull()) {
                 // If room does not have a password, or typed password matches room's password
                 if (getType() != RoomType.PASSWORD || password.equals(getPassword()) ||
                         PlayerInfo.isModerator(playerId)) {
@@ -385,9 +385,9 @@ public class Room {
         return getPlayers().containsKey(playerId);
     }
 
-    public boolean isFull() {
+    public boolean notFull() {
         synchronized (locker) {
-            return getPlayers().size() >= getMaxSize().toInt();
+            return getPlayers().size() < getMaxSize().toInt();
         }
     }
 

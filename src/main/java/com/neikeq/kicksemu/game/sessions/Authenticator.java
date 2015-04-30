@@ -72,7 +72,7 @@ public class Authenticator {
 
                             int id = result.getInt("id");
 
-                            if (!Moderation.isUserBanned(id)) {
+                            if (Moderation.notUserBanned(id)) {
                                 if (!UserUtils.isAlreadyConnected(id)) {
                                     authResult = AuthResult.SUCCESS;
                                 } else {
@@ -155,7 +155,7 @@ public class Authenticator {
 
             try (ResultSet result = stmt.executeQuery()) {
                 if (result.next()) {
-                    if (!Moderation.isUserBanned(accountId)) {
+                    if (Moderation.notUserBanned(accountId)) {
                         boolean connected = UserUtils.isAlreadyConnected(accountId);
 
                         if (connected) {

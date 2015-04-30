@@ -23,7 +23,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
             MessageHandler messageHandler = ServerManager.getMessageHandler();
 
             // Handle the incoming message
-            if (!messageHandler.handle(SessionManager.getSession(ctx.channel()), message)) {
+            if (messageHandler.handleFails(SessionManager.getSession(ctx.channel()), message)) {
                 Output.println("Received unknown message (id: " + message.getMessageId() +
                         ") from: " + ctx.channel().remoteAddress().toString(), Level.DEBUG);
             }

@@ -39,9 +39,8 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
                     if (room != null && room.isPlaying()) {
                         if (room.getHost() == playerId) {
                             room.sendBroadcast(MessageBuilder.hostInfo(room));
-                        } else {
-                            // TODO update player's port
                         }
+                        // TODO else { update player's port }
                     }
                 }
             }
@@ -49,7 +48,7 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
             MessageHandler messageHandler = ServerManager.getMessageHandler();
 
             // Handle the incoming message
-            if (!messageHandler.handle(session, message)) {
+            if (messageHandler.handleFails(session, message)) {
                 Output.println("Received unknown datagram packet (id: " + message.getMessageId() +
                         ") from: " + packet.sender().getAddress().getHostAddress(), Level.DEBUG);
             }

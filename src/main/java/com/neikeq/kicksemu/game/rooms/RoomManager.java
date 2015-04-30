@@ -145,7 +145,7 @@ public class RoomManager {
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
                 result = (byte) 253; // Wrong level settings
             } else if (maxSize == null || type == null || map == null || ball == null ||
-                    roomMode == null || !roomMode.isValidForServer(serverType)) {
+                    roomMode == null || roomMode.notValidForServer(serverType)) {
                 result = (byte) 255; // System problem
             } else {
                 short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
@@ -221,7 +221,7 @@ public class RoomManager {
 
         List<Room> freeRooms = rooms.values().stream()
                 .filter(r -> !r.isPlaying() && r.getType() != RoomType.PASSWORD &&
-                        !r.isFull() && !r.playerHasInvalidLevel(level))
+                        r.notFull() && !r.playerHasInvalidLevel(level))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         Collections.sort(freeRooms, (r1, r2) ->
@@ -327,7 +327,7 @@ public class RoomManager {
         GameServerType serverType = ServerInfo.getType(ServerManager.getServerId());
 
         if (maxSize == null || type == null || roomMode == null ||
-                !roomMode.isValidForServer(serverType)) {
+                roomMode.notValidForServer(serverType)) {
             result = (byte) 255; // System problem
         } else if (room == null) {
             result = (byte) 254; // Room does not exist

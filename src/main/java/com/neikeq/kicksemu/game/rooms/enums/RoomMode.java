@@ -47,16 +47,16 @@ public enum RoomMode {
     }
 
     // TODO Add TOURNAMENT and CLUB server checks
-    public boolean isValidForServer(GameServerType serverType) {
+    public boolean notValidForServer(GameServerType serverType) {
         switch (serverType) {
             case PRIVATE:
             case NORMAL:
-                return this == AI_GOALKEEPER;
+                return this != AI_GOALKEEPER;
             case PRACTICE:
-                return this == TRAINING_ONE || this == TRAINING_TWO ||
-                        this == TRAINING_THREE;
+                return this != TRAINING_ONE && this != TRAINING_TWO &&
+                        this != TRAINING_THREE;
             default:
-                return false;
+                return true;
         }
     }
 }

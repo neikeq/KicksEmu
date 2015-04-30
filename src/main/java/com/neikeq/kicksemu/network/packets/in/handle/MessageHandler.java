@@ -22,14 +22,14 @@ public abstract class MessageHandler {
         events.put(MessageId.TCP_PING, UserManager::tcpPing);
     }
 
-    public boolean handle(Session session, ClientMessage msg) {
+    public boolean handleFails(Session session, ClientMessage msg) {
         MessageEventHandler event = events.get(msg.getMessageId());
 
         if (event != null) {
             event.handle(session, msg);
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 }

@@ -79,7 +79,7 @@ public class Configuration {
         if (conf.config != null && conf.config.containsKey(key)) {
             return conf.config.getProperty(key);
         } else {
-            return null;
+            return "";
         }
     }
 

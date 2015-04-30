@@ -34,19 +34,19 @@ public class TutorialManager {
 
                     boolean updated;
 
-                    if (updated = !compare(dribbling, tutorialState.getDribbling())) {
+                    if (updated = areDifferent(dribbling, tutorialState.getDribbling())) {
                         tutorialState.setDribbling(dribbling);
                     }
 
-                    if (updated |= !compare(passing, tutorialState.getPassing())) {
+                    if (updated |= areDifferent(passing, tutorialState.getPassing())) {
                         tutorialState.setPassing(passing);
                     }
 
-                    if (updated |= !compare(shooting, tutorialState.getShooting())) {
+                    if (updated |= areDifferent(shooting, tutorialState.getShooting())) {
                         tutorialState.setShooting(shooting);
                     }
 
-                    if (updated |= !compare(defense, tutorialState.getDefense())) {
+                    if (updated |= areDifferent(defense, tutorialState.getDefense())) {
                         tutorialState.setDefense(defense);
                     }
 
@@ -72,17 +72,17 @@ public class TutorialManager {
 
     }
 
-    private static boolean compare(byte tutorial, byte storedTutorial) {
+    private static boolean areDifferent(byte tutorial, byte storedTutorial) {
         for (byte i = 0; i < 4; i++) {
             byte tutorialBit = (byte) ((tutorial >> i) & 1);
             byte storedBit = (byte) ((storedTutorial >> i) & 1);
 
             if (tutorialBit != storedBit) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     private static boolean checkForReward(int characterId, byte dribbling,

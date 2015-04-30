@@ -27,7 +27,7 @@ public class Moderation {
         }
     }
 
-    public static boolean isUserBanned(int userId) {
+    public static boolean notUserBanned(int userId) {
         String query = "SELECT id FROM bans WHERE user_id = ? AND expire > ? LIMIT 1";
 
         try (Connection connection = MySqlManager.getConnection();
@@ -36,11 +36,11 @@ public class Moderation {
             stmt.setTimestamp(2, DateUtils.getTimestamp());
 
             try (ResultSet result = stmt.executeQuery()) {
-                return result.next();
+                return !result.next();
             }
 
         } catch (SQLException e) {
-            return true;
+            return false;
         }
     }
 }
