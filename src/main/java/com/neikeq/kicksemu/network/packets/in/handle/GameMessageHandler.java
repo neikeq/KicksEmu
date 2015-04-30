@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.network.packets.in.handle;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.StatusMessage;
 import com.neikeq.kicksemu.game.chat.ChatManager;
+import com.neikeq.kicksemu.game.clubs.ClubManager;
 import com.neikeq.kicksemu.game.misc.MatchBroadcaster;
 import com.neikeq.kicksemu.game.inventory.InventoryManager;
 import com.neikeq.kicksemu.game.inventory.Shop;
@@ -92,6 +93,8 @@ public class GameMessageHandler extends MessageHandler {
         events.put(MessageId.PURCHASE_CELE, Shop::purchaseCele);
         events.put(MessageId.ACTIVATE_CELE, InventoryManager::activateCele);
         events.put(MessageId.DEACTIVATE_CELE, InventoryManager::deactivateCele);
+        events.put(MessageId.CLUB_INFO, (s, msg) -> ClubManager.clubInfo(s));
+        events.put(MessageId.CLUB_MEMBERS, ClubManager::clubMembers);
         events.put(MessageId.UDP_GAME_1, MatchBroadcaster::udpGame);
         events.put(MessageId.UDP_GAME_2, MatchBroadcaster::udpGame);
         events.put(MessageId.UDP_GAME_3, MatchBroadcaster::udpGame);

@@ -71,7 +71,7 @@ class CharacterValidator {
     }
 
     private static boolean nameAlreadyInUse(String name) {
-        String query = "SELECT count(*) FROM characters WHERE name = ?";
+        String query = "SELECT count(1) FROM characters WHERE name = ?";
 
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {

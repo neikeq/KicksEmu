@@ -26,6 +26,8 @@ public class MessageId {
     public static final int FRIEND_REQUEST = 2111;
     public static final int FRIEND_RESPONSE = 2112;
     public static final int DELETE_FRIEND = 2113;
+    public static final int CLUB_INFO = 2114;
+    public static final int CLUB_MEMBERS = 2115;
     public static final int IGNORED_LIST = 2116;
     public static final int BLOCK_PLAYER = 2117;
     public static final int UNBLOCK_PLAYER = 2119;

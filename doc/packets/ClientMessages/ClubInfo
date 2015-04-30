@@ -1,0 +1,8 @@
+// ClubInfo
+// Tcp
+
+Id: 2114
+Size: 4
+
+Data:
+int packet_id

@@ -26,13 +26,16 @@ public class MemberInfo {
 
     public static int getInt(String column, String table, int id, Connection ... con) {
         String query = "SELECT " + column + " FROM " + table +
-                " WHERE id = ? AND role != 'PENDING' LIMIT 1;";
+                " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
+                stmt.setString(2, "PENDING");
+                stmt.setString(3, "REJECTED");
+
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return rs.getInt(column);
@@ -52,13 +55,16 @@ public class MemberInfo {
 
     public static String getString(String column, String table, int id, Connection ... con) {
         String query = "SELECT " + column + " FROM " + table +
-                " WHERE id = ? AND role != 'PENDING' LIMIT 1;";
+                " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
+                stmt.setString(2, "PENDING");
+                stmt.setString(3, "REJECTED");
+
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return rs.getString(column);

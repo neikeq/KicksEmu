@@ -1,0 +1,17 @@
+// ClubInfo
+// Tcp
+
+Id: 2114
+Size: 74
+
+Data:
+int packet_id
+byte reason
+byte response
+char[15] club_name
+short members_count
+short members_limit
+char[15] manager
+char[15] captain_one
+char[15] captain_two
+int club_points

@@ -2,7 +2,6 @@ package com.neikeq.kicksemu.game.chat;
 
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 
 public class ChatUtils {

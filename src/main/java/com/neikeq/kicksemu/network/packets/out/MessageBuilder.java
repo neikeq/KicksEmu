@@ -1314,4 +1314,83 @@ public class MessageBuilder {
 
         return msg;
     }
+
+    public static ServerMessage clubInfo(int playerId) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_INFO);
+
+        MessageUtils.appendResult((byte) 0, msg);
+
+        int clubId = MemberInfo.getClubId(playerId);
+
+        msg.append(ClubInfo.getName(clubId), 15);
+        msg.append(ClubInfo.getMembersCount(clubId));
+        msg.append(ClubInfo.getMembersLimit(clubId));
+
+        int manager = ClubInfo.getManager(clubId);
+        msg.append(PlayerInfo.getName(manager), 15);
+
+        List<Integer> captains = ClubInfo.getCaptains(clubId);
+
+        for (int i = 0; i < 2; i++) {
+            if (i >= captains.size()) {
+                msg.appendZeros(15);
+            } else {
+                msg.append(PlayerInfo.getName(captains.get(i)), 15);
+            }
+        }
+
+        msg.append(ClubInfo.getClubPoints(clubId));
+
+        return msg;
+    }
+
+    public static ServerMessage clubMembers(int playerId, byte page) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_MEMBERS);
+
+        MessageUtils.appendResult((byte) 0, msg);
+
+        msg.append(page);
+
+        int clubId = MemberInfo.getClubId(playerId);
+
+        List<Integer> membersForPage = ClubInfo.getMembers(clubId, page * 10);
+
+        membersForPage.forEach(memberId -> {
+            msg.append(memberId);
+            msg.append(PlayerInfo.getName(memberId), 15);
+            msg.append(PlayerInfo.getLevel(memberId));
+            msg.append((byte)PlayerInfo.getPosition(memberId));
+
+            byte status;
+            short server = 0;
+            short location = 0;
+            int userId = PlayerInfo.getOwner(memberId);
+
+            if (!ServerManager.isPlayerConnected(memberId)) {
+                server = UserInfo.getServer(userId);
+
+                status = (byte)(server > 0 && UserInfo.getOnline(userId) == memberId ? 1 : 0);
+            } else {
+                status = 2;
+            }
+
+            switch (status) {
+                case 1:
+                    location = server;
+                    break;
+                case 2:
+                    location = (short)ServerManager.getSessionById(memberId).getRoomId();
+                    break;
+                case 3:
+                    location = (short)ServerManager.getSessionById(memberId).getRoomId();
+                    break;
+                default:
+            }
+
+            msg.append(status);
+            msg.append(location);
+        });
+
+        return msg;
+    }
 }

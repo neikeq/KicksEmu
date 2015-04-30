@@ -147,6 +147,7 @@ CREATE TABLE IF NOT EXISTS `clubs` (
   `club_points` int(10) unsigned NOT NULL DEFAULT '0',
   `membership_mode` enum('APPROVED','IMMEDIATE','DISCONTINUED') NOT NULL,
   `uniform_active` bit(1) NOT NULL DEFAULT b'0',
+  `extra_membership` BIT(1) NOT NULL DEFAULT b'0',
   `uniform_home_shirts` int(11) unsigned DEFAULT NULL,
   `uniform_home_pants` int(11) unsigned DEFAULT NULL,
   `uniform_home_socks` int(11) unsigned DEFAULT NULL,
@@ -166,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `clubs` (
 CREATE TABLE IF NOT EXISTS `club_members` (
   `id` int(11) unsigned NOT NULL,
   `club_id` int(11) unsigned NOT NULL,
-  `role` enum('PENDING','MEMBER','CAPTAIN','MANAGER') NOT NULL,
+  `role` enum('REJECTED','PENDING','MEMBER','CAPTAIN','MANAGER') NOT NULL,
   `back_number` smallint(6) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

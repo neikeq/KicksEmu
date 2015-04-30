@@ -16,15 +16,15 @@ char[15] name
 short level
 byte position
 byte status // Offline: 0, Server: 1, Room: 2, Team: 3
-short id
+short location_id
 
 Notes:
 // The status value is 'Server' (1) when a friend is online in a different server,
-// and the id represents the id of that server.
-// This status was never used on the original game (atleast not in the HK version).
+// and the location_id represents the id of that server.
+// This status was never used on the original game (at least not in the HK version).
 
 // The status value is 'Room' (2) when a friend is online in this server,
-// and the id represents the id of the room where the friend is playing,
+// and the location_id represents the id of the room where the friend is playing,
 // or zero if the friend is in the main lobby.
 
 // I do not currently know what the status 'Team' (3) stands for.
