@@ -98,7 +98,7 @@ public class Input {
     }
 
     private void handleStats() {
-        ServerType serverType = KicksEmu.getInstance().getServerManager().getServerType();
+        ServerType serverType = KicksEmu.getServerManager().getServerType();
 
         System.out.println("- Server: " + ServerManager.getServerId());
         System.out.println("- Type: " + serverType.toString());

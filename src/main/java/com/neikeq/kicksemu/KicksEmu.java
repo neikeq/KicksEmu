@@ -184,8 +184,8 @@ public class KicksEmu {
         return output;
     }
 
-    public ServerManager getServerManager() {
-        return serverManager;
+    public static ServerManager getServerManager() {
+        return getInstance().serverManager;
     }
 
     public static KicksEmu getInstance() {

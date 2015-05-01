@@ -1,10 +1,12 @@
 package com.neikeq.kicksemu.game.sessions;
 
+import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.network.server.ServerType;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
@@ -154,7 +156,7 @@ public class PlayerCache {
     }
 
     public Short getPosition() {
-        return position;
+        return KicksEmu.getServerManager().getServerType() == ServerType.GAME ? position : null;
     }
 
     public void setPosition(Short position) {
