@@ -154,7 +154,7 @@ function reset_stats_by_id($char_id, $db) {
         on_character_level_up($char_id, $level, $level - 1, $branch_position, $db);
     }
 
-    if ($level >= 18) {
+    if ($level >= 18 && $position % 10 != 0) {
         apply_upgrade_stats($char_id, $position, $db);
     }
 }
