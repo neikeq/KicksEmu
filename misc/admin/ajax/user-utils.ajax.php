@@ -3,6 +3,17 @@
 require_once "../includes/database.php";
 require_once "constants.ajax.php";
 
+function refValues($arr){
+    if (strnatcmp(phpversion(),'5.3') >= 0)
+    {
+        $refs = array();
+        foreach($arr as $key => $value)
+            $refs[$key] = &$arr[$key];
+        return $refs;
+    }
+    return $arr;
+}
+
 function character_exists($name, $db) {
     $stmt = $db->prepare("SELECT 1 FROM characters WHERE name=?");
     $stmt->bind_param("s", $name);
@@ -113,21 +124,17 @@ function set_character_level($char_id, $level, $db) {
     return $result;
 }
 
-function set_character_stats_by_index($char_id, $value, $index, $db) {
-    $stats_type = get_stats_type_by_index($index);
-
-    $stmt = $db->prepare("UPDATE characters SET stats_" . $stats_type . "=? WHERE id=?");
-    $stmt->bind_param("ii", $value, $char_id);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    $stmt->close();
-
-    return $result;
-}
-
-function set_character_stats_points($char_id, $stats_points, $db) {
-    $stmt = $db->prepare("UPDATE characters SET stats_points=? WHERE id=?");
-    $stmt->bind_param("ii", $stats_points, $char_id);
+function set_character_stats($char_id, $stats_points, $stats, $db) {
+    $stmt = $db->prepare("UPDATE characters SET " .
+        "stats_running = ?, stats_endurance = ?, stats_agility = ?, " .
+        "stats_ball_control = ?, stats_dribbling = ?, stats_stealing = ?, " .
+        "stats_tackling = ?, stats_heading = ?, stats_short_shots = ?, " .
+        "stats_long_shots = ?, stats_crossing = ?, stats_short_passes = ?, " .
+        "stats_long_passes = ?, stats_marking = ?, stats_goalkeeping = ?, " .
+        "stats_punching = ?, stats_defense = ?, stats_points = ? " .
+        "WHERE id = ? LIMIT 1;");
+    call_user_func_array(array($stmt, "bind_param"), refValues(array_merge(array('iiiiiiiiiiiiiiiiiii'), $stats, array($stats_points, $char_id))));
+    //$stmt->bind_param("ii", $stats_points, $char_id);
     $stmt->execute();
     $result = $stmt->fetch();
     $stmt->close();
@@ -247,6 +254,23 @@ function check_character_experience($char_id, $db) {
 
 function on_character_level_up($char_id, $level, $levels, $position, $db) {
     $level_from = $level - $levels;
+    $stats_points = 0;
+    for ($i = $level_from; $i < $level; $i++) {
+        $index = $i + 1;
+        $stats_to_add = array_key_exists($index, Constants::stats_for_level) ?
+                        Constants::stats_for_level[$index] : 1;
+        $stats_points += $stats_to_add;
+    }
+    $auto_stats = Constants::auto_stats[$position];
+    for ($i = 0; $i < count($auto_stats); $i++) {
+        $stats_points += sum_character_stats_by_index($char_id, $auto_stats[$i] * $levels,
+                                                      $i, $db);
+    }
+    sum_character_stats_points($char_id, $stats_points, $db);
+}
+
+function on_level_up_optimized($level, $levels, $position, &$stats) {
+    $level_from = $level - $levels;
 
     $stats_points = 0;
 
@@ -258,12 +282,22 @@ function on_character_level_up($char_id, $level, $levels, $position, $db) {
     }
 
     $auto_stats = Constants::auto_stats[$position];
-    for ($i = 0; $i < count($auto_stats); $i++) {
-        $stats_points += sum_character_stats_by_index($char_id, $auto_stats[$i] * $levels,
-                                                      $i, $db);
-    }
+    sum_stats($auto_stats, $levels, $stats, $stats_points);
 
-    sum_character_stats_points($char_id, $stats_points, $db);
+    return $stats_points;
+}
+
+function sum_stats($add, $factor, &$stats, &$stats_points) {
+    for ($i = 0; $i < 17; $i++) {
+        $stats[$i] += sum_stats_up_to_hundred($add[$i] * $factor, $stats[$i], $stats_points);
+    }
+}
+
+function sum_stats_up_to_hundred($value, $current, &$stats_points) {
+    $add = stats_up_to_hundred($current, $value);
+    $stats_points += $value - $add;
+
+    return $add;
 }
 
 function stats_up_to_hundred($current_value, $value) {

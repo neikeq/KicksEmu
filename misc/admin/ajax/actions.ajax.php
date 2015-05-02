@@ -12,7 +12,7 @@ function ban_user($username, $expire, $reason, $db) {
     $stmt->execute();
     $result = $stmt->fetch();
     $stmt->close();
-    
+
     return $result;
 }
 
@@ -137,26 +137,24 @@ function reset_stats($character, $db) {
 
 function reset_stats_by_id($char_id, $db) {
     $position = get_character_position($char_id, $db);
+    $trunk_position = $position - ($position % 10);
     $level = get_character_level($char_id, $db);
-    $branch_position = $position - ($position % 10);
-    $creation_stats = Constants::creation_stats[$branch_position];
+    $stats = Constants::creation_stats[$trunk_position];
 
-    set_character_stats_points($char_id, 10, $db);
-
-    for ($i = 0; $i < 17; $i++) {
-        set_character_stats_by_index($char_id, $creation_stats[$i], $i, $db);
-    }
+    $stats_points = 10;
 
     if ($level > 18) {
-        on_character_level_up($char_id, 18, 17, $branch_position, $db);
-        on_character_level_up($char_id, $level, $level - 18, $position, $db);
+        $stats_points += on_level_up_optimized(18, 17, $trunk_position, $stats);
+        $stats_points += on_level_up_optimized($level, $level - 18, $position, $stats);
     } else {
-        on_character_level_up($char_id, $level, $level - 1, $branch_position, $db);
+        $stats_points += on_level_up_optimized($level, $level - 1, $trunk_position, $stats);
     }
 
     if ($level >= 18 && $position % 10 != 0) {
-        apply_upgrade_stats($char_id, $position, $db);
+        sum_stats(Constants::upgrade_stats[$position], 1, $stats, $stats_points);
     }
+
+    set_character_stats($char_id, $stats_points, $stats, $db);
 }
 
 function reset_stats_global($reason, $db) {
@@ -179,18 +177,6 @@ function reset_stats_global($reason, $db) {
     }
 
     return $result;
-}
-
-function apply_upgrade_stats($char_id, $position, $db) {
-    $position_stats = Constants::upgrade_stats[$position];
-    $remain_stats = 0;
-
-    for ($i = 0; $i < 17; $i++) {
-        $remain_stats += sum_character_stats_by_index($char_id, $position_stats[$i],
-                                                      $i, $db);
-    }
-
-    sum_character_stats_points($remain_stats, $char_id, $db);
 }
 
 function change_position($character, $position, $db) {
