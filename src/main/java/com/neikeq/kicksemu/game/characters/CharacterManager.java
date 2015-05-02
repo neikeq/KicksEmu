@@ -101,20 +101,20 @@ public class CharacterManager {
 
         MutableInteger statsPoints = new MutableInteger(10);
 
+        if (level > 18) {
+            onPlayerLevelUp(18, 17, branchPosition, newStats, statsPoints);
+            onPlayerLevelUp(level, level - 18, position, newStats, statsPoints);
+        } else {
+            onPlayerLevelUp(level, level - 1, branchPosition, newStats, statsPoints);
+        }
+
+        if (level >= 18 && Position.isAdvancedPosition(position)) {
+            // Apply upgrade stats
+            PlayerStats.sumStats(StatsInfo.getInstance().getUpgradeStats().get(position),
+                    1, newStats, statsPoints);
+        }
+
         try (Connection con = MySqlManager.getConnection()) {
-            if (level > 18) {
-                onPlayerLevelUp(18, 17, branchPosition, newStats, statsPoints);
-                onPlayerLevelUp(level, level - 18, position, newStats, statsPoints);
-            } else {
-                onPlayerLevelUp(level, level - 1, branchPosition, newStats, statsPoints);
-            }
-
-            if (level >= 18) {
-                // Apply upgrade stats
-                PlayerStats.sumStats(StatsInfo.getInstance().getUpgradeStats().get(position),
-                        1, newStats, statsPoints);
-            }
-
             // Set new stats
             PlayerInfo.setStats(newStats, playerId, con);
 

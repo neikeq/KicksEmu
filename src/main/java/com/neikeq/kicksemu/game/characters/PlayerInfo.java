@@ -365,9 +365,9 @@ public class PlayerInfo {
     }
 
     public static PlayerStats getStats(int id, Connection ... con) {
-        String query = "SELECT stats_running, stats_endurance,  stats_agility, " +
+        String query = "SELECT stats_running, stats_endurance, stats_agility, " +
                 "stats_ball_control, stats_dribbling, stats_stealing, stats_tackling, " +
-                "stats_heading,  stats_short_shots, stats_long_shots, stats_crossing, " +
+                "stats_heading, stats_short_shots, stats_long_shots, stats_crossing, " +
                 "stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping, " +
                 "stats_punching, stats_defense FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
