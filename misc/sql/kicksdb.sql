@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `club_members` (
   `id` int(11) unsigned NOT NULL,
   `club_id` int(11) unsigned NOT NULL,
   `role` enum('REJECTED','PENDING','MEMBER','CAPTAIN','MANAGER') NOT NULL,
-  `back_number` smallint(6) unsigned NOT NULL,
+	`back_number` SMALLINT(6) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
