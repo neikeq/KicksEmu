@@ -9,8 +9,8 @@ import java.util.List;
 
 public class TableReader {
 
-    List<Row> rows;
-    int index = 0;
+    private final List<Row> rows;
+    private int index = 0;
 
     public Row nextRow() throws IndexOutOfBoundsException {
         if (index < rows.size()) {

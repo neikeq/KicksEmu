@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Flood {
+class Flood {
 
     private static final Map<Integer, Long> lockedPlayers = new HashMap<>();
     private static final Map<Integer, ArrayList<Long>> chatHistory =  new HashMap<>();

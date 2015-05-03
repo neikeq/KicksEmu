@@ -22,7 +22,7 @@ public enum ItemType {
     SKILL_SLOT,
     CHARACTER_SLOT,
     STATS_RESET,
-    KASH_TICKET,
+    CASH_TICKET,
     POINTS_TICKET,
     CLUB_SPONSORSHIP,
     RANDOM_BOX,
@@ -89,7 +89,7 @@ public enum ItemType {
                 return 203;
             case STATS_RESET:
                 return 204;
-            case KASH_TICKET:
+            case CASH_TICKET:
                 return 205;
             case POINTS_TICKET:
                 return 206;
@@ -185,7 +185,7 @@ public enum ItemType {
             case 204:
                 return STATS_RESET;
             case 205:
-                return KASH_TICKET;
+                return CASH_TICKET;
             case 206:
                 return POINTS_TICKET;
             case 209:

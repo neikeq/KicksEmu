@@ -43,7 +43,7 @@ public class ServerManager {
         }
     }
 
-    void initializeMain() {
+    private void initializeMain() {
         messageHandler = new MainMessageHandler();
         serverId = 0;
 

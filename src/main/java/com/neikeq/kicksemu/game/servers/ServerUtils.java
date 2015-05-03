@@ -108,7 +108,7 @@ public class ServerUtils {
             stmt.setString(9, base.getType().name());
             stmt.setInt(10, base.getExpFactor());
             stmt.setInt(11, base.getPointFactor());
-            stmt.setInt(12, base.getKashFactor());
+            stmt.setInt(12, base.getCashFactor());
             stmt.setBoolean(13, base.isPracticeRewards());
 
             return stmt.executeUpdate() > 0;
@@ -137,7 +137,7 @@ public class ServerUtils {
             stmt.setString(10, base.getType().name());
             stmt.setInt(11, base.getExpFactor());
             stmt.setInt(12, base.getPointFactor());
-            stmt.setInt(13, base.getKashFactor());
+            stmt.setInt(13, base.getCashFactor());
             stmt.setBoolean(14, base.isPracticeRewards());
             stmt.setShort(15, base.getId());
 

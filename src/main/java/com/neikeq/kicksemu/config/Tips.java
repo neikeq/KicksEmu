@@ -19,7 +19,7 @@ public class Tips {
     private String tipsPath;
     private int index;
 
-    public void init() {
+    private void init() {
         tipsList = new ArrayList<>();
         index = 0;
 
@@ -54,11 +54,11 @@ public class Tips {
         return "";
     }
 
-    public Tips() {
+    private Tips() {
         init();
     }
 
-    public static Tips getInstance() {
+    private static Tips getInstance() {
         if (instance == null) {
             instance = new Tips();
         }

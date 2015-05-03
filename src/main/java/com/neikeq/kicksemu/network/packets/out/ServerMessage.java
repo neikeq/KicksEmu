@@ -43,7 +43,7 @@ public class ServerMessage {
         body.writeInt(value);
     }
 
-    public void append(byte[] value, int length) {
+    private void append(byte[] value, int length) {
         int lengthFlag = length > value.length ? value.length : length;
 
         for (int i = 0; i < lengthFlag; i++) {
@@ -70,10 +70,6 @@ public class ServerMessage {
 
     public void write(int index, short value) {
         body.setShort(index, value);
-    }
-
-    public void write(int index, int value) {
-        body.setInt(index, value);
     }
     
     public ByteBuf getByteBuf() {

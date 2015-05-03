@@ -1,4 +1,4 @@
-Index,Id,StatIndex,Level,StatPoints,Payment,Kash,Points,Name,Stat,IconPath
+Index,Id,StatIndex,Level,StatPoints,Payment,Cash,Points,Name,Stat,IconPath
 0,101,1,0,1,2,200,1000,Running Training 1,Running,Learn/Learn_Run
 1,102,1,10,1,2,400,2000,Running Training 2,Running,Learn/Learn_Run
 2,103,1,20,1,2,800,4000,Running Training 3,Running,Learn/Learn_Run

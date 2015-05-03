@@ -2,10 +2,10 @@ package com.neikeq.kicksemu.game.inventory;
 
 public class DefaultClothes {
 
-    private int head;
-    private int shirts;
-    private int pants;
-    private int shoes;
+    private final int head;
+    private final int shirts;
+    private final int pants;
+    private final int shoes;
 
     public DefaultClothes(int head, int shirts, int pants, int shoes) {
         this.head = head;

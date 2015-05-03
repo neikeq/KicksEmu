@@ -33,7 +33,7 @@ public class NettyTcpServer {
         initBootstrap();
     }
 
-    void initBootstrap() {
+    private void initBootstrap() {
         bootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new Initializer())

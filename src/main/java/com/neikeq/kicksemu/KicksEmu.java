@@ -39,7 +39,7 @@ public class KicksEmu {
         KicksEmu.getInstance().start(configFile);
     }
 
-    void start(String configFile) {
+    private void start(String configFile) {
         long startTime = System.nanoTime();
 
         // Initialize Configurations
@@ -126,7 +126,7 @@ public class KicksEmu {
      *
      * @param messages error message/s
      */
-    void handleFatalError(String... messages) {
+    private void handleFatalError(String... messages) {
         String message = messages[0];
 
         for (int i = 1; i < messages.length; i++) {
@@ -153,7 +153,7 @@ public class KicksEmu {
         short serverId = ServerManager.getServerId();
 
         if (serverId > 0 && initialized) {
-            ServerInfo.setOnline(false, serverId);
+            ServerInfo.toggleOffline(serverId);
             ServerInfo.setConnectedUsers((short) 0, serverId);
         }
     }

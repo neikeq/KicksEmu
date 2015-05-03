@@ -21,7 +21,7 @@ public class UserInfo {
         return SqlUtils.getString("password", TABLE, id, con);
     }
 
-    public static int getKash(int id, Connection ... con) {
+    public static int getCash(int id, Connection... con) {
         return SqlUtils.getInt("kash", TABLE, id, con);
     }
 
@@ -83,7 +83,7 @@ public class UserInfo {
 
     // Sql setters
 
-    public static void sumKash(int value, int id, Connection ... con) {
+    public static void sumCash(int value, int id, Connection... con) {
         SqlUtils.sumInt("kash", value, TABLE, id, con);
     }
 
@@ -168,16 +168,16 @@ public class UserInfo {
         return characterSlot(characterId, id) >= 0;
     }
 
-    public static void setSlotWithIndex(int index, int value, int id) {
+    public static void clearSlotByIndex(int index, int id) {
         switch (index) {
             case 0:
-                setSlotOne(value, id);
+                setSlotOne(0, id);
                 break;
             case 1:
-                setSlotTwo(value, id);
+                setSlotTwo(0, id);
                 break;
             case 2:
-                setSlotThree(value, id);
+                setSlotThree(0, id);
                 break;
             default:
         }

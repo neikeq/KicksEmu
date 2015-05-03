@@ -30,7 +30,7 @@ public class NettyUdpServer {
         initBootstrap();
     }
 
-    void initBootstrap() {
+    private void initBootstrap() {
         bootstrap.group(group)
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_BROADCAST, true)

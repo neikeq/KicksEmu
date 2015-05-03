@@ -6,12 +6,12 @@ import java.sql.Timestamp;
 
 public class Celebration implements Product, IndexedProduct {
 
-    private int id;
-    private int inventoryId;
-    private Expiration expiration;
+    private final int id;
+    private final int inventoryId;
+    private final Expiration expiration;
     private byte selectionIndex;
-    private Timestamp timestampExpire;
-    private boolean visible;
+    private final Timestamp timestampExpire;
+    private final boolean visible;
 
     public Celebration() {
         this(0, 0, 0, (byte)0, DateUtils.getTimestamp(), false);

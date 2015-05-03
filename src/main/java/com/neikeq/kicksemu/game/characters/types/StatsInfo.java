@@ -12,7 +12,7 @@ public class StatsInfo {
 
     private static StatsInfo instance;
 
-    public void defineCreationStats() {
+    private void defineCreationStats() {
         getCreationStats().put(Position.FW,
                 new PlayerStats(40, 30, 30, 30, 30, 20, 15, 35, 30, 20, 55, 60, 55, 30, 0, 0, 0));
         getCreationStats().put(Position.MF,
@@ -21,7 +21,7 @@ public class StatsInfo {
                 new PlayerStats(40, 30, 30, 25, 25, 30, 30, 35, 15, 15, 50, 60, 65, 30, 0, 0, 0));
     }
 
-    public void defineUpgradeStats() {
+    private void defineUpgradeStats() {
         getUpgradeStats().put(Position.ST,
                 new PlayerStats(0, 0, 0, 7, 7, 0, -10, 7, 7, -10, 0, 0, 0, 0, 0, 0, 0));
         getUpgradeStats().put(Position.CF,
@@ -44,7 +44,7 @@ public class StatsInfo {
                 new PlayerStats(0, 7, 0, 0, 0, 0, 7, 0, -10, -10, 0, 0, 7, 7, 0, 0, 0));
     }
 
-    public void defineAutoStats() {
+    private void defineAutoStats() {
         getAutoStats().put(Position.FW,
                 new PlayerStats(1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0));
         getAutoStats().put(Position.ST,
@@ -73,7 +73,7 @@ public class StatsInfo {
                 new PlayerStats(1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     }
 
-    public void defineLevelStats() {
+    private void defineLevelStats() {
         getLevelStats().put(10, 2);
         getLevelStats().put(20, 2);
         getLevelStats().put(30, 2);
@@ -117,7 +117,7 @@ public class StatsInfo {
         return autoStats;
     }
 
-    public Map<Integer, Integer> getLevelStats() {
+    private Map<Integer, Integer> getLevelStats() {
         return levelStats;
     }
 

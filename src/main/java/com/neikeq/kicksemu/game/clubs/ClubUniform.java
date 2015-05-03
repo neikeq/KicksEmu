@@ -2,15 +2,15 @@ package com.neikeq.kicksemu.game.clubs;
 
 public class ClubUniform {
 
-    private int homeShirts;
-    private int homePants;
-    private int homeSocks;
-    private int homeWrist;
+    private final int homeShirts;
+    private final int homePants;
+    private final int homeSocks;
+    private final int homeWrist;
 
-    private int awayShirts;
-    private int awayPants;
-    private int awaySocks;
-    private int awayWrist;
+    private final int awayShirts;
+    private final int awayPants;
+    private final int awaySocks;
+    private final int awayWrist;
 
     public ClubUniform() {
         this(0, 0, 0, 0, 0, 0, 0, 0);

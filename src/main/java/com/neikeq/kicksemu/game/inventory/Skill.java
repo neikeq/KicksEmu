@@ -6,12 +6,12 @@ import java.sql.Timestamp;
 
 public class Skill implements Product, IndexedProduct {
 
-    private int id;
-    private int inventoryId;
-    private Expiration expiration;
+    private final int id;
+    private final int inventoryId;
+    private final Expiration expiration;
     private byte selectionIndex;
-    private Timestamp timestampExpire;
-    private boolean visible;
+    private final Timestamp timestampExpire;
+    private final boolean visible;
 
     public Skill() {
         this(0, 0, 0, (byte)0, DateUtils.getTimestamp(), false);
@@ -23,7 +23,7 @@ public class Skill implements Product, IndexedProduct {
         this.inventoryId = inventoryId;
         this.expiration = Expiration.fromInt(expiration);
         this.setSelectionIndex(selectionIndex);
-        this.setTimestampExpire(timestampExpire);
+        this.timestampExpire = timestampExpire;
         this.visible = visible;
     }
 
@@ -53,9 +53,5 @@ public class Skill implements Product, IndexedProduct {
 
     public void setSelectionIndex(byte selectionIndex) {
         this.selectionIndex = selectionIndex;
-    }
-
-    public void setTimestampExpire(Timestamp timestampExpire) {
-        this.timestampExpire = timestampExpire;
     }
 }

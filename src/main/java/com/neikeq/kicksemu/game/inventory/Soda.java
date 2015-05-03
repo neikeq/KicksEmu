@@ -20,7 +20,7 @@ public enum Soda {
         }
     }
 
-    public boolean isPointsBonus() {
+    private boolean isPointsBonus() {
         switch (this) {
             case POINTS_100:
             case POINTS_150:

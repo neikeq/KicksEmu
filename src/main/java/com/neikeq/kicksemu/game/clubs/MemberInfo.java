@@ -12,20 +12,20 @@ public class MemberInfo {
     private static final String TABLE = "club_members";
 
     public static int getClubId(int id, Connection ... con) {
-        return getInt("club_id", TABLE, id, con);
+        return getInt("club_id", id, con);
     }
 
     public static MemberRole getRole(int id, Connection... con) {
-        String role = getString("role", TABLE, id, con);
+        String role = getString("role", id, con);
         return role.isEmpty() ? MemberRole.MEMBER : MemberRole.valueOf(role);
     }
 
     public static int getBackNumber(int id, Connection ... con) {
-        return getInt("back_number", TABLE, id, con);
+        return getInt("back_number", id, con);
     }
 
-    public static int getInt(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table +
+    private static int getInt(String column, int id, Connection... con) {
+        String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {
@@ -53,8 +53,8 @@ public class MemberInfo {
         }
     }
 
-    public static String getString(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table +
+    private static String getString(String column, int id, Connection... con) {
+        String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {

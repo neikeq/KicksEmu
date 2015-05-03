@@ -9,12 +9,12 @@ public class OptionInfo {
     private final int id;
     private final int type;
     private final short value;
-    private final short kashLevel;
+    private final short cashLevel;
     private final short pointsLevel;
     private final Price price;
 
     public boolean isValidLevel(short level, Payment payment) {
-        return payment == Payment.KASH ? level >= kashLevel : level >= pointsLevel;
+        return payment == Payment.CASH ? level >= cashLevel : level >= pointsLevel;
     }
 
     public OptionInfo(Row row) {
@@ -23,7 +23,7 @@ public class OptionInfo {
         type = Integer.valueOf(row.nextColumn());
         row.nextColumn();
         value = Short.valueOf(row.nextColumn());
-        kashLevel = Short.valueOf(row.nextColumn());
+        cashLevel = Short.valueOf(row.nextColumn());
         pointsLevel = Short.valueOf(row.nextColumn());
         price = new Price(row);
     }

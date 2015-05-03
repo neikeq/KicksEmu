@@ -1,14 +1,14 @@
 package com.neikeq.kicksemu.game.inventory;
 
 public enum Payment {
-    KASH,
+    CASH,
     POINTS,
     BOTH;
 
     public static Payment fromInt(int value) {
         switch (value) {
             case 1:
-                return KASH;
+                return CASH;
             case 2:
                 return POINTS;
             case 3:

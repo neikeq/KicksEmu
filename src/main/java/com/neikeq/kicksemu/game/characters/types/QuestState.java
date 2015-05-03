@@ -2,8 +2,8 @@ package com.neikeq.kicksemu.game.characters.types;
 
 public class QuestState {
 
-    private short currentQuest;
-    private short remainMatches;
+    private final short currentQuest;
+    private final short remainMatches;
 
     public QuestState() {
         this((short) 0, (short) 0);

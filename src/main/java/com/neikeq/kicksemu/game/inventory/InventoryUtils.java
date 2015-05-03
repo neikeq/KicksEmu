@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class InventoryUtils {
+class InventoryUtils {
 
     public static int getItemPrice(ItemInfo itemInfo, Expiration expiration, Payment payment,
                                    OptionInfo bonusOne, OptionInfo bonusTwo) {

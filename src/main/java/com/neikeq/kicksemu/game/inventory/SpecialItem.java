@@ -5,7 +5,7 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 
-public class SpecialItem {
+class SpecialItem {
 
     public static boolean isSpecialItem(int itemType) {
         switch (itemType) {

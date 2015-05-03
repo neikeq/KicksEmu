@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.table;
 
+import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.utils.table.Row;
 import com.neikeq.kicksemu.utils.table.TableReader;
 
@@ -72,8 +73,8 @@ public class TableManager {
         return result.isPresent() ? result.get() : null;
     }
 
-    public static void initializeSkillTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeSkillTable() {
+        TableReader reader = new TableReader(Constants.TABLE_SKILL_PATH);
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -82,8 +83,8 @@ public class TableManager {
         }
     }
 
-    public static void initializeCeleTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeCeleTable() {
+        TableReader reader = new TableReader(Constants.TABLE_CELE_PATH);
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -92,8 +93,8 @@ public class TableManager {
         }
     }
 
-    public static void initializeLearnTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeLearnTable() {
+        TableReader reader = new TableReader(Constants.TABLE_LEARN_PATH);
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -102,8 +103,8 @@ public class TableManager {
         }
     }
 
-    public static void initializeItemFreeTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeItemFreeTable() {
+        TableReader reader = new TableReader(Constants.TABLE_ITEM_FREE_PATH);
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -112,8 +113,8 @@ public class TableManager {
         }
     }
 
-    public static void initializeItemTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeItemTable() {
+        TableReader reader = new TableReader(Constants.TABLE_ITEM_PATH);
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -122,8 +123,8 @@ public class TableManager {
         }
     }
 
-    public static void initializeBonusTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeBonusTable() {
+        TableReader reader = new TableReader(Constants.TABLE_BONUS_PATH);
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -132,8 +133,8 @@ public class TableManager {
         }
     }
 
-    public static void initializeOptionTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeOptionTable() {
+        TableReader reader = new TableReader(Constants.TABLE_OPTION_PATH);
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -142,8 +143,8 @@ public class TableManager {
         }
     }
 
-    public static void initializeLevelTable(String path) {
-        TableReader reader = new TableReader(path);
+    public static void initializeLevelTable() {
+        TableReader reader = new TableReader(Constants.TABLE_LEVEL_FILE);
 
         Row line;
         while ((line = reader.nextRow()) != null) {

@@ -7,15 +7,15 @@ import java.sql.Timestamp;
 
 public class Item implements Product {
 
-    private int id;
-    private int inventoryId;
-    private Expiration expiration;
-    private int bonusOne;
-    private int bonusTwo;
+    private final int id;
+    private final int inventoryId;
+    private final Expiration expiration;
+    private final int bonusOne;
+    private final int bonusTwo;
     private short usages;
-    private Timestamp timestampExpire;
+    private final Timestamp timestampExpire;
     private boolean selected;
-    private boolean visible;
+    private final boolean visible;
 
     public Item() {
         this(0, 0, 0, 0, 0, (short)0, DateUtils.getTimestamp(), false, false);
@@ -30,20 +30,20 @@ public class Item implements Product {
         this.bonusTwo = bonusTwo;
         this.usages = usages;
         this.timestampExpire = expire;
-        this.setSelected(selected);
+        this.selected = selected;
         this.visible = visible;
     }
 
     public void deactivateGracefully(int playerId) {
         if (isSelected()) {
-            setSelected(false);
+            this.selected = false;
             PlayerInfo.setInventoryItem(this, playerId);
         }
     }
 
     public void activateGracefully(int playerId) {
         if (!isSelected()) {
-            setSelected(true);
+            this.selected = true;
             PlayerInfo.setInventoryItem(this, playerId);
         }
     }
@@ -86,9 +86,5 @@ public class Item implements Product {
 
     public boolean isVisible() {
         return visible;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 }

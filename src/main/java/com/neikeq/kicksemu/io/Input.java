@@ -111,7 +111,7 @@ public class Input {
         }
     }
 
-    void defineCommands() {
+    private void defineCommands() {
         commands = new TreeMap<>();
         commands.put("save", this::handleSave);
         commands.put("logs", this::handleLogs);

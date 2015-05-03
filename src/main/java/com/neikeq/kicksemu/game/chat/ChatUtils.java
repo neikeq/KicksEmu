@@ -15,7 +15,7 @@ public class ChatUtils {
                 MessageType.SERVER_MESSAGE, message));
     }
 
-    public static void sendServerNotice(Session session, String notice) {
+    private static void sendServerNotice(Session session, String notice) {
         session.sendAndFlush(MessageBuilder.chatMessage(0, "",
                 MessageType.SERVER_NOTICE, notice));
     }

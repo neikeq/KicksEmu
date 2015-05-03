@@ -15,7 +15,7 @@ public class ServerBase {
     private GameServerType type;
     private int expFactor;
     private int pointFactor;
-    private int kashFactor;
+    private int cashFactor;
     private boolean practiceRewards;
 
     public static ServerBase fromConfig() {
@@ -32,7 +32,7 @@ public class ServerBase {
         base.setType(GameServerType.valueOf(Configuration.get("game.type")));
         base.setExpFactor(Configuration.getInt("game.rewards.exp"));
         base.setPointFactor(Configuration.getInt("game.rewards.point"));
-        base.setKashFactor(Configuration.getInt("game.rewards.kash"));
+        base.setCashFactor(Configuration.getInt("game.rewards.cash"));
         base.setPracticeRewards(Configuration.getBoolean("game.rewards.practice"));
 
         return base;
@@ -42,7 +42,7 @@ public class ServerBase {
         return id;
     }
 
-    public void setId(short id) {
+    private void setId(short id) {
         this.id = id;
     }
 
@@ -50,7 +50,7 @@ public class ServerBase {
         return filter;
     }
 
-    public void setFilter(short filter) {
+    private void setFilter(short filter) {
         this.filter = filter;
     }
 
@@ -58,7 +58,7 @@ public class ServerBase {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -66,7 +66,7 @@ public class ServerBase {
         return address;
     }
 
-    public void setAddress(String address) {
+    private void setAddress(String address) {
         this.address = address;
     }
 
@@ -74,7 +74,7 @@ public class ServerBase {
         return port;
     }
 
-    public void setPort(short port) {
+    private void setPort(short port) {
         this.port = port;
     }
 
@@ -82,7 +82,7 @@ public class ServerBase {
         return minLevel;
     }
 
-    public void setMinLevel(byte minLevel) {
+    private void setMinLevel(byte minLevel) {
         this.minLevel = minLevel;
     }
 
@@ -90,7 +90,7 @@ public class ServerBase {
         return maxLevel;
     }
 
-    public void setMaxLevel(byte maxLevel) {
+    private void setMaxLevel(byte maxLevel) {
         this.maxLevel = maxLevel;
     }
 
@@ -98,7 +98,7 @@ public class ServerBase {
         return maxUsers;
     }
 
-    public void setMaxUsers(short maxUsers) {
+    private void setMaxUsers(short maxUsers) {
         this.maxUsers = maxUsers;
     }
 
@@ -106,7 +106,7 @@ public class ServerBase {
         return type;
     }
 
-    public void setType(GameServerType type) {
+    private void setType(GameServerType type) {
         this.type = type;
     }
 
@@ -114,7 +114,7 @@ public class ServerBase {
         return expFactor;
     }
 
-    public void setExpFactor(int expFactor) {
+    private void setExpFactor(int expFactor) {
         this.expFactor = expFactor;
     }
 
@@ -122,23 +122,23 @@ public class ServerBase {
         return pointFactor;
     }
 
-    public void setPointFactor(int pointFactor) {
+    private void setPointFactor(int pointFactor) {
         this.pointFactor = pointFactor;
     }
 
-    public int getKashFactor() {
-        return kashFactor;
+    public int getCashFactor() {
+        return cashFactor;
     }
 
-    public void setKashFactor(int kashFactor) {
-        this.kashFactor = kashFactor;
+    private void setCashFactor(int cashFactor) {
+        this.cashFactor = cashFactor;
     }
 
     public boolean isPracticeRewards() {
         return practiceRewards;
     }
 
-    public void setPracticeRewards(boolean practiceRewards) {
+    private void setPracticeRewards(boolean practiceRewards) {
         this.practiceRewards = practiceRewards;
     }
 }

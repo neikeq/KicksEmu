@@ -11,7 +11,7 @@ public class LearnInfo {
     private final short statPoints;
     private final Payment payment;
     private final int points;
-    private final int kash;
+    private final int cash;
 
     public LearnInfo(Row row) {
         row.nextColumn();
@@ -20,7 +20,7 @@ public class LearnInfo {
         level = Short.valueOf(row.nextColumn());
         statPoints = Short.valueOf(row.nextColumn());
         payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));
-        kash = Integer.valueOf(row.nextColumn());
+        cash = Integer.valueOf(row.nextColumn());
         points = Integer.valueOf(row.nextColumn());
     }
 
@@ -48,7 +48,7 @@ public class LearnInfo {
         return points;
     }
 
-    public int getKash() {
-        return kash;
+    public int getCash() {
+        return cash;
     }
 }

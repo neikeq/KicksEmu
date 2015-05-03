@@ -202,7 +202,7 @@ public class PlayerInfo {
         return SqlUtils.getInt("points", TABLE, id, con);
     }
 
-    public static short getTicketsKash(int id, Connection ... con) {
+    public static short getTicketsCash(int id, Connection... con) {
         return SqlUtils.getShort("tickets_kash", TABLE, id, con);
     }
 
@@ -738,10 +738,6 @@ public class PlayerInfo {
 
     // setters
 
-    public static void setBlocked(boolean value, int id, Connection ... con) {
-        SqlUtils.setBoolean("blocked", value, TABLE, id, con);
-    }
-
     public static void setVisible(boolean value, int id, Connection ... con) {
         SqlUtils.setBoolean("visible", value, TABLE, id, con);
     }
@@ -814,7 +810,7 @@ public class PlayerInfo {
         SqlUtils.sumInt("points", value, TABLE, id, con);
     }
 
-    public static void setTicketsKash(short value, int id, Connection ... con) {
+    public static void setTicketsCash(short value, int id, Connection... con) {
         SqlUtils.setShort("tickets_kash", value, TABLE, id, con);
     }
 

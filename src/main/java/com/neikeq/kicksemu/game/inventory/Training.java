@@ -2,9 +2,9 @@ package com.neikeq.kicksemu.game.inventory;
 
 public class Training implements Product {
 
-    private int id;
-    private int inventoryId;
-    private boolean visible;
+    private final int id;
+    private final int inventoryId;
+    private final boolean visible;
 
     public Training() {
         this(0, 0, false);

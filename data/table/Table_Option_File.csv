@@ -1,4 +1,4 @@
-Index,Id,Type,Order,Value,Kash Level,Points Level,Kash 7,Kash 30,Kash Perm,Points 7,Points 30,Points Perm,Name
+Index,Id,Type,Order,Value,Cash Level,Points Level,Cash 7,Cash 30,Cash Perm,Points 7,Points 30,Points Perm,Name
 0,1100001,11,0,1,1,1,12,24,47,250,500,1000,Running + 1
 1,1100002,11,1,2,1,1,24,47,94,500,1000,2000,Running + 2
 2,1100003,11,2,3,1,20,35,71,141,750,1500,3000,Running + 3

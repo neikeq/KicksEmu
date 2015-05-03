@@ -64,7 +64,7 @@ public class InventoryManager {
         }
     }
 
-    public static byte deactivateSkill(Session s, int skillId, Map<Integer, Skill> skills) {
+    private static byte deactivateSkill(Session s, int skillId, Map<Integer, Skill> skills) {
         byte result = 0;
 
         int playerId = s.getPlayerId();
@@ -124,7 +124,7 @@ public class InventoryManager {
         }
     }
 
-    public static byte deactivateCele(Session s, int celeId, Map<Integer, Celebration> celes) {
+    private static byte deactivateCele(Session s, int celeId, Map<Integer, Celebration> celes) {
         byte result = 0;
 
         int playerId = s.getPlayerId();
@@ -176,7 +176,7 @@ public class InventoryManager {
         session.send(MessageBuilder.activateItem(inventoryId, playerId, result));
     }
 
-    public static byte deactivateItem(Session s, Item item) {
+    private static byte deactivateItem(Session s, Item item) {
         byte result = 0;
 
         int playerId = s.getPlayerId();

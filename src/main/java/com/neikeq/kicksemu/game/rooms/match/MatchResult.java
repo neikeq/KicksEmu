@@ -35,9 +35,9 @@ public class MatchResult {
                 blueTeam, redPlayers);
     }
 
-    public MatchResult(int mom, short countdown, boolean goldenTime,
-                       boolean experience, TeamResult redTeam, TeamResult blueTeam,
-                       List<PlayerResult> players) {
+    private MatchResult(int mom, short countdown, boolean goldenTime,
+                        boolean experience, TeamResult redTeam, TeamResult blueTeam,
+                        List<PlayerResult> players) {
         this.mom = mom;
         this.countdown = countdown;
         this.goldenTime = goldenTime;

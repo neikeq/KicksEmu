@@ -76,15 +76,13 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage certifyExit(boolean result) {
+    public static ServerMessage certifyExit() {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_EXIT);
 
-        MessageUtils.appendResult((byte) (result ? 0 : 255), msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
-        if (result) {
-            // Request the client to close the connection
-            msg.write(0, (short)-1);
-        }
+        // Request the client to close the connection
+        msg.write(0, (short)-1);
 
         return msg;
     }

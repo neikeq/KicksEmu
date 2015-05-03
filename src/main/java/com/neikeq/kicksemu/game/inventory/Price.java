@@ -4,17 +4,17 @@ import com.neikeq.kicksemu.utils.table.Row;
 
 public class Price {
 
-    private int kash7;
-    private int kash30;
-    private int kashPerm;
-    private int points7;
-    private int points30;
-    private int pointsPerm;
+    private final int cash7;
+    private final int cash30;
+    private final int cashPerm;
+    private final int points7;
+    private final int points30;
+    private final int pointsPerm;
 
     public Price(Row row) {
-        kash7 = Integer.valueOf(row.nextColumn());
-        kash30 = Integer.valueOf(row.nextColumn());
-        kashPerm = Integer.valueOf(row.nextColumn());
+        cash7 = Integer.valueOf(row.nextColumn());
+        cash30 = Integer.valueOf(row.nextColumn());
+        cashPerm = Integer.valueOf(row.nextColumn());
         points7 = Integer.valueOf(row.nextColumn());
         points30 = Integer.valueOf(row.nextColumn());
         pointsPerm = Integer.valueOf(row.nextColumn());
@@ -24,13 +24,13 @@ public class Price {
         switch (expiration) {
             case USAGE_10:
             case DAYS_7:
-                return payment == Payment.KASH ? kash7 : points7;
+                return payment == Payment.CASH ? cash7 : points7;
             case USAGE_50:
             case DAYS_30:
-                return payment == Payment.KASH ? kash30 : points30;
+                return payment == Payment.CASH ? cash30 : points30;
             case USAGE_100:
             case DAYS_PERM:
-                return payment == Payment.KASH ? kashPerm : pointsPerm;
+                return payment == Payment.CASH ? cashPerm : pointsPerm;
             default:
                 return -1;
         }

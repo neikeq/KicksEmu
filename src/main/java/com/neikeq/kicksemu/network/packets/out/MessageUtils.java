@@ -64,7 +64,7 @@ class MessageUtils {
                         msg.append(rs.getShort("level"));
                         msg.append(rs.getInt("experience"));
                         msg.append(rs.getShort("stats_points"));
-                        msg.append(UserInfo.getKash(rs.getInt("owner")));
+                        msg.append(UserInfo.getCash(rs.getInt("owner")));
                         msg.append(rs.getInt("points"));
                         msg.appendZeros(8);
                         msg.append(rs.getShort("tickets_kash"));

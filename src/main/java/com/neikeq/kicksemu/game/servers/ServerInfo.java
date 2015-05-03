@@ -56,8 +56,8 @@ public class ServerInfo {
         return SqlUtils.getBoolean("online", TABLE, id);
     }
 
-    public static void setOnline(boolean status, int id) {
-        SqlUtils.setBoolean("online", status, TABLE, id);
+    public static void toggleOffline(int id) {
+        SqlUtils.setBoolean("online", false, TABLE, id);
     }
 
     public static GameServerType getType(int id) {

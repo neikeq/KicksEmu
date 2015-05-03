@@ -19,7 +19,7 @@ import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ChatCommands {
+class ChatCommands {
 
     private static Map<String, InputHandler> commands;
 

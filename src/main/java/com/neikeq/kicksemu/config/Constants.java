@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.config;
 import java.io.File;
 
 public class Constants {
-    public static final String DATA_DIR = "data" + File.separator;
+    private static final String DATA_DIR = "data" + File.separator;
     public static final String CONFIG_DIR = DATA_DIR + "config" + File.separator;
     public static final String LANG_DIR = DATA_DIR + "lang" + File.separator;
     public static final String TABLE_DIR = DATA_DIR + "table" + File.separator;

@@ -15,7 +15,7 @@ public class SessionInfo {
     private static final String TABLE = "sessions";
 
     public static int getPlayerId(int sessionId, Connection ... con) {
-        return getInt("player_id", TABLE, sessionId, con);
+        return getInt("player_id", sessionId, con);
     }
 
     public static void setPlayerId(int playerId, int sessionId, Connection ... con) {
@@ -23,11 +23,11 @@ public class SessionInfo {
     }
 
     public static int getUserId(int sessionId, Connection ... con) {
-        return getInt("user_id", TABLE, sessionId, con);
+        return getInt("user_id", sessionId, con);
     }
 
     public static String getHash(int sessionId, Connection ... con) {
-        return getString("hash", TABLE, sessionId, con);
+        return getString(sessionId, con);
     }
 
     public static void reduceExpiration(int sessionId) {
@@ -99,8 +99,8 @@ public class SessionInfo {
         } catch (SQLException ignored) {}
     }
 
-    public static int getInt(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table +
+    private static int getInt(String column, int id, Connection... con) {
+        String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
 
         try {
@@ -126,8 +126,10 @@ public class SessionInfo {
         }
     }
 
-    public static String getString(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table +
+    private static String getString(int id, Connection... con) {
+        final String column = "hash";
+
+        String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
 
         try {

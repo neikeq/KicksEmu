@@ -89,11 +89,11 @@ public class Shop {
                         }
                     } else {
                         // Not enough money
-                        result = (byte) (payment == Payment.KASH ? -8 : -5);
+                        result = (byte) (payment == Payment.CASH ? -8 : -5);
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.KASH ? -2 : -3);
+                    result = (byte) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -166,11 +166,11 @@ public class Shop {
                         }
                     } else {
                         // Not enough money
-                        result = (byte) (payment == Payment.KASH ? -8 : -5);
+                        result = (byte) (payment == Payment.CASH ? -8 : -5);
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.KASH ? -2 : -3);
+                    result = (byte) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -210,7 +210,7 @@ public class Shop {
             // If the player meets the level requirements for this learn
             if (level >= learnInfo.getLevel()) {
                 int learnPrice = payment == Payment.POINTS ?
-                        learnInfo.getPoints() : learnInfo.getKash();
+                        learnInfo.getPoints() : learnInfo.getCash();
 
                 // If the price sent by the client is valid
                 if (learnPrice != -1 && learnPrice == price &&
@@ -237,11 +237,11 @@ public class Shop {
                         }
                     } else {
                         // Not enough money
-                        result = (byte) (payment == Payment.KASH ? -8 : -5);
+                        result = (byte) (payment == Payment.CASH ? -8 : -5);
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.KASH ? -2 : -3);
+                    result = (byte) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -333,7 +333,7 @@ public class Shop {
                     // If the player has enough money
                     if (price > money) {
                         // Not enough money
-                        result = (byte) (payment == Payment.KASH ? -8 : -5);
+                        result = (byte) (payment == Payment.CASH ? -8 : -5);
                     } else if (items.size() >= InventoryManager.MAX_INVENTORY_ITEMS) {
                         // Inventory is full
                         result = (byte) -10;
@@ -365,7 +365,7 @@ public class Shop {
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.KASH ? -2 : -3);
+                    result = (byte) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -393,8 +393,8 @@ public class Shop {
 
     private static int getMoneyFromPaymentMode(Payment payment, int playerId) {
         switch (payment) {
-            case KASH:
-                return UserInfo.getKash(PlayerInfo.getOwner(playerId));
+            case CASH:
+                return UserInfo.getCash(PlayerInfo.getOwner(playerId));
             case POINTS:
                 return PlayerInfo.getPoints(playerId);
             default:
@@ -404,8 +404,8 @@ public class Shop {
 
     private static void sumMoneyToPaymentMode(Payment payment, int playerId, int value) {
         switch (payment) {
-            case KASH:
-                UserInfo.sumKash(value, PlayerInfo.getOwner(playerId));
+            case CASH:
+                UserInfo.sumCash(value, PlayerInfo.getOwner(playerId));
                 break;
             case POINTS:
                 PlayerInfo.sumPoints(value, playerId);

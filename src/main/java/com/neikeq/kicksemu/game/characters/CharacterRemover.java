@@ -35,7 +35,7 @@ public class CharacterRemover {
                 Arrays.fill(password, '\0');
 
                 if (limitTimeExpired(userId)) {
-                    clearOwnerSlot(userId, slot);
+                    UserInfo.clearSlotByIndex(slot, userId);
                     updateExpireTime(userId);
                 } else {
                     result = RemoverResult.TIME_LIMIT;
@@ -56,10 +56,6 @@ public class CharacterRemover {
         java.sql.Timestamp lastDeletionDate = UserInfo.getLastCharDeletion(userId);
 
         return lastDeletionDate == null || DateUtils.getTimestamp().after(lastDeletionDate);
-    }
-
-    private static void clearOwnerSlot(int userId, int slot) {
-        UserInfo.setSlotWithIndex(slot, 0, userId);
     }
 
     private static void updateExpireTime(int userId) {

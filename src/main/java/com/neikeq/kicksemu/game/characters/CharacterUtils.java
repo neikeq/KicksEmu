@@ -70,7 +70,7 @@ public class CharacterUtils {
         }
     }
 
-    public static Item getItemInUseByType(ItemType type, int playerId) {
+    private static Item getItemInUseByType(ItemType type, int playerId) {
         switch (type) {
             case HEAD:
                 return PlayerInfo.getItemHead(playerId);
@@ -110,8 +110,8 @@ public class CharacterUtils {
                 return PlayerInfo.getItemInUseByType(ItemType.CHARACTER_SLOT, playerId);
             case STATS_RESET:
                 return PlayerInfo.getItemInUseByType(ItemType.STATS_RESET, playerId);
-            case KASH_TICKET:
-                return PlayerInfo.getItemInUseByType(ItemType.KASH_TICKET, playerId);
+            case CASH_TICKET:
+                return PlayerInfo.getItemInUseByType(ItemType.CASH_TICKET, playerId);
             case POINTS_TICKET:
                 return PlayerInfo.getItemInUseByType(ItemType.POINTS_TICKET, playerId);
             case CLUB_SPONSORSHIP:

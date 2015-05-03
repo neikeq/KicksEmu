@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Row {
-    private List<String> columns;
-    int index = 0;
+    private final List<String> columns;
+    private int index = 0;
 
     public String nextColumn() throws IndexOutOfBoundsException {
         return columns.get(index++);

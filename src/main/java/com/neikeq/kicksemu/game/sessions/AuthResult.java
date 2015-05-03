@@ -5,7 +5,7 @@ public class AuthResult {
     public static final byte SUCCESS = (byte)0;
     public static final byte ACCOUNT_BLOCKED = (byte)247;
     public static final byte CLIENT_VERSION = (byte)248;
-    public static final byte SERVER_FULL = (byte)249;
+    public static final byte SERVER_FULL = (byte)249; // TODO make use of this when checking
     public static final byte AUTH_FAILURE = (byte)250;
     public static final byte ACCESS_FAILURE = (byte)251;
     public static final byte ALREADY_CONNECTED = (byte)252;
