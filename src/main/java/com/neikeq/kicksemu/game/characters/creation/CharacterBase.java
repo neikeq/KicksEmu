@@ -1,48 +1,32 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
 import com.neikeq.kicksemu.game.characters.types.Animation;
+import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 
 class CharacterBase {
 
     private int owner;
-
-    private String name;
-
-    private short statsPoints;
-
-    private Animation animation;
-    private short face;
 
     private int defaultHead;
     private int defaultShirts;
     private int defaultPants;
     private int defaultShoes;
 
+    private short statsPoints;
+    private short face;
     private short position;
 
-    private short statsRunning;
-    private short statsEndurance;
-    private short statsAgility;
-    private short statsBallControl;
-    private short statsDribbling;
-    private short statsStealing;
-    private short statsTackling;
-    private short statsHeading;
-    private short statsShortShots;
-    private short statsLongShots;
-    private short statsCrossing;
-    private short statsShortPasses;
-    private short statsLongPasses;
-    private short statsMarking;
-    private short statsGoalkeeping;
-    private short statsPunching;
-    private short statsDefense;
+    private String name;
+
+    private Animation animation;
+    private PlayerStats stats;
 
     public int getTotalStats() {
-        return statsPoints + statsRunning + statsEndurance + statsAgility + statsBallControl +
-                statsDribbling + statsStealing + statsTackling + statsHeading + statsShortShots +
-                statsLongShots + statsCrossing + statsShortPasses + statsLongPasses +
-                statsMarking + statsGoalkeeping + statsPunching + statsDefense;
+        return statsPoints + stats.getRunning() + stats.getEndurance() + stats.getAgility() +
+                stats.getBallControl() + stats.getDribbling() + stats.getStealing() + stats.getTackling() +
+                stats.getHeading() + stats.getShortShots() + stats.getLongShots() + stats.getCrossing() +
+                stats.getShortPasses() + stats.getLongPasses() + stats.getMarking() + stats.getGoalkeeping() +
+                stats.getPunching() + stats.getDefense();
     }
 
     public int getOwner() {
@@ -125,139 +109,11 @@ class CharacterBase {
         this.position = position;
     }
 
-    public short getStatsRunning() {
-        return statsRunning;
+    public PlayerStats getStats() {
+        return stats;
     }
 
-    public void setStatsRunning(short statsRunning) {
-        this.statsRunning = statsRunning;
-    }
-
-    public short getStatsEndurance() {
-        return statsEndurance;
-    }
-
-    public void setStatsEndurance(short statsEndurance) {
-        this.statsEndurance = statsEndurance;
-    }
-
-    public short getStatsAgility() {
-        return statsAgility;
-    }
-
-    public void setStatsAgility(short statsAgility) {
-        this.statsAgility = statsAgility;
-    }
-
-    public short getStatsBallControl() {
-        return statsBallControl;
-    }
-
-    public void setStatsBallControl(short statsBallControl) {
-        this.statsBallControl = statsBallControl;
-    }
-
-    public short getStatsDribbling() {
-        return statsDribbling;
-    }
-
-    public void setStatsDribbling(short statsDribbling) {
-        this.statsDribbling = statsDribbling;
-    }
-
-    public short getStatsStealing() {
-        return statsStealing;
-    }
-
-    public void setStatsStealing(short statsStealing) {
-        this.statsStealing = statsStealing;
-    }
-
-    public short getStatsTackling() {
-        return statsTackling;
-    }
-
-    public void setStatsTackling(short statsTackling) {
-        this.statsTackling = statsTackling;
-    }
-
-    public short getStatsHeading() {
-        return statsHeading;
-    }
-
-    public void setStatsHeading(short statsHeading) {
-        this.statsHeading = statsHeading;
-    }
-
-    public short getStatsShortShots() {
-        return statsShortShots;
-    }
-
-    public void setStatsShortShots(short statsShortShots) {
-        this.statsShortShots = statsShortShots;
-    }
-
-    public short getStatsLongShots() {
-        return statsLongShots;
-    }
-
-    public void setStatsLongShots(short statsLongShots) {
-        this.statsLongShots = statsLongShots;
-    }
-
-    public short getStatsCrossing() {
-        return statsCrossing;
-    }
-
-    public void setStatsCrossing(short statsCrossing) {
-        this.statsCrossing = statsCrossing;
-    }
-
-    public short getStatsShortPasses() {
-        return statsShortPasses;
-    }
-
-    public void setStatsShortPasses(short statsShortPasses) {
-        this.statsShortPasses = statsShortPasses;
-    }
-
-    public short getStatsLongPasses() {
-        return statsLongPasses;
-    }
-
-    public void setStatsLongPasses(short statsLongPasses) {
-        this.statsLongPasses = statsLongPasses;
-    }
-
-    public short getStatsMarking() {
-        return statsMarking;
-    }
-
-    public void setStatsMarking(short statsMarking) {
-        this.statsMarking = statsMarking;
-    }
-
-    public short getStatsGoalkeeping() {
-        return statsGoalkeeping;
-    }
-
-    public void setStatsGoalkeeping(short statsGoalkeeping) {
-        this.statsGoalkeeping = statsGoalkeeping;
-    }
-
-    public short getStatsPunching() {
-        return statsPunching;
-    }
-
-    public void setStatsPunching(short statsPunching) {
-        this.statsPunching = statsPunching;
-    }
-
-    public short getStatsDefense() {
-        return statsDefense;
-    }
-
-    public void setStatsDefense(short statsDefense) {
-        this.statsDefense = statsDefense;
+    public void setStats(PlayerStats stats) {
+        this.stats = stats;
     }
 }

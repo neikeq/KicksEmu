@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
 class CreationResult {
+
     static final byte SUCCESS = 0;
     static final byte INVALID_CHARACTER = (byte)252;
     static final byte CHARACTERS_LIMIT = (byte)253;

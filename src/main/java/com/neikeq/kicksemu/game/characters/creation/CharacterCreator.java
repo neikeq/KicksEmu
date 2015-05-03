@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
 import com.neikeq.kicksemu.game.characters.types.Animation;
+import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -64,23 +65,23 @@ public class CharacterCreator {
                 stmt.setInt(8, character.getDefaultPants());
                 stmt.setInt(9, character.getDefaultShoes());
                 stmt.setShort(10, character.getStatsPoints());
-                stmt.setShort(11, character.getStatsRunning());
-                stmt.setShort(12, character.getStatsEndurance());
-                stmt.setShort(13, character.getStatsAgility());
-                stmt.setShort(14, character.getStatsBallControl());
-                stmt.setShort(15, character.getStatsDribbling());
-                stmt.setShort(16, character.getStatsStealing());
-                stmt.setShort(17, character.getStatsTackling());
-                stmt.setShort(18, character.getStatsHeading());
-                stmt.setShort(19, character.getStatsShortShots());
-                stmt.setShort(20, character.getStatsLongShots());
-                stmt.setShort(21, character.getStatsCrossing());
-                stmt.setShort(22, character.getStatsShortPasses());
-                stmt.setShort(23, character.getStatsLongPasses());
-                stmt.setShort(24, character.getStatsMarking());
-                stmt.setShort(25, character.getStatsGoalkeeping());
-                stmt.setShort(26, character.getStatsPunching());
-                stmt.setShort(27, character.getStatsDefense());
+                stmt.setShort(11, character.getStats().getRunning());
+                stmt.setShort(12, character.getStats().getEndurance());
+                stmt.setShort(13, character.getStats().getAgility());
+                stmt.setShort(14, character.getStats().getBallControl());
+                stmt.setShort(15, character.getStats().getDribbling());
+                stmt.setShort(16, character.getStats().getStealing());
+                stmt.setShort(17, character.getStats().getTackling());
+                stmt.setShort(18, character.getStats().getHeading());
+                stmt.setShort(19, character.getStats().getShortShots());
+                stmt.setShort(20, character.getStats().getLongShots());
+                stmt.setShort(21, character.getStats().getCrossing());
+                stmt.setShort(22, character.getStats().getShortPasses());
+                stmt.setShort(23, character.getStats().getLongPasses());
+                stmt.setShort(24, character.getStats().getMarking());
+                stmt.setShort(25, character.getStats().getGoalkeeping());
+                stmt.setShort(26, character.getStats().getPunching());
+                stmt.setShort(27, character.getStats().getDefense());
                 stmt.setString(28, "");
                 stmt.setString(29, "");
 
@@ -135,23 +136,14 @@ public class CharacterCreator {
         character.setDefaultShoes(msg.readInt());
         character.setPosition(msg.readShort());
         msg.ignoreBytes(6);
-        character.setStatsRunning(msg.readShort());
-        character.setStatsEndurance(msg.readShort());
-        character.setStatsAgility(msg.readShort());
-        character.setStatsBallControl(msg.readShort());
-        character.setStatsDribbling(msg.readShort());
-        character.setStatsStealing(msg.readShort());
-        character.setStatsTackling(msg.readShort());
-        character.setStatsHeading(msg.readShort());
-        character.setStatsShortShots(msg.readShort());
-        character.setStatsLongShots(msg.readShort());
-        character.setStatsCrossing(msg.readShort());
-        character.setStatsShortPasses(msg.readShort());
-        character.setStatsLongPasses(msg.readShort());
-        character.setStatsMarking(msg.readShort());
-        character.setStatsGoalkeeping(msg.readShort());
-        character.setStatsPunching(msg.readShort());
-        character.setStatsDefense(msg.readShort());
+
+        short[] stats = new short[17];
+
+        for (int i = 0; i < stats.length; i++) {
+            stats[i] = msg.readShort();
+        }
+
+        character.setStats(PlayerStats.fromArray(stats));
 
         return character;
     }

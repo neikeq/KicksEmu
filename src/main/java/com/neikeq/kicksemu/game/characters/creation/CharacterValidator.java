@@ -93,23 +93,23 @@ class CharacterValidator {
         return character.getTotalStats() == STATS_GLOBAL &&
                 character.getStatsPoints() <= MAX_STATS_POINTS &&
                 character.getStatsPoints() >= MIN_STATS_POINTS &&
-                character.getStatsRunning() >= stats.getRunning() &&
-                character.getStatsEndurance() >= stats.getEndurance() &&
-                character.getStatsAgility() >= stats.getAgility() &&
-                character.getStatsBallControl() >= stats.getBallControl() &&
-                character.getStatsDribbling() >= stats.getDribbling() &&
-                character.getStatsStealing() >= stats.getStealing() &&
-                character.getStatsTackling() >= stats.getTackling() &&
-                character.getStatsHeading() >= stats.getHeading() &&
-                character.getStatsShortShots() >= stats.getShortShots() &&
-                character.getStatsLongShots() >= stats.getLongShots() &&
-                character.getStatsCrossing() >= stats.getCrossing() &&
-                character.getStatsShortPasses() >= stats.getShortPasses() &&
-                character.getStatsLongPasses() >= stats.getLongPasses() &&
-                character.getStatsMarking() >= stats.getMarking() &&
-                character.getStatsGoalkeeping() >= stats.getGoalkeeping() &&
-                character.getStatsPunching() >= stats.getPunching() &&
-                character.getStatsDefense() >= stats.getDefense();
+                character.getStats().getRunning() >= stats.getRunning() &&
+                character.getStats().getEndurance() >= stats.getEndurance() &&
+                character.getStats().getAgility() >= stats.getAgility() &&
+                character.getStats().getBallControl() >= stats.getBallControl() &&
+                character.getStats().getDribbling() >= stats.getDribbling() &&
+                character.getStats().getStealing() >= stats.getStealing() &&
+                character.getStats().getTackling() >= stats.getTackling() &&
+                character.getStats().getHeading() >= stats.getHeading() &&
+                character.getStats().getShortShots() >= stats.getShortShots() &&
+                character.getStats().getLongShots() >= stats.getLongShots() &&
+                character.getStats().getCrossing() >= stats.getCrossing() &&
+                character.getStats().getShortPasses() >= stats.getShortPasses() &&
+                character.getStats().getLongPasses() >= stats.getLongPasses() &&
+                character.getStats().getMarking() >= stats.getMarking() &&
+                character.getStats().getGoalkeeping() >= stats.getGoalkeeping() &&
+                character.getStats().getPunching() >= stats.getPunching() &&
+                character.getStats().getDefense() >= stats.getDefense();
     }
 
     private static boolean containsValidItems(CharacterBase character) {
