@@ -1,0 +1,32 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+mainClassName = 'com.neikeq.kicksemu.KicksEmu'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    compile 'mysql:mysql-connector-java:5.1.30'
+    compile 'io.netty:netty-all:4.0.27.Final'
+    compile 'com.opencsv:opencsv:3.3'
+    compile 'org.apache.commons:commons-dbcp2:2.1'
+    compile 'commons-logging:commons-logging:1.2'
+    compile 'org.apache.commons:commons-pool2:2.3'
+}
+
+run {
+    standardInput = System.in
+
+    if (project.hasProperty('args')) {
+        args project.args.split(' ')
+    } else {
+        args 'config'
+    }
+}
