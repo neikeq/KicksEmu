@@ -55,7 +55,7 @@ class CharacterValidator {
     }
 
     private static boolean isValidName(String name) {
-        return (name.length() <= NAME_MAX_LENGTH && name.length() >= NAME_MIN_LENGTH) ||
+        return (name.length() <= NAME_MAX_LENGTH && name.length() >= NAME_MIN_LENGTH) &&
                 !nameContainsInvalidChar(name);
     }
 
