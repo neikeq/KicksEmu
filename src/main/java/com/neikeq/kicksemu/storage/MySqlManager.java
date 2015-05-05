@@ -2,7 +2,6 @@ package com.neikeq.kicksemu.storage;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
-import com.neikeq.kicksemu.io.Output;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,10 +22,8 @@ public class MySqlManager {
     private static int minIdle;
     private static int maxIdle;
     
-    public static void init()
+    public static void initialize()
             throws ClassNotFoundException, SQLException, IllegalArgumentException {
-        Output.println(Localization.get("mysql.init"));
-        
         minIdle = Configuration.getInt("mysql.idle.min");
         maxIdle = Configuration.getInt("mysql.idle.max");
         

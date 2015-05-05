@@ -15,6 +15,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
+import com.neikeq.kicksemu.game.servers.GameServerType;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.AuthResult;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -82,7 +83,7 @@ public class MessageBuilder {
         MessageUtils.appendResult((byte) 0, msg);
 
         // Request the client to close the connection
-        msg.write(0, (short)-1);
+        msg.write(0, (short) -1);
 
         return msg;
     }
@@ -191,14 +192,26 @@ public class MessageBuilder {
         msg.append((short)servers.size());
 
         for (short serverId : servers) {
-            msg.append(serverId);
-            msg.append(ServerInfo.getName(serverId), 30);
-            msg.append(ServerInfo.isOnline(serverId));
-            msg.append(ServerInfo.getMaxUsers(serverId));
-            msg.append(ServerInfo.getConnectedUsers(serverId));
-            msg.append(ServerInfo.getAddress(serverId), 16);
-            msg.append(ServerInfo.getPort(serverId));
-            msg.appendZeros(20);
+            final String query = "SELECT name, online, max_users, connected_users, " +
+                    "address, port FROM servers WHERE id = ? LIMIT 1";
+
+            try (Connection con = MySqlManager.getConnection();
+                 PreparedStatement stmt = con.prepareStatement(query)) {
+                stmt.setInt(1, serverId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        msg.append(serverId);
+                        msg.append(rs.getString("name"), 30);
+                        msg.append(rs.getBoolean("online"));
+                        msg.append(rs.getShort("max_users"));
+                        msg.append(rs.getShort("connected_users"));
+                        msg.append(rs.getString("address"), 16);
+                        msg.append(rs.getShort("port"));
+                        msg.appendZeros(20);
+                    }
+                }
+            } catch (SQLException ignored) {}
         }
 
         return msg;
@@ -227,12 +240,24 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(serverId);
-            msg.append(ServerInfo.getType(serverId).toShort());
-            msg.append(ServerInfo.getMinLevel(serverId));
-            msg.append(ServerInfo.getMaxLevel(serverId));
-            msg.append(ServerInfo.getAddress(serverId), 16);
-            msg.append(ServerInfo.getPort(serverId));
+            final String query = "SELECT type, min_level, max_level, address, port " +
+                    "FROM servers WHERE id = ? LIMIT 1";
+
+            try (Connection con = MySqlManager.getConnection();
+                 PreparedStatement stmt = con.prepareStatement(query)) {
+                stmt.setInt(1, serverId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        msg.append(serverId);
+                        msg.append(GameServerType.valueOf(rs.getString("type")).toShort());
+                        msg.append(rs.getShort("min_level"));
+                        msg.append(rs.getShort("max_level"));
+                        msg.append(rs.getString("address"), 16);
+                        msg.append(rs.getShort("port"));
+                    }
+                }
+            } catch (SQLException ignored) {}
         }
 
         return msg;
@@ -404,7 +429,7 @@ public class MessageBuilder {
 
                 String array = Strings.repeatAndSplit("?", ", ", players.length);
 
-                String query = "SELECT name, level, position, status_message FROM characters" +
+                final String query = "SELECT name, level, position, status_message FROM characters" +
                         " WHERE id IN(" + array + ") ORDER BY FIELD(id, " + array + ")";
 
                 try (PreparedStatement stmt = connection.prepareStatement(query)) {

@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
@@ -140,7 +141,7 @@ public class RoomManager {
             // Check that everything is correct
             byte result = 0;
 
-            GameServerType serverType = ServerInfo.getType(ServerManager.getServerId());
+            GameServerType serverType = KicksEmu.getServerManager().getServerBase().getType();
 
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
                 result = (byte) 253; // Wrong level settings
@@ -324,7 +325,7 @@ public class RoomManager {
 
         Room room = rooms.get(roomId);
 
-        GameServerType serverType = ServerInfo.getType(ServerManager.getServerId());
+        GameServerType serverType = KicksEmu.getServerManager().getServerBase().getType();
 
         if (maxSize == null || type == null || roomMode == null ||
                 roomMode.notValidForServer(serverType)) {

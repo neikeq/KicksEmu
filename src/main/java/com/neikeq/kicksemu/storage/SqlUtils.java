@@ -28,7 +28,7 @@ public class SqlUtils {
     }
 
     public static short getShort(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
+        final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -53,7 +53,7 @@ public class SqlUtils {
     }
 
     public static int getInt(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
+        final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -78,7 +78,7 @@ public class SqlUtils {
     }
 
     public static boolean getBoolean(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
+        final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -99,7 +99,7 @@ public class SqlUtils {
     }
 
     public static String getString(String column, String table, int id, Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
+        final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -125,7 +125,7 @@ public class SqlUtils {
 
     public static Timestamp getTimestamp(String column, String table, int id,
                                          Connection ... con) {
-        String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
+        final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -151,7 +151,7 @@ public class SqlUtils {
 
     public static void setShort(String column, short value, String table, int id,
                                 Connection ... con) {
-        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
+        final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -171,7 +171,7 @@ public class SqlUtils {
 
     public static void setInt(String column, int value, String table, int id,
                               Connection ... con) {
-        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
+        final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -191,7 +191,7 @@ public class SqlUtils {
 
     public static void setBoolean(String column, boolean value, String table, int id,
                                   Connection ... con) {
-        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
+        final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -211,7 +211,7 @@ public class SqlUtils {
 
     public static void setString(String column, String value, String table, int id,
                                  Connection ... con) {
-        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
+        final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -231,7 +231,7 @@ public class SqlUtils {
 
     public static void setTimestamp(String column, Timestamp value, String table, int id,
                                     Connection ... con) {
-        String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
+        final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -253,7 +253,7 @@ public class SqlUtils {
                                 Connection ... con) {
         if (value == 0) return;
 
-        String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ? LIMIT 1;";
+        final String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -275,7 +275,7 @@ public class SqlUtils {
                               Connection ... con) {
         if (value == 0) return;
 
-        String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ? LIMIT 1;";
+        final String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();

@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.servers;
 
+import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Tips;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.ClubManager;
@@ -37,15 +38,17 @@ public class ServerUtils {
         // TODO Check if character can access private server... Reject code is 251
         int clubId = MemberInfo.getClubId(playerId);
 
-        if (ServerInfo.getType(serverId) == GameServerType.CLUB &&
+        ServerBase serverBase = KicksEmu.getServerManager().getServerBase();
+
+        if (serverBase.getType() == GameServerType.CLUB &&
                 (clubId <= 0 || !ClubManager.clubExist(clubId))) {
             // Cannot join a club server without being a club member
             result = -4;
-        } else if (level < ServerInfo.getMinLevel(serverId) ||
-                level > ServerInfo.getMaxLevel(serverId)) {
+        } else if (level < serverBase.getMinLevel() ||
+                level > serverBase.getMaxLevel()) {
             // Player does not meet the level requirements
             result = -3;
-        } else if (ServerInfo.getMaxUsers(serverId) <=
+        } else if (serverBase.getMaxUsers() <=
                 ServerInfo.getConnectedUsers(serverId)) {
             // Server is full
             result = -2;
@@ -56,7 +59,7 @@ public class ServerUtils {
 
     private static List<Short> getServerList(short filter) {
         List<Short> servers = new ArrayList<>();
-        String query = "SELECT id FROM servers WHERE filter = ?";
+        final String query = "SELECT id FROM servers WHERE filter = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
@@ -75,7 +78,7 @@ public class ServerUtils {
     }
 
     public static boolean serverExist(short id) {
-        String query = "SELECT 1 FROM servers WHERE id = ? LIMIT 1";
+        final String query = "SELECT 1 FROM servers WHERE id = ? LIMIT 1";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
@@ -89,8 +92,8 @@ public class ServerUtils {
         }
     }
 
-    public static boolean insertServer(ServerBase base) {
-        String query = "INSERT INTO servers (id, filter, name, address, port, min_level," +
+    public static void insertServer(ServerBase base) throws SQLException {
+        final String query = "INSERT INTO servers (id, filter, name, address, port, min_level," +
                 " max_level, max_users, type," +
                 " exp_factor, point_factor, kash_factor, practice_rewards)" +
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -111,14 +114,12 @@ public class ServerUtils {
             stmt.setInt(12, base.getCashFactor());
             stmt.setBoolean(13, base.isPracticeRewards());
 
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            return false;
+            stmt.executeUpdate();
         }
     }
 
-    public static boolean updateServer(ServerBase base) {
-        String query = "UPDATE servers SET filter=?, name=?, address=?, port=?, min_level=?," +
+    public static void updateServer(ServerBase base) throws SQLException {
+        final String query = "UPDATE servers SET filter=?, name=?, address=?, port=?, min_level=?," +
                 " max_level=?, max_users=?, connected_users=?, online=?, type=?, exp_factor=?," +
                 " point_factor=?, kash_factor=?, practice_rewards=? WHERE id=?";
 
@@ -141,9 +142,7 @@ public class ServerUtils {
             stmt.setBoolean(14, base.isPracticeRewards());
             stmt.setShort(15, base.getId());
 
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            return false;
+            stmt.executeUpdate();
         }
     }
 

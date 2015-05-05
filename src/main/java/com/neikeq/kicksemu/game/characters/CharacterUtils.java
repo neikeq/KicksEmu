@@ -179,7 +179,7 @@ public class CharacterUtils {
     }
 
     public static boolean characterExist(int characterId) {
-        String query = "SELECT id FROM characters WHERE id = ?";
+        final String query = "SELECT id FROM characters WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
@@ -195,7 +195,7 @@ public class CharacterUtils {
     }
 
     public static int getCharacterIdByName(String name) {
-        String query = "SELECT id FROM characters WHERE name = ?";
+        final String query = "SELECT id FROM characters WHERE name = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {

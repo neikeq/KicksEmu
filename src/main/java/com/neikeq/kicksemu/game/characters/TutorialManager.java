@@ -101,7 +101,7 @@ public class TutorialManager {
     }
 
     private static boolean giveReward(int characterId) {
-        String query = "UPDATE characters SET points = points + ? WHERE id = ?";
+        final String query = "UPDATE characters SET points = points + ? WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {

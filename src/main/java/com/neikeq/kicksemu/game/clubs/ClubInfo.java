@@ -29,7 +29,7 @@ public class ClubInfo {
     }
 
     public static int getManager(int id, Connection ... con) {
-        String query = "SELECT id FROM club_members " +
+        final String query = "SELECT id FROM club_members " +
                 "WHERE club_id = ? AND role = ? LIMIT 1";
 
         try {
@@ -53,7 +53,7 @@ public class ClubInfo {
     }
 
     public static List<Integer> getCaptains(int id, Connection ... con) {
-        String query = "SELECT id FROM club_members " +
+        final String query = "SELECT id FROM club_members " +
                 "WHERE club_id = ? AND role = ? LIMIT 2";
 
         try {
@@ -83,7 +83,7 @@ public class ClubInfo {
     }
 
     public static List<Integer> getMembers(int id, int offset, Connection ... con) {
-        String query = "SELECT id FROM club_members " +
+        final String query = "SELECT id FROM club_members " +
                 "WHERE club_id = ? AND role NOT IN(?, ?) LIMIT 10 OFFSET ?";
 
         try {
@@ -115,7 +115,7 @@ public class ClubInfo {
     }
 
     public static short getMembersCount(int id, Connection ... con) {
-        String query = "SELECT count(1) FROM club_members " +
+        final String query = "SELECT count(1) FROM club_members " +
                 "WHERE club_id = ? AND role NOT IN(?, ?)";
 
         try {
@@ -140,7 +140,7 @@ public class ClubInfo {
     }
 
     public static short getMembersLimit(int id, Connection ... con) {
-        String query = "SELECT extra_membership FROM clubs WHERE id = ? LIMIT 1";
+        final String query = "SELECT extra_membership FROM clubs WHERE id = ? LIMIT 1";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -172,7 +172,7 @@ public class ClubInfo {
     }
 
     public static ClubUniform getUniform(int id, Connection ... con) {
-        String query = "SELECT uniform_home_shirts, uniform_home_pants, " +
+        final String query = "SELECT uniform_home_shirts, uniform_home_pants, " +
                 "uniform_home_socks, uniform_home_wrist, uniform_away_shirts, " +
                 "uniform_away_pants, uniform_away_socks, uniform_away_wrist " +
                 "FROM " + TABLE + " WHERE id = ? LIMIT 1;";

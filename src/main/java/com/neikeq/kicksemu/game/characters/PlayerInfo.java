@@ -79,7 +79,7 @@ public class PlayerInfo {
     }
 
     public static boolean isVisibleInLobby(int id, Connection ... con) {
-        String query = "SELECT moderator, visible FROM " + TABLE + " WHERE id = ? LIMIT 1;";
+        final String query = "SELECT moderator, visible FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -134,7 +134,7 @@ public class PlayerInfo {
     }
 
     public static QuestState getQuestState(int id, Connection ... con) {
-        String query = "SELECT quest_current, quest_matches_left FROM " +
+        final String query = "SELECT quest_current, quest_matches_left FROM " +
                 TABLE + " WHERE id = ? LIMIT 1;";
 
         try {
@@ -162,7 +162,7 @@ public class PlayerInfo {
     }
 
     public static TutorialState getTutorialState(int id, Connection ... con) {
-        String query = "SELECT tutorial_dribbling, tutorial_passing, tutorial_shooting, " +
+        final String query = "SELECT tutorial_dribbling, tutorial_passing, tutorial_shooting, " +
                 "tutorial_defense FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
         try {
@@ -239,7 +239,7 @@ public class PlayerInfo {
             }
         }
 
-        String query = "SELECT default_head, default_shirts, default_pants, " +
+        final String query = "SELECT default_head, default_shirts, default_pants, " +
                 "default_shoes FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
         try {
@@ -365,7 +365,7 @@ public class PlayerInfo {
     }
 
     public static PlayerStats getStats(int id, Connection ... con) {
-        String query = "SELECT stats_running, stats_endurance, stats_agility, " +
+        final String query = "SELECT stats_running, stats_endurance, stats_agility, " +
                 "stats_ball_control, stats_dribbling, stats_stealing, stats_tackling, " +
                 "stats_heading, stats_short_shots, stats_long_shots, stats_crossing, " +
                 "stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping, " +
@@ -442,7 +442,7 @@ public class PlayerInfo {
     }
 
     public static PlayerHistory getHistory(int id, Connection ... con) {
-        String query = "SELECT history_matches, history_wins, history_draws, history_MOM, " +
+        final String query = "SELECT history_matches, history_wins, history_draws, history_MOM, " +
                 "history_valid_goals, history_valid_assists, history_valid_interception, " +
                 "history_valid_shooting, history_valid_stealing, history_valid_tackling, " +
                 "history_shooting, history_stealing, history_tackling, history_total_points " +
@@ -486,7 +486,7 @@ public class PlayerInfo {
     }
 
     public static PlayerHistory getMonthHistory(int id, Connection ... con) {
-        String query = "SELECT history_month_matches, history_month_wins, " +
+        final String query = "SELECT history_month_matches, history_month_wins, " +
                 "history_month_draws, history_month_MOM, history_month_valid_goals, " +
                 "history_month_valid_assists, history_month_valid_interception, " +
                 "history_month_valid_shooting, history_month_valid_stealing, " +
@@ -548,7 +548,7 @@ public class PlayerInfo {
 
         Map<Integer, Item> items = new LinkedHashMap<>();
 
-        String query = "SELECT * FROM items WHERE player_id = ? AND " + ITEM_ACTIVE +
+        final String query = "SELECT * FROM items WHERE player_id = ? AND " + ITEM_ACTIVE +
                 " LIMIT " + InventoryManager.MAX_INVENTORY_ITEMS;
 
         try {
@@ -595,7 +595,7 @@ public class PlayerInfo {
 
         Map<Integer, Training> learns = new LinkedHashMap<>();
 
-        String query = "SELECT * FROM learns WHERE player_id = ?";
+        final String query = "SELECT * FROM learns WHERE player_id = ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -638,7 +638,7 @@ public class PlayerInfo {
 
         Map<Integer, Skill> skills = new LinkedHashMap<>();
 
-        String query = "SELECT * FROM skills WHERE player_id = ? AND " + PRODUCT_ACTIVE;
+        final String query = "SELECT * FROM skills WHERE player_id = ? AND " + PRODUCT_ACTIVE;
 
         byte slots = PlayerInfo.getSkillSlots(id, con);
         byte slotsUsed = 0;
@@ -696,7 +696,7 @@ public class PlayerInfo {
 
         Map<Integer, Celebration> celes = new LinkedHashMap<>();
 
-        String query = "SELECT * FROM ceres WHERE player_id = ? AND " + PRODUCT_ACTIVE;
+        final String query = "SELECT * FROM ceres WHERE player_id = ? AND " + PRODUCT_ACTIVE;
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -759,7 +759,7 @@ public class PlayerInfo {
     }
 
     public static void setTutorialState(TutorialState tutorial, int id, Connection ... con) {
-        String query = "UPDATE " + TABLE + " SET tutorial_dribbling=?, tutorial_passing=?, " +
+        final String query = "UPDATE " + TABLE + " SET tutorial_dribbling=?, tutorial_passing=?, " +
                 "tutorial_shooting=?, tutorial_defense=? WHERE id=? LIMIT 1;";
 
         try {
@@ -786,7 +786,7 @@ public class PlayerInfo {
     }
 
     public static void sumMoney(int experience, int points, int id, Connection ... con) {
-        String query = "UPDATE " + TABLE + " SET experience = experience + ?, " +
+        final String query = "UPDATE " + TABLE + " SET experience = experience + ?, " +
                 "points = points + ? WHERE id = ? LIMIT 1;";
 
         try {
@@ -827,7 +827,7 @@ public class PlayerInfo {
     }
 
     public static void setStats(PlayerStats stats, int id, Connection ... con) {
-        String query = "UPDATE " + TABLE + " SET stats_running = ?, stats_endurance = ?, " +
+        final String query = "UPDATE " + TABLE + " SET stats_running = ?, stats_endurance = ?, " +
                 "stats_agility = ?, stats_ball_control = ?, stats_dribbling = ?," +
                 "stats_stealing = ?, stats_tackling = ?, stats_heading = ?, " +
                 "stats_short_shots = ?, stats_long_shots = ?, stats_crossing = ?, " +
@@ -868,7 +868,7 @@ public class PlayerInfo {
     }
 
     public static void sumHistory(PlayerHistory history, int id, Connection ... con) {
-        String query = "UPDATE " + TABLE + " SET history_matches = history_matches + ?, " +
+        final String query = "UPDATE " + TABLE + " SET history_matches = history_matches + ?, " +
                 "history_wins = history_wins + ?, history_draws = history_draws + ?, " +
                 "history_MOM = history_MOM + ?, history_valid_goals = history_valid_goals + ?, " +
                 "history_valid_assists = history_valid_assists + ?, " +
@@ -950,7 +950,7 @@ public class PlayerInfo {
     }
 
     public static void addInventoryItem(Item item, int id, Connection ... con) {
-        String query = "INSERT INTO items VALUES(?,?,?,?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO items VALUES(?,?,?,?,?,?,?,?,?,?)";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -977,7 +977,7 @@ public class PlayerInfo {
     }
 
     public static void setInventoryItem(Item item, int id, Connection ... con) {
-        String query = "UPDATE items SET " +
+        final String query = "UPDATE items SET " +
                 "bonus_one=?, bonus_two=?, usages=?, timestamp_expire=?, selected=? " +
                 "WHERE player_id=? AND inventory_id=? AND " + ITEM_ACTIVE + " LIMIT 1;";
 
@@ -1003,7 +1003,7 @@ public class PlayerInfo {
     }
 
     public static void removeInventoryItem(Item item, int id, Connection ... con) {
-        String query = "DELETE FROM items WHERE player_id = ? AND inventory_id = ?;";
+        final String query = "DELETE FROM items WHERE player_id = ? AND inventory_id = ?;";
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
@@ -1021,7 +1021,7 @@ public class PlayerInfo {
     }
 
     public static void addInventoryTraining(Training training, int id, Connection ... con) {
-        String query = "INSERT INTO learns VALUES(?,?,?,?)";
+        final String query = "INSERT INTO learns VALUES(?,?,?,?)";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -1042,7 +1042,7 @@ public class PlayerInfo {
     }
 
     public static void addInventorySkill(Skill skill, int id, Connection ... con) {
-        String query = "INSERT INTO skills VALUES(?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO skills VALUES(?,?,?,?,?,?,?)";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -1066,7 +1066,7 @@ public class PlayerInfo {
     }
 
     public static void setInventorySkill(Skill skill, int id, Connection ... con) {
-        String query = "UPDATE skills SET selection_index=?, timestamp_expire=? " +
+        final String query = "UPDATE skills SET selection_index=?, timestamp_expire=? " +
                 "WHERE player_id=? AND inventory_id=? AND " + PRODUCT_ACTIVE + " LIMIT 1;";
 
         try {
@@ -1088,7 +1088,7 @@ public class PlayerInfo {
     }
 
     public static void addInventoryCele(Celebration cele, int id, Connection ... con) {
-        String query = "INSERT INTO ceres VALUES(?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO ceres VALUES(?,?,?,?,?,?,?)";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -1112,7 +1112,7 @@ public class PlayerInfo {
     }
 
     public static void setInventoryCele(Celebration cele, int id, Connection ... con) {
-        String query = "UPDATE ceres SET selection_index=?, timestamp_expire=? " +
+        final String query = "UPDATE ceres SET selection_index=?, timestamp_expire=? " +
                 "WHERE player_id=? AND inventory_id=? AND " + PRODUCT_ACTIVE + " LIMIT 1;";
 
         try {

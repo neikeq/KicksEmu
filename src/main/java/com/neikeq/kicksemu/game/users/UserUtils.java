@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class UserUtils {
 
     public static boolean isAlreadyConnected(int userId) {
-        String query = "SELECT online FROM users WHERE id = ?";
+        final String query = "SELECT online FROM users WHERE id = ?";
 
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -25,7 +25,7 @@ public class UserUtils {
     }
 
     public static int getIdFromUsername(String username) {
-        String query = "SELECT id FROM users WHERE username = ?";
+        final String query = "SELECT id FROM users WHERE username = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {

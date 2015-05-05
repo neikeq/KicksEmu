@@ -25,7 +25,7 @@ public class MemberInfo {
     }
 
     private static int getInt(String column, int id, Connection... con) {
-        String query = "SELECT " + column + " FROM " + TABLE +
+        final String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {
@@ -54,7 +54,7 @@ public class MemberInfo {
     }
 
     private static String getString(String column, int id, Connection... con) {
-        String query = "SELECT " + column + " FROM " + TABLE +
+        final String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {

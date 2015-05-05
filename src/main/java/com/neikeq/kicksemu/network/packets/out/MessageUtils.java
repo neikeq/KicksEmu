@@ -50,7 +50,7 @@ class MessageUtils {
     }
 
     public static void appendCharacterInfo(int playerId, ServerMessage msg, Connection ... con) {
-        String query = "SELECT level, experience, stats_points, owner, points, " +
+        final String query = "SELECT level, experience, stats_points, owner, points, " +
                 "tickets_kash, tickets_points FROM characters WHERE id = ? LIMIT 1;";
 
         try {

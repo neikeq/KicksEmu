@@ -26,7 +26,7 @@ public class UserInfo {
     }
 
     public static UserSettings getSettings(int id) {
-        String query = "SELECT settings_camera, settings_names, vol_effects, vol_music," +
+        final String query = "SELECT settings_camera, settings_names, vol_effects, vol_music," +
                 " settings_invites, settings_shadows, settings_whispers, settings_country" +
                 " FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
@@ -112,7 +112,7 @@ public class UserInfo {
     }
 
     public static void setSettings(UserSettings settings, int id) {
-        String query = "UPDATE users SET settings_camera = ?, settings_names = ?," +
+        final String query = "UPDATE users SET settings_camera = ?, settings_names = ?," +
                 " vol_effects = ?, vol_music = ?, settings_invites = ?," +
                 " settings_shadows = ?, settings_whispers = ?, settings_country = ?" +
                 " WHERE id = ? LIMIT 1;";

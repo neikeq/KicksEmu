@@ -1,14 +1,11 @@
 package com.neikeq.kicksemu.network.server;
 
 import com.neikeq.kicksemu.config.Configuration;
-import com.neikeq.kicksemu.config.Localization;
-import com.neikeq.kicksemu.config.Table;
+import com.neikeq.kicksemu.game.servers.GameServerType;
 import com.neikeq.kicksemu.game.servers.ServerBase;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
 import com.neikeq.kicksemu.game.sessions.Session;
-import com.neikeq.kicksemu.io.Output;
-import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.handle.GameMessageHandler;
 import com.neikeq.kicksemu.network.packets.in.handle.MainMessageHandler;
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
@@ -25,45 +22,27 @@ public class ServerManager {
     private final ServerType serverType;
 
     private static MessageHandler messageHandler;
-    private static Map<Integer, Session> players;
+    private static Map<Integer, Session> players = new ConcurrentHashMap<>();
     private static ServerBase serverBase;
     private static short serverId;
 
     private static final Object locker = new Object();
 
-    public boolean init() {
-        switch (getServerType()) {
-            case MAIN:
-                initializeMain();
-                return true;
-            case GAME:
-                return initializeGame();
-            default:
-                return false;
-        }
-    }
-
     private void initializeMain() {
         messageHandler = new MainMessageHandler();
         serverId = 0;
-
-        Table.initializeTables();
     }
 
-    private boolean initializeGame() {
-        Output.println(Localization.get("game.init"), Level.INFO);
-
+    private void initializeGame() throws SQLException {
         messageHandler = new GameMessageHandler();
 
         serverBase = ServerBase.fromConfig();
         serverId = serverBase.getId();
 
-        Table.initializeTables();
-
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
-            return ServerUtils.insertServer(serverBase);
+            ServerUtils.insertServer(serverBase);
         } else {
-            return ServerUtils.updateServer(serverBase);
+            ServerUtils.updateServer(serverBase);
         }
     }
 
@@ -85,10 +64,10 @@ public class ServerManager {
     }
 
     public static void cleanPossibleConnectedUsers() {
-        String sql = "UPDATE users SET online = -1, server = -1 WHERE server = ?";
+        final String query = "UPDATE users SET online = -1, server = -1 WHERE server = ?";
 
         try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setShort(1, getServerId());
 
             stmt.executeUpdate();
@@ -123,17 +102,16 @@ public class ServerManager {
         return getPlayers().size();
     }
 
-    public ServerManager(String serverTypeId) {
+    public ServerManager(String serverTypeId) throws SQLException {
         this(ServerType.valueOf(serverTypeId.toUpperCase()));
-    }
-
-    private ServerManager(ServerType type) {
-        serverType = type;
-        players = new ConcurrentHashMap<>();
     }
 
     public static short getServerId() {
         return serverId;
+    }
+
+    public ServerBase getServerBase() {
+        return serverBase;
     }
 
     public ServerType getServerType() {
@@ -146,5 +124,20 @@ public class ServerManager {
 
     public static MessageHandler getMessageHandler() {
         return messageHandler;
+    }
+
+    private ServerManager(ServerType type) throws SQLException {
+        serverType = type;
+
+        switch (getServerType()) {
+            case MAIN:
+                initializeMain();
+                break;
+            case GAME:
+                initializeGame();
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected ServerType.");
+        }
     }
 }

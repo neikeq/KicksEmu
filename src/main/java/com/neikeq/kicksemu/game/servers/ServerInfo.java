@@ -16,32 +16,8 @@ public class ServerInfo {
         SqlUtils.setShort("filter", filter, TABLE, id);
     }
 
-    public static String getName(int id) {
-        return SqlUtils.getString("name", TABLE, id);
-    }
-
     public static void setName(String name, int id) {
         SqlUtils.setString("name", name, TABLE, id);
-    }
-
-    public static String getAddress(int id) {
-        return SqlUtils.getString("address", TABLE, id);
-    }
-
-    public static short getPort(int id) {
-        return SqlUtils.getShort("port", TABLE, id);
-    }
-
-    public static short getMinLevel(int id) {
-        return SqlUtils.getShort("min_level", TABLE, id);
-    }
-
-    public static short getMaxLevel(int id) {
-        return SqlUtils.getShort("max_level", TABLE, id);
-    }
-
-    public static short getMaxUsers(int id) {
-        return SqlUtils.getShort("max_users", TABLE, id);
     }
 
     public static short getConnectedUsers(int id) {
@@ -52,15 +28,7 @@ public class ServerInfo {
         SqlUtils.setShort("connected_users", connectedUsers, TABLE, id);
     }
 
-    public static boolean isOnline(int id) {
-        return SqlUtils.getBoolean("online", TABLE, id);
-    }
-
     public static void toggleOffline(int id) {
         SqlUtils.setBoolean("online", false, TABLE, id);
-    }
-
-    public static GameServerType getType(int id) {
-        return GameServerType.valueOf(SqlUtils.getString("type", TABLE, id));
     }
 }

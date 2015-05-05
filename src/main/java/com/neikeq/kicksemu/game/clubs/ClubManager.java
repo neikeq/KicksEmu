@@ -22,7 +22,7 @@ public class ClubManager {
     }
 
     public static boolean clubExist(int clubId) {
-        String query = "SELECT id FROM clubs WHERE id = ?";
+        final String query = "SELECT id FROM clubs WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {

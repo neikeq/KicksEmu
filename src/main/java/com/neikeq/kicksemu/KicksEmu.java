@@ -2,6 +2,7 @@ package com.neikeq.kicksemu;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Input;
@@ -55,21 +56,26 @@ public class KicksEmu {
         try {
             Output.println(Localization.get("init"));
 
-            // Initialize MySQL Database
-            MySqlManager.init();
+            // --- Initialize MySQL Database
+            Output.println(Localization.get("mysql.init"));
+            MySqlManager.initialize();
 
-            // Initialize ServerManager
-            serverManager = new ServerManager(Configuration.get("net.type"));
+            // --- Initialize ServerManager
+            Output.println(Localization.get("server.init"));
+            String serverType = Configuration.get("net.type");
 
-            if (serverManager.getServerType() == null) {
+            if (serverType == null) {
                 handleFatalError("Invalid server type.");
-            } else if (!getServerManager().init()) {
-                handleFatalError("Could not initialize Server Manager.");
+            } else {
+                serverManager = new ServerManager(serverType);
+                ServerManager.cleanPossibleConnectedUsers();
             }
 
-            ServerManager.cleanPossibleConnectedUsers();
+            // --- Initialize Game Components
+            Output.println(Localization.get("game.init"));
+            TableManager.initialize();
 
-            // Initialize Tcp Server
+            // --- Initialize Tcp Server
             Output.println(Localization.get("net.init"));
 
             // Port for game servers must be relative to the port id
@@ -97,11 +103,8 @@ public class KicksEmu {
         } catch (InterruptedException e) {
             // Bind was interrupted
             handleFatalError(Localization.get("net.bind.interrupt"), e.getMessage());
-        } catch (SQLException e) {
+        } catch (SQLException | IllegalArgumentException | AssertionError e) {
             // Connection error
-            handleFatalError(Localization.get("mysql.error.conn"), e.getMessage());
-        } catch (IllegalArgumentException e) {
-            // e.x.: Pool size is less than zero
             handleFatalError(e.getMessage());
         } catch (BindException e) {
             handleFatalError(Localization.get("net.bind.error"), e.getMessage());
@@ -147,15 +150,6 @@ public class KicksEmu {
         cleanDatabase();
     }
 
-    private static void cleanDatabase() {
-        short serverId = ServerManager.getServerId();
-
-        if (serverId > 0 && initialized) {
-            ServerInfo.toggleOffline(serverId);
-            ServerInfo.setConnectedUsers((short) 0, serverId);
-        }
-    }
-
     private static void cleanNetworking() {
         if (ServerManager.getPlayers() != null) {
             ServerManager.getPlayers().values().stream().forEach(Session::close);
@@ -167,6 +161,15 @@ public class KicksEmu {
 
         if (getNettyUdpServer() != null) {
             getNettyUdpServer().close();
+        }
+    }
+
+    private static void cleanDatabase() {
+        short serverId = ServerManager.getServerId();
+
+        if (serverId > 0 && initialized) {
+            ServerInfo.toggleOffline(serverId);
+            ServerInfo.setConnectedUsers((short) 0, serverId);
         }
     }
 

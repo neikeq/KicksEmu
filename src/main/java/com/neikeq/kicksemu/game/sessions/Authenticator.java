@@ -58,7 +58,7 @@ public class Authenticator {
         byte authResult;
 
         if (clientVersion == Constants.REQUIRED_CLIENT_VERSION) {
-            String query = "SELECT password, id FROM users WHERE username = ?";
+            final String query = "SELECT password, id FROM users WHERE username = ?";
 
             try (Connection con = MySqlManager.getConnection();
                  PreparedStatement stmt = con.prepareStatement(query)) {
@@ -147,7 +147,7 @@ public class Authenticator {
     private static byte instantAuthenticate(int accountId) {
         byte authResult;
 
-        String query = "SELECT 1 FROM users WHERE id = ?";
+        final String query = "SELECT 1 FROM users WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {

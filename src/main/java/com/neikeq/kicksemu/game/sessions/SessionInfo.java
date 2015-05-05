@@ -31,11 +31,11 @@ public class SessionInfo {
     }
 
     public static void reduceExpiration(int sessionId) {
-        String sql = "UPDATE " + TABLE + " SET expiration = CURRENT_TIMESTAMP + " +
+        final String query = "UPDATE " + TABLE + " SET expiration = CURRENT_TIMESTAMP + " +
                 "INTERVAL 30 SECOND WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
 
             stmt.executeUpdate();
@@ -43,10 +43,10 @@ public class SessionInfo {
     }
 
     public static void remove(int sessionId) {
-        String sql = "DELETE FROM " + TABLE + " WHERE id = ?";
+        final String query = "DELETE FROM " + TABLE + " WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
 
             stmt.executeUpdate();
@@ -54,11 +54,11 @@ public class SessionInfo {
     }
 
     public static void resetExpiration(int sessionId) {
-        String sql = "UPDATE " + TABLE + " SET expiration = CURRENT_TIMESTAMP + " +
+        final String query = "UPDATE " + TABLE + " SET expiration = CURRENT_TIMESTAMP + " +
                 "INTERVAL 1 DAY WHERE id = ?";
 
         try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
 
             stmt.executeUpdate();
@@ -66,12 +66,12 @@ public class SessionInfo {
     }
 
     public static int generateSessionId() {
-        String sql = "SELECT FLOOR((RAND() * 4294967295) - 2147483648) " +
+        final String query = "SELECT FLOOR((RAND() * 4294967295) - 2147483648) " +
                 "AS random_session_id FROM " + TABLE + " WHERE \"random_session_id\" " +
                 "NOT IN (SELECT id FROM " + TABLE + ") LIMIT 1";
 
         try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(query)) {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("random_session_id");
@@ -85,11 +85,11 @@ public class SessionInfo {
     }
 
     public static void insertSession(int sessionId, int userId, int playerId, String hash) {
-        String sql = "INSERT INTO " + TABLE + " (id, user_id, player_id, hash, expiration) " +
+        final String query = "INSERT INTO " + TABLE + " (id, user_id, player_id, hash, expiration) " +
                 "VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 1 DAY)";
 
         try (Connection con = MySqlManager.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+             PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
             stmt.setInt(2, userId);
             stmt.setInt(3, playerId);
@@ -100,7 +100,7 @@ public class SessionInfo {
     }
 
     private static int getInt(String column, int id, Connection... con) {
-        String query = "SELECT " + column + " FROM " + TABLE +
+        final String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
 
         try {
@@ -129,7 +129,7 @@ public class SessionInfo {
     private static String getString(int id, Connection... con) {
         final String column = "hash";
 
-        String query = "SELECT " + column + " FROM " + TABLE +
+        final String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
 
         try {

@@ -23,6 +23,17 @@ public class TableManager {
     private static final Map<Integer, OptionInfo> optionTable = new HashMap<>();
     private static final Map<Short, LevelInfo> levelInfoTable = new HashMap<>();
 
+    public static void initialize() {
+        initializeItemFreeTable();
+        initializeSkillTable();
+        initializeCeleTable();
+        initializeLearnTable();
+        initializeItemTable();
+        initializeBonusTable();
+        initializeOptionTable();
+        initializeLevelTable();
+    }
+
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
         Optional<SkillInfo> result = skillsTable.values().stream().filter(filter).findFirst();
 

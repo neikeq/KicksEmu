@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class Moderation {
 
     public static boolean isRemoteAddressBanned(InetSocketAddress address) {
-        String query = "SELECT id FROM blacklist WHERE remote_address = ? AND expire > ? LIMIT 1";
+        final String query = "SELECT id FROM blacklist WHERE remote_address = ? AND expire > ? LIMIT 1";
         
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -28,7 +28,7 @@ public class Moderation {
     }
 
     public static boolean notUserBanned(int userId) {
-        String query = "SELECT id FROM bans WHERE user_id = ? AND expire > ? LIMIT 1";
+        final String query = "SELECT id FROM bans WHERE user_id = ? AND expire > ? LIMIT 1";
 
         try (Connection connection = MySqlManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
