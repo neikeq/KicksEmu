@@ -1,7 +1,6 @@
 package com.neikeq.kicksemu.network.server;
 
 import com.neikeq.kicksemu.config.Configuration;
-import com.neikeq.kicksemu.game.servers.GameServerType;
 import com.neikeq.kicksemu.game.servers.ServerBase;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.servers.ServerUtils;

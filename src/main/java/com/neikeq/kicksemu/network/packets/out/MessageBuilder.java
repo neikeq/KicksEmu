@@ -16,7 +16,6 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.servers.GameServerType;
-import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.AuthResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
