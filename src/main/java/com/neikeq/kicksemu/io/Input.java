@@ -80,7 +80,7 @@ public class Input {
     private void handleVerbosity(String ... arg) {
         try {
             Level specifiedLevel = Level.valueOf(arg[1].toUpperCase());
-            KicksEmu.getInstance().getOutput().setLevel(specifiedLevel);
+            KicksEmu.getOutput().setLevel(specifiedLevel);
         } catch (IllegalArgumentException ignored) {
             System.out.println(Localization.get("input.error", arg[1]));
         }
@@ -116,7 +116,7 @@ public class Input {
         commands.put("save", this::handleSave);
         commands.put("logs", this::handleLogs);
         commands.put("verb", this::handleVerbosity);
-        commands.put("stop", (arg) -> KicksEmu.getInstance().stop());
+        commands.put("stop", (arg) -> KicksEmu.stop());
         commands.put("notice", this::handleNotice);
         commands.put("stats", (arg) -> handleStats());
     }

@@ -18,16 +18,14 @@ import java.sql.SQLException;
 
 public class KicksEmu {
 
-    private Output output;
+    private static Output output;
 
-    private ServerManager serverManager;
+    private static ServerManager serverManager;
 
-    private NettyTcpServer nettyTcpServer;
-    private NettyUdpServer nettyUdpServer;
+    private static NettyTcpServer nettyTcpServer;
+    private static NettyUdpServer nettyUdpServer;
 
-    private boolean initialized = false;
-
-    private static KicksEmu instance;
+    private static boolean initialized = false;
 
     /** @param args command line arguments */
     public static void main(String[] args) {
@@ -36,10 +34,10 @@ public class KicksEmu {
 
         configFile += !configFile.endsWith(".properties") ? ".properties" : "";
 
-        KicksEmu.getInstance().start(configFile);
+        KicksEmu.start(configFile);
     }
 
-    private void start(String configFile) {
+    private static void start(String configFile) {
         long startTime = System.nanoTime();
 
         // Initialize Configurations
@@ -126,7 +124,7 @@ public class KicksEmu {
      *
      * @param messages error message/s
      */
-    private void handleFatalError(String... messages) {
+    private static void handleFatalError(String... messages) {
         String message = messages[0];
 
         for (int i = 1; i < messages.length; i++) {
@@ -139,7 +137,7 @@ public class KicksEmu {
     }
 
     /** Performs required disposing operations */
-    private void dispose() {
+    private static void dispose() {
         // Dispose server sockets
         Output.println(Localization.get("net.close"));
         cleanNetworking();
@@ -149,7 +147,7 @@ public class KicksEmu {
         cleanDatabase();
     }
 
-    private void cleanDatabase() {
+    private static void cleanDatabase() {
         short serverId = ServerManager.getServerId();
 
         if (serverId > 0 && initialized) {
@@ -158,7 +156,7 @@ public class KicksEmu {
         }
     }
 
-    private void cleanNetworking() {
+    private static void cleanNetworking() {
         if (ServerManager.getPlayers() != null) {
             ServerManager.getPlayers().values().stream().forEach(Session::close);
         }
@@ -172,7 +170,7 @@ public class KicksEmu {
         }
     }
 
-    public void stop() {
+    public static void stop() {
         Output.println(Localization.get("stop"));
 
         dispose();
@@ -180,23 +178,15 @@ public class KicksEmu {
         System.exit(0);
     }
 
-    public Output getOutput() {
+    public static Output getOutput() {
         return output;
     }
 
     public static ServerManager getServerManager() {
-        return getInstance().serverManager;
+        return serverManager;
     }
 
-    public static KicksEmu getInstance() {
-        if (instance == null) {
-            instance = new KicksEmu();
-        }
-
-        return instance;
-    }
-
-    public NettyUdpServer getNettyUdpServer() {
+    public static NettyUdpServer getNettyUdpServer() {
         return nettyUdpServer;
     }
 }

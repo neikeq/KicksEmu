@@ -23,7 +23,7 @@ public class MatchBroadcaster {
         if (room != null && room.isPlayerIn(targetId)) {
             if (isBroadcastEnabled()) {
                     Session targetSession = room.getPlayers().get(targetId);
-                    Channel ch = KicksEmu.getInstance().getNettyUdpServer().getChannelFuture().channel();
+                    Channel ch = KicksEmu.getNettyUdpServer().getChannelFuture().channel();
 
                     try {
                         String targetIp = targetSession.getRemoteAddress().getAddress().getHostAddress();
