@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.game.servers;
 
-import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Tips;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.ClubManager;
@@ -38,17 +37,15 @@ public class ServerUtils {
         // TODO Check if character can access private server... Reject code is 251
         int clubId = MemberInfo.getClubId(playerId);
 
-        ServerBase serverBase = KicksEmu.getServerManager().getServerBase();
-
-        if (serverBase.getType() == GameServerType.CLUB &&
+        if (ServerInfo.getType(serverId) == GameServerType.CLUB &&
                 (clubId <= 0 || !ClubManager.clubExist(clubId))) {
             // Cannot join a club server without being a club member
             result = -4;
-        } else if (level < serverBase.getMinLevel() ||
-                level > serverBase.getMaxLevel()) {
+        } else if (level < ServerInfo.getMinLevel(serverId) ||
+                level > ServerInfo.getMaxLevel(serverId)) {
             // Player does not meet the level requirements
             result = -3;
-        } else if (serverBase.getMaxUsers() <=
+        } else if (ServerInfo.getMaxUsers(serverId) <=
                 ServerInfo.getConnectedUsers(serverId)) {
             // Server is full
             result = -2;

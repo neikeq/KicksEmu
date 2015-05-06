@@ -20,6 +20,22 @@ public class ServerInfo {
         SqlUtils.setString("name", name, TABLE, id);
     }
 
+    public static short getMinLevel(int id) {
+        return SqlUtils.getShort("min_level", TABLE, id);
+    }
+
+    public static short getMaxLevel(int id) {
+        return SqlUtils.getShort("max_level", TABLE, id);
+    }
+
+    public static short getMaxUsers(int id) {
+        return SqlUtils.getShort("max_users", TABLE, id);
+    }
+
+    public static GameServerType getType(int id) {
+        return GameServerType.valueOf(SqlUtils.getString("type", TABLE, id));
+    }
+
     public static short getConnectedUsers(int id) {
         return SqlUtils.getShort("connected_users", TABLE, id);
     }
