@@ -36,6 +36,9 @@ public class ChatManager {
                 case TEAM:
                     handleTeamMessage(session, name, message);
                     break;
+                case CLUB:
+                    handleClubMessage(session, name, message);
+                    break;
                 case WHISPER:
                     if (isWhisperMessage(message)) {
                         onMessageWhisper(session, name, message);
@@ -161,10 +164,26 @@ public class ChatManager {
             onMessageClub(session, name, message.substring(2));
         } else if (isWhisperMessage(message)) {
             onMessageWhisper(session, name, message);
+        } else if (isTeamMessage(message)) {
+            onMessageTeam(session, name, message.substring(1));
         } else if (isCommandMessage(message)) {
             ChatCommands.handle(session, message.substring(1));
         } else {
             onMessageTeam(session, name, message);
+        }
+    }
+
+    private static void handleClubMessage(Session session, String name, String message) {
+        if (isClubMessage(message)) {
+            onMessageClub(session, name, message.substring(2));
+        } else if (isWhisperMessage(message)) {
+            onMessageWhisper(session, name, message);
+        } else if (isTeamMessage(message)) {
+            onMessageTeam(session, name, message.substring(1));
+        } else if (isCommandMessage(message)) {
+            ChatCommands.handle(session, message.substring(1));
+        } else {
+            onMessageClub(session, name, message);
         }
     }
 
