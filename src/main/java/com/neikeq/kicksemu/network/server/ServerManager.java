@@ -5,8 +5,6 @@ import com.neikeq.kicksemu.game.servers.ServerBase;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
 import com.neikeq.kicksemu.game.sessions.Session;
-import com.neikeq.kicksemu.network.packets.in.handle.GameMessageHandler;
-import com.neikeq.kicksemu.network.packets.in.handle.MainMessageHandler;
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
@@ -20,21 +18,18 @@ public class ServerManager {
 
     private final ServerType serverType;
 
-    private static MessageHandler messageHandler;
-    private static Map<Integer, Session> players = new ConcurrentHashMap<>();
+    private static MessageHandler messageHandler = new MessageHandler();
+    private static final Map<Integer, Session> players = new ConcurrentHashMap<>();
     private static ServerBase serverBase;
     private static short serverId;
 
     private static final Object locker = new Object();
 
     private void initializeMain() {
-        messageHandler = new MainMessageHandler();
         serverId = 0;
     }
 
     private void initializeGame() throws SQLException {
-        messageHandler = new GameMessageHandler();
-
         serverBase = ServerBase.fromConfig();
         serverId = serverBase.getId();
 

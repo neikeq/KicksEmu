@@ -2,6 +2,7 @@ package com.neikeq.kicksemu;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
+import com.neikeq.kicksemu.game.events.EventsManager;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -13,6 +14,7 @@ import com.neikeq.kicksemu.network.server.ServerType;
 import com.neikeq.kicksemu.network.server.tcp.NettyTcpServer;
 import com.neikeq.kicksemu.network.server.udp.NettyUdpServer;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import org.quartz.SchedulerException;
 
 import java.net.BindException;
 import java.sql.SQLException;
@@ -68,12 +70,18 @@ public class KicksEmu {
                 handleFatalError("Invalid server type.");
             } else {
                 serverManager = new ServerManager(serverType);
+
+                ServerManager.getMessageHandler().defineEvents();
+                ServerManager.getMessageHandler().defineCertifyEvents();
+
                 ServerManager.cleanPossibleConnectedUsers();
             }
 
             // --- Initialize Game Components
             Output.println(Localization.get("game.init"));
+
             TableManager.initialize();
+            EventsManager.initialize();
 
             // --- Initialize Tcp Server
             Output.println(Localization.get("net.init"));
@@ -108,6 +116,8 @@ public class KicksEmu {
             handleFatalError(e.getMessage());
         } catch (BindException e) {
             handleFatalError(Localization.get("net.bind.error"), e.getMessage());
+        } catch (SchedulerException e) {
+            handleFatalError(Localization.get("game.event.error"), e.getMessage());
         }
 
         long endTime = (System.nanoTime() - startTime) / 1000000;

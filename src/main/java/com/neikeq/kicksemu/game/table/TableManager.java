@@ -84,7 +84,7 @@ public class TableManager {
         return result.isPresent() ? result.get() : null;
     }
 
-    public static void initializeSkillTable() {
+    private static void initializeSkillTable() {
         TableReader reader = new TableReader(Constants.TABLE_SKILL_PATH);
 
         Row line;
@@ -94,7 +94,7 @@ public class TableManager {
         }
     }
 
-    public static void initializeCeleTable() {
+    private static void initializeCeleTable() {
         TableReader reader = new TableReader(Constants.TABLE_CELE_PATH);
 
         Row line;
@@ -104,7 +104,7 @@ public class TableManager {
         }
     }
 
-    public static void initializeLearnTable() {
+    private static void initializeLearnTable() {
         TableReader reader = new TableReader(Constants.TABLE_LEARN_PATH);
 
         Row line;
@@ -114,7 +114,7 @@ public class TableManager {
         }
     }
 
-    public static void initializeItemFreeTable() {
+    private static void initializeItemFreeTable() {
         TableReader reader = new TableReader(Constants.TABLE_ITEM_FREE_PATH);
 
         Row line;
@@ -124,7 +124,7 @@ public class TableManager {
         }
     }
 
-    public static void initializeItemTable() {
+    private static void initializeItemTable() {
         TableReader reader = new TableReader(Constants.TABLE_ITEM_PATH);
 
         Row line;
@@ -134,7 +134,7 @@ public class TableManager {
         }
     }
 
-    public static void initializeBonusTable() {
+    private static void initializeBonusTable() {
         TableReader reader = new TableReader(Constants.TABLE_BONUS_PATH);
 
         Row line;
@@ -144,7 +144,7 @@ public class TableManager {
         }
     }
 
-    public static void initializeOptionTable() {
+    private static void initializeOptionTable() {
         TableReader reader = new TableReader(Constants.TABLE_OPTION_PATH);
 
         Row line;
@@ -154,7 +154,7 @@ public class TableManager {
         }
     }
 
-    public static void initializeLevelTable() {
+    private static void initializeLevelTable() {
         TableReader reader = new TableReader(Constants.TABLE_LEVEL_FILE);
 
         Row line;

@@ -17,8 +17,8 @@ dependencies {
     compile 'io.netty:netty-all:4.0.27.Final'
     compile 'com.opencsv:opencsv:3.3'
     compile 'org.apache.commons:commons-dbcp2:2.1'
-    compile 'commons-logging:commons-logging:1.2'
-    compile 'org.apache.commons:commons-pool2:2.3'
+    compile 'org.quartz-scheduler:quartz:2.2.1'
+    compile 'org.slf4j:slf4j-nop:1.7.12'
 }
 
 run {

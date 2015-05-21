@@ -23,5 +23,9 @@
     <orderEntry type="library" exported="" name="Gradle: commons-logging:commons-logging:1.2" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.apache.commons:commons-pool2:2.3" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.apache.commons:commons-lang3:3.3.2" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.quartz-scheduler:quartz:2.2.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: c3p0:c3p0:0.9.1.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.slf4j:slf4j-nop:1.7.12" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.slf4j:slf4j-api:1.7.12" level="project" />
   </component>
 </module>

@@ -13,35 +13,27 @@ import java.net.InetSocketAddress;
 
 public class MatchBroadcaster {
 
-    private static Boolean broadcastEnabled;
-
     public static void udpGame(Session session, ClientMessage msg) {
         int targetId = msg.getTargetId();
 
         Room room = RoomManager.getRoomById(session.getRoomId());
 
         if (room != null && room.isPlayerIn(targetId)) {
-            if (isBroadcastEnabled()) {
-                    Session targetSession = room.getPlayers().get(targetId);
-                    Channel ch = KicksEmu.getNettyUdpServer().getChannelFuture().channel();
+            Session targetSession = room.getPlayers().get(targetId);
+            Channel ch = KicksEmu.getNettyUdpServer().getChannelFuture().channel();
 
-                    try {
-                        String targetIp = targetSession.getRemoteAddress().getAddress().getHostAddress();
+            try {
+                String targetIp = targetSession.getRemoteAddress().getAddress().getHostAddress();
 
-                        ch.writeAndFlush(new DatagramPacket(msg.getBody().readerIndex(0).retain(),
-                                new InetSocketAddress(targetIp, targetSession.getUdpPort())));
-                    } finally {
-                        ch.closeFuture();
-                    }
+                ch.writeAndFlush(new DatagramPacket(msg.getBody().readerIndex(0).retain(),
+                        new InetSocketAddress(targetIp, targetSession.getUdpPort())));
+            } finally {
+                ch.closeFuture();
             }
         }
     }
 
-    private static boolean isBroadcastEnabled() {
-        if (broadcastEnabled == null) {
-            broadcastEnabled = Configuration.getBoolean("game.match.broadcast");
-        }
-
-        return broadcastEnabled;
+    public static boolean isBroadcastEnabled() {
+        return Configuration.getBoolean("game.match.broadcast");
     }
 }

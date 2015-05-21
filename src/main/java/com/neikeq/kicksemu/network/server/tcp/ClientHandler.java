@@ -6,6 +6,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.game.sessions.SessionManager;
 
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
+import com.neikeq.kicksemu.network.packets.in.handle.UndefinedMessageException;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,13 +21,13 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
         try {
             ClientMessage message = new ClientMessage(buf);
 
-            MessageHandler messageHandler = ServerManager.getMessageHandler();
-
             // Handle the incoming message
-            if (messageHandler.handleFails(SessionManager.getSession(ctx.channel()), message)) {
-                Output.println("Received unknown message (id: " + message.getMessageId() +
-                        ") from: " + ctx.channel().remoteAddress().toString(), Level.DEBUG);
-            }
+            MessageHandler messageHandler = ServerManager.getMessageHandler();
+            messageHandler.handle(SessionManager.getSession(ctx.channel()), message);
+
+        } catch (UndefinedMessageException ume) {
+            Output.println(ume.getMessage() + " from: " +
+                    ctx.channel().remoteAddress().toString(), Level.DEBUG);
         } finally {
             buf.release();
         }
@@ -51,7 +52,6 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         SessionManager.removeSession(ctx.channel());
 
-        Output.println("Client handler caught an exception: " + cause.getMessage(),
-                Level.DEBUG);
+        Output.println("Client handler caught an exception: " + cause.getMessage(), Level.DEBUG);
     }
 }

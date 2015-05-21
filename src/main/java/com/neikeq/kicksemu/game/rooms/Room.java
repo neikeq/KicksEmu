@@ -314,7 +314,7 @@ public class Room {
                         );
             } catch (SQLException ignored) {}
         } else {
-            players.get(host).sendAndFlush(MessageBuilder.updateRoomPlayer(playerId));
+            players.get(host).sendAndFlush(MessageBuilder.updateRoomPlayer(playerId)); // TODO replace with custom message to update address and port
 
             disconnectedPlayers.remove(playerId);
 
@@ -406,7 +406,7 @@ public class Room {
         return getPlayers().containsKey(playerId);
     }
 
-    public boolean isPlayerReconnecting(int playerId) {
+    private boolean isPlayerReconnecting(int playerId) {
         return state == RoomState.PLAYING && disconnectedPlayers.containsKey(playerId);
     }
 

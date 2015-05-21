@@ -1,35 +1,146 @@
 package com.neikeq.kicksemu.network.packets.in.handle;
 
+import com.neikeq.kicksemu.KicksEmu;
+import com.neikeq.kicksemu.game.characters.CharacterManager;
+import com.neikeq.kicksemu.game.characters.CharacterRemover;
+import com.neikeq.kicksemu.game.characters.StatusMessage;
+import com.neikeq.kicksemu.game.characters.TutorialManager;
+import com.neikeq.kicksemu.game.characters.creation.CharacterCreator;
+import com.neikeq.kicksemu.game.chat.ChatManager;
+import com.neikeq.kicksemu.game.clubs.ClubManager;
+import com.neikeq.kicksemu.game.inventory.InventoryManager;
+import com.neikeq.kicksemu.game.inventory.Shop;
+import com.neikeq.kicksemu.game.lobby.LobbyManager;
+import com.neikeq.kicksemu.game.misc.MatchBroadcaster;
+import com.neikeq.kicksemu.game.misc.friendship.FriendsManager;
+import com.neikeq.kicksemu.game.misc.ignored.IgnoredManager;
+import com.neikeq.kicksemu.game.rooms.RoomManager;
+import com.neikeq.kicksemu.game.servers.ServerUtils;
+import com.neikeq.kicksemu.game.sessions.Authenticator;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserManager;
 import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
+import com.neikeq.kicksemu.network.server.ServerType;
+import com.neikeq.kicksemu.network.server.udp.UdpPing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public abstract class MessageHandler {
-    private static Map<Integer, MessageEventHandler> events;
+public class MessageHandler {
+    private static final Map<Integer, MessageEventHandler> events = new HashMap<>();
+    private static final List<Integer> certifyEvents = new ArrayList<>();
 
-    MessageHandler() {
-        defineEvents();
-    }
-
-    private void defineEvents() {
-        events = new HashMap<>();
-
-        events.put(MessageId.UPDATE_SETTINGS, UserManager::updateSettings);
+    public void defineEvents() {
+        // Define global events
         events.put(MessageId.TCP_PING, UserManager::tcpPing);
-    }
+        events.put(MessageId.UPDATE_SETTINGS, UserManager::updateSettings);
 
-    public boolean handleFails(Session session, ClientMessage msg) {
-        MessageEventHandler event = events.get(msg.getMessageId());
-
-        if (event != null) {
-            event.handle(session, msg);
-            return false;
+        // Define main events
+        if (KicksEmu.getServerManager().getServerType() == ServerType.MAIN) {
+            events.put(MessageId.CERTIFY_LOGIN, Authenticator::certifyLogin);
+            events.put(MessageId.INSTANT_LOGIN, Authenticator::instantLogin);
+            events.put(MessageId.INSTANT_EXIT, (s, m) -> UserManager.instantExit(s));
+            events.put(MessageId.CERTIFY_EXIT, (s, m) -> UserManager.certifyExit(s));
+            events.put(MessageId.CHARACTER_INFO, (s, m) -> UserManager.characterInfo(s));
+            events.put(MessageId.CREATE_CHARACTER, CharacterCreator::createCharacter);
+            events.put(MessageId.CHOICE_CHARACTER, UserManager::choiceCharacter);
+            events.put(MessageId.REMOVE_CHARACTER, CharacterRemover::removeCharacter);
+            events.put(MessageId.SERVER_LIST, ServerUtils::serverList);
+            events.put(MessageId.SERVER_INFO, ServerUtils::serverInfo);
+            events.put(MessageId.UPGRADE_CHARACTER, UserManager::upgradeCharacter);
+            events.put(MessageId.UPDATE_TUTORIAL, TutorialManager::updateTutorial);
         }
 
-        return true;
+        // Define game events
+        if (KicksEmu.getServerManager().getServerType() == ServerType.GAME) {
+            events.put(MessageId.GAME_LOGIN, Authenticator::gameLogin);
+            events.put(MessageId.GAME_EXIT, (s, m) -> UserManager.gameExit(s));
+            events.put(MessageId.UDP_CONFIRM, (s, m) -> Authenticator.udpConfirm(s));
+            events.put(MessageId.PLAYER_INFO, (s, m) -> CharacterManager.playerInfo(s));
+            events.put(MessageId.FRIENDS_LIST, FriendsManager::friendsList);
+            events.put(MessageId.FRIEND_REQUEST, FriendsManager::friendRequest);
+            events.put(MessageId.FRIEND_RESPONSE, FriendsManager::friendResponse);
+            events.put(MessageId.DELETE_FRIEND, FriendsManager::deleteFriend);
+            events.put(MessageId.CLUB_INFO, (s, m) -> ClubManager.clubInfo(s));
+            events.put(MessageId.CLUB_MEMBERS, ClubManager::clubMembers);
+            events.put(MessageId.IGNORED_LIST, IgnoredManager::ignoreList);
+            events.put(MessageId.BLOCK_PLAYER, IgnoredManager::blockPlayer);
+            events.put(MessageId.UNBLOCK_PLAYER, IgnoredManager::unblockPlayer);
+            events.put(MessageId.STATUS_MESSAGE, StatusMessage::statusMessage);
+            events.put(MessageId.ROOM_LIST, RoomManager::roomList);
+            events.put(MessageId.CREATE_ROOM, RoomManager::createRoom);
+            events.put(MessageId.JOIN_ROOM, RoomManager::joinRoom);
+            events.put(MessageId.QUICK_JOIN_ROOM, (s, m) -> RoomManager.quickJoinRoom(s));
+            events.put(MessageId.NEXT_TIP, (s, m) -> ServerUtils.nextTip(s));
+            events.put(MessageId.LEAVE_ROOM, RoomManager::leaveRoom);
+            events.put(MessageId.SWAP_TEAM, RoomManager::swapTeam);
+            events.put(MessageId.ROOM_MAP, RoomManager::roomMap);
+            events.put(MessageId.ROOM_BALL, RoomManager::roomBall);
+            events.put(MessageId.ROOM_SETTINGS, RoomManager::roomSettings);
+            events.put(MessageId.KICK_PLAYER, RoomManager::kickPlayer);
+            events.put(MessageId.LOBBY_LIST, LobbyManager::lobbyList);
+            events.put(MessageId.INVITE_PLAYER, RoomManager::invitePlayer);
+            events.put(MessageId.CHAT_MESSAGE, ChatManager::chatMessage);
+            events.put(MessageId.START_COUNT_DOWN, RoomManager::startCountDown);
+            events.put(MessageId.HOST_INFO, RoomManager::hostInfo);
+            events.put(MessageId.COUNT_DOWN, RoomManager::countDown);
+            events.put(MessageId.CANCEL_COUNT_DOWN, RoomManager::cancelCountDown);
+            events.put(MessageId.MATCH_LOADING, RoomManager::matchLoading);
+            events.put(MessageId.PLAYER_READY, RoomManager::playerReady);
+            events.put(MessageId.CANCEL_LOADING, RoomManager::cancelLoading);
+            events.put(MessageId.START_MATCH, RoomManager::startMatch);
+            events.put(MessageId.MATCH_RESULT, RoomManager::matchResult);
+            events.put(MessageId.MATCH_FORCED_RESULT, RoomManager::matchResult);
+            events.put(MessageId.UNKNOWN1, RoomManager::unknown1);
+            events.put(MessageId.UNKNOWN2, RoomManager::unknown2);
+            events.put(MessageId.PURCHASE_ITEM, Shop::purchaseItem);
+            events.put(MessageId.RESELL_ITEM, InventoryManager::resellItem);
+            events.put(MessageId.ACTIVATE_ITEM, InventoryManager::activateItem);
+            events.put(MessageId.DEACTIVATE_ITEM, InventoryManager::deactivateItem);
+            events.put(MessageId.MERGE_ITEM, InventoryManager::mergeItem);
+            events.put(MessageId.PURCHASE_LEARN, Shop::purchaseLearn);
+            events.put(MessageId.PURCHASE_SKILL, Shop::purchaseSkill);
+            events.put(MessageId.ACTIVATE_SKILL, InventoryManager::activateSkill);
+            events.put(MessageId.DEACTIVATE_SKILL, InventoryManager::deactivateSkill);
+            events.put(MessageId.PURCHASE_CELE, Shop::purchaseCele);
+            events.put(MessageId.ACTIVATE_CELE, InventoryManager::activateCele);
+            events.put(MessageId.DEACTIVATE_CELE, InventoryManager::deactivateCele);
+            events.put(MessageId.PLAYER_DETAILS, CharacterManager::playerDetails);
+            events.put(MessageId.ADD_STATS_POINTS, CharacterManager::addStatsPoints);
+            events.put(MessageId.UDP_PING, (s, m) -> UdpPing.udpPing(s));
+            events.put(MessageId.UDP_AUTHENTICATE, (s, m) -> Authenticator.udpAuthentication(s));
+
+            if (MatchBroadcaster.isBroadcastEnabled()) {
+                events.put(MessageId.UDP_GAME_1, MatchBroadcaster::udpGame);
+                events.put(MessageId.UDP_GAME_2, MatchBroadcaster::udpGame);
+                events.put(MessageId.UDP_GAME_3, MatchBroadcaster::udpGame);
+                events.put(MessageId.UDP_GAME_4, MatchBroadcaster::udpGame);
+                events.put(MessageId.UDP_GAME_5, MatchBroadcaster::udpGame);
+            }
+        }
+    }
+
+    public void defineCertifyEvents() {
+        certifyEvents.add(MessageId.CERTIFY_LOGIN);
+        certifyEvents.add(MessageId.INSTANT_LOGIN);
+        certifyEvents.add(MessageId.GAME_LOGIN);
+    }
+
+    public void handle(Session session, ClientMessage msg)
+            throws UndefinedMessageException {
+        int messageId = msg.getMessageId();
+
+        if (session.isAuthenticated() || certifyEvents.contains(messageId)) {
+            MessageEventHandler event = events.get(msg.getMessageId());
+
+            if (event != null) {
+                event.handle(session, msg);
+            } else {
+                throw new UndefinedMessageException("Received unknown message (" + messageId + ")");
+            }
+        }
     }
 }

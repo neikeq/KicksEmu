@@ -7,6 +7,7 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
+import com.neikeq.kicksemu.network.packets.in.handle.UndefinedMessageException;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,12 +46,14 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
                 }
             }
 
-            MessageHandler messageHandler = ServerManager.getMessageHandler();
+            try {
+                // Handle the incoming message
+                MessageHandler messageHandler = ServerManager.getMessageHandler();
+                messageHandler.handle(session, message);
 
-            // Handle the incoming message
-            if (messageHandler.handleFails(session, message)) {
-                Output.println("Received unknown datagram packet (id: " + message.getMessageId() +
-                        ") from: " + packet.sender().getAddress().getHostAddress(), Level.DEBUG);
+            } catch (UndefinedMessageException ume) {
+                Output.println(ume.getMessage() + " from: " +
+                        packet.sender().getAddress().getHostAddress(), Level.DEBUG);
             }
         }
     }
