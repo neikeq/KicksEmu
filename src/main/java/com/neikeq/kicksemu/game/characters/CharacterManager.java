@@ -235,7 +235,7 @@ public class CharacterManager {
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
                 if (room != null) {
-                    room.sendBroadcast(MessageBuilder.updateRoomPlayer(session.getPlayerId(), con));
+                    room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                 }
             }
         } catch (SQLException ignored) {}

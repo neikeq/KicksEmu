@@ -521,6 +521,10 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage chatMessage(MessageType messageType, String message) {
+        return chatMessage(0, "", messageType, message);
+    }
+
     public static ServerMessage chatMessage(int playerId, String name,
                                             MessageType messageType, String message) {
         ServerMessage msg = new ServerMessage(MessageId.CHAT_MESSAGE);
@@ -871,13 +875,13 @@ public class MessageBuilder {
     public static ServerMessage hostInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.HOST_INFO);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         Session session = ServerManager.getSessionById(room.getHost());
 
         msg.append(room.getHost());
         msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-        msg.append((short)session.getUdpPort());
+        msg.append((short) session.getUdpPort());
         msg.append(room.isTraining());
         msg.appendZeros(4);
 
@@ -1310,13 +1314,12 @@ public class MessageBuilder {
     public static ServerMessage updateRoomPlayer(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.UPDATE_ROOM_PLAYER);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         msg.append(playerId);
         msg.append(true);
 
         MessageUtils.appendCharacterInfo(playerId, msg, con);
-
         MessageUtils.appendStats(playerId, msg, con);
 
         return msg;

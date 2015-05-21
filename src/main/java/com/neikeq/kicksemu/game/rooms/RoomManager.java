@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.game.rooms;
 
-import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
@@ -36,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -140,7 +140,7 @@ public class RoomManager {
             // Check that everything is correct
             byte result = 0;
 
-            GameServerType serverType = KicksEmu.getServerManager().getServerBase().getType();
+            GameServerType serverType = ServerManager.getServerBase().getType();
 
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
                 result = (byte) 253; // Wrong level settings
@@ -324,7 +324,7 @@ public class RoomManager {
 
         Room room = rooms.get(roomId);
 
-        GameServerType serverType = KicksEmu.getServerManager().getServerBase().getType();
+        GameServerType serverType = ServerManager.getServerBase().getType();
 
         if (maxSize == null || type == null || roomMode == null ||
                 roomMode.notValidForServer(serverType)) {
@@ -537,7 +537,9 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            room.sendBroadcast(MessageBuilder.matchLoading(playerId, roomId, status));
+            if (room.state() == RoomState.LOADING) {
+                room.sendBroadcast(MessageBuilder.matchLoading(playerId, roomId, status));
+            }
         }
     }
 
@@ -548,18 +550,22 @@ public class RoomManager {
         if (session.getRoomId() == roomId) {
             Room room = getRoomById(roomId);
 
-            if (!room.getConfirmedPlayers().contains(playerId)) {
-                room.getConfirmedPlayers().add(playerId);
+            if (room.state() == RoomState.LOADING) {
+                if (!room.getConfirmedPlayers().contains(playerId)) {
+                    room.getConfirmedPlayers().add(playerId);
 
-                // Instead of waiting 5 seconds (or not), we send an udp ping immediately to
-                // the client so we can update his udp port (if changed) before match starts
-                UdpPing.sendUdpPing(session);
-            }
+                    // Instead of waiting 5 seconds (or not), we send an udp ping immediately to
+                    // the client so we can update his udp port (if changed) before match starts
+                    UdpPing.sendUdpPing(session);
+                }
 
-            if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
-                room.setState(RoomState.PLAYING);
-                room.setTimeStart(DateUtils.currentTimeMillis());
-                room.sendBroadcast(MessageBuilder.playerReady((byte)0));
+                if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
+                    room.setState(RoomState.PLAYING);
+                    room.setTimeStart(DateUtils.currentTimeMillis());
+                    room.sendBroadcast(MessageBuilder.playerReady((byte) 0));
+                }
+            } else {
+                session.send(MessageBuilder.playerReady((byte) 0));
             }
         }
     }
@@ -592,10 +598,18 @@ public class RoomManager {
         // If match was not playing
         if (room.state() != RoomState.PLAYING) return;
 
-        room.setState(RoomState.RESULT);
-
         MatchResult result = MatchResult.fromMessage(msg,
                 room.redTeamSize() + room.blueTeamSize());
+
+        // Remove disconnected players from players result
+        room.getDisconnectedPlayers().keySet().forEach(playerId -> {
+            Optional<PlayerResult> optional = result.getPlayers().stream()
+                    .filter(pr -> pr.getPlayerId() == playerId).findFirst();
+
+            if (optional.isPresent()) {
+                result.getPlayers().remove(optional.get());
+            }
+        });
 
         // Apply level gap bonus if the levels difference in room settings is less than 10
         final boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
@@ -612,6 +626,8 @@ public class RoomManager {
         if (gameCountdown < countdown && gameCountdown - countdown > 20) {
             room.resetTrainingFactor();
         }
+
+        room.setState(RoomState.RESULT);
 
         try (Connection con = MySqlManager.getConnection()) {
             // Calculate average level
@@ -632,6 +648,7 @@ public class RoomManager {
             // Reward players
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
+
                 int reward = RewardCalculator.calculateReward(pr, room, gameCountdown);
 
                 int appliedReward = reward;

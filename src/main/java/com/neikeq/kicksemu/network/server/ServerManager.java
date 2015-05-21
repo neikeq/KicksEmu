@@ -109,7 +109,7 @@ public class ServerManager {
         return serverId;
     }
 
-    public ServerBase getServerBase() {
+    public static ServerBase getServerBase() {
         return serverBase;
     }
 

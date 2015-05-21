@@ -7,16 +7,14 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 public class ChatUtils {
 
     public static void broadcastNotice(String notice) {
-        ServerManager.getPlayers().values().stream().forEach(s -> sendServerNotice(s, notice));
+        ServerManager.getPlayers().values().forEach(s -> sendServerNotice(s, notice));
     }
 
     public static void sendServerMessage(Session session, String message) {
-        session.sendAndFlush(MessageBuilder.chatMessage(0, "",
-                MessageType.SERVER_MESSAGE, message));
+        session.sendAndFlush(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
     }
 
     private static void sendServerNotice(Session session, String notice) {
-        session.sendAndFlush(MessageBuilder.chatMessage(0, "",
-                MessageType.SERVER_NOTICE, notice));
+        session.sendAndFlush(MessageBuilder.chatMessage(MessageType.SERVER_NOTICE, notice));
     }
 }

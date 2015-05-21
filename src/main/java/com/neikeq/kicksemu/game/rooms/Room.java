@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.lobby.RoomLobby;
 import com.neikeq.kicksemu.game.rooms.enums.*;
@@ -44,6 +45,7 @@ public class Room {
     private final SwapLocker swapLocker;
 
     private final Map<Integer, Session> players;
+    private final Map<Integer, RoomTeam> disconnectedPlayers;
 
     private final List<Integer> confirmedPlayers;
     private final List<Integer> redTeam;
@@ -65,7 +67,7 @@ public class Room {
                 // If room does not have a password, or typed password matches room's password
                 if (getType() != RoomType.PASSWORD || password.equals(getPassword()) ||
                         PlayerInfo.isModerator(playerId)) {
-                    if (!isPlaying()) {
+                    if (!isPlaying() || isPlayerReconnecting(playerId)) {
                         short level = PlayerInfo.getLevel(playerId);
 
                         // If player level is not allowed in room settings
@@ -107,7 +109,11 @@ public class Room {
             getRoomLobby().addPlayer(playerId);
 
             // Add player to the correct team
-            addPlayerToTeam(playerId);
+            if (disconnectedPlayers.containsKey(playerId)) {
+                addPlayerToTeam(playerId, disconnectedPlayers.get(playerId));
+            } else {
+                addPlayerToTeam(playerId);
+            }
 
             // If player is in observer mode add it to the observers list
             if (session.isObserver()) {
@@ -124,6 +130,8 @@ public class Room {
     
     public void removePlayer(Session session, RoomLeaveReason reason) {
         int playerId = session.getPlayerId();
+
+        RoomTeam playerTeam = getPlayerTeam(playerId);
 
         synchronized (locker) {
             // Remove player from players list and room lobby
@@ -148,7 +156,7 @@ public class Room {
                 // If the leaver was room host, set a new one
                 if (playerId == getHost()) {
                     updateHost();
-                    onHostLeaved();
+                    onHostLeaved(playerId);
                 }
             }
         }
@@ -156,24 +164,14 @@ public class Room {
         // Notify the session
         session.onLeavedRoom();
 
-        onPlayerLeaved(playerId, reason);
+        onPlayerLeaved(playerId, reason, playerTeam);
     }
 
-    private void onHostLeaved() {
+    private void onHostLeaved(int playerId) {
         switch (state()) {
             case PLAYING:
-                setState(RoomState.RESULT);
-                try (Connection con = MySqlManager.getConnection()) {
-                    getPlayers().values().stream().forEach(s -> s.sendAndFlush(
-                            MessageBuilder.matchResult(null, null, null, con))
-                    );
-
-                    ThreadUtils.sleep(3000);
-                } catch (SQLException ignored) {}
-
-                setState(RoomState.WAITING);
-                sendBroadcast(MessageBuilder.unknown1());
-                sendBroadcast(MessageBuilder.unknown2());
+                sendBroadcast(MessageBuilder.hostInfo(this));
+                sendBroadcast(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED));
                 break;
             case LOADING:
                 setState(RoomState.WAITING);
@@ -307,18 +305,41 @@ public class Room {
         sendRoomPlayersInfo(session);
 
         // Notify players in room about the new player
-        try (Connection con = MySqlManager.getConnection()) {
-            getPlayers().values().stream()
-                    .filter(s -> s.getPlayerId() != playerId)
-                    .forEach(s -> s.sendAndFlush(
-                            MessageBuilder.roomPlayerInfo(session, this, con))
-                    );
-        } catch (SQLException ignored) {}
+        if (!disconnectedPlayers.containsKey(playerId)) {
+            try (Connection con = MySqlManager.getConnection()) {
+                getPlayers().values().stream()
+                        .filter(s -> s.getPlayerId() != playerId)
+                        .forEach(s -> s.sendAndFlush(
+                                        MessageBuilder.roomPlayerInfo(session, this, con))
+                        );
+            } catch (SQLException ignored) {}
+        } else {
+            players.get(host).sendAndFlush(MessageBuilder.updateRoomPlayer(playerId));
+
+            disconnectedPlayers.remove(playerId);
+
+            // Notify about the player which reconnected
+            String message = "Player reconnected: " + PlayerInfo.getName(playerId);
+            sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
+
+            ThreadUtils.sleep(1000);
+            session.sendAndFlush(MessageBuilder.startCountDown((byte) -1));
+            session.sendAndFlush(MessageBuilder.hostInfo(this));
+            session.sendAndFlush(MessageBuilder.countDown((short) 0));
+        }
     }
 
-    private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
+    private void onPlayerLeaved(int playerId, RoomLeaveReason reason, RoomTeam team) {
         // Notify players in room about player leaving
-        sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
+        if (state() != RoomState.PLAYING) {
+            sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
+        } else {
+            disconnectedPlayers.put(playerId, team);
+
+            // Notify about the player which disconnected
+            String message = "Player disconnected: " + PlayerInfo.getName(playerId);
+            sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
+        }
 
         // If the countdown started, cancel it
         if (state() == RoomState.COUNT_DOWN) {
@@ -329,16 +350,16 @@ public class Room {
     private void sendRoomPlayersInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
             getPlayers().values().stream().forEach(s ->
-                    session.send(MessageBuilder.roomPlayerInfo(s, this, con)));
+                    session.sendAndFlush(MessageBuilder.roomPlayerInfo(s, this, con)));
         } catch (SQLException ignored) {}
     }
 
     private void updateMaster() {
-        setMaster((Integer)getPlayers().keySet().toArray()[0]);
+        setMaster((Integer) getPlayers().keySet().toArray()[0]);
     }
 
     private void updateHost() {
-        setHost((Integer)getPlayers().keySet().toArray()[0]);
+        setHost((Integer) getPlayers().keySet().toArray()[0]);
     }
 
     public RoomTeam getPlayerTeam(int playerId) {
@@ -383,6 +404,10 @@ public class Room {
 
     public boolean isPlayerIn(int playerId) {
         return getPlayers().containsKey(playerId);
+    }
+
+    public boolean isPlayerReconnecting(int playerId) {
+        return state == RoomState.PLAYING && disconnectedPlayers.containsKey(playerId);
     }
 
     public boolean notFull() {
@@ -438,6 +463,7 @@ public class Room {
 
     public Room() {
         players = new LinkedHashMap<>();
+        disconnectedPlayers = new LinkedHashMap<>();
 
         confirmedPlayers = new ArrayList<>();
 
@@ -561,6 +587,10 @@ public class Room {
         return players;
     }
 
+    public Map<Integer, RoomTeam> getDisconnectedPlayers() {
+        return disconnectedPlayers;
+    }
+
     public List<Short> getRedTeamPositions() {
         return redTeamPositions;
     }
@@ -610,7 +640,20 @@ public class Room {
     }
 
     public void setState(RoomState state) {
-        this.state = state;
+        synchronized (locker) {
+            this.state = state;
+
+            if (state == RoomState.RESULT || state == RoomState.WAITING) {
+                // Notify players to remove disconnected player definitely
+                disconnectedPlayers.keySet().forEach(playerId -> {
+                    ServerMessage message = MessageBuilder.leaveRoom(playerId,
+                            RoomLeaveReason.DISCONNECTED);
+                    sendBroadcast(message);
+                });
+
+                disconnectedPlayers.clear();
+            }
+        }
     }
 
     public int getTrainingFactor() {
