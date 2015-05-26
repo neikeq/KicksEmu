@@ -5,14 +5,6 @@ KicksEmu
 KicksEmu is an open-source emulator for the Kicks Online MMO game.<br>
 It uses Netty framework for networking and Apache DBCP for MySql connection pooling.
 
-### Dependencies
-
-* netty-4
-* commons-dbcp2
-* commons-logging
-* commons-pool2
-* opencsv-3.1
-
 ### Usage
 
 Check [Building](https://github.com/neikeq/KicksEmu/wiki/Building) and [Setup guide](https://github.com/neikeq/KicksEmu/wiki/Setup-Guide).
