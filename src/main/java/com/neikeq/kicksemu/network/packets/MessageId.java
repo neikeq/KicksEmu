@@ -89,4 +89,7 @@ public class MessageId {
     public static final int UDP_GAME_3 = 9003;
     public static final int UDP_GAME_4 = 9004;
     public static final int UDP_GAME_5 = 9005;
+
+    // CUSTOM MESSAGES
+    public static final int UPDATE_PLAYER_ADDRESS = 11001;
 }

@@ -314,7 +314,7 @@ public class Room {
                         );
             } catch (SQLException ignored) {}
         } else {
-            players.get(host).sendAndFlush(MessageBuilder.updateRoomPlayer(playerId)); // TODO replace with custom message to update address and port
+            sendBroadcast(MessageBuilder.updatePlayerAddress(session));
 
             disconnectedPlayers.remove(playerId);
 

@@ -1401,4 +1401,15 @@ public class MessageBuilder {
     public static ServerMessage udpPing() {
         return new ServerMessage(MessageId.UDP_PING);
     }
+
+    public static ServerMessage updatePlayerAddress(Session session) {
+        ServerMessage msg = new ServerMessage(MessageId.UPDATE_PLAYER_ADDRESS);
+
+        MessageUtils.appendResult((byte) 0, msg);
+
+        msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
+        msg.append((short) session.getUdpPort());
+
+        return msg;
+    }
 }
