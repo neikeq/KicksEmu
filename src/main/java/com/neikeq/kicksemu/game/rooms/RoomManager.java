@@ -454,7 +454,7 @@ public class RoomManager {
 
             // If there is something wrong, notify the client
             if (result != 0) {
-                session.sendAndFlush(MessageBuilder.invitePlayer(result, null, ""));
+                session.send(MessageBuilder.invitePlayer(result, null, ""));
             }
         }
     }
@@ -559,7 +559,7 @@ public class RoomManager {
             if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
                 room.setState(RoomState.PLAYING);
                 room.setTimeStart(DateUtils.currentTimeMillis());
-                room.sendBroadcast(MessageBuilder.playerReady((byte)0));
+                room.sendBroadcast(MessageBuilder.playerReady((byte) 0));
             }
         }
     }
