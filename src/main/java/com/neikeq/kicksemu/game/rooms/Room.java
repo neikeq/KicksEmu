@@ -307,10 +307,9 @@ public class Room {
         // Notify players in room about the new player
         if (!disconnectedPlayers.containsKey(playerId)) {
             try (Connection con = MySqlManager.getConnection()) {
-                getPlayers().values().stream()
-                        .filter(s -> s.getPlayerId() != playerId)
-                        .forEach(s -> s.sendAndFlush(
-                                        MessageBuilder.roomPlayerInfo(session, this, con))
+                getPlayers().values().stream().filter(s -> s.getPlayerId() != playerId)
+                        .forEach(s ->
+                            s.sendAndFlush(MessageBuilder.roomPlayerInfo(session, this, con))
                         );
             } catch (SQLException ignored) {}
         } else {
@@ -323,8 +322,8 @@ public class Room {
             sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
 
             ThreadUtils.sleep(1000);
-            session.sendAndFlush(MessageBuilder.startCountDown((byte) -1));
-            session.sendAndFlush(MessageBuilder.hostInfo(this));
+            session.send(MessageBuilder.startCountDown((byte) -1));
+            session.send(MessageBuilder.hostInfo(this));
             session.sendAndFlush(MessageBuilder.countDown((short) 0));
         }
     }

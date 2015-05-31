@@ -50,7 +50,7 @@ public class FriendsManager {
         }
 
         if (result != 0) {
-            session.sendAndFlush(MessageBuilder.friendRequest(playerId, result));
+            session.send(MessageBuilder.friendRequest(playerId, result));
         }
     }
 
@@ -97,7 +97,7 @@ public class FriendsManager {
         }
 
         if (result != (byte)253) {
-            session.sendAndFlush(MessageBuilder.friendResponse(result));
+            session.send(MessageBuilder.friendResponse(result));
         }
     }
 

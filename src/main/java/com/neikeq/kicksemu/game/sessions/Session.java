@@ -114,8 +114,7 @@ public class Session {
             setAuthenticated(false);
             setUdpAuthenticated(false);
 
-            // Reduce the session lifetime. The client has 1 minute to authenticate
-            // if switching between auth server and game server
+            // Reduce the session lifetime. The client has 30 seconds to authenticate
             SessionInfo.reduceExpiration(getSessionId());
 
             // Update user status on database
@@ -131,7 +130,7 @@ public class Session {
                 LobbyManager.removePlayer(playerId);
             }
 
-            // If session is inside a room, leave it
+            // If session player is inside a room, leave it
             leaveRoom(RoomLeaveReason.DISCONNECTED);
         }
     }

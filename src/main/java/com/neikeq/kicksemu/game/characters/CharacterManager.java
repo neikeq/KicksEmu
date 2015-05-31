@@ -229,7 +229,7 @@ public class CharacterManager {
                 }
             }
 
-            session.sendAndFlush(MessageBuilder.addStatsPoints(playerId, result, con));
+            session.send(MessageBuilder.addStatsPoints(playerId, result, con));
 
             if (session.getRoomId() > 0) {
                 Room room = RoomManager.getRoomById(session.getRoomId());

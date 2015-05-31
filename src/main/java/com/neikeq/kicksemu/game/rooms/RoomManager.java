@@ -454,7 +454,7 @@ public class RoomManager {
 
             // If there is something wrong, notify the client
             if (result != 0) {
-                session.sendAndFlush(MessageBuilder.invitePlayer(result, null, ""));
+                session.send(MessageBuilder.invitePlayer(result, null, ""));
             }
         }
     }

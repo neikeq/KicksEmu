@@ -24,7 +24,7 @@ class SpecialItem {
         switch (itemType) {
             case 204:
                 CharacterManager.resetStats(playerId);
-                session.sendAndFlush(MessageBuilder.playerStats(playerId));
+                session.send(MessageBuilder.playerStats(playerId));
                 break;
             case 100:
                 PlayerInfo.setFace((short) (itemId / 10 - 100000), playerId);
