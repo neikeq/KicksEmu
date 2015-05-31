@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.inventory;
+package com.neikeq.kicksemu.game.inventory.types;
 
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 

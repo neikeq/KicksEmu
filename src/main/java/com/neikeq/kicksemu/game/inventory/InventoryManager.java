@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.game.table.OptionInfo;

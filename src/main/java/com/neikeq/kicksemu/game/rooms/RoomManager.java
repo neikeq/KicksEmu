@@ -5,7 +5,7 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
 import com.neikeq.kicksemu.game.characters.types.Position;
-import com.neikeq.kicksemu.game.inventory.Soda;
+import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
