@@ -1,7 +1,7 @@
 package com.neikeq.kicksemu.game.table;
 
 import com.neikeq.kicksemu.game.inventory.Price;
-import com.neikeq.kicksemu.game.inventory.Payment;
+import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.utils.table.Row;
 
 public class SkillInfo {

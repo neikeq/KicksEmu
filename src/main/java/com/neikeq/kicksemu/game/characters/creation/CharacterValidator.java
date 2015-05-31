@@ -4,7 +4,7 @@ import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.characters.types.Position;
 import com.neikeq.kicksemu.game.characters.types.StatsInfo;
-import com.neikeq.kicksemu.game.inventory.ItemType;
+import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemFree;
 import com.neikeq.kicksemu.storage.MySqlManager;

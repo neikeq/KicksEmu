@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.inventory;
 
+import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;

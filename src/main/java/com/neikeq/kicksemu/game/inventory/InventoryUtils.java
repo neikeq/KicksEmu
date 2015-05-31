@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.inventory;
 
+import com.neikeq.kicksemu.game.inventory.types.Expiration;
+import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.utils.DateUtils;

@@ -2,7 +2,7 @@ package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.inventory.Item;
-import com.neikeq.kicksemu.game.inventory.ItemType;
+import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;

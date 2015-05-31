@@ -4,6 +4,8 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Position;
+import com.neikeq.kicksemu.game.inventory.types.Expiration;
+import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.table.CeleInfo;
 import com.neikeq.kicksemu.game.table.BonusInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
