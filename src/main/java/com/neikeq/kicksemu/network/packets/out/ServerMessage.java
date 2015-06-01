@@ -76,13 +76,22 @@ public class ServerMessage {
         body.setInt(index, value);
     }
     
-    public ByteBuf getByteBuf() {
+    public ByteBuf getByteBuf(int targetId) {
         int size = body.readableBytes() - Constants.HEADER_SIZE;
 
         // Write the body size to the header
-        write(Constants.BODY_SIZE_INDEX, (short)size);
+        write(Constants.BODY_SIZE_INDEX, (short) size);
+        write(Constants.TARGET_ID_INDEX, targetId);
 
         return body;
+    }
+
+    public void retain() {
+        body.retain();
+    }
+
+    public void release() {
+        body.release();
     }
     
     public ServerMessage(int messageId) {

@@ -374,11 +374,11 @@ public class Room {
     public void sendBroadcast(ServerMessage msg) {
         try {
             getPlayers().values().stream().forEach(s -> {
-                msg.getByteBuf().retain();
+                msg.retain();
                 s.sendAndFlush(msg);
             });
         } finally {
-            msg.getByteBuf().release();
+            msg.release();
         }
     }
 
@@ -392,12 +392,12 @@ public class Room {
                         .forEach(playerId -> {
                             Session s = getPlayers().get(playerId);
 
-                            msg.getByteBuf().retain();
+                            msg.retain();
                             s.sendAndFlush(msg);
                         });
             }
         } finally {
-            msg.getByteBuf().release();
+            msg.release();
         }
     }
 
