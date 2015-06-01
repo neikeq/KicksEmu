@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.network.packets.out;
 
+import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.QuestState;
@@ -749,7 +750,7 @@ public class MessageBuilder {
     public static ServerMessage friendList(List<Integer> friends, byte page) {
         ServerMessage msg = new ServerMessage(MessageId.FRIENDS_LIST);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         msg.append(page);
 
@@ -1221,8 +1222,12 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.TCP_PING);
     }
 
-    public static ServerMessage udpPing() {
-        return new ServerMessage(MessageId.UDP_PING);
+    public static ServerMessage udpPing(int targetId) {
+        ServerMessage msg = new ServerMessage(MessageId.UDP_PING);
+
+        msg.write(Constants.TARGET_ID_INDEX, targetId);
+
+        return msg;
     }
 
     public static ServerMessage playerDetails(int playerId, byte result) {
@@ -1299,7 +1304,7 @@ public class MessageBuilder {
     public static ServerMessage setObserver(int playerId, boolean observer) {
         ServerMessage msg = new ServerMessage(MessageId.SET_OBSERVER);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         msg.append(playerId);
         msg.append(observer, 2);
@@ -1381,7 +1386,7 @@ public class MessageBuilder {
             msg.append(memberId);
             msg.append(PlayerInfo.getName(memberId), 15);
             msg.append(PlayerInfo.getLevel(memberId));
-            msg.append((byte)PlayerInfo.getPosition(memberId));
+            msg.append((byte) PlayerInfo.getPosition(memberId));
 
             byte status;
             short server = 0;
@@ -1391,7 +1396,7 @@ public class MessageBuilder {
             if (!ServerManager.isPlayerConnected(memberId)) {
                 server = UserInfo.getServer(userId);
 
-                status = (byte)(server > 0 && UserInfo.getOnline(userId) == memberId ? 1 : 0);
+                status = (byte) (server > 0 && UserInfo.getOnline(userId) == memberId ? 1 : 0);
             } else {
                 status = 2;
             }
@@ -1401,10 +1406,10 @@ public class MessageBuilder {
                     location = server;
                     break;
                 case 2:
-                    location = (short)ServerManager.getSessionById(memberId).getRoomId();
+                    location = (short) ServerManager.getSessionById(memberId).getRoomId();
                     break;
                 case 3:
-                    location = (short)ServerManager.getSessionById(memberId).getRoomId();
+                    location = (short) ServerManager.getSessionById(memberId).getRoomId();
                     break;
                 default:
             }

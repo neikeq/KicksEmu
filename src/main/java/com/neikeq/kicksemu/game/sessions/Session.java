@@ -48,7 +48,7 @@ public class Session {
      */
     public synchronized void send(ServerMessage msg) {
         if (getChannel().isOpen() && getChannel().isWritable()) {
-            getChannel().write(msg.getByteBuf());
+            getChannel().write(msg.getByteBuf(playerId));
         }
     }
 
@@ -58,7 +58,7 @@ public class Session {
      */
     public synchronized void sendAndFlush(ServerMessage msg)  {
         if (getChannel().isOpen() && getChannel().isWritable()) {
-            getChannel().writeAndFlush(msg.getByteBuf());
+            getChannel().writeAndFlush(msg.getByteBuf(playerId));
         }
     }
 
@@ -126,7 +126,7 @@ public class Session {
             if (playerId > 0) {
                 // Remove session from the list of connected clients
                 ServerManager.removePlayer(playerId);
-                // If session is in the main lobby, leave it
+                // If session player is in the main lobby, leave it
                 LobbyManager.removePlayer(playerId);
             }
 
