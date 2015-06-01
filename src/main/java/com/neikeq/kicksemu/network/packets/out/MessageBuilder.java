@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.network.packets.out;
 
+import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.QuestState;
@@ -922,7 +923,7 @@ public class MessageBuilder {
                                             MessageType messageType, String message) {
         ServerMessage msg = new ServerMessage(MessageId.CHAT_MESSAGE);
 
-        MessageUtils.appendResult((byte)0, msg);
+        MessageUtils.appendResult((byte) 0, msg);
 
         msg.append(playerId);
         msg.append(name, 15);
@@ -1401,7 +1402,7 @@ public class MessageBuilder {
     public static ServerMessage udpPing(int playerId) {
         ServerMessage msg = new ServerMessage(MessageId.UDP_PING);
 
-        msg.write(6, playerId);
+        msg.write(Constants.TARGET_ID_INDEX, playerId);
 
         return msg;
     }
