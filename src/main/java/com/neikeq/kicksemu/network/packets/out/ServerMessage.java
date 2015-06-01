@@ -71,6 +71,10 @@ public class ServerMessage {
     public void write(int index, short value) {
         body.setShort(index, value);
     }
+
+    public void write(int index, int value) {
+        body.setInt(index, value);
+    }
     
     public ByteBuf getByteBuf() {
         int size = body.readableBytes() - Constants.HEADER_SIZE;

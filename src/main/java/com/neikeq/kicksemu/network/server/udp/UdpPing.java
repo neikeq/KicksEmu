@@ -15,7 +15,7 @@ public class UdpPing implements Runnable {
     }
 
     public static void sendUdpPing(Session session) {
-        session.sendAndFlush(MessageBuilder.udpPing());
+        session.sendAndFlush(MessageBuilder.udpPing(session.getPlayerId()));
     }
 
     @Override

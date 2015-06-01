@@ -1398,8 +1398,12 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage udpPing() {
-        return new ServerMessage(MessageId.UDP_PING);
+    public static ServerMessage udpPing(int playerId) {
+        ServerMessage msg = new ServerMessage(MessageId.UDP_PING);
+
+        msg.write(6, playerId);
+
+        return msg;
     }
 
     public static ServerMessage updatePlayerAddress(Session session) {
