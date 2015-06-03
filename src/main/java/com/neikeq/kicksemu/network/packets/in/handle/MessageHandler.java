@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.network.packets.in.handle;
 
 import com.neikeq.kicksemu.KicksEmu;
+import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.CharacterRemover;
 import com.neikeq.kicksemu.game.characters.StatusMessage;
@@ -120,6 +121,10 @@ public class MessageHandler {
                 events.put(MessageId.UDP_GAME_4, MatchBroadcaster::udpGame);
                 events.put(MessageId.UDP_GAME_5, MatchBroadcaster::udpGame);
             }
+
+            if (Configuration.getBoolean("game.proxy.enabled")) {
+                events.put(MessageId.PROXY_UPDATE_PORT, (s, m) -> s.setUdpPort(m.readShort()));
+            }
         }
     }
 
@@ -139,7 +144,8 @@ public class MessageHandler {
             if (event != null) {
                 event.handle(session, msg);
             } else {
-                throw new UndefinedMessageException("Received unknown message (" + messageId + ")");
+                throw new UndefinedMessageException("Received unknown message (" +
+                        messageId + ")");
             }
         }
     }

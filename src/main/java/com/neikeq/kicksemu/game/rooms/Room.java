@@ -34,26 +34,27 @@ public class Room {
     private String name;
     private String password;
 
-    private RoomMap map;
     private RoomBall ball;
-    private RoomType type;
-    private RoomState state;
-    private RoomSize maxSize;
+    private RoomMap map;
     private RoomMode roomMode;
+    private RoomSize maxSize;
+    private RoomState state = RoomState.WAITING;
+    private RoomType type;
 
-    private final RoomLobby roomLobby;
-    private final SwapLocker swapLocker;
+    private final RoomLobby roomLobby = new RoomLobby();
+    private final SwapLocker swapLocker = new SwapLocker();
 
-    private final Map<Integer, Session> players;
-    private final Map<Integer, RoomTeam> disconnectedPlayers;
+    private final Map<Integer, Session> players = new LinkedHashMap<>();
+    private final Map<Integer, RoomTeam> disconnectedPlayers = new LinkedHashMap<>();
 
-    private final List<Integer> confirmedPlayers;
-    private final List<Integer> redTeam;
-    private final List<Integer> blueTeam;
-    private final List<Integer> observers;
+    private final List<Integer> confirmedPlayers = new ArrayList<>();
+    private final List<Integer> reconnectedPlayers = new ArrayList<>();
+    private final List<Integer> redTeam = new ArrayList<>();
+    private final List<Integer> blueTeam = new ArrayList<>();
+    private final List<Integer> observers = new ArrayList<>();
 
-    private final List<Short> redTeamPositions;
-    private final List<Short> blueTeamPositions;
+    private final List<Short> redTeamPositions = new ArrayList<>();
+    private final List<Short> blueTeamPositions = new ArrayList<>();
 
     private final Object locker = new Object();
 
@@ -313,9 +314,8 @@ public class Room {
                         );
             } catch (SQLException ignored) {}
         } else {
-            sendBroadcast(MessageBuilder.updatePlayerAddress(session));
-
             disconnectedPlayers.remove(playerId);
+            getReconnectedPlayers().add(playerId);
 
             // Notify about the player which reconnected
             String message = "Player reconnected: " + PlayerInfo.getName(playerId);
@@ -334,6 +334,7 @@ public class Room {
             sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
         } else {
             disconnectedPlayers.put(playerId, team);
+            getReconnectedPlayers().remove(Integer.valueOf(playerId));
 
             // Notify about the player which disconnected
             String message = "Player disconnected: " + PlayerInfo.getName(playerId);
@@ -458,26 +459,6 @@ public class Room {
     public boolean isTraining() {
         return getPlayers().values().stream().filter(s -> !observers.contains(s.getPlayerId()))
                 .count() < 6 || redTeamSize() != blueTeamSize();
-    }
-
-    public Room() {
-        players = new LinkedHashMap<>();
-        disconnectedPlayers = new LinkedHashMap<>();
-
-        confirmedPlayers = new ArrayList<>();
-
-        redTeam = new ArrayList<>();
-        blueTeam = new ArrayList<>();
-
-        redTeamPositions = new ArrayList<>();
-        blueTeamPositions = new ArrayList<>();
-
-        observers = new ArrayList<>();
-
-        roomLobby = new RoomLobby();
-        swapLocker = new SwapLocker();
-
-        state = RoomState.WAITING;
     }
 
     public int getId() {
@@ -651,6 +632,8 @@ public class Room {
                 });
 
                 disconnectedPlayers.clear();
+            } else if (state == RoomState.LOADING) {
+                getReconnectedPlayers().clear();
             }
         }
     }
@@ -677,5 +660,9 @@ public class Room {
 
     public SwapLocker getSwapLocker() {
         return swapLocker;
+    }
+
+    public List<Integer> getReconnectedPlayers() {
+        return reconnectedPlayers;
     }
 }

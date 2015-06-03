@@ -809,6 +809,36 @@ public class RoomManager {
 
             room.setState(RoomState.WAITING);
 
+            room.getReconnectedPlayers().forEach(playerId -> {
+                Session playerSession = room.getPlayers().get(playerId);
+
+                ServerMessage msgLeaveRoom = MessageBuilder.leaveRoom(playerId, (short) 4);
+
+                try {
+                    room.getPlayers().values().stream()
+                            .filter(s -> s.getPlayerId() != playerId).forEach(s -> {
+                        msgLeaveRoom.retain();
+                        s.sendAndFlush(msgLeaveRoom);
+                    });
+                } finally {
+                    msgLeaveRoom.release();
+                }
+
+                ServerMessage msgInfo = MessageBuilder.roomPlayerInfo(playerSession, room);
+
+                try {
+                    room.getPlayers().values().stream()
+                            .filter(s -> s.getPlayerId() != playerId).forEach(s -> {
+                        msgInfo.retain();
+                        s.sendAndFlush(msgInfo);
+                    });
+                } finally {
+                    msgInfo.release();
+                }
+            });
+
+            room.getReconnectedPlayers().clear();
+
             room.sendBroadcast(MessageBuilder.unknown1());
         }
     }

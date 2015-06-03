@@ -762,9 +762,9 @@ public class MessageBuilder {
             msg.append(clubId > 0); // is club member
             msg.append((byte) MemberInfo.getRole(playerId, con).toInt());
             msg.appendZeros(3);
-            msg.append((byte)0);
-            msg.append((byte)0);
-            msg.append((byte)0);
+            msg.append((byte) 0);
+            msg.append((byte) 0);
+            msg.append((byte) 0);
 
             // Stats
             MessageUtils.appendStats(playerId, msg, con);
@@ -781,9 +781,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage leaveRoom(int playerId, RoomLeaveReason reason) {
+        return leaveRoom(playerId, reason.toShort());
+    }
+
+    public static ServerMessage leaveRoom(int playerId, short reason) {
         ServerMessage msg = new ServerMessage(MessageId.LEAVE_ROOM);
 
-        msg.append(reason.toShort());
+        msg.append(reason);
         msg.append(playerId);
 
         return msg;
@@ -1403,17 +1407,6 @@ public class MessageBuilder {
         ServerMessage msg = new ServerMessage(MessageId.UDP_PING);
 
         msg.write(Constants.TARGET_ID_INDEX, playerId);
-
-        return msg;
-    }
-
-    public static ServerMessage updatePlayerAddress(Session session) {
-        ServerMessage msg = new ServerMessage(MessageId.UPDATE_PLAYER_ADDRESS);
-
-        MessageUtils.appendResult((byte) 0, msg);
-
-        msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-        msg.append((short) session.getUdpPort());
 
         return msg;
     }
