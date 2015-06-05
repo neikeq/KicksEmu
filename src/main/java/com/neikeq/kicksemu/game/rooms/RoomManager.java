@@ -221,7 +221,7 @@ public class RoomManager {
 
         List<Room> freeRooms = rooms.values().stream()
                 .filter(r -> !r.isPlaying() && r.getType() != RoomType.PASSWORD &&
-                        r.notFull() && !r.playerHasInvalidLevel(level))
+                        r.isNotFull() && !r.playerHasInvalidLevel(level))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         Collections.sort(freeRooms, (r1, r2) ->
@@ -605,7 +605,6 @@ public class RoomManager {
         room.getDisconnectedPlayers().keySet().forEach(playerId -> {
             Optional<PlayerResult> optional = result.getPlayers().stream()
                     .filter(pr -> pr.getPlayerId() == playerId).findFirst();
-
             if (optional.isPresent()) {
                 result.getPlayers().remove(optional.get());
             }
@@ -812,29 +811,11 @@ public class RoomManager {
             room.getReconnectedPlayers().forEach(playerId -> {
                 Session playerSession = room.getPlayers().get(playerId);
 
-                ServerMessage msgLeaveRoom = MessageBuilder.leaveRoom(playerId, (short) 4);
+                room.sendBroadcast(MessageBuilder.leaveRoom(playerId, (short) 4),
+                        s -> s.getPlayerId() != playerId);
 
-                try {
-                    room.getPlayers().values().stream()
-                            .filter(s -> s.getPlayerId() != playerId).forEach(s -> {
-                        msgLeaveRoom.retain();
-                        s.sendAndFlush(msgLeaveRoom);
-                    });
-                } finally {
-                    msgLeaveRoom.release();
-                }
-
-                ServerMessage msgInfo = MessageBuilder.roomPlayerInfo(playerSession, room);
-
-                try {
-                    room.getPlayers().values().stream()
-                            .filter(s -> s.getPlayerId() != playerId).forEach(s -> {
-                        msgInfo.retain();
-                        s.sendAndFlush(msgInfo);
-                    });
-                } finally {
-                    msgInfo.release();
-                }
+                room.sendBroadcast(MessageBuilder.roomPlayerInfo(playerSession, room),
+                        s -> s.getPlayerId() != playerId);
             });
 
             room.getReconnectedPlayers().clear();

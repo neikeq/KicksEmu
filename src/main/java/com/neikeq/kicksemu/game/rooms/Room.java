@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class Room {
 
@@ -64,7 +65,7 @@ public class Room {
         byte result = 0;
 
         synchronized (locker) {
-            if (notFull()) {
+            if (isNotFull()) {
                 // If room does not have a password, or typed password matches room's password
                 if (getType() != RoomType.PASSWORD || password.equals(getPassword()) ||
                         PlayerInfo.isModerator(playerId)) {
@@ -110,7 +111,7 @@ public class Room {
             getRoomLobby().addPlayer(playerId);
 
             // Add player to the correct team
-            if (disconnectedPlayers.containsKey(playerId)) {
+            if (disconnectedPlayers.containsKey(playerId) && state() != RoomState.WAITING) {
                 addPlayerToTeam(playerId, disconnectedPlayers.get(playerId));
             } else {
                 addPlayerToTeam(playerId);
@@ -308,10 +309,8 @@ public class Room {
         // Notify players in room about the new player
         if (!disconnectedPlayers.containsKey(playerId)) {
             try (Connection con = MySqlManager.getConnection()) {
-                getPlayers().values().stream().filter(s -> s.getPlayerId() != playerId)
-                        .forEach(s ->
-                            s.sendAndFlush(MessageBuilder.roomPlayerInfo(session, this, con))
-                        );
+                sendBroadcast(MessageBuilder.roomPlayerInfo(session, this, con),
+                        s -> s.getPlayerId() != playerId);
             } catch (SQLException ignored) {}
         } else {
             disconnectedPlayers.remove(playerId);
@@ -383,6 +382,17 @@ public class Room {
         }
     }
 
+    public void sendBroadcast(ServerMessage msg, Predicate<? super Session> filter) {
+        try {
+            getPlayers().values().stream().filter(filter).forEach(s -> {
+                msg.retain();
+                s.sendAndFlush(msg);
+            });
+        } finally {
+            msg.release();
+        }
+    }
+
     public void sendTeamBroadcast(ServerMessage msg, RoomTeam team, int broadcaster) {
         try {
             if (team != null) {
@@ -410,7 +420,7 @@ public class Room {
         return state == RoomState.PLAYING && disconnectedPlayers.containsKey(playerId);
     }
 
-    public boolean notFull() {
+    public boolean isNotFull() {
         synchronized (locker) {
             return getPlayers().size() < getMaxSize().toInt();
         }
