@@ -19,15 +19,11 @@ import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class ChatCommands {
+public class ChatCommands {
 
-    private static Map<String, InputHandler> commands;
+    private static final Map<String, InputHandler> commands = new LinkedHashMap<>();
 
     public static void handle(Session session, String message) {
-        if (commands == null) {
-            defineCommands();
-        }
-
         String[] params = message.split(" ");
 
         if (commands.containsKey(params[0])) {
@@ -183,8 +179,7 @@ class ChatCommands {
         }
     }
 
-    private static void defineCommands() {
-        commands = new LinkedHashMap<>();
+    public static void initialize() {
         commands.put("host", ChatCommands::onMaster);
         commands.put("progress", ChatCommands::onProgress);
         commands.put("who", ChatCommands::onWho);

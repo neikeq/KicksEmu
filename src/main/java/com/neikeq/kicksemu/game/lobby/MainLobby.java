@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 public class MainLobby implements Lobby {
 
     private final List<Integer> players = new ArrayList<>();
-
     private final Object locker = new Object();
 
     @Override

@@ -15,17 +15,14 @@ public class NettyUdpServer {
 
     private final int port;
 
-    private final EventLoopGroup group;
+    private final EventLoopGroup group = new NioEventLoopGroup();
 
-    private final Bootstrap bootstrap;
+    private final Bootstrap bootstrap = new Bootstrap();
 
     private ChannelFuture channelFuture;
 
     public NettyUdpServer(int port) {
         this.port = port;
-
-        group = new NioEventLoopGroup();
-        bootstrap = new Bootstrap();
 
         initBootstrap();
     }

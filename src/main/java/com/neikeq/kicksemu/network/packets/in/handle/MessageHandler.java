@@ -16,13 +16,13 @@ import com.neikeq.kicksemu.game.misc.MatchBroadcaster;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsManager;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredManager;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
 import com.neikeq.kicksemu.game.sessions.Authenticator;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserManager;
 import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
-import com.neikeq.kicksemu.network.server.ServerType;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
 
 import java.util.ArrayList;
@@ -39,8 +39,8 @@ public class MessageHandler {
         events.put(MessageId.TCP_PING, UserManager::tcpPing);
         events.put(MessageId.UPDATE_SETTINGS, UserManager::updateSettings);
 
-        // Define main events
         if (KicksEmu.getServerManager().getServerType() == ServerType.MAIN) {
+            // Define main events
             events.put(MessageId.CERTIFY_LOGIN, Authenticator::certifyLogin);
             events.put(MessageId.INSTANT_LOGIN, Authenticator::instantLogin);
             events.put(MessageId.INSTANT_EXIT, (s, m) -> UserManager.instantExit(s));
@@ -53,10 +53,8 @@ public class MessageHandler {
             events.put(MessageId.SERVER_INFO, ServerUtils::serverInfo);
             events.put(MessageId.UPGRADE_CHARACTER, UserManager::upgradeCharacter);
             events.put(MessageId.UPDATE_TUTORIAL, TutorialManager::updateTutorial);
-        }
-
-        // Define game events
-        if (KicksEmu.getServerManager().getServerType() == ServerType.GAME) {
+        } else {
+            // Define game events
             events.put(MessageId.GAME_LOGIN, Authenticator::gameLogin);
             events.put(MessageId.GAME_EXIT, (s, m) -> UserManager.gameExit(s));
             events.put(MessageId.UDP_CONFIRM, (s, m) -> Authenticator.udpConfirm(s));

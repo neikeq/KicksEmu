@@ -3,9 +3,7 @@ package com.neikeq.kicksemu.game.events.tournaments;
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.game.events.GameEvent;
 
-import com.neikeq.kicksemu.game.servers.GameServerType;
-import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.network.server.ServerType;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import org.quartz.DateBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
@@ -42,7 +40,6 @@ public class TournamentEvent implements GameEvent {
 
     @Override
     public boolean isUsable() {
-        return KicksEmu.getServerManager().getServerType() == ServerType.GAME &&
-                ServerManager.getServerBase().getType() == GameServerType.TOURNAMENT;
+        return KicksEmu.getServerManager().getServerType() == ServerType.TOURNAMENT;
     }
 }

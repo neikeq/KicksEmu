@@ -6,7 +6,7 @@ import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
-import com.neikeq.kicksemu.network.server.ServerType;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
@@ -16,19 +16,19 @@ import java.util.stream.Collectors;
 
 public class PlayerCache {
 
-    private Integer owner;
+    private Integer owner = null;
 
-    private DefaultClothes defaultClothes;
+    private DefaultClothes defaultClothes = null;
 
-    private Short animation;
-    private Short position;
+    private Short animation = null;
+    private Short position = null;
 
-    private String name;
+    private String name = null;
 
-    private Map<Integer, Item> items;
-    private Map<Integer, Skill> skills;
-    private Map<Integer, Celebration> celes;
-    private Map<Integer, Training> learns;
+    private Map<Integer, Item> items = null;
+    private Map<Integer, Skill> skills = null;
+    private Map<Integer, Celebration> celes = null;
+    private Map<Integer, Training> learns = null;
 
     public void clear() {
         owner = null;
@@ -156,7 +156,7 @@ public class PlayerCache {
     }
 
     public Short getPosition() {
-        return KicksEmu.getServerManager().getServerType() == ServerType.GAME ? position : null;
+        return KicksEmu.getServerManager().getServerType() != ServerType.MAIN ? position : null;
     }
 
     public void setPosition(Short position) {

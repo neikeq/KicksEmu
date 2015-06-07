@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 
 public class ServerMessage {
 
-    private final ByteBuf body;
+    private final ByteBuf body = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
     public void append(boolean value) {
         body.writeByte(value ? 1 : 0);
@@ -95,11 +95,8 @@ public class ServerMessage {
     }
     
     public ServerMessage(int messageId) {
-        body = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
-
         // Allocate space for the header
         appendZeros(Constants.HEADER_SIZE);
-
         append(messageId);
     }
 }

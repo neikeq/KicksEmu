@@ -17,9 +17,9 @@ public class Configuration {
 
     private static Configuration instance;
 
-    private String configPath;
+    private final Properties config = new Properties();
 
-    private Properties config;
+    private String configPath;
 
     /**
      * Initializes the configuration properties with default values.
@@ -27,8 +27,6 @@ public class Configuration {
      */
     public void init(String path) {
         configPath = Constants.CONFIG_DIR + path;
-        
-        config = new Properties();
 
         // Output Settings
         config.put("output.logging", "true");
@@ -44,24 +42,30 @@ public class Configuration {
         config.put("mysql.database", "kicksdb");
         
         // Networking Settings
-        config.put("net.type", "main");
         config.put("net.backlog", "50");
-        config.put("net.tcp.bind.port", "1299");
         
         // Language Settings
         config.put("lang", "en");
+
+        // Game Server Settings
+        config.put("id", "99");
+        config.put("game.tcp.port.factor", "1200");
+        config.put("game.users.max", "500");
+        config.put("game.type", "main");
         
-        // If configuration file exist, load it
-        if (Files.exists(Paths.get(configPath))) {
-            load();
-        }
+        // Try to read the properties from the configuration file
+        loadConfiguration();
     }
 
-    private void load() {
-        try (InputStream configStream = new FileInputStream(configPath)) {
-            config.load(configStream);
-        } catch (IOException e) {
-            System.out.println("Cannot read configuration file." + e.getMessage());
+    private void loadConfiguration() {
+        if (Files.exists(Paths.get(configPath))) {
+            try (InputStream configStream = new FileInputStream(configPath)) {
+                config.load(configStream);
+            } catch (IOException e) {
+                System.out.println("Cannot read configuration file." + e.getMessage());
+            }
+        } else {
+            Output.println("Initialized configuration with default values.", Level.WARNING);
         }
     }
 

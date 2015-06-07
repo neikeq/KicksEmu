@@ -4,14 +4,14 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 
 public class UserSettings {
 
-    private byte camera;
-    private boolean shadows;
-    private byte names;
-    private byte volEffects;
-    private byte volMusic;
-    private boolean invites;
-    private boolean whispers;
-    private int country;
+    private byte camera = CameraValues.front2;
+    private boolean shadows = false;
+    private byte names = 2;
+    private byte volEffects = 7;
+    private byte volMusic = 7;
+    private boolean invites = true;
+    private boolean whispers = true;
+    private int country = 0;
 
     // TODO List<Integer> validCountries;
 
@@ -20,17 +20,6 @@ public class UserSettings {
         private static final byte front1 = 9;
         private static final byte front2 = 5;
         private static final byte front3 = 7;
-    }
-
-    public UserSettings() {
-        camera = CameraValues.front2;
-        shadows = false;
-        names = 2;
-        volEffects = 7;
-        volMusic = 7;
-        invites = true;
-        whispers = true;
-        country = 0;
     }
 
     public static UserSettings fromMessage(ClientMessage msg) {

@@ -2,14 +2,12 @@ package com.neikeq.kicksemu.game.characters.types;
 
 public class TutorialState {
 
-    private byte dribbling;
-    private byte passing;
-    private byte shooting;
-    private byte defense;
+    private byte dribbling = 0;
+    private byte passing = 0;
+    private byte shooting = 0;
+    private byte defense = 0;
 
-    public TutorialState() {
-        this((byte)0, (byte)0, (byte)0, (byte)0);
-    }
+    public TutorialState() {}
 
     public TutorialState(byte dribbling, byte passing, byte shooting, byte defense) {
         this.setDribbling(dribbling);

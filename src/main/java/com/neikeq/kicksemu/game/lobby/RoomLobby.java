@@ -6,7 +6,6 @@ import java.util.List;
 public class RoomLobby implements Lobby {
 
     private final List<Integer> players = new ArrayList<>();
-
     private final Object locker = new Object();
 
     public List<Integer> getPlayers() {

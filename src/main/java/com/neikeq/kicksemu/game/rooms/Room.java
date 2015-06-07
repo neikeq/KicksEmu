@@ -21,26 +21,26 @@ import java.util.function.Predicate;
 
 public class Room {
 
-    private int id;
-    private int host;
-    private int master;
+    private int id = -1;
+    private int host = -1;
+    private int master = -1;
 
-    private byte minLevel;
-    private byte maxLevel;
+    private byte minLevel = 1;
+    private byte maxLevel = 60;
 
-    private int trainingFactor;
+    private int trainingFactor = 0;
 
-    private long timeStart;
+    private long timeStart = 0;
 
-    private String name;
-    private String password;
+    private String name = "";
+    private String password = "";
 
-    private RoomBall ball;
-    private RoomMap map;
-    private RoomMode roomMode;
-    private RoomSize maxSize;
+    private RoomBall ball = RoomBall.STAR;
+    private RoomMap map = RoomMap.A_BACK_STREET;
+    private RoomMode roomMode = RoomMode.AI_GOALKEEPER;
+    private RoomSize maxSize = RoomSize.SIZE_4V4;
     private RoomState state = RoomState.WAITING;
-    private RoomType type;
+    private RoomType type = RoomType.FREE;
 
     private final RoomLobby roomLobby = new RoomLobby();
     private final SwapLocker swapLocker = new SwapLocker();

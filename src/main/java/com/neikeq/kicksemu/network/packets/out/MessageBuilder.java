@@ -16,7 +16,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
-import com.neikeq.kicksemu.game.servers.GameServerType;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.sessions.AuthResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -221,7 +221,7 @@ public class MessageBuilder {
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         msg.append(serverId);
-                        msg.append(GameServerType.valueOf(rs.getString("type")).toShort());
+                        msg.append(ServerType.valueOf(rs.getString("type")).toShort());
                         msg.append(rs.getShort("min_level"));
                         msg.append(rs.getShort("max_level"));
                         msg.append(rs.getString("address"), 16);

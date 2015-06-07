@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class PlayerLevelCache {
 
-    private final Map<Integer, Short> levels;
+    private final Map<Integer, Short> levels = new HashMap<>();
 
     public short getPlayerLevel(int playerId, Connection ... con) {
         Short level = levels.get(playerId);
@@ -17,9 +17,5 @@ public class PlayerLevelCache {
         }
 
         return level;
-    }
-
-    public PlayerLevelCache() {
-        levels = new HashMap<>();
     }
 }

@@ -5,10 +5,10 @@ import java.util.Map;
 
 public class StatsInfo {
 
-    private final Map<Short, PlayerStats> creationStats;
-    private final Map<Short, PlayerStats> upgradeStats;
-    private final Map<Short, PlayerStats> autoStats;
-    private final Map<Integer, Integer> levelStats;
+    private final Map<Short, PlayerStats> creationStats = new HashMap<>();
+    private final Map<Short, PlayerStats> upgradeStats = new HashMap<>();
+    private final Map<Short, PlayerStats> autoStats = new HashMap<>();
+    private final Map<Integer, Integer> levelStats = new HashMap<>();
 
     private static StatsInfo instance;
 
@@ -90,11 +90,6 @@ public class StatsInfo {
     }
 
     private StatsInfo() {
-        creationStats = new HashMap<>();
-        upgradeStats = new HashMap<>();
-        autoStats = new HashMap<>();
-        levelStats = new HashMap<>();
-
         defineCreationStats();
         defineUpgradeStats();
         defineAutoStats();

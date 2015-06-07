@@ -10,9 +10,10 @@ import java.util.List;
 public class StatusMessage {
 
     // List of censured words
-    private static final List<String> censuredWords = Arrays.asList(new String[] {
-            // Censured words go here
-    });
+    // TODO replace with client censured words? and use in ChatManager too?
+    private static final List<String> censuredWords = Arrays.asList(
+            "<an_horrible_word>", "<another_horrible_word>"
+    );
 
     public static void statusMessage(Session session, ClientMessage msg) {
         String statusMessage = msg.readString(35);

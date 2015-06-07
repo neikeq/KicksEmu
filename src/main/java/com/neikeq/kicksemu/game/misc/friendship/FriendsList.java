@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FriendsList {
 
-    private final List<Integer> friends;
+    private final List<Integer> friends = new ArrayList<>();
 
     public void addFriend(int friendId) {
         friends.add(friendId);
@@ -80,7 +80,5 @@ public class FriendsList {
         return strFriends;
     }
 
-    private FriendsList() {
-        friends = new ArrayList<>();
-    }
+    private FriendsList() {}
 }

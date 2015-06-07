@@ -2,7 +2,9 @@ package com.neikeq.kicksemu;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
+import com.neikeq.kicksemu.game.chat.ChatCommands;
 import com.neikeq.kicksemu.game.events.EventsManager;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -10,7 +12,6 @@ import com.neikeq.kicksemu.io.Input;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.network.server.ServerType;
 import com.neikeq.kicksemu.network.server.tcp.NettyTcpServer;
 import com.neikeq.kicksemu.network.server.udp.NettyUdpServer;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -43,16 +44,16 @@ public class KicksEmu {
     private static void start(String configFile) {
         long startTime = System.nanoTime();
 
-        // Initialize Configurations
+        // --- Initialize Configurations
         Configuration.getInstance().init(configFile);
 
-        // Initialize Output Stream
+        // --- Initialize Output Stream
         output = new Output(Configuration.getBoolean("output.logging"),
                 Configuration.getLevel("output.verbosity"));
 
         output.printHeader();
 
-        // Initialize Language Translations
+        // --- Initialize Language Translations
         Localization.getInstance().init();
 
         try {
@@ -64,18 +65,11 @@ public class KicksEmu {
 
             // --- Initialize ServerManager
             Output.println(Localization.get("server.init"));
-            String serverType = Configuration.get("net.type");
 
-            if (serverType == null) {
-                handleFatalError("Invalid server type.");
-            } else {
-                serverManager = new ServerManager(serverType);
-
-                ServerManager.getMessageHandler().defineEvents();
-                ServerManager.getMessageHandler().defineCertifyEvents();
-
-                ServerManager.cleanPossibleConnectedUsers();
-            }
+            serverManager = new ServerManager();
+            ServerManager.getMessageHandler().defineEvents();
+            ServerManager.getMessageHandler().defineCertifyEvents();
+            ServerManager.cleanPossibleConnectedUsers();
 
             // --- Initialize Game Components
             Output.println(Localization.get("game.init"));
@@ -87,24 +81,25 @@ public class KicksEmu {
             Output.println(Localization.get("net.init"));
 
             // Port for game servers must be relative to the port id
-            int portTcp = serverManager.getServerType() == ServerType.MAIN ?
-                    Configuration.getInt("net.tcp.bind.port") :
-                    Configuration.getShort("game.tcp.port.factor") +
-                            Configuration.getShort("game.id");
+            int tcpPort = Configuration.getShort("game.tcp.port.factor") +
+                    Configuration.getShort("game.id");
 
-            nettyTcpServer = new NettyTcpServer(portTcp);
+            nettyTcpServer = new NettyTcpServer(tcpPort);
             nettyTcpServer.start();
 
-            // If this is a game server, initialize Udp Server
-            if (serverManager.getServerType() == ServerType.GAME) {
+            // If this is a game server
+            if (serverManager.getServerType() != ServerType.MAIN) {
                 // Port for game servers must be relative to the port id
-                int portUdp = Configuration.getShort("game.udp.port.factor") +
+                int udpPort = Configuration.getShort("game.udp.port.factor") +
                         Configuration.getShort("game.id");
 
-                nettyUdpServer = new NettyUdpServer(portUdp);
-                getNettyUdpServer().start();
-            }
+                // --- Initialize Udp Server
+                nettyUdpServer = new NettyUdpServer(udpPort);
+                nettyUdpServer.start();
 
+                // --- Initialize chat commands parser
+                ChatCommands.initialize();
+            }
         } catch (ClassNotFoundException e) {
             // MySql Driver not found
             handleFatalError(Localization.get("mysql.error.driver"), e.getMessage());
@@ -126,6 +121,10 @@ public class KicksEmu {
 
         // Print success notification including elapsed time
         Output.println(Localization.get("init.success", Long.toString(endTime)), Level.INFO);
+
+        // Print some information about the initialized server
+        Output.println("Information | Type: " + serverManager.getServerType().toString() +
+                " - ID: " + ServerManager.getServerId());
 
         // Start listening for user inputs
         Input input = new Input();

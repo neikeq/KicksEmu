@@ -15,32 +15,23 @@ public class Tips {
 
     private static Tips instance;
 
-    private List<String> tipsList;
-    private String tipsPath;
-    private int index;
-
-    private void init() {
-        tipsList = new ArrayList<>();
-        index = 0;
-
-        tipsPath = Constants.TABLE_DIR + "tips_" + Configuration.get("lang");
-
-        if (Files.exists(Paths.get(tipsPath))) {
-            load();
-        }
-    }
+    private final List<String> tipsList = new ArrayList<>();
+    private final String tipsPath = Constants.TABLE_DIR + "tips_" + Configuration.get("lang");
+    private int index = 0;
 
     private void load() {
-        try (Scanner s = new Scanner(new File(tipsPath))) {
-            while (s.hasNextLine()) {
-                String line = s.nextLine();
+        if (Files.exists(Paths.get(tipsPath))) {
+            try (Scanner s = new Scanner(new File(tipsPath))) {
+                while (s.hasNextLine()) {
+                    String line = s.nextLine();
 
-                if (!line.isEmpty()) {
-                    tipsList.add(line);
+                    if (!line.isEmpty()) {
+                        tipsList.add(line);
+                    }
                 }
+            } catch (FileNotFoundException e) {
+                Output.println("Cannot read tips file.", Level.INFO);
             }
-        } catch (FileNotFoundException e) {
-            Output.println("Cannot read tips file.", Level.INFO);
         }
     }
 
@@ -55,7 +46,7 @@ public class Tips {
     }
 
     private Tips() {
-        init();
+        load();
     }
 
     private static Tips getInstance() {

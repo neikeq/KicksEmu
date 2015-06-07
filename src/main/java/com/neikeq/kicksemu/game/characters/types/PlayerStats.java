@@ -5,23 +5,23 @@ import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 public class PlayerStats {
 
-    private short running;
-    private short endurance;
-    private short agility;
-    private short ballControl;
-    private short dribbling;
-    private short stealing;
-    private short tackling;
-    private short heading;
-    private short shortShots;
-    private short longShots;
-    private short crossing;
-    private short shortPasses;
-    private short longPasses;
-    private short marking;
-    private short goalkeeping;
-    private short punching;
-    private short defense;
+    private short running = 0;
+    private short endurance = 0;
+    private short agility = 0;
+    private short ballControl = 0;
+    private short dribbling = 0;
+    private short stealing = 0;
+    private short tackling = 0;
+    private short heading = 0;
+    private short shortShots = 0;
+    private short longShots = 0;
+    private short crossing = 0;
+    private short shortPasses = 0;
+    private short longPasses = 0;
+    private short marking = 0;
+    private short goalkeeping = 0;
+    private short punching = 0;
+    private short defense = 0;
 
     private static short sumStatsUpToHundred(int value, short current, MutableInteger statsPoints) {
         short add = CharacterUtils.statsUpToHundred(current, value);
@@ -78,25 +78,7 @@ public class PlayerStats {
                 stats[12], stats[13], stats[14], stats[15], stats[16]);
     }
 
-    public PlayerStats() {
-        this.running = 0;
-        this.endurance = 0;
-        this.agility = 0;
-        this.ballControl = 0;
-        this.dribbling = 0;
-        this.stealing = 0;
-        this.tackling = 0;
-        this.heading = 0;
-        this.shortShots = 0;
-        this.longShots = 0;
-        this.crossing = 0;
-        this.shortPasses = 0;
-        this.longPasses = 0;
-        this.marking = 0;
-        this.goalkeeping = 0;
-        this.punching = 0;
-        this.defense = 0;
-    }
+    public PlayerStats() {}
 
     public PlayerStats(int running, int endurance, int agility, int ballControl,
                        int dribbling, int stealing, int tackling, int heading,

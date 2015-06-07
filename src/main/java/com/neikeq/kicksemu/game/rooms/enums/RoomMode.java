@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
-import com.neikeq.kicksemu.game.servers.GameServerType;
+import com.neikeq.kicksemu.game.servers.ServerType;
 
 public enum RoomMode {
 
@@ -47,7 +47,7 @@ public enum RoomMode {
     }
 
     // TODO Add TOURNAMENT and CLUB server checks
-    public boolean notValidForServer(GameServerType serverType) {
+    public boolean notValidForServer(ServerType serverType) {
         switch (serverType) {
             case PRIVATE:
             case NORMAL:

@@ -37,7 +37,7 @@ public class ServerUtils {
         // TODO Check if character can access private server... Reject code is 251
         int clubId = MemberInfo.getClubId(playerId);
 
-        if (ServerInfo.getType(serverId) == GameServerType.CLUB &&
+        if (ServerInfo.getType(serverId) == ServerType.CLUB &&
                 (clubId <= 0 || !ClubManager.clubExist(clubId))) {
             // Cannot join a club server without being a club member
             result = -4;

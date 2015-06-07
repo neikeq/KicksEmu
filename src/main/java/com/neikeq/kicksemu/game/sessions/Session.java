@@ -18,27 +18,25 @@ import java.util.concurrent.ScheduledFuture;
 public class Session {
 
     private final Channel channel;
-    private final PlayerCache playerCache;
+    private final Object locker = new Object();
+    private final PlayerCache playerCache = new PlayerCache();
 
     private ScheduledFuture<?> udpPingFuture;
 
-    private int userId;
-    private int playerId;
-    private int sessionId;
+    private int userId = -1;
+    private int playerId = -1;
+    private int sessionId = -1;
+    private int roomId = -1;
+    private int udpPort = -1;
+    private int ping = -1;
 
-    private int roomId;
-    private int udpPort;
-    private int ping;
+    private byte pingState = 0;
 
-    private byte pingState;
+    private long lastPingResponse = 0;
 
-    private long lastPingResponse;
-
-    private boolean authenticated;
-    private boolean udpAuthenticated;
-    private boolean observer;
-
-    private final Object locker = new Object();
+    private boolean authenticated = false;
+    private boolean udpAuthenticated = false;
+    private boolean observer = false;
 
     /**
      * Write a message to the channel without flushing.<br>
@@ -136,19 +134,7 @@ public class Session {
     }
 
     public Session(Channel channel) {
-        setSessionId(-1);
-
-        this.playerCache = new PlayerCache();
         this.channel = channel;
-
-        setRoomId(-1);
-        setObserver(false);
-        setUdpPort(-1);
-
-        setAuthenticated(false);
-        setUdpAuthenticated(false);
-
-        setLastPingResponse(0);
     }
 
     public boolean isAuthenticated() {

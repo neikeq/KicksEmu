@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.network.server;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.servers.ServerBase;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
@@ -16,23 +17,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerManager {
 
-    private final ServerType serverType;
-
-    private static MessageHandler messageHandler = new MessageHandler();
-    private static final Map<Integer, Session> players = new ConcurrentHashMap<>();
-    private static ServerBase serverBase;
-    private static short serverId;
-
     private static final Object locker = new Object();
+    private static final Map<Integer, Session> players = new ConcurrentHashMap<>();
+    private static final MessageHandler messageHandler = new MessageHandler();
+    private static final ServerBase serverBase = new ServerBase();
 
     private void initializeMain() {
-        serverId = 0;
+        /*
+        Ensure the server id is set to 99.
+        This id is reserved for main servers only.
+        */
+        serverBase.setId((short) 99);
     }
 
     private void initializeGame() throws SQLException {
-        serverBase = ServerBase.fromConfig();
-        serverId = serverBase.getId();
-
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
             ServerUtils.insertServer(serverBase);
         } else {
@@ -96,12 +94,8 @@ public class ServerManager {
         return getPlayers().size();
     }
 
-    public ServerManager(String serverTypeId) throws SQLException {
-        this(ServerType.valueOf(serverTypeId.toUpperCase()));
-    }
-
     public static short getServerId() {
-        return serverId;
+        return serverBase.getId();
     }
 
     public static ServerBase getServerBase() {
@@ -109,7 +103,7 @@ public class ServerManager {
     }
 
     public ServerType getServerType() {
-        return serverType;
+        return serverBase.getType();
     }
 
     public static Map<Integer, Session> getPlayers() {
@@ -120,18 +114,17 @@ public class ServerManager {
         return messageHandler;
     }
 
-    private ServerManager(ServerType type) throws SQLException {
-        serverType = type;
+    public ServerManager() throws SQLException {
+        ServerType serverType = getServerType();
 
-        switch (getServerType()) {
-            case MAIN:
-                initializeMain();
-                break;
-            case GAME:
-                initializeGame();
-                break;
-            default:
-                throw new IllegalArgumentException("Unexpected ServerType.");
+        if (serverType == null) {
+            throw new IllegalArgumentException("Invalid ServerType.");
+        } else if (serverType == ServerType.MAIN) {
+            // Initialize as main server
+            initializeMain();
+        } else {
+            // Initialize as game server
+            initializeGame();
         }
     }
 }

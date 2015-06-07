@@ -18,31 +18,20 @@ public class Localization {
 
     private static Localization localization;
 
-    private String langPath;
-    private Properties lang;
+    private final Properties lang = new Properties();
+    private final String langPath = Constants.LANG_DIR + "lang_" +
+            Configuration.get("lang") + ".properties";
 
     public void init() {
-        langPath = Constants.LANG_DIR + "lang_" + Configuration.get("lang") + ".properties";
-
-        if (!Files.exists(Paths.get(langPath))) {
-            Output.println("Language file missing.", Level.CRITICAL);
-        } else {
-            try {
-                lang = load();
+        if (Files.exists(Paths.get(langPath))) {
+            try (InputStream configStream = new FileInputStream(langPath)) {
+                lang.load(configStream);
             } catch (IOException e) {
                 Output.println("Cannot read language file: " + e.getMessage(), Level.CRITICAL);
             }
+        } else {
+            Output.println("Language file missing.", Level.CRITICAL);
         }
-    }
-
-    private Properties load() throws IOException {
-        Properties properties = new Properties();
-
-        try (InputStream configStream = new FileInputStream(langPath)) {
-            properties.load(configStream);
-        }
-
-        return properties;
     }
 
     public void save() throws IOException{

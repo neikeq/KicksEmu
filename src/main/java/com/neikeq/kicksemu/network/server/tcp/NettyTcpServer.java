@@ -16,19 +16,15 @@ public class NettyTcpServer {
 
     private final int port;
     
-    private final EventLoopGroup bossGroup;
-    private final EventLoopGroup workerGroup;
+    private final EventLoopGroup bossGroup = new NioEventLoopGroup();
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
-    private final ServerBootstrap bootstrap;
+    private final ServerBootstrap bootstrap = new ServerBootstrap();
 
     private ChannelFuture channelFuture;
     
     public NettyTcpServer(int port) {
         this.port = port;
-
-        bossGroup = new NioEventLoopGroup();
-        workerGroup = new NioEventLoopGroup();
-        bootstrap = new ServerBootstrap();
 
         initBootstrap();
     }

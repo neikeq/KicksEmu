@@ -12,7 +12,7 @@ import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.RewardCalculator;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
-import com.neikeq.kicksemu.game.servers.GameServerType;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -140,7 +140,7 @@ public class RoomManager {
             // Check that everything is correct
             byte result = 0;
 
-            GameServerType serverType = ServerManager.getServerBase().getType();
+            ServerType serverType = ServerManager.getServerBase().getType();
 
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
                 result = (byte) 253; // Wrong level settings
@@ -324,7 +324,7 @@ public class RoomManager {
 
         Room room = rooms.get(roomId);
 
-        GameServerType serverType = ServerManager.getServerBase().getType();
+        ServerType serverType = ServerManager.getServerBase().getType();
 
         if (maxSize == null || type == null || roomMode == null ||
                 roomMode.notValidForServer(serverType)) {
@@ -613,7 +613,7 @@ public class RoomManager {
         // Apply level gap bonus if the levels difference in room settings is less than 10
         final boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
         final boolean goldenTime = GameEvents.isGoldenTime();
-        final boolean levelExpWeightingFlag = Configuration.getBoolean("game.match.levelExpWeighting");
+        final boolean levelExpWeightingFlag = Configuration.getBoolean("game.match.bonus.lowers");
 
         // Check the match countdown
         final long startTime = DateUtils.currentTimeMillis();

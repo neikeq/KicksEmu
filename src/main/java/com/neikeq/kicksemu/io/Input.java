@@ -3,13 +3,13 @@ package com.neikeq.kicksemu.io;
 import com.neikeq.kicksemu.game.chat.ChatUtils;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.io.logging.Logger;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.network.server.ServerType;
 
 import java.io.IOException;
 import java.util.Map;
@@ -104,7 +104,8 @@ public class Input {
         System.out.println("- Type: " + serverType.toString());
         System.out.println("- Connected users: " + ServerManager.connectedPlayers());
 
-        if (serverType == ServerType.GAME) {
+        // If this is a game server
+        if (serverType != ServerType.MAIN) {
             System.out.println("- Users in lobby: " +
                     LobbyManager.getMainLobby().getPlayers().size());
             System.out.println("- Open rooms: " + RoomManager.openRooms());

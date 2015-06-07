@@ -32,8 +32,8 @@ public class ServerInfo {
         return SqlUtils.getShort("max_users", TABLE, id);
     }
 
-    public static GameServerType getType(int id) {
-        return GameServerType.valueOf(SqlUtils.getString("type", TABLE, id));
+    public static ServerType getType(int id) {
+        return ServerType.valueOf(SqlUtils.getString("type", TABLE, id));
     }
 
     public static short getConnectedUsers(int id) {
