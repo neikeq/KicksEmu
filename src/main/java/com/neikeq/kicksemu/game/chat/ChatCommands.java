@@ -81,7 +81,7 @@ public class ChatCommands {
         Room room = RoomManager.getRoomById(session.getRoomId());
 
         if (room != null) {
-            switch (args[1]) {
+            switch (args[1].toLowerCase()) {
                 case "master":
                     ChatUtils.sendServerMessage(session,
                             "Master: " + PlayerInfo.getName(room.getMaster()));
