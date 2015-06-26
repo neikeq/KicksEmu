@@ -351,26 +351,28 @@ public class RoomMessages {
 
             byte result = 0;
 
-            // If the player to invite is in the main lobby
-            if (LobbyManager.getMainLobby().getPlayers().contains(playerToInvite)) {
-                Session sessionToInvite = ServerManager.getPlayers().get(playerToInvite);
+            if (room.isNotFull()) {
+                // If the player to invite is in the main lobby
+                if (LobbyManager.getMainLobby().getPlayers().contains(playerToInvite)) {
+                    Session sessionToInvite = ServerManager.getPlayers().get(playerToInvite);
 
-                if (UserInfo.getSettings(sessionToInvite.getUserId()).getInvites()) {
-                    byte level = (byte) PlayerInfo.getLevel(sessionToInvite.getPlayerId());
+                    if (UserInfo.getSettings(sessionToInvite.getUserId()).getInvites()) {
+                        byte level = (byte) PlayerInfo.getLevel(sessionToInvite.getPlayerId());
 
-                    // If player level meets the level requirement of the room
-                    if (room.getMinLevel() <= level && room.getMaxLevel() >= level) {
-                        ServerMessage invitation = MessageBuilder.invitePlayer(result,
-                                room, PlayerInfo.getName(session.getPlayerId()));
-                        sessionToInvite.sendAndFlush(invitation);
+                        // If player level meets the level requirement of the room
+                        if (room.getMinLevel() <= level && room.getMaxLevel() >= level) {
+                            ServerMessage invitation = MessageBuilder.invitePlayer(result,
+                                    room, PlayerInfo.getName(session.getPlayerId()));
+                            sessionToInvite.sendAndFlush(invitation);
+                        } else {
+                            result = (byte) -5; // Player does not meet the level requirements
+                        }
                     } else {
-                        result = (byte) -5; // Player does not meet the level requirements
+                        result = (byte) -3; // Player does not accept invitations
                     }
                 } else {
-                    result = (byte) -3; // Player does not accept invitations
+                    result = (byte) -2; // Player not found
                 }
-            } else {
-                result = (byte) -2; // Player not found
             }
 
             // If there is something wrong, notify the client
