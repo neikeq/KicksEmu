@@ -1,12 +1,19 @@
 package com.neikeq.kicksemu.game.inventory;
 
+import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
+import com.neikeq.kicksemu.game.inventory.types.ItemType;
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Item implements Product {
+
+    private static final Map<ItemType, ActivationCallback> activationCallbacks = new HashMap<>();
 
     private final int id;
     private final int inventoryId;
@@ -35,17 +42,29 @@ public class Item implements Product {
         this.visible = visible;
     }
 
-    public void deactivateGracefully(int playerId) {
+    public void deactivateGracefully(ItemType type, Session session) {
         if (isSelected()) {
             this.selected = false;
-            PlayerInfo.setInventoryItem(this, playerId);
+            PlayerInfo.setInventoryItem(this, session.getPlayerId());
+
+            ActivationCallback callback = activationCallbacks.get(type);
+
+            if (callback != null) {
+                callback.onItemActivation(this, session);
+            }
         }
     }
 
-    public void activateGracefully(int playerId) {
+    public void activateGracefully(ItemType type, Session session) {
         if (!isSelected()) {
             this.selected = true;
-            PlayerInfo.setInventoryItem(this, playerId);
+            PlayerInfo.setInventoryItem(this, session.getPlayerId());
+
+            ActivationCallback callback = activationCallbacks.get(type);
+
+            if (callback != null) {
+                callback.onItemActivation(this, session);
+            }
         }
     }
 
@@ -87,5 +106,17 @@ public class Item implements Product {
 
     public boolean isVisible() {
         return visible;
+    }
+
+    @FunctionalInterface
+    interface ActivationCallback {
+
+        void onItemActivation(Item item, Session session);
+    }
+
+    static {
+        activationCallbacks.put(ItemType.SKILL_SLOT, (Item item, Session session) -> {
+            CharacterManager.sendSkillList(session);
+        });
     }
 }

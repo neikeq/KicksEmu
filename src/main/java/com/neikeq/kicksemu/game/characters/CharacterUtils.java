@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.characters;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -11,8 +12,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CharacterUtils {
+
+    private static final List<ItemType> DEACTIVATION_EXCEPTIONS = new ArrayList<>(Arrays.asList(
+            ItemType.SKILL_SLOT, ItemType.CHARACTER_SLOT
+    ));
 
     public static void sumStatsByIndex(int index, short value, PlayerStats playerStats) {
         switch (index) {
@@ -163,18 +171,22 @@ public class CharacterUtils {
         }
     }
 
-    public static void updateItemsInUse(Item itemIn, int playerId) {
+    public static void updateItemsInUse(Item itemIn, Session session) {
         ItemInfo itemInfo = TableManager.getItemInfo(o ->
                 o.getId() == itemIn.getId());
 
-        Item itemOut = getItemInUseByType(ItemType.fromInt(itemInfo.getType()), playerId);
+        ItemType itemType = ItemType.fromInt(itemInfo.getType());
 
-        if (itemOut != null) {
-            itemOut.deactivateGracefully(playerId);
+        if (!DEACTIVATION_EXCEPTIONS.contains(itemType)) {
+            Item itemOut = getItemInUseByType(itemType, session.getPlayerId());
+
+            if (itemOut != null) {
+                itemOut.deactivateGracefully(itemType, session);
+            }
         }
 
         if (itemIn != null) {
-            itemIn.activateGracefully(playerId);
+            itemIn.activateGracefully(itemType, session);
         }
     }
 

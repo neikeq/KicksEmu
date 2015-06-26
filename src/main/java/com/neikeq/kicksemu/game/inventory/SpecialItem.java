@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 
@@ -21,12 +22,16 @@ class SpecialItem {
                               Session session) {
         int playerId = session.getPlayerId();
 
-        switch (itemType) {
-            case 204:
+        ItemType type = ItemType.fromInt(itemType);
+
+        if (type == null) return;
+
+        switch (type) {
+            case STATS_RESET:
                 CharacterManager.resetStats(playerId);
                 session.send(MessageBuilder.playerStats(playerId));
                 break;
-            case 100:
+            case FACE:
                 PlayerInfo.setFace((short) (itemId / 10 - 100000), playerId);
                 break;
             default:

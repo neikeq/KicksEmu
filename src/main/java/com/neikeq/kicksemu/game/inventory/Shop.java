@@ -352,7 +352,7 @@ public class Shop {
                             // Add it to the player's inventory
                             items.put(id, item);
                             // Activate item
-                            CharacterUtils.updateItemsInUse(item, playerId);
+                            CharacterUtils.updateItemsInUse(item, session);
                             // Update player's inventory
                             PlayerInfo.addInventoryItem(item, playerId);
                         } else {

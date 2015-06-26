@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.ItemInfo;
@@ -100,6 +101,8 @@ public class InventoryManager {
             // Activate skill
             newIndex = InventoryUtils.getSmallestMissingIndex(celes.values());
 
+            // If there is at least a free slot for the celebration
+            // The maximum celebration that can be used are 5
             if (newIndex <= 5) {
                 cele.setSelectionIndex(newIndex);
 
@@ -145,36 +148,35 @@ public class InventoryManager {
         return result;
     }
 
-    public static void deactivateItem(Session session, ClientMessage msg) {
-        int inventoryId = msg.readInt();
-        int playerId = session.getPlayerId();
-
-        byte result = deactivateItem(session, PlayerInfo.getInventoryItems(playerId)
-                .get(inventoryId));
-
-        if (result != 0) {
-            session.send(MessageBuilder.deactivateItem(inventoryId, playerId, result));
-        }
-    }
-
     public static void activateItem(Session session, ClientMessage msg) {
         int playerId = session.getPlayerId();
         int inventoryId = msg.readInt();
 
         byte result = 0;
 
-        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
-        Item item = items.get(inventoryId);
+        Item item = PlayerInfo.getInventoryItems(playerId).get(inventoryId);
 
         // If item exists
         if (item != null && !item.isSelected()) {
-            CharacterUtils.updateItemsInUse(item, playerId);
+            CharacterUtils.updateItemsInUse(item, session);
             PlayerInfo.setInventoryItem(item, playerId);
         } else {
             result = -2; // Skill does not exists
         }
 
         session.send(MessageBuilder.activateItem(inventoryId, playerId, result));
+    }
+
+    public static void deactivateItem(Session session, ClientMessage msg) {
+        int inventoryId = msg.readInt();
+        int playerId = session.getPlayerId();
+
+        byte result = deactivateItem(session,
+                PlayerInfo.getInventoryItems(playerId).get(inventoryId));
+
+        if (result != 0) {
+            session.send(MessageBuilder.deactivateItem(inventoryId, playerId, result));
+        }
     }
 
     private static byte deactivateItem(Session s, Item item) {
@@ -184,8 +186,11 @@ public class InventoryManager {
 
         // If item exists
         if (item != null) {
+            ItemInfo itemInfo = TableManager.getItemInfo(o ->
+                    o.getId() == item.getId());
+
             // Deactivate item
-            item.deactivateGracefully(playerId);
+            item.deactivateGracefully(ItemType.fromInt(itemInfo.getType()), s);
             s.send(MessageBuilder.deactivateItem(item.getInventoryId(), playerId,  result));
 
             PlayerInfo.setInventoryItem(item, playerId);
