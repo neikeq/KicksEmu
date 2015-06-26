@@ -1,10 +1,10 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
-public enum RoomType {
+public enum RoomAccessType {
     FREE,
     PASSWORD;
 
-    public static RoomType fromInt(int type) {
+    public static RoomAccessType fromShort(short type) {
         switch (type) {
             case 1:
                 return FREE;

@@ -98,7 +98,7 @@ public class Input {
     }
 
     private void handleStats() {
-        ServerType serverType = KicksEmu.getServerManager().getServerType();
+        ServerType serverType = ServerManager.getServerType();
 
         System.out.println("- Server: " + ServerManager.getServerId());
         System.out.println("- Type: " + serverType.toString());
@@ -108,7 +108,7 @@ public class Input {
         if (serverType != ServerType.MAIN) {
             System.out.println("- Users in lobby: " +
                     LobbyManager.getMainLobby().getPlayers().size());
-            System.out.println("- Open rooms: " + RoomManager.openRooms());
+            System.out.println("- Open rooms: " + RoomManager.roomsCount());
         }
     }
 

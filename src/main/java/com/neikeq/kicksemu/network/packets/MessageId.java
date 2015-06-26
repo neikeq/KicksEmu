@@ -64,6 +64,9 @@ public class MessageId {
     public static final int UNKNOWN2 = 2411;
     public static final int UPDATE_ROOM_PLAYER = 2412;
     public static final int PLAYER_BONUS_STATS = 2413;
+    public static final int CLUB_ROOM_LIST = 2500;
+    public static final int CLUB_CREATE_ROOM = 2501;
+    public static final int CLUB_ROOM_INFO = 2510;
     public static final int PURCHASE_ITEM = 2600;
     public static final int RESELL_ITEM = 2601;
     public static final int ACTIVATE_ITEM = 2603;
@@ -90,6 +93,6 @@ public class MessageId {
     public static final int UDP_GAME_4 = 9004;
     public static final int UDP_GAME_5 = 9005;
 
-    // PROXY MESSAGES
+    // Proxy messages
     public static final int PROXY_UPDATE_PORT = 11001;
 }

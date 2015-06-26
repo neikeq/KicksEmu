@@ -1,6 +1,8 @@
 package com.neikeq.kicksemu.game.servers;
 
+// TODO make PRIVATE a flag variable instead of a constant of this enum
 public enum ServerType {
+
     MAIN,
     NORMAL,
     PRACTICE,
@@ -23,6 +25,14 @@ public enum ServerType {
             case PRIVATE:
             default:
                 return -1;
+        }
+    }
+
+    public static ServerType fromString(String name) {
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException ignored) {
+            return null;
         }
     }
 }

@@ -88,7 +88,7 @@ public class KicksEmu {
             nettyTcpServer.start();
 
             // If this is a game server
-            if (serverManager.getServerType() != ServerType.MAIN) {
+            if (ServerManager.getServerType() != ServerType.MAIN) {
                 // Port for game servers must be relative to the port id
                 int udpPort = Configuration.getShort("game.udp.port.factor") +
                         Configuration.getShort("game.id");
@@ -123,7 +123,7 @@ public class KicksEmu {
         Output.println(Localization.get("init.success", Long.toString(endTime)), Level.INFO);
 
         // Print some information about the initialized server
-        Output.println("Information | Type: " + serverManager.getServerType().toString() +
+        Output.println("Information | Type: " + ServerManager.getServerType().toString() +
                 " - ID: " + ServerManager.getServerId());
 
         // Start listening for user inputs
@@ -136,15 +136,15 @@ public class KicksEmu {
      *
      * @param messages error message/s
      */
-    private static void handleFatalError(String... messages) {
+    public static void handleFatalError(String... messages) {
         String message = messages[0];
 
         for (int i = 1; i < messages.length; i++) {
             message += System.lineSeparator() + messages[i];
         }
 
+        Output.println(Localization.get("init.error"), Level.CRITICAL);
         Output.println(message, Level.CRITICAL);
-        Output.println(Localization.get("init.error.exit"), Level.CRITICAL);
         stop();
     }
 
@@ -183,10 +183,7 @@ public class KicksEmu {
     }
 
     public static void stop() {
-        Output.println(Localization.get("stop"));
-
         dispose();
-
         System.exit(0);
     }
 

@@ -98,11 +98,7 @@ public class ServerManager {
         return serverBase.getId();
     }
 
-    public static ServerBase getServerBase() {
-        return serverBase;
-    }
-
-    public ServerType getServerType() {
+    public static ServerType getServerType() {
         return serverBase.getType();
     }
 
@@ -118,7 +114,7 @@ public class ServerManager {
         ServerType serverType = getServerType();
 
         if (serverType == null) {
-            throw new IllegalArgumentException("Invalid ServerType.");
+            throw new IllegalArgumentException("Invalid server type.");
         } else if (serverType == ServerType.MAIN) {
             // Initialize as main server
             initializeMain();

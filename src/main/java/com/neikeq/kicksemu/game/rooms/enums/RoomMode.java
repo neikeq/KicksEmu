@@ -46,10 +46,11 @@ public enum RoomMode {
         }
     }
 
-    // TODO Add TOURNAMENT and CLUB server checks
+    // TODO CLUB server checks
     public boolean notValidForServer(ServerType serverType) {
         switch (serverType) {
             case PRIVATE:
+            case CLUB:
             case NORMAL:
                 return this != AI_GOALKEEPER;
             case PRACTICE:

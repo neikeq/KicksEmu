@@ -8,6 +8,7 @@ import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.ThreadUtils;
 
@@ -40,7 +41,7 @@ public class Room {
     private RoomMode roomMode = RoomMode.AI_GOALKEEPER;
     private RoomSize maxSize = RoomSize.SIZE_4V4;
     private RoomState state = RoomState.WAITING;
-    private RoomType type = RoomType.FREE;
+    private RoomAccessType accessType = RoomAccessType.FREE;
 
     private final RoomLobby roomLobby = new RoomLobby();
     private final SwapLocker swapLocker = new SwapLocker();
@@ -67,7 +68,7 @@ public class Room {
         synchronized (locker) {
             if (isNotFull()) {
                 // If room does not have a password, or typed password matches room's password
-                if (getType() != RoomType.PASSWORD || password.equals(getPassword()) ||
+                if (getAccessType() != RoomAccessType.PASSWORD || password.equals(getPassword()) ||
                         PlayerInfo.isModerator(playerId)) {
                     if (!isPlaying() || isPlayerReconnecting(playerId)) {
                         short level = PlayerInfo.getLevel(playerId);
@@ -297,11 +298,25 @@ public class Room {
         }
     }
 
+    private void sendRoomInfo(Session session) {
+        switch (ServerManager.getServerType()) {
+            case NORMAL:
+            case PRACTICE:
+            case TOURNAMENT:
+                session.send(MessageBuilder.roomInfo(this));
+                break;
+            case CLUB:
+                session.send(MessageBuilder.clubRoomInfo(this));
+                break;
+            default:
+        }
+    }
+
     private void onPlayerJoined(Session session) {
         int playerId = session.getPlayerId();
 
         // Send the room info to the client
-        session.send(MessageBuilder.roomInfo(this));
+        sendRoomInfo(session);
 
         // Send to the client information about players inside the room
         sendRoomPlayersInfo(session);
@@ -495,12 +510,12 @@ public class Room {
         this.ball = ball;
     }
 
-    public RoomType getType() {
-        return type;
+    public RoomAccessType getAccessType() {
+        return accessType;
     }
 
-    public void setType(RoomType type) {
-        this.type = type;
+    public void setAccessType(RoomAccessType accessType) {
+        this.accessType = accessType;
     }
 
     public RoomMode getRoomMode() {

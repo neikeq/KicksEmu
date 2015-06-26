@@ -617,7 +617,7 @@ public class MessageBuilder {
 
             for (Room room : rooms.values()) {
                 // Visibility. Hide if player is moderator.
-                msg.append((byte)room.getType().toInt());
+                msg.append((byte)room.getAccessType().toInt());
                 msg.append(room.isPlaying());
                 msg.append((short)room.getId());
                 msg.append(room.getName(), 46);
@@ -713,7 +713,7 @@ public class MessageBuilder {
         MessageUtils.appendResult((byte) 0, msg);
 
         if (room != null) {
-            msg.append((byte)room.getType().toInt());
+            msg.append((byte)room.getAccessType().toInt());
             msg.append((short)room.getId());
             msg.append(room.getName(), 45);
             msg.append(room.getPassword(), 5);
@@ -729,8 +729,27 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage clubRoomInfo(Room room) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_INFO);
+
+        MessageUtils.appendResult((byte) 0, msg);
+
+        if (room != null) {
+            msg.append(false);
+            msg.append((byte)room.getAccessType().toInt());
+            msg.append((short)room.getId());
+            msg.append(room.getName(), 45);
+            msg.append(room.getPassword(), 5);
+            msg.append(room.getMaster());
+            msg.append((byte)room.getRoomMode().toInt());
+            msg.append((short) 0); // wins
+        }
+
+        return msg;
+    }
+
     public static ServerMessage roomPlayerInfo(Session session, Room room, Connection ... con) {
-        ServerMessage msg = new ServerMessage(MessageId.ROOM_PLAYER_INFO);
+        ServerMessage msg = new ServerMessage(2511);//MessageId.ROOM_PLAYER_INFO);
 
         if (session != null) {
             int playerId = session.getPlayerId();
@@ -840,7 +859,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (room != null) {
-            msg.append((short)room.getType().toInt());
+            msg.append((short)room.getAccessType().toInt());
             msg.append(room.getName(), 45);
             msg.append(room.getPassword(), 4);
             msg.appendZeros(1);
@@ -1107,6 +1126,18 @@ public class MessageBuilder {
         msg.append(playerId);
 
         MessageUtils.appendStatsBonus(playerId, msg, con);
+
+        return msg;
+    }
+
+    public static ServerMessage clubCreateRoom(short roomId, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_CREATE_ROOM);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.append(roomId);
+        }
 
         return msg;
     }

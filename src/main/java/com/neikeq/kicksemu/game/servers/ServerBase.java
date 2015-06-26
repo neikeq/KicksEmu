@@ -12,7 +12,7 @@ public class ServerBase {
     private final byte minLevel = Configuration.getByte("game.level.min");
     private final byte maxLevel = Configuration.getByte("game.level.max");
     private final short maxUsers = Configuration.getShort("game.users.max");
-    private final ServerType type = ServerType.valueOf(Configuration.get("game.type").toUpperCase());
+    private final ServerType type = ServerType.fromString(Configuration.get("game.type"));
     private final int expFactor = Configuration.getInt("game.rewards.exp");
     private final int pointFactor = Configuration.getInt("game.rewards.point");
     private final int cashFactor = Configuration.getInt("game.rewards.cash");

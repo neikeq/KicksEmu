@@ -7,7 +7,7 @@ import com.neikeq.kicksemu.game.rooms.Room;
 
 import java.sql.Connection;
 
-public class RewardCalculator {
+public class MatchRewards {
 
     public static int calculateReward(PlayerResult result, Room room, short countdown) {
         short votePoints = result.getVotePoints() > 100 ? 100 : result.getVotePoints();
@@ -35,32 +35,31 @@ public class RewardCalculator {
                                            int mvp, Connection con) {
         int playerId = result.getPlayerId();
 
-        PlayerHistory sumHistory = new PlayerHistory();
-
-        sumHistory.sumMatches(1);
+        PlayerHistory matchHistory = new PlayerHistory();
+        matchHistory.sumMatches(1);
 
         switch (teamResult.getResult()) {
             case 0:
-                sumHistory.sumDraws(1);
+                matchHistory.sumDraws(1);
                 break;
             case 1:
-                sumHistory.sumWins(1);
+                matchHistory.sumWins(1);
                 break;
             default:
         }
 
         if (playerId == mvp) {
-            sumHistory.sumMom(1);
+            matchHistory.sumMom(1);
         }
 
-        sumHistory.sumValidGoals(result.getGoals());
-        sumHistory.sumValidAssists(result.getAssists());
-        sumHistory.sumValidInterception(result.getBlocks());
-        sumHistory.sumValidShooting(result.getShots());
-        sumHistory.sumValidStealing(result.getSteals());
-        sumHistory.sumValidTackling(result.getTackles());
-        sumHistory.sumTotalPoints(result.getVotePoints());
+        matchHistory.sumValidGoals(result.getGoals());
+        matchHistory.sumValidAssists(result.getAssists());
+        matchHistory.sumValidInterception(result.getBlocks());
+        matchHistory.sumValidShooting(result.getShots());
+        matchHistory.sumValidStealing(result.getSteals());
+        matchHistory.sumValidTackling(result.getTackles());
+        matchHistory.sumTotalPoints(result.getVotePoints());
 
-        PlayerInfo.sumHistory(sumHistory, playerId, con);
+        PlayerInfo.sumHistory(matchHistory, playerId, con);
     }
 }
