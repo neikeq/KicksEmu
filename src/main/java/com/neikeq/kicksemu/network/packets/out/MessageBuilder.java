@@ -749,7 +749,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage roomPlayerInfo(Session session, Room room, Connection ... con) {
-        ServerMessage msg = new ServerMessage(2511);//MessageId.ROOM_PLAYER_INFO);
+        ServerMessage msg = new ServerMessage(MessageId.ROOM_PLAYER_INFO);
 
         if (session != null) {
             int playerId = session.getPlayerId();
