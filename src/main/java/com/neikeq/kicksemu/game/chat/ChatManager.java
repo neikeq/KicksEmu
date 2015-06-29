@@ -15,6 +15,7 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class ChatManager {
 
@@ -137,10 +138,15 @@ public class ChatManager {
             if (!message.isEmpty()) {
                 MessageType type = MessageType.CLUB;
 
-                ServerManager.getPlayers().values().stream()
-                        .filter(s -> MemberInfo.getClubId(s.getPlayerId()) == clubId)
-                        .forEach(s -> s.sendAndFlush(MessageBuilder.chatMessage(playerId,
-                                name, type, message)));
+                Stream<Session> clubSessions = ServerManager.getPlayers().values().stream()
+                        .filter(s -> MemberInfo.getClubId(s.getPlayerId()) == clubId);
+
+                if (clubSessions.count() > 0) {
+                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
+                    clubSessions.forEach(s -> s.sendAndFlush(msg));
+                } else {
+                    ChatUtils.sendServerMessage(session, "No club members connected.");
+                }
             }
         }
     }
