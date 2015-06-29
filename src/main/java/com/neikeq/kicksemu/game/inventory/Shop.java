@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Position;
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
+import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.table.CeleInfo;
 import com.neikeq.kicksemu.game.table.BonusInfo;
@@ -26,7 +27,6 @@ import java.util.Map;
 
 public class Shop {
 
-    private static final int SLOTS_ITEM_TYPE = 202;
     private static final byte SLOTS_LIMIT = 12;
 
     public static void purchaseSkill(Session session, ClientMessage msg) {
@@ -339,7 +339,8 @@ public class Shop {
                     } else if (items.size() >= InventoryManager.MAX_INVENTORY_ITEMS) {
                         // Inventory is full
                         result = (byte) -10;
-                    } else if (itemInfo.getType() != SLOTS_ITEM_TYPE || canPurchaseSlots) {
+                    } else if (canPurchaseSlots ||
+                            itemInfo.getType() != ItemType.SKILL_SLOT.toInt()) {
                         if (!SpecialItem.isSpecialItem(itemInfo.getType())) {
                             // Initialize item with the requested data
                             int id = InventoryUtils.getSmallestMissingId(items.values());
