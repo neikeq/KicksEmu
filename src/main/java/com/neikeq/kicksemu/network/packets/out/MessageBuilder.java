@@ -729,25 +729,6 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage clubRoomInfo(Room room) {
-        ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_INFO);
-
-        MessageUtils.appendResult((byte) 0, msg);
-
-        if (room != null) {
-            msg.append(false);
-            msg.append((byte)room.getAccessType().toInt());
-            msg.append((short)room.getId());
-            msg.append(room.getName(), 45);
-            msg.append(room.getPassword(), 5);
-            msg.append(room.getMaster());
-            msg.append((byte)room.getRoomMode().toInt());
-            msg.append((short) 0); // wins
-        }
-
-        return msg;
-    }
-
     public static ServerMessage roomPlayerInfo(Session session, Room room, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_PLAYER_INFO);
 
@@ -766,7 +747,7 @@ public class MessageBuilder {
             msg.append(UserInfo.getSettings(ownerId).getCountry());
             msg.append(session.getPing() < 100, 2);
             msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-            msg.append((short) session.getUdpPort());
+            msg.append(session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
@@ -986,7 +967,7 @@ public class MessageBuilder {
 
         msg.append(room.getHost());
         msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-        msg.append((short) session.getUdpPort());
+        msg.append(session.getUdpPort());
         msg.append(room.isTraining());
         msg.appendZeros(4);
 
@@ -1137,6 +1118,25 @@ public class MessageBuilder {
 
         if (result == 0) {
             msg.append(roomId);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage clubRoomInfo(Room room) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_INFO);
+
+        MessageUtils.appendResult((byte) 0, msg);
+
+        if (room != null) {
+            msg.append(false);
+            msg.append((byte)room.getAccessType().toInt());
+            msg.append((short)room.getId());
+            msg.append(room.getName(), 45);
+            msg.append(room.getPassword(), 5);
+            msg.append(room.getMaster());
+            msg.append((byte)room.getRoomMode().toInt());
+            msg.append((short) 0); // wins
         }
 
         return msg;
@@ -1435,9 +1435,14 @@ public class MessageBuilder {
     }
 
     public static ServerMessage udpPing(int playerId) {
-        ServerMessage msg = new ServerMessage(MessageId.UDP_PING);
+        return new ServerMessage(MessageId.UDP_PING);
+    }
 
-        msg.write(Constants.TARGET_ID_INDEX, playerId);
+    public static ServerMessage proxyUpdatePort(int playerId, short port) {
+        ServerMessage msg = new ServerMessage(MessageId.PROXY_UPDATE_PORT);
+
+        msg.append(playerId);
+        msg.append(port);
 
         return msg;
     }

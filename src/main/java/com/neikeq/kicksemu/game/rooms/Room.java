@@ -25,11 +25,10 @@ public class Room {
     private int id = -1;
     private int host = -1;
     private int master = -1;
+    private int trainingFactor = 0;
 
     private byte minLevel = 1;
     private byte maxLevel = 60;
-
-    private int trainingFactor = 0;
 
     private long timeStart = 0;
 
@@ -330,6 +329,10 @@ public class Room {
         } else {
             disconnectedPlayers.remove(playerId);
             getReconnectedPlayers().add(playerId);
+
+            // Send the new player's port to the match host
+            short port = session.getUdpPort();
+            getPlayers().get(host).sendAndFlush(MessageBuilder.proxyUpdatePort(playerId, port));
 
             // Notify about the player which reconnected
             String message = "Player reconnected: " + PlayerInfo.getName(playerId);
