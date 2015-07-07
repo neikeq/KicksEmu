@@ -19,19 +19,19 @@ public class PlayerResult {
     private int points;
 
     public void appendResult(ServerMessage msg) {
-        msg.append(playerId);
-        msg.append(experience);
-        msg.append(points);
-        msg.append(goals);
-        msg.append(assists);
-        msg.append(blocks);
-        msg.append(shots);
-        msg.append(steals);
-        msg.append(tackles);
-        msg.appendZeros(10);
-        msg.append(votePoints);
-        msg.appendZeros(2);
-        msg.append(ballControl);
+        msg.writeInt(playerId);
+        msg.writeInt(experience);
+        msg.writeInt(points);
+        msg.writeShort(goals);
+        msg.writeShort(assists);
+        msg.writeShort(blocks);
+        msg.writeShort(shots);
+        msg.writeShort(steals);
+        msg.writeShort(tackles);
+        msg.writeZeros(10);
+        msg.writeShort(votePoints);
+        msg.writeZeros(2);
+        msg.writeShort(ballControl);
     }
 
     public static PlayerResult fromMessage(ClientMessage msg) {

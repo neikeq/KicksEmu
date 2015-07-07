@@ -41,7 +41,6 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        Output.println("Udp client exception: " + cause.getMessage(),
-                Level.DEBUG);
+        Output.println("Udp client exception: " + cause.getMessage(), Level.DEBUG);
     }
 }

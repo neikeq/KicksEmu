@@ -29,24 +29,24 @@ import java.sql.SQLException;
 class MessageUtils {
 
     public static void appendResult(byte result, ServerMessage msg) {
-        msg.append(result);
-        msg.append(result == 0 ? result : (byte)255);
+        msg.writeByte(result);
+        msg.writeByte(result == 0 ? result : (byte) 255);
     }
 
     public static void appendQuestInfo(int playerId, ServerMessage msg, Connection ... con) {
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
-        msg.append(questState.getCurrentQuest());
-        msg.append(questState.getRemainMatches());
+        msg.writeShort(questState.getCurrentQuest());
+        msg.writeShort(questState.getRemainMatches());
     }
 
     public static void appendTutorialInfo(int playerId, ServerMessage msg, Connection ... con) {
         TutorialState tutorialState = PlayerInfo.getTutorialState(playerId, con);
 
-        msg.append(tutorialState.getDribbling());
-        msg.append(tutorialState.getPassing());
-        msg.append(tutorialState.getShooting());
-        msg.append(tutorialState.getDefense());
+        msg.writeByte(tutorialState.getDribbling());
+        msg.writeByte(tutorialState.getPassing());
+        msg.writeByte(tutorialState.getShooting());
+        msg.writeByte(tutorialState.getDefense());
     }
 
     public static void appendCharacterInfo(int playerId, ServerMessage msg, Connection ... con) {
@@ -61,14 +61,14 @@ class MessageUtils {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        msg.append(rs.getShort("level"));
-                        msg.append(rs.getInt("experience"));
-                        msg.append(rs.getShort("stats_points"));
-                        msg.append(UserInfo.getCash(rs.getInt("owner")));
-                        msg.append(rs.getInt("points"));
-                        msg.appendZeros(8);
-                        msg.append(rs.getShort("tickets_kash"));
-                        msg.append(rs.getShort("tickets_points"));
+                        msg.writeShort(rs.getShort("level"));
+                        msg.writeInt(rs.getInt("experience"));
+                        msg.writeShort(rs.getShort("stats_points"));
+                        msg.writeInt(UserInfo.getCash(rs.getInt("owner")));
+                        msg.writeInt(rs.getInt("points"));
+                        msg.writeZeros(8);
+                        msg.writeShort(rs.getShort("tickets_kash"));
+                        msg.writeShort(rs.getShort("tickets_points"));
                     }
                 }
             } finally {
@@ -82,10 +82,10 @@ class MessageUtils {
     public static void appendDefaultClothes(int playerId, ServerMessage msg, Connection ... con) {
         DefaultClothes defaultClothes = PlayerInfo.getDefaultClothes(playerId, con);
 
-        msg.append(defaultClothes.getHead());
-        msg.append(defaultClothes.getShirts());
-        msg.append(defaultClothes.getPants());
-        msg.append(defaultClothes.getShoes());
+        msg.writeInt(defaultClothes.getHead());
+        msg.writeInt(defaultClothes.getShirts());
+        msg.writeInt(defaultClothes.getPants());
+        msg.writeInt(defaultClothes.getShoes());
     }
 
     public static void appendInventoryItem(Item item, ServerMessage msg) {
@@ -94,22 +94,22 @@ class MessageUtils {
             item = new Item();
         }
 
-        msg.append(item.getInventoryId());
-        msg.append(item.getId());
-        msg.append(item.isSelected());
-        msg.append(item.getExpiration() != null ? item.getExpiration().toInt() : 0);
-        msg.append(item.getBonusOne());
-        msg.append(item.getBonusTwo());
-        msg.append(item.getUsages());
+        msg.writeInt(item.getInventoryId());
+        msg.writeInt(item.getId());
+        msg.writeBool(item.isSelected());
+        msg.writeInt(item.getExpiration() != null ? item.getExpiration().toInt() : 0);
+        msg.writeInt(item.getBonusOne());
+        msg.writeInt(item.getBonusTwo());
+        msg.writeShort(item.getUsages());
 
         if (item.getExpiration() != null &&
                 (item.getExpiration().isPermanent() || item.getExpiration().isUsage())) {
-            msg.append(0);
+            msg.writeInt(0);
         } else {
-            msg.append((int) (item.getTimestampExpire().getTime() / 1000));
+            msg.writeInt((int) (item.getTimestampExpire().getTime() / 1000));
         }
 
-        msg.append(item.isVisible());
+        msg.writeBool(item.isVisible());
     }
 
     public static void appendInventoryTraining(Training training, ServerMessage msg) {
@@ -118,10 +118,10 @@ class MessageUtils {
             training = new Training();
         }
 
-        msg.append(training.getInventoryId());
-        msg.append(training.getId());
-        msg.appendZeros(14);
-        msg.append(training.isVisible());
+        msg.writeInt(training.getInventoryId());
+        msg.writeInt(training.getId());
+        msg.writeZeros(14);
+        msg.writeBool(training.isVisible());
     }
 
     public static void appendInventorySkill(Skill skill, ServerMessage msg) {
@@ -130,14 +130,14 @@ class MessageUtils {
             skill = new Skill();
         }
 
-        msg.append(skill.getInventoryId());
-        msg.append(skill.getId());
-        msg.append(skill.getSelectionIndex());
-        msg.append(skill.getExpiration() != null ? skill.getExpiration().toInt() : 0);
-        msg.appendZeros(8);
-        msg.append(skill.getExpiration() != null && skill.getExpiration().isPermanent() ?
+        msg.writeInt(skill.getInventoryId());
+        msg.writeInt(skill.getId());
+        msg.writeByte(skill.getSelectionIndex());
+        msg.writeInt(skill.getExpiration() != null ? skill.getExpiration().toInt() : 0);
+        msg.writeZeros(8);
+        msg.writeInt(skill.getExpiration() != null && skill.getExpiration().isPermanent() ?
                 0 : (int) (skill.getTimestampExpire().getTime() / 1000));
-        msg.append(skill.isVisible());
+        msg.writeBool(skill.isVisible());
     }
 
     public static void appendInventoryCelebration(Celebration cele, ServerMessage msg) {
@@ -146,122 +146,122 @@ class MessageUtils {
             cele = new Celebration();
         }
 
-        msg.append(cele.getInventoryId());
-        msg.append((short)cele.getId());
-        msg.append(cele.getSelectionIndex());
-        msg.append(cele.getExpiration() != null ? cele.getExpiration().toInt() : 0);
-        msg.appendZeros(8);
-        msg.append(cele.getExpiration() != null && cele.getExpiration().isPermanent() ?
+        msg.writeInt(cele.getInventoryId());
+        msg.writeShort((short) cele.getId());
+        msg.writeByte(cele.getSelectionIndex());
+        msg.writeInt(cele.getExpiration() != null ? cele.getExpiration().toInt() : 0);
+        msg.writeZeros(8);
+        msg.writeInt(cele.getExpiration() != null && cele.getExpiration().isPermanent() ?
                 0 : (int) (cele.getTimestampExpire().getTime() / 1000));
-        msg.append(cele.isVisible());
+        msg.writeBool(cele.isVisible());
     }
 
     public static void appendStats(int playerId, ServerMessage msg, Connection ... con) {
         PlayerStats stats = PlayerInfo.getStats(playerId, con);
 
-        msg.append(stats.getRunning());
-        msg.append(stats.getEndurance());
-        msg.append(stats.getAgility());
-        msg.append(stats.getBallControl());
-        msg.append(stats.getDribbling());
-        msg.append(stats.getStealing());
-        msg.append(stats.getTackling());
-        msg.append(stats.getHeading());
-        msg.append(stats.getShortShots());
-        msg.append(stats.getLongShots());
-        msg.append(stats.getCrossing());
-        msg.append(stats.getShortPasses());
-        msg.append(stats.getLongPasses());
-        msg.append(stats.getMarking());
-        msg.append(stats.getGoalkeeping());
-        msg.append(stats.getPunching());
-        msg.append(stats.getDefense());
+        msg.writeShort(stats.getRunning());
+        msg.writeShort(stats.getEndurance());
+        msg.writeShort(stats.getAgility());
+        msg.writeShort(stats.getBallControl());
+        msg.writeShort(stats.getDribbling());
+        msg.writeShort(stats.getStealing());
+        msg.writeShort(stats.getTackling());
+        msg.writeShort(stats.getHeading());
+        msg.writeShort(stats.getShortShots());
+        msg.writeShort(stats.getLongShots());
+        msg.writeShort(stats.getCrossing());
+        msg.writeShort(stats.getShortPasses());
+        msg.writeShort(stats.getLongPasses());
+        msg.writeShort(stats.getMarking());
+        msg.writeShort(stats.getGoalkeeping());
+        msg.writeShort(stats.getPunching());
+        msg.writeShort(stats.getDefense());
     }
 
     public static void appendStatsTraining(int playerId, ServerMessage msg, Connection ... con) {
         PlayerStats learnStats = PlayerInfo.getTrainingStats(playerId, con);
 
-        msg.append(learnStats.getRunning());
-        msg.append(learnStats.getEndurance());
-        msg.append(learnStats.getAgility());
-        msg.append(learnStats.getBallControl());
-        msg.append(learnStats.getDribbling());
-        msg.append(learnStats.getStealing());
-        msg.append(learnStats.getTackling());
-        msg.append(learnStats.getHeading());
-        msg.append(learnStats.getShortShots());
-        msg.append(learnStats.getLongShots());
-        msg.append(learnStats.getCrossing());
-        msg.append(learnStats.getShortPasses());
-        msg.append(learnStats.getLongPasses());
-        msg.append(learnStats.getMarking());
-        msg.append(learnStats.getGoalkeeping());
-        msg.append(learnStats.getPunching());
-        msg.append(learnStats.getDefense());
+        msg.writeShort(learnStats.getRunning());
+        msg.writeShort(learnStats.getEndurance());
+        msg.writeShort(learnStats.getAgility());
+        msg.writeShort(learnStats.getBallControl());
+        msg.writeShort(learnStats.getDribbling());
+        msg.writeShort(learnStats.getStealing());
+        msg.writeShort(learnStats.getTackling());
+        msg.writeShort(learnStats.getHeading());
+        msg.writeShort(learnStats.getShortShots());
+        msg.writeShort(learnStats.getLongShots());
+        msg.writeShort(learnStats.getCrossing());
+        msg.writeShort(learnStats.getShortPasses());
+        msg.writeShort(learnStats.getLongPasses());
+        msg.writeShort(learnStats.getMarking());
+        msg.writeShort(learnStats.getGoalkeeping());
+        msg.writeShort(learnStats.getPunching());
+        msg.writeShort(learnStats.getDefense());
     }
 
     public static void appendStatsBonus(int playerId, ServerMessage msg, Connection ... con) {
         PlayerStats bonusStats = PlayerInfo.getBonusStats(playerId, con);
 
-        msg.append(bonusStats.getRunning());
-        msg.append(bonusStats.getEndurance());
-        msg.append(bonusStats.getAgility());
-        msg.append(bonusStats.getBallControl());
-        msg.append(bonusStats.getDribbling());
-        msg.append(bonusStats.getStealing());
-        msg.append(bonusStats.getTackling());
-        msg.append(bonusStats.getHeading());
-        msg.append(bonusStats.getShortShots());
-        msg.append(bonusStats.getLongShots());
-        msg.append(bonusStats.getCrossing());
-        msg.append(bonusStats.getShortPasses());
-        msg.append(bonusStats.getLongPasses());
-        msg.append(bonusStats.getMarking());
-        msg.append(bonusStats.getGoalkeeping());
-        msg.append(bonusStats.getPunching());
-        msg.append(bonusStats.getDefense());
+        msg.writeShort(bonusStats.getRunning());
+        msg.writeShort(bonusStats.getEndurance());
+        msg.writeShort(bonusStats.getAgility());
+        msg.writeShort(bonusStats.getBallControl());
+        msg.writeShort(bonusStats.getDribbling());
+        msg.writeShort(bonusStats.getStealing());
+        msg.writeShort(bonusStats.getTackling());
+        msg.writeShort(bonusStats.getHeading());
+        msg.writeShort(bonusStats.getShortShots());
+        msg.writeShort(bonusStats.getLongShots());
+        msg.writeShort(bonusStats.getCrossing());
+        msg.writeShort(bonusStats.getShortPasses());
+        msg.writeShort(bonusStats.getLongPasses());
+        msg.writeShort(bonusStats.getMarking());
+        msg.writeShort(bonusStats.getGoalkeeping());
+        msg.writeShort(bonusStats.getPunching());
+        msg.writeShort(bonusStats.getDefense());
     }
 
     public static void appendHistory(int playerId, ServerMessage msg, Connection ... con) {
         PlayerHistory history = PlayerInfo.getHistory(playerId, con);
 
-        msg.append(history.getMatches());
-        msg.append(history.getWins());
-        msg.append(history.getDraws());
-        msg.append(history.getMom());
-        msg.append(history.getValidGoals());
-        msg.append(history.getValidAssists());
-        msg.append(history.getValidInterception());
-        msg.append(history.getValidShooting());
-        msg.append(history.getValidStealing());
-        msg.append(history.getValidTackling());
-        msg.appendZeros(4);
-        msg.append(history.getShooting());
-        msg.append(history.getStealing());
-        msg.append(history.getTackling());
-        msg.appendZeros(4);
-        msg.append(history.getTotalPoints());
+        msg.writeInt(history.getMatches());
+        msg.writeInt(history.getWins());
+        msg.writeInt(history.getDraws());
+        msg.writeInt(history.getMom());
+        msg.writeInt(history.getValidGoals());
+        msg.writeInt(history.getValidAssists());
+        msg.writeInt(history.getValidInterception());
+        msg.writeInt(history.getValidShooting());
+        msg.writeInt(history.getValidStealing());
+        msg.writeInt(history.getValidTackling());
+        msg.writeZeros(4);
+        msg.writeInt(history.getShooting());
+        msg.writeInt(history.getStealing());
+        msg.writeInt(history.getTackling());
+        msg.writeZeros(4);
+        msg.writeInt(history.getTotalPoints());
     }
 
     public static void appendHistoryMonth(int playerId, ServerMessage msg, Connection... con) {
         PlayerHistory monthHistory = PlayerInfo.getMonthHistory(playerId, con);
 
-        msg.append(monthHistory.getMatches());
-        msg.append(monthHistory.getWins());
-        msg.append(monthHistory.getDraws());
-        msg.append(monthHistory.getMom());
-        msg.append(monthHistory.getValidGoals());
-        msg.append(monthHistory.getValidAssists());
-        msg.append(monthHistory.getValidInterception());
-        msg.append(monthHistory.getValidShooting());
-        msg.append(monthHistory.getValidStealing());
-        msg.append(monthHistory.getValidTackling());
-        msg.appendZeros(4);
-        msg.append(monthHistory.getShooting());
-        msg.append(monthHistory.getStealing());
-        msg.append(monthHistory.getTackling());
-        msg.appendZeros(4);
-        msg.append(monthHistory.getTotalPoints());
+        msg.writeInt(monthHistory.getMatches());
+        msg.writeInt(monthHistory.getWins());
+        msg.writeInt(monthHistory.getDraws());
+        msg.writeInt(monthHistory.getMom());
+        msg.writeInt(monthHistory.getValidGoals());
+        msg.writeInt(monthHistory.getValidAssists());
+        msg.writeInt(monthHistory.getValidInterception());
+        msg.writeInt(monthHistory.getValidShooting());
+        msg.writeInt(monthHistory.getValidStealing());
+        msg.writeInt(monthHistory.getValidTackling());
+        msg.writeZeros(4);
+        msg.writeInt(monthHistory.getShooting());
+        msg.writeInt(monthHistory.getStealing());
+        msg.writeInt(monthHistory.getTackling());
+        msg.writeZeros(4);
+        msg.writeInt(monthHistory.getTotalPoints());
     }
 
     public static void appendMatchHistory(PlayerResult playerResult, Room room, MatchResult result,
@@ -280,102 +280,102 @@ class MessageUtils {
 
         PlayerHistory history = PlayerInfo.getHistory(id, con);
 
-        msg.append(history.getMatches() + (training ? 0 : 1));
-        msg.append(history.getWins() + (tr.getResult() == 1 ? 1 : 0));
-        msg.append(history.getDraws() + (tr.getResult() == 0 ? 1 : 0));
-        msg.append(history.getMom() + (result.getMom() == id ? 1 : 0));
-        msg.append(history.getValidGoals() + pr.getGoals());
-        msg.append(history.getValidAssists() + pr.getAssists());
-        msg.append(history.getValidInterception() + pr.getBlocks());
-        msg.append(history.getValidShooting() + pr.getShots());
-        msg.append(history.getValidStealing() + pr.getSteals());
-        msg.append(history.getValidTackling() + pr.getTackles());
-        msg.appendZeros(4);
-        msg.append(history.getShooting());
-        msg.append(history.getStealing());
-        msg.append(history.getTackling());
-        msg.appendZeros(4);
-        msg.append(history.getTotalPoints() + pr.getVotePoints());
+        msg.writeInt(history.getMatches() + (training ? 0 : 1));
+        msg.writeInt(history.getWins() + (tr.getResult() == 1 ? 1 : 0));
+        msg.writeInt(history.getDraws() + (tr.getResult() == 0 ? 1 : 0));
+        msg.writeInt(history.getMom() + (result.getMom() == id ? 1 : 0));
+        msg.writeInt(history.getValidGoals() + pr.getGoals());
+        msg.writeInt(history.getValidAssists() + pr.getAssists());
+        msg.writeInt(history.getValidInterception() + pr.getBlocks());
+        msg.writeInt(history.getValidShooting() + pr.getShots());
+        msg.writeInt(history.getValidStealing() + pr.getSteals());
+        msg.writeInt(history.getValidTackling() + pr.getTackles());
+        msg.writeZeros(4);
+        msg.writeInt(history.getShooting());
+        msg.writeInt(history.getStealing());
+        msg.writeInt(history.getTackling());
+        msg.writeZeros(4);
+        msg.writeInt(history.getTotalPoints() + pr.getVotePoints());
 
         PlayerHistory monthHistory = PlayerInfo.getMonthHistory(id, con);
 
-        msg.append(monthHistory.getMatches() + (training ? 0 : 1));
-        msg.append(monthHistory.getWins() + (tr.getResult() == 1 ? 1 : 0));
-        msg.append(monthHistory.getDraws() + (tr.getResult() == 0 ? 1 : 0));
-        msg.append(monthHistory.getMom() + (result.getMom() == id ? 1 : 0));
-        msg.append(monthHistory.getValidGoals() + pr.getGoals());
-        msg.append(monthHistory.getValidAssists() + pr.getAssists());
-        msg.append(monthHistory.getValidInterception() + pr.getBlocks());
-        msg.append(monthHistory.getValidShooting() + pr.getShots());
-        msg.append(monthHistory.getValidStealing() + pr.getSteals());
-        msg.append(monthHistory.getValidTackling() + pr.getTackles());
-        msg.appendZeros(4);
-        msg.append(monthHistory.getShooting());
-        msg.append(monthHistory.getStealing());
-        msg.append(monthHistory.getTackling());
-        msg.appendZeros(4);
-        msg.append(monthHistory.getTotalPoints() + pr.getVotePoints());
+        msg.writeInt(monthHistory.getMatches() + (training ? 0 : 1));
+        msg.writeInt(monthHistory.getWins() + (tr.getResult() == 1 ? 1 : 0));
+        msg.writeInt(monthHistory.getDraws() + (tr.getResult() == 0 ? 1 : 0));
+        msg.writeInt(monthHistory.getMom() + (result.getMom() == id ? 1 : 0));
+        msg.writeInt(monthHistory.getValidGoals() + pr.getGoals());
+        msg.writeInt(monthHistory.getValidAssists() + pr.getAssists());
+        msg.writeInt(monthHistory.getValidInterception() + pr.getBlocks());
+        msg.writeInt(monthHistory.getValidShooting() + pr.getShots());
+        msg.writeInt(monthHistory.getValidStealing() + pr.getSteals());
+        msg.writeInt(monthHistory.getValidTackling() + pr.getTackles());
+        msg.writeZeros(4);
+        msg.writeInt(monthHistory.getShooting());
+        msg.writeInt(monthHistory.getStealing());
+        msg.writeInt(monthHistory.getTackling());
+        msg.writeZeros(4);
+        msg.writeInt(monthHistory.getTotalPoints() + pr.getVotePoints());
     }
 
     public static void appendRanking(int playerId, ServerMessage msg, Connection ... con) {
-        msg.append(PlayerRanking.getRankingMatches(playerId, con));
-        msg.append(PlayerRanking.getRankingWins(playerId, con));
-        msg.append(PlayerRanking.getRankingPoints(playerId, con));
-        msg.append(PlayerRanking.getRankingMom(playerId, con));
-        msg.append(PlayerRanking.getRankingValidGoals(playerId, con));
-        msg.append(PlayerRanking.getRankingValidAssists(playerId, con));
-        msg.append(PlayerRanking.getRankingValidInterception(playerId, con));
-        msg.append(PlayerRanking.getRankingValidShooting(playerId, con));
-        msg.append(PlayerRanking.getRankingValidStealing(playerId, con));
-        msg.append(PlayerRanking.getRankingValidTackling(playerId, con));
-        msg.appendZeros(2);
-        msg.append(PlayerRanking.getRankingAvgGoals(playerId, con));
-        msg.append(PlayerRanking.getRankingAvgAssists(playerId, con));
-        msg.append(PlayerRanking.getRankingAvgInterception(playerId, con));
-        msg.append(PlayerRanking.getRankingAvgShooting(playerId, con));
-        msg.append(PlayerRanking.getRankingAvgStealing(playerId, con));
-        msg.append(PlayerRanking.getRankingAvgTackling(playerId, con));
-        msg.appendZeros(2);
-        msg.append(PlayerRanking.getRankingAvgVotePoints(playerId, con));
-        msg.append(PlayerRanking.getRankingShooting(playerId, con));
-        msg.append(PlayerRanking.getRankingStealing(playerId, con));
-        msg.append(PlayerRanking.getRankingTackling(playerId, con));
-        msg.appendZeros(2);
-        msg.append(PlayerRanking.getRankingTotalPoints(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMatches(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingWins(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingPoints(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMom(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingValidGoals(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingValidAssists(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingValidInterception(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingValidShooting(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingValidStealing(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingValidTackling(playerId, con));
+        msg.writeZeros(2);
+        msg.writeShort(PlayerRanking.getRankingAvgGoals(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingAvgAssists(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingAvgInterception(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingAvgShooting(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingAvgStealing(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingAvgTackling(playerId, con));
+        msg.writeZeros(2);
+        msg.writeShort(PlayerRanking.getRankingAvgVotePoints(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingShooting(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingStealing(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingTackling(playerId, con));
+        msg.writeZeros(2);
+        msg.writeShort(PlayerRanking.getRankingTotalPoints(playerId, con));
     }
 
     public static void appendRankingLastMonth(int playerId,
                                               ServerMessage msg, Connection ... con) {
-        msg.append(PlayerRanking.getRankingMonthMatches(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthWins(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthPoints(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthMom(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthValidGoals(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthValidAssists(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthValidInterception(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthValidShooting(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthValidStealing(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthValidTackling(playerId, con));
-        msg.appendZeros(2);
-        msg.append(PlayerRanking.getRankingMonthAvgGoals(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthAvgAssists(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthAvgInterception(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthAvgShooting(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthAvgStealing(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthAvgTackling(playerId, con));
-        msg.appendZeros(2);
-        msg.append(PlayerRanking.getRankingMonthAvgVotePoints(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthShooting(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthStealing(playerId, con));
-        msg.append(PlayerRanking.getRankingMonthTackling(playerId, con));
-        msg.appendZeros(2);
-        msg.append(PlayerRanking.getRankingMonthTotalPoints(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthMatches(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthWins(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthPoints(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthMom(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthValidGoals(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthValidAssists(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthValidInterception(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthValidShooting(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthValidStealing(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthValidTackling(playerId, con));
+        msg.writeZeros(2);
+        msg.writeShort(PlayerRanking.getRankingMonthAvgGoals(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthAvgAssists(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthAvgInterception(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthAvgShooting(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthAvgStealing(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthAvgTackling(playerId, con));
+        msg.writeZeros(2);
+        msg.writeShort(PlayerRanking.getRankingMonthAvgVotePoints(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthShooting(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthStealing(playerId, con));
+        msg.writeShort(PlayerRanking.getRankingMonthTackling(playerId, con));
+        msg.writeZeros(2);
+        msg.writeShort(PlayerRanking.getRankingMonthTotalPoints(playerId, con));
     }
 
     private static void appendItemInUse(Item item, ServerMessage msg) {
-        msg.append(item != null ? item.getId() : 0);
-        msg.append(item != null, 4);
-        msg.appendZeros(20);
+        msg.writeInt(item != null ? item.getId() : 0);
+        msg.writeBool(item != null, 4);
+        msg.writeZeros(20);
     }
 
     public static void appendItemsInUse(int playerId, ServerMessage msg, Connection ... con) {
@@ -438,14 +438,14 @@ class MessageUtils {
     public static void appendClubUniform(int clubId, ServerMessage msg, Connection ... con) {
         ClubUniform clubUniform = ClubInfo.getUniform(clubId, con);
 
-        msg.append(clubUniform.getHomeShirts());
-        msg.append(clubUniform.getHomePants());
-        msg.append(clubUniform.getHomeSocks());
-        msg.append(clubUniform.getHomeWrist());
+        msg.writeInt(clubUniform.getHomeShirts());
+        msg.writeInt(clubUniform.getHomePants());
+        msg.writeInt(clubUniform.getHomeSocks());
+        msg.writeInt(clubUniform.getHomeWrist());
 
-        msg.append(clubUniform.getAwayShirts());
-        msg.append(clubUniform.getAwayPants());
-        msg.append(clubUniform.getAwaySocks());
-        msg.append(clubUniform.getAwayWrist());
+        msg.writeInt(clubUniform.getAwayShirts());
+        msg.writeInt(clubUniform.getAwayPants());
+        msg.writeInt(clubUniform.getAwaySocks());
+        msg.writeInt(clubUniform.getAwayWrist());
     }
 }

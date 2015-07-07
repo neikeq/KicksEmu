@@ -115,8 +115,7 @@ public class Item implements Product {
     }
 
     static {
-        activationCallbacks.put(ItemType.SKILL_SLOT, (Item item, Session session) -> {
-            CharacterManager.sendSkillList(session);
-        });
+        activationCallbacks.put(ItemType.SKILL_SLOT, (Item item, Session session) ->
+                CharacterManager.sendSkillList(session));
     }
 }

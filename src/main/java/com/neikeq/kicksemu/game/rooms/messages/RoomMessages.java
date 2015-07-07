@@ -44,9 +44,9 @@ import java.util.Optional;
 
 public class RoomMessages {
 
-    protected static final int MAX_ROOM_NAME_LENGTH = 30;
-    protected static final byte MAX_ROOM_LEVEL = 60;
-    protected static final byte MIN_ROOM_LEVEL = 1;
+    private static final int MAX_ROOM_NAME_LENGTH = 30;
+    static final byte MAX_ROOM_LEVEL = 60;
+    static final byte MIN_ROOM_LEVEL = 1;
 
     public static void createRoom(Session session, ClientMessage msg) {
         // If player is not already in a room
@@ -181,6 +181,7 @@ public class RoomMessages {
 
         Map<Integer, Room> pageRooms = RoomManager.getRoomsFromPage(page);
 
+        // TODO I think it should use clubRoomList message instead
         session.send(MessageBuilder.roomList(pageRooms, page, (byte) 0));
     }
 

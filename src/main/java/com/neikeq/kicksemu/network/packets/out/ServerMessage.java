@@ -12,67 +12,67 @@ public class ServerMessage {
 
     private final ByteBuf body = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
-    public void append(boolean value) {
+    public void writeBool(boolean value) {
         body.writeByte(value ? 1 : 0);
     }
 
-    public void append(boolean value, int length) {
+    public void writeBool(boolean value, int length) {
         switch (length) {
             case 1:
-                append(value);
+                writeBool(value);
                 break;
             case 2:
-                append((short)(value ? 1 : 0));
+                writeShort((short) (value ? 1 : 0));
                 break;
             case 4:
-                append(value ? 1 : 0);
+                writeInt(value ? 1 : 0);
                 break;
             default:
         }
     }
     
-    public void append(byte value) {
+    public void writeByte(byte value) {
         body.writeByte(value);
     }
     
-    public void append(short value) {
+    public void writeShort(short value) {
         body.writeShort(value);
     }
     
-    public void append(int value) {
+    public void writeInt(int value) {
         body.writeInt(value);
     }
 
-    private void append(byte[] value, int length) {
+    private void writeBytes(byte[] value, int length) {
         int lengthFlag = length > value.length ? value.length : length;
 
         for (int i = 0; i < lengthFlag; i++) {
-            append(value[i]);
+            writeByte(value[i]);
         }
 
         if (lengthFlag < length) {
-            appendZeros(length - lengthFlag);
+            writeZeros(length - lengthFlag);
         }
     }
 
-    public void append(String value, int length) {
+    public void writeString(String value, int length) {
         if (value != null) {
-            append(value.getBytes(Charset.forName("windows-1252")), length);
+            writeBytes(value.getBytes(Charset.forName("windows-1252")), length);
         } else {
-            appendZeros(length);
+            writeZeros(length);
         }
     }
 
-    public void appendZeros(int length) {
+    public void writeZeros(int length) {
         if (length > 0)
             body.writeZero(length);
     }
 
-    public void write(int index, short value) {
+    public void setShort(int index, short value) {
         body.setShort(index, value);
     }
 
-    public void write(int index, int value) {
+    public void setInt(int index, int value) {
         body.setInt(index, value);
     }
     
@@ -80,8 +80,8 @@ public class ServerMessage {
         int size = body.readableBytes() - Constants.HEADER_SIZE;
 
         // Write the body size to the header
-        write(Constants.BODY_SIZE_INDEX, (short) size);
-        write(Constants.TARGET_ID_INDEX, targetId);
+        setShort(Constants.BODY_SIZE_INDEX, (short) size);
+        setInt(Constants.TARGET_ID_INDEX, targetId);
 
         return body;
     }
@@ -96,7 +96,7 @@ public class ServerMessage {
     
     public ServerMessage(int messageId) {
         // Allocate space for the header
-        appendZeros(Constants.HEADER_SIZE);
-        append(messageId);
+        writeZeros(Constants.HEADER_SIZE);
+        writeInt(messageId);
     }
 }

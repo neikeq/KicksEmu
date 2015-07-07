@@ -15,7 +15,7 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 
 public class ClubRoomMessages extends RoomMessages {
 
-    protected static final int MAX_ROOM_NAME_LENGTH = 14;
+    private static final int MAX_ROOM_NAME_LENGTH = 14;
 
     public static void createRoom(Session session, ClientMessage msg) {
         RoomAccessType type = RoomAccessType.fromShort(msg.readShort());

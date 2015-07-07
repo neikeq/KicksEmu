@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.network.packets.out;
 
-import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.QuestState;
@@ -45,23 +44,23 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == AuthResult.SUCCESS) {
-            msg.append(sessionId);
+            msg.writeInt(sessionId);
 
             UserSettings settings = UserInfo.getSettings(userId);
 
-            msg.append(settings.getCamera());
-            msg.append(settings.getShadows());
-            msg.append(settings.getNames());
-            msg.append(settings.getVolEffects());
-            msg.append(settings.getVolMusic());
-            msg.append(settings.getInvites());
-            msg.append(settings.getWhispers());
-            msg.append(settings.getCountry());
+            msg.writeByte(settings.getCamera());
+            msg.writeBool(settings.getShadows());
+            msg.writeByte(settings.getNames());
+            msg.writeByte(settings.getVolEffects());
+            msg.writeByte(settings.getVolMusic());
+            msg.writeBool(settings.getInvites());
+            msg.writeBool(settings.getWhispers());
+            msg.writeInt(settings.getCountry());
 
-            msg.append(DateUtils.dateToString(UserInfo.getLastCharDeletion(userId)), 19);
+            msg.writeString(DateUtils.dateToString(UserInfo.getLastCharDeletion(userId)), 19);
         } else {
             // Request the client to close the connection
-            msg.write(0, (short)-1);
+            msg.setShort(0, (short) -1);
         }
 
         return msg;
@@ -72,7 +71,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult(result, msg);
 
-        msg.append(sessionId);
+        msg.writeInt(sessionId);
 
         return msg;
     }
@@ -82,10 +81,10 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.appendZeros(2);
+        msg.writeZeros(2);
 
         // Request the client to close the connection
-        msg.write(0, (short) -1);
+        msg.setShort(0, (short) -1);
 
         return msg;
     }
@@ -96,7 +95,7 @@ public class MessageBuilder {
         MessageUtils.appendResult((byte) 0, msg);
 
         // Request the client to close the connection
-        msg.write(0, (short) -1);
+        msg.setShort(0, (short) -1);
 
         return msg;
     }
@@ -110,30 +109,30 @@ public class MessageBuilder {
         MessageUtils.appendResult((byte) (blocked ? 254 : 0), msg);
 
         if (!blocked) {
-            msg.append(ownerId);
-            msg.append(playerId);
-            msg.append(slot);
-            msg.append(PlayerInfo.getName(playerId, con), 15);
+            msg.writeInt(ownerId);
+            msg.writeInt(playerId);
+            msg.writeShort(slot);
+            msg.writeString(PlayerInfo.getName(playerId, con), 15);
 
             MessageUtils.appendQuestInfo(playerId, msg, con);
             MessageUtils.appendTutorialInfo(playerId, msg, con);
 
-            msg.appendZeros(3);
+            msg.writeZeros(3);
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
-            msg.appendZeros(2);
-            msg.append(PlayerInfo.getAnimation(playerId, con));
-            msg.append(PlayerInfo.getFace(playerId, con));
+            msg.writeZeros(2);
+            msg.writeShort(PlayerInfo.getAnimation(playerId, con));
+            msg.writeShort(PlayerInfo.getFace(playerId, con));
 
             MessageUtils.appendDefaultClothes(playerId, msg, con);
 
-            msg.append(PlayerInfo.getPosition(playerId, con));
-            msg.appendZeros(6);
+            msg.writeShort(PlayerInfo.getPosition(playerId, con));
+            msg.writeZeros(6);
 
             MessageUtils.appendStats(playerId, msg, con);
 
-            msg.appendZeros(4);
+            msg.writeZeros(4);
 
             MessageUtils.appendItemsInUse(playerId, msg, con);
         }
@@ -155,7 +154,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(characterId);
+            msg.writeInt(characterId);
         }
 
         return msg;
@@ -166,8 +165,8 @@ public class MessageBuilder {
 
         MessageUtils.appendResult(result, msg);
 
-        msg.append(characterId);
-        msg.append(date, 20);
+        msg.writeInt(characterId);
+        msg.writeString(date, 20);
 
         return msg;
     }
@@ -177,7 +176,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult(result, msg);
 
-        msg.append((short) servers.size());
+        msg.writeShort((short) servers.size());
 
         for (short serverId : servers) {
             final String query = "SELECT name, online, max_users, connected_users, " +
@@ -189,14 +188,14 @@ public class MessageBuilder {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        msg.append(serverId);
-                        msg.append(rs.getString("name"), 30);
-                        msg.append(rs.getBoolean("online"));
-                        msg.append(rs.getShort("max_users"));
-                        msg.append(rs.getShort("connected_users"));
-                        msg.append(rs.getString("address"), 16);
-                        msg.append(rs.getShort("port"));
-                        msg.appendZeros(20);
+                        msg.writeShort(serverId);
+                        msg.writeString(rs.getString("name"), 30);
+                        msg.writeBool(rs.getBoolean("online"));
+                        msg.writeShort(rs.getShort("max_users"));
+                        msg.writeShort(rs.getShort("connected_users"));
+                        msg.writeString(rs.getString("address"), 16);
+                        msg.writeShort(rs.getShort("port"));
+                        msg.writeZeros(20);
                     }
                 }
             } catch (SQLException ignored) {}
@@ -220,12 +219,12 @@ public class MessageBuilder {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        msg.append(serverId);
-                        msg.append(ServerType.valueOf(rs.getString("type")).toShort());
-                        msg.append(rs.getShort("min_level"));
-                        msg.append(rs.getShort("max_level"));
-                        msg.append(rs.getString("address"), 16);
-                        msg.append(rs.getShort("port"));
+                        msg.writeShort(serverId);
+                        msg.writeShort(ServerType.valueOf(rs.getString("type")).toShort());
+                        msg.writeShort(rs.getShort("min_level"));
+                        msg.writeShort(rs.getShort("max_level"));
+                        msg.writeString(rs.getString("address"), 16);
+                        msg.writeShort(rs.getShort("port"));
                     }
                 }
             } catch (SQLException ignored) {}
@@ -249,11 +248,11 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(dribbling);
-            msg.append(passing);
-            msg.append(shooting);
-            msg.append(defense);
-            msg.append(reward);
+            msg.writeByte(dribbling);
+            msg.writeByte(passing);
+            msg.writeByte(shooting);
+            msg.writeByte(defense);
+            msg.writeInt(reward);
         }
 
         return msg;
@@ -272,12 +271,12 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.append(characterId);
-        msg.append(clientIp.getAddress().getHostAddress(), 16);
-        msg.appendZeros(2);
+        msg.writeInt(characterId);
+        msg.writeString(clientIp.getAddress().getHostAddress(), 16);
+        msg.writeZeros(2);
 
         // Request the client to close the connection
-        msg.write(0, (short) -1);
+        msg.setShort(0, (short) -1);
 
         return msg;
     }
@@ -298,27 +297,27 @@ public class MessageBuilder {
         if (result == 0) {
             int clubId = MemberInfo.getClubId(playerId, con);
 
-            msg.append(playerId);
-            msg.appendZeros(54);
-            msg.append(PlayerInfo.getName(playerId, con), 15);
-            msg.append(ClubInfo.getName(clubId), 15);
-            msg.append(PlayerInfo.getStatusMessage(playerId, con), 35);
+            msg.writeInt(playerId);
+            msg.writeZeros(54);
+            msg.writeString(PlayerInfo.getName(playerId, con), 15);
+            msg.writeString(ClubInfo.getName(clubId), 15);
+            msg.writeString(PlayerInfo.getStatusMessage(playerId, con), 35);
 
             MessageUtils.appendQuestInfo(playerId, msg, con);
             MessageUtils.appendTutorialInfo(playerId, msg, con);
 
-            msg.appendZeros(24);
+            msg.writeZeros(24);
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
-            msg.appendZeros(2);
-            msg.append(PlayerInfo.getAnimation(playerId, con));
-            msg.append(PlayerInfo.getFace(playerId, con));
+            msg.writeZeros(2);
+            msg.writeShort(PlayerInfo.getAnimation(playerId, con));
+            msg.writeShort(PlayerInfo.getFace(playerId, con));
 
             MessageUtils.appendDefaultClothes(playerId, msg, con);
 
-            msg.append(PlayerInfo.getPosition(playerId, con));
-            msg.appendZeros(6);
+            msg.writeShort(PlayerInfo.getPosition(playerId, con));
+            msg.writeZeros(6);
 
             // Stats
             MessageUtils.appendStats(playerId, msg, con);
@@ -345,7 +344,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append((short)items.size());
+            msg.writeShort((short) items.size());
 
             for (Item item : items.values()) {
                 MessageUtils.appendInventoryItem(item, msg);
@@ -361,7 +360,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append((short)trainings.size());
+            msg.writeShort((short) trainings.size());
 
             for (Training training : trainings.values()) {
                 MessageUtils.appendInventoryTraining(training, msg);
@@ -377,8 +376,8 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(slots);
-            msg.append((short)skills.size());
+            msg.writeByte(slots);
+            msg.writeShort((short) skills.size());
 
             for (Skill skill : skills.values()) {
                 MessageUtils.appendInventorySkill(skill, msg);
@@ -394,7 +393,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append((short)celebs.size());
+            msg.writeShort((short) celebs.size());
 
             for (Celebration celebration : celebs.values()) {
                 MessageUtils.appendInventoryCelebration(celebration, msg);
@@ -409,13 +408,13 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.append(page);
+        msg.writeByte(page);
 
         for (int friendId : friends) {
-            msg.append(friendId);
-            msg.append(PlayerInfo.getName(friendId), 15);
-            msg.append(PlayerInfo.getLevel(friendId));
-            msg.append((byte)PlayerInfo.getPosition(friendId));
+            msg.writeInt(friendId);
+            msg.writeString(PlayerInfo.getName(friendId), 15);
+            msg.writeShort(PlayerInfo.getLevel(friendId));
+            msg.writeByte((byte) PlayerInfo.getPosition(friendId));
 
             byte status;
             short server = 0;
@@ -443,8 +442,8 @@ public class MessageBuilder {
                 default:
             }
 
-            msg.append(status);
-            msg.append(location);
+            msg.writeByte(status);
+            msg.writeShort(location);
         }
 
         return msg;
@@ -456,8 +455,8 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(playerId);
-            msg.append(PlayerInfo.getName(playerId), 15);
+            msg.writeInt(playerId);
+            msg.writeString(PlayerInfo.getName(playerId), 15);
         }
 
         return msg;
@@ -486,24 +485,24 @@ public class MessageBuilder {
 
         int clubId = MemberInfo.getClubId(playerId);
 
-        msg.append(ClubInfo.getName(clubId), 15);
-        msg.append(ClubInfo.getMembersCount(clubId));
-        msg.append(ClubInfo.getMembersLimit(clubId));
+        msg.writeString(ClubInfo.getName(clubId), 15);
+        msg.writeShort(ClubInfo.getMembersCount(clubId));
+        msg.writeShort(ClubInfo.getMembersLimit(clubId));
 
         int manager = ClubInfo.getManager(clubId);
-        msg.append(PlayerInfo.getName(manager), 15);
+        msg.writeString(PlayerInfo.getName(manager), 15);
 
         List<Integer> captains = ClubInfo.getCaptains(clubId);
 
         for (int i = 0; i < 2; i++) {
             if (i >= captains.size()) {
-                msg.appendZeros(15);
+                msg.writeZeros(15);
             } else {
-                msg.append(PlayerInfo.getName(captains.get(i)), 15);
+                msg.writeString(PlayerInfo.getName(captains.get(i)), 15);
             }
         }
 
-        msg.append(clubId > 0 ? ClubInfo.getClubPoints(clubId) : 0);
+        msg.writeInt(clubId > 0 ? ClubInfo.getClubPoints(clubId) : 0);
 
         return msg;
     }
@@ -513,17 +512,17 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(page);
+        msg.writeByte(page);
 
         int clubId = MemberInfo.getClubId(playerId);
 
         List<Integer> membersForPage = ClubInfo.getMembers(clubId, page * 10);
 
         membersForPage.forEach(memberId -> {
-            msg.append(memberId);
-            msg.append(PlayerInfo.getName(memberId), 15);
-            msg.append(PlayerInfo.getLevel(memberId));
-            msg.append((byte) PlayerInfo.getPosition(memberId));
+            msg.writeInt(memberId);
+            msg.writeString(PlayerInfo.getName(memberId), 15);
+            msg.writeShort(PlayerInfo.getLevel(memberId));
+            msg.writeByte((byte) PlayerInfo.getPosition(memberId));
 
             byte status;
             short server = 0;
@@ -551,8 +550,8 @@ public class MessageBuilder {
                 default:
             }
 
-            msg.append(status);
-            msg.append(location);
+            msg.writeByte(status);
+            msg.writeShort(location);
         });
 
         return msg;
@@ -563,12 +562,12 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.append(page);
+        msg.writeByte(page);
 
         for (int playerId : ignoredPlayers) {
-            msg.append(playerId);
-            msg.append(PlayerInfo.getName(playerId), 15);
-            msg.append((byte)PlayerInfo.getPosition(playerId));
+            msg.writeInt(playerId);
+            msg.writeString(PlayerInfo.getName(playerId), 15);
+            msg.writeByte((byte) PlayerInfo.getPosition(playerId));
         }
 
         return msg;
@@ -580,8 +579,8 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(playerId);
-            msg.append(PlayerInfo.getName(playerId), 15);
+            msg.writeInt(playerId);
+            msg.writeString(PlayerInfo.getName(playerId), 15);
         }
 
         return msg;
@@ -601,7 +600,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(statusMessage, statusMessage.length());
+            msg.writeString(statusMessage, statusMessage.length());
         }
 
         return msg;
@@ -613,42 +612,42 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(page);
+            msg.writeShort(page);
 
             for (Room room : rooms.values()) {
                 // Visibility. Hide if player is moderator.
-                msg.append((byte)room.getAccessType().toInt());
-                msg.append(room.isPlaying());
-                msg.append((short)room.getId());
-                msg.append(room.getName(), 46);
-                msg.append(room.getMinLevel());
-                msg.append(room.getMaxLevel());
-                msg.append((byte)room.getMaxSize().toInt());
-                msg.append(room.getCurrentSize());
+                msg.writeByte((byte) room.getAccessType().toInt());
+                msg.writeBool(room.isPlaying());
+                msg.writeShort((short) room.getId());
+                msg.writeString(room.getName(), 46);
+                msg.writeByte(room.getMinLevel());
+                msg.writeByte(room.getMaxLevel());
+                msg.writeByte((byte) room.getMaxSize().toInt());
+                msg.writeByte(room.getCurrentSize());
 
                 // Red team positions
 
                 int i = 0;
 
                 for (short position : room.getRedTeamPositions()) {
-                    msg.append((byte)position);
+                    msg.writeByte((byte) position);
                     i++;
                 }
 
                 // Fill the remain spaces if red team is not full
-                msg.appendZeros(5 - i);
+                msg.writeZeros(5 - i);
 
                 // Blue team positions
 
                 i = 0;
 
                 for (short position : room.getBlueTeamPositions()) {
-                    msg.append((byte)position);
+                    msg.writeByte((byte) position);
                     i++;
                 }
 
                 // Fill the remain spaces if blue team is not full
-                msg.appendZeros(5 - i);
+                msg.writeZeros(5 - i);
             }
         }
 
@@ -661,7 +660,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(roomId);
+            msg.writeShort(roomId);
         }
 
         return msg;
@@ -673,12 +672,12 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0 && room != null) {
-            msg.append((short)room.getId());
+            msg.writeShort((short) room.getId());
 
             RoomTeam team = room.getPlayerTeam(playerId);
             short teamIndex = team != null ? (short)team.toInt() : -1;
-            msg.append(teamIndex);
-            msg.append(teamIndex);
+            msg.writeShort(teamIndex);
+            msg.writeShort(teamIndex);
         }
 
         return msg;
@@ -698,10 +697,10 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(GameEvents.isGoldenTime());
-            msg.append(GameEvents.isClubTime());
+            msg.writeBool(GameEvents.isGoldenTime());
+            msg.writeBool(GameEvents.isClubTime());
 
-            msg.append(tip, tip.length() > 120 ? 120 : tip.length());
+            msg.writeString(tip, tip.length() > 120 ? 120 : tip.length());
         }
 
         return msg;
@@ -713,17 +712,17 @@ public class MessageBuilder {
         MessageUtils.appendResult((byte) 0, msg);
 
         if (room != null) {
-            msg.append((byte)room.getAccessType().toInt());
-            msg.append((short)room.getId());
-            msg.append(room.getName(), 45);
-            msg.append(room.getPassword(), 5);
-            msg.append(room.getMaster());
-            msg.append((byte)room.getRoomMode().toInt());
-            msg.append(room.getMinLevel());
-            msg.append(room.getMaxLevel());
-            msg.append((short)room.getMap().toInt());
-            msg.append((short)room.getBall().toInt());
-            msg.append((byte)room.getMaxSize().toInt());
+            msg.writeByte((byte) room.getAccessType().toInt());
+            msg.writeShort((short) room.getId());
+            msg.writeString(room.getName(), 45);
+            msg.writeString(room.getPassword(), 5);
+            msg.writeInt(room.getMaster());
+            msg.writeByte((byte) room.getRoomMode().toInt());
+            msg.writeByte(room.getMinLevel());
+            msg.writeByte(room.getMaxLevel());
+            msg.writeShort((short) room.getMap().toInt());
+            msg.writeShort((short) room.getBall().toInt());
+            msg.writeByte((byte) room.getMaxSize().toInt());
         }
 
         return msg;
@@ -737,34 +736,34 @@ public class MessageBuilder {
             int ownerId = PlayerInfo.getOwner(playerId, con);
             int clubId = MemberInfo.getClubId(playerId, con);
 
-            msg.append(true, 2);
-            msg.append(playerId);
-            msg.append(PlayerInfo.getName(playerId, con), 15);
-            msg.append(ClubInfo.getName(clubId, con), 15);
-            msg.append((short)(room.getRedTeam().contains(playerId) ? 0 : 1));
-            msg.append(room.isObserver(playerId));
-            msg.append(false, 2);
-            msg.append(UserInfo.getSettings(ownerId).getCountry());
-            msg.append(session.getPing() < 100, 2);
-            msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-            msg.append(session.getUdpPort());
+            msg.writeBool(true, 2);
+            msg.writeInt(playerId);
+            msg.writeString(PlayerInfo.getName(playerId, con), 15);
+            msg.writeString(ClubInfo.getName(clubId, con), 15);
+            msg.writeShort((short) (room.getRedTeam().contains(playerId) ? 0 : 1));
+            msg.writeBool(room.isObserver(playerId));
+            msg.writeBool(false, 2);
+            msg.writeInt(UserInfo.getSettings(ownerId).getCountry());
+            msg.writeBool(session.getPing() < 100, 2);
+            msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
+            msg.writeShort(session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
-            msg.appendZeros(2);
-            msg.append(PlayerInfo.getAnimation(playerId, con));
-            msg.append(PlayerInfo.getFace(playerId, con));
+            msg.writeZeros(2);
+            msg.writeShort(PlayerInfo.getAnimation(playerId, con));
+            msg.writeShort(PlayerInfo.getFace(playerId, con));
 
             MessageUtils.appendDefaultClothes(playerId, msg, con);
 
-            msg.append(PlayerInfo.getPosition(playerId, con));
-            msg.appendZeros(1);
-            msg.append(clubId > 0); // is club member
-            msg.append((byte) MemberInfo.getRole(playerId, con).toInt());
-            msg.appendZeros(3);
-            msg.append((byte) 0);
-            msg.append((byte) 0);
-            msg.append((byte) 0);
+            msg.writeShort(PlayerInfo.getPosition(playerId, con));
+            msg.writeZeros(1);
+            msg.writeBool(clubId > 0); // is club member
+            msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
+            msg.writeZeros(3);
+            msg.writeByte((byte) 0);
+            msg.writeByte((byte) 0);
+            msg.writeByte((byte) 0);
 
             // Stats
             MessageUtils.appendStats(playerId, msg, con);
@@ -787,8 +786,8 @@ public class MessageBuilder {
     public static ServerMessage leaveRoom(int playerId, short reason) {
         ServerMessage msg = new ServerMessage(MessageId.LEAVE_ROOM);
 
-        msg.append(reason);
-        msg.append(playerId);
+        msg.writeShort(reason);
+        msg.writeInt(playerId);
 
         return msg;
     }
@@ -796,8 +795,8 @@ public class MessageBuilder {
     public static ServerMessage roomMaster(int playerId) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_MASTER);
 
-        msg.appendZeros(2);
-        msg.append(playerId);
+        msg.writeZeros(2);
+        msg.writeInt(playerId);
 
         return msg;
     }
@@ -807,9 +806,9 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte)0, msg);
 
-        msg.append(playerId);
-        msg.appendZeros(2);
-        msg.append((short) newTeam.toInt());
+        msg.writeInt(playerId);
+        msg.writeZeros(2);
+        msg.writeShort((short) newTeam.toInt());
 
         return msg;
     }
@@ -819,7 +818,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(map);
+        msg.writeShort(map);
 
         return msg;
     }
@@ -829,7 +828,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(ball);
+        msg.writeShort(ball);
 
         return msg;
     }
@@ -840,14 +839,14 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (room != null) {
-            msg.append((short)room.getAccessType().toInt());
-            msg.append(room.getName(), 45);
-            msg.append(room.getPassword(), 4);
-            msg.appendZeros(1);
-            msg.append((byte)room.getRoomMode().toInt());
-            msg.append(room.getMinLevel());
-            msg.append(room.getMaxLevel());
-            msg.append((byte)room.getMaxSize().toInt());
+            msg.writeShort((short) room.getAccessType().toInt());
+            msg.writeString(room.getName(), 45);
+            msg.writeString(room.getPassword(), 4);
+            msg.writeZeros(1);
+            msg.writeByte((byte) room.getRoomMode().toInt());
+            msg.writeByte(room.getMinLevel());
+            msg.writeByte(room.getMaxLevel());
+            msg.writeByte((byte) room.getMaxSize().toInt());
         }
 
         return msg;
@@ -868,15 +867,16 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(page);
+            msg.writeByte(page);
 
             try {
                 Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
                 String array = Strings.repeatAndSplit("?", ", ", players.length);
 
-                final String query = "SELECT name, level, position, status_message FROM characters" +
-                        " WHERE id IN(" + array + ") ORDER BY FIELD(id, " + array + ")";
+                final String query = "SELECT name, level, position, status_message" +
+                        " FROM characters WHERE" +
+                        " id IN(" + array + ") ORDER BY FIELD(id, " + array + ")";
 
                 try (PreparedStatement stmt = connection.prepareStatement(query)) {
                     SqlUtils.repeatSetInt(stmt, players);
@@ -884,12 +884,12 @@ public class MessageBuilder {
 
                     try (ResultSet rs = stmt.executeQuery()) {
                         for (int i = 0; rs.next(); i++) {
-                            msg.append(true);
-                            msg.append(players[i]);
-                            msg.append(rs.getString("name"), 15);
-                            msg.append(rs.getShort("level"));
-                            msg.append((byte) rs.getShort("position"));
-                            msg.append(rs.getString("status_message"), 35);
+                            msg.writeBool(true);
+                            msg.writeInt(players[i]);
+                            msg.writeString(rs.getString("name"), 15);
+                            msg.writeShort(rs.getShort("level"));
+                            msg.writeByte((byte) rs.getShort("position"));
+                            msg.writeString(rs.getString("status_message"), 35);
                         }
                     }
                 } finally {
@@ -911,9 +911,9 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0 && room != null) {
-            msg.append(name, 15);
-            msg.append((short) room.getId());
-            msg.append(room.getPassword(), 5);
+            msg.writeString(name, 15);
+            msg.writeShort((short) room.getId());
+            msg.writeString(room.getPassword(), 5);
         }
 
         return msg;
@@ -929,10 +929,10 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(playerId);
-        msg.append(name, 15);
-        msg.append((byte)messageType.toInt());
-        msg.append(message, message.length());
+        msg.writeInt(playerId);
+        msg.writeString(name, 15);
+        msg.writeByte((byte) messageType.toInt());
+        msg.writeString(message, message.length());
 
         return msg;
     }
@@ -942,8 +942,8 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(playerId);
-        msg.append(observer, 2);
+        msg.writeInt(playerId);
+        msg.writeBool(observer, 2);
 
         return msg;
     }
@@ -953,7 +953,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(type);
+        msg.writeByte(type);
 
         return msg;
     }
@@ -965,17 +965,17 @@ public class MessageBuilder {
 
         Session session = ServerManager.getSessionById(room.getHost());
 
-        msg.append(room.getHost());
-        msg.append(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-        msg.append(session.getUdpPort());
-        msg.append(room.isTraining());
-        msg.appendZeros(4);
+        msg.writeInt(room.getHost());
+        msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
+        msg.writeShort(session.getUdpPort());
+        msg.writeBool(room.isTraining());
+        msg.writeZeros(4);
 
         byte hostIndex = (byte)(room.getPlayerTeam(room.getHost()) == RoomTeam.RED ?
                 room.getRedTeam() : room.getBlueTeam()).indexOf(room.getHost());
 
-        msg.append(room.getHost());
-        msg.append(hostIndex);
+        msg.writeInt(room.getHost());
+        msg.writeByte(hostIndex);
 
         room.getPlayers().keySet().stream()
                 .filter(playerId -> playerId != room.getHost())
@@ -983,8 +983,8 @@ public class MessageBuilder {
                     byte playerIndex = (byte) (room.getPlayerTeam(playerId) == RoomTeam.RED ?
                             room.getRedTeam() : room.getBlueTeam()).indexOf(playerId);
 
-                    msg.append(playerId);
-                    msg.append(playerIndex);
+                    msg.writeInt(playerId);
+                    msg.writeByte(playerIndex);
                 });
 
         return msg;
@@ -993,7 +993,7 @@ public class MessageBuilder {
     public static ServerMessage countDown(short count) {
         ServerMessage msg = new ServerMessage(MessageId.COUNT_DOWN);
 
-        msg.append(count);
+        msg.writeShort(count);
 
         return msg;
     }
@@ -1009,9 +1009,9 @@ public class MessageBuilder {
     public static ServerMessage matchLoading(int playerId, int roomId, short status) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_LOADING);
 
-        msg.append(playerId);
-        msg.append((short)roomId);
-        msg.append(status);
+        msg.writeInt(playerId);
+        msg.writeShort((short) roomId);
+        msg.writeShort(status);
 
         return msg;
     }
@@ -1047,21 +1047,21 @@ public class MessageBuilder {
         MessageUtils.appendResult((byte) 0, msg);
 
         if (result != null && playerResult != null && room != null) {
-            msg.append(result.getMom());
+            msg.writeInt(result.getMom());
 
             result.getRedTeam().appendResult(msg);
             result.getBlueTeam().appendResult(msg);
 
             result.getPlayers().stream().forEach(pr -> pr.appendResult(msg));
-            msg.appendZeros(40 * (10 - result.getPlayers().size()));
+            msg.writeZeros(40 * (10 - result.getPlayers().size()));
 
-            msg.append(result.getCountdown());
-            msg.append(result.isGoldenTime());
-            msg.append(result.isExperience());
-            msg.append(result.isExperience()); // Point
+            msg.writeShort(result.getCountdown());
+            msg.writeBool(result.isGoldenTime());
+            msg.writeBool(result.isExperience());
+            msg.writeBool(result.isExperience()); // Point
 
-            msg.append(playerResult.getExperience());
-            msg.append(playerResult.getPoints());
+            msg.writeInt(playerResult.getExperience());
+            msg.writeInt(playerResult.getPoints());
 
             MessageUtils.appendMatchHistory(playerResult, room, result, msg, con);
         }
@@ -1090,8 +1090,8 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(playerId);
-        msg.append(true);
+        msg.writeInt(playerId);
+        msg.writeBool(true);
 
         MessageUtils.appendCharacterInfo(playerId, msg, con);
         MessageUtils.appendStats(playerId, msg, con);
@@ -1104,7 +1104,7 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(playerId);
+        msg.writeInt(playerId);
 
         MessageUtils.appendStatsBonus(playerId, msg, con);
 
@@ -1117,7 +1117,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(roomId);
+            msg.writeShort(roomId);
         }
 
         return msg;
@@ -1129,14 +1129,14 @@ public class MessageBuilder {
         MessageUtils.appendResult((byte) 0, msg);
 
         if (room != null) {
-            msg.append(false);
-            msg.append((byte)room.getAccessType().toInt());
-            msg.append((short)room.getId());
-            msg.append(room.getName(), 45);
-            msg.append(room.getPassword(), 5);
-            msg.append(room.getMaster());
-            msg.append((byte)room.getRoomMode().toInt());
-            msg.append((short) 0); // wins
+            msg.writeBool(false);
+            msg.writeByte((byte) room.getAccessType().toInt());
+            msg.writeShort((short) room.getId());
+            msg.writeString(room.getName(), 45);
+            msg.writeString(room.getPassword(), 5);
+            msg.writeInt(room.getMaster());
+            msg.writeByte((byte) room.getRoomMode().toInt());
+            msg.writeShort((short) 0); // wins
         }
 
         return msg;
@@ -1151,7 +1151,7 @@ public class MessageBuilder {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
             MessageUtils.appendStatsBonus(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
-            msg.append(PlayerInfo.getSkillSlots(playerId, con));
+            msg.writeByte(PlayerInfo.getSkillSlots(playerId, con));
         }
 
         return msg;
@@ -1167,10 +1167,10 @@ public class MessageBuilder {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
             MessageUtils.appendStatsBonus(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
-            msg.append(PlayerInfo.getSkillSlots(playerId, con));
-            msg.appendZeros(3);
-            msg.append(refund);
-            msg.append(inventoryId);
+            msg.writeByte(PlayerInfo.getSkillSlots(playerId, con));
+            msg.writeZeros(3);
+            msg.writeInt(refund);
+            msg.writeInt(inventoryId);
         }
 
         return msg;
@@ -1184,7 +1184,7 @@ public class MessageBuilder {
         if (result == 0) {
             MessageUtils.appendStatsBonus(playerId, msg);
             MessageUtils.appendInventoryItemsInUse(playerId, msg);
-            msg.append(inventoryId);
+            msg.writeInt(inventoryId);
         }
 
         return msg;
@@ -1198,7 +1198,7 @@ public class MessageBuilder {
         if (result == 0) {
             MessageUtils.appendStatsBonus(playerId, msg);
             MessageUtils.appendInventoryItemsInUse(playerId, msg);
-            msg.append(inventoryId);
+            msg.writeInt(inventoryId);
         }
 
         return msg;
@@ -1212,8 +1212,8 @@ public class MessageBuilder {
 
         if (result == 0) {
             MessageUtils.appendStatsBonus(playerId, msg);
-            msg.append(inventoryId);
-            msg.append(usages);
+            msg.writeInt(inventoryId);
+            msg.writeShort(usages);
         }
 
         return msg;
@@ -1254,8 +1254,8 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(inventoryId);
-            msg.append(index);
+            msg.writeInt(inventoryId);
+            msg.writeByte(index);
         }
 
         return msg;
@@ -1267,7 +1267,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(skillId);
+            msg.writeInt(skillId);
         }
 
         return msg;
@@ -1293,8 +1293,8 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(inventoryId);
-            msg.append(index);
+            msg.writeInt(inventoryId);
+            msg.writeByte(index);
         }
 
         return msg;
@@ -1306,7 +1306,7 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(inventoryId);
+            msg.writeInt(inventoryId);
         }
 
         return msg;
@@ -1330,11 +1330,11 @@ public class MessageBuilder {
         MessageUtils.appendResult(result, msg);
 
         if (result == 0) {
-            msg.append(playerId);
-            msg.append(PlayerInfo.getName(playerId), 15);
-            msg.append(PlayerInfo.getPosition(playerId));
-            msg.append(PlayerInfo.getLevel(playerId));
-            msg.append(ClubInfo.getName(MemberInfo.getClubId(playerId)), 15);
+            msg.writeInt(playerId);
+            msg.writeString(PlayerInfo.getName(playerId), 15);
+            msg.writeShort(PlayerInfo.getPosition(playerId));
+            msg.writeShort(PlayerInfo.getLevel(playerId));
+            msg.writeString(ClubInfo.getName(MemberInfo.getClubId(playerId)), 15);
 
             PlayerHistory history = PlayerInfo.getHistory(playerId);
             PlayerHistory monthHistory = PlayerInfo.getMonthHistory(playerId);
@@ -1344,50 +1344,50 @@ public class MessageBuilder {
                     (monthHistory.getWins() + monthHistory.getDraws()));
 
             // Matches history
-            msg.append(history.getWins());
-            msg.append(history.getDraws());
-            msg.append(historyLoses);
-            msg.append((short) monthHistory.getWins());
-            msg.append((short) monthHistory.getDraws());
-            msg.append(historyMonthLoses);
+            msg.writeInt(history.getWins());
+            msg.writeInt(history.getDraws());
+            msg.writeInt(historyLoses);
+            msg.writeShort((short) monthHistory.getWins());
+            msg.writeShort((short) monthHistory.getDraws());
+            msg.writeShort(historyMonthLoses);
 
             // TODO Fix History and Last Month History writing to PlayerDetails message
 
             // History
-            msg.append((short) history.getMatches());
-            msg.append((short) history.getWins());
-            msg.append((short) history.getDraws());
-            msg.append((short) history.getMom());
-            msg.append((short) history.getValidGoals());
-            msg.append((short) history.getValidAssists());
-            msg.append((short) history.getValidInterception());
-            msg.append((short) history.getValidShooting());
-            msg.append((short) history.getValidStealing());
-            msg.append((short) history.getValidTackling());
-            msg.appendZeros(2);
-            msg.append((short) history.getShooting());
-            msg.append((short) history.getStealing());
-            msg.append((short) history.getTackling());
-            msg.appendZeros(2);
-            msg.append((short) history.getTotalPoints());
+            msg.writeShort((short) history.getMatches());
+            msg.writeShort((short) history.getWins());
+            msg.writeShort((short) history.getDraws());
+            msg.writeShort((short) history.getMom());
+            msg.writeShort((short) history.getValidGoals());
+            msg.writeShort((short) history.getValidAssists());
+            msg.writeShort((short) history.getValidInterception());
+            msg.writeShort((short) history.getValidShooting());
+            msg.writeShort((short) history.getValidStealing());
+            msg.writeShort((short) history.getValidTackling());
+            msg.writeZeros(2);
+            msg.writeShort((short) history.getShooting());
+            msg.writeShort((short) history.getStealing());
+            msg.writeShort((short) history.getTackling());
+            msg.writeZeros(2);
+            msg.writeShort((short) history.getTotalPoints());
 
             // History Last Month
-            msg.append((short) monthHistory.getMatches());
-            msg.append((short) monthHistory.getWins());
-            msg.append((short) monthHistory.getDraws());
-            msg.append((short) monthHistory.getMom());
-            msg.append((short) monthHistory.getValidGoals());
-            msg.append((short) monthHistory.getValidAssists());
-            msg.append((short) monthHistory.getValidInterception());
-            msg.append((short) monthHistory.getValidShooting());
-            msg.append((short) monthHistory.getValidStealing());
-            msg.append((short) monthHistory.getValidTackling());
-            msg.appendZeros(2);
-            msg.append((short) monthHistory.getShooting());
-            msg.append((short) monthHistory.getStealing());
-            msg.append((short) monthHistory.getTackling());
-            msg.appendZeros(2);
-            msg.append((short) monthHistory.getTotalPoints());
+            msg.writeShort((short) monthHistory.getMatches());
+            msg.writeShort((short) monthHistory.getWins());
+            msg.writeShort((short) monthHistory.getDraws());
+            msg.writeShort((short) monthHistory.getMom());
+            msg.writeShort((short) monthHistory.getValidGoals());
+            msg.writeShort((short) monthHistory.getValidAssists());
+            msg.writeShort((short) monthHistory.getValidInterception());
+            msg.writeShort((short) monthHistory.getValidShooting());
+            msg.writeShort((short) monthHistory.getValidStealing());
+            msg.writeShort((short) monthHistory.getValidTackling());
+            msg.writeZeros(2);
+            msg.writeShort((short) monthHistory.getShooting());
+            msg.writeShort((short) monthHistory.getStealing());
+            msg.writeShort((short) monthHistory.getTackling());
+            msg.writeZeros(2);
+            msg.writeShort((short) monthHistory.getTotalPoints());
 
             // TODO Add club info
         }
@@ -1400,9 +1400,9 @@ public class MessageBuilder {
 
         MessageUtils.appendResult(result, msg);
 
-        msg.append(playerId);
+        msg.writeInt(playerId);
 
-        msg.append(PlayerInfo.getStatsPoints(playerId));
+        msg.writeShort(PlayerInfo.getStatsPoints(playerId));
         MessageUtils.appendStats(playerId, msg, con);
 
         return msg;
@@ -1415,10 +1415,10 @@ public class MessageBuilder {
 
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
-        msg.append(questState.getCurrentQuest());
-        msg.append(PlayerInfo.getLevel(playerId, con));
-        msg.append(questState.getRemainMatches());
-        msg.append(PlayerInfo.getPoints(playerId, con));
+        msg.writeShort(questState.getCurrentQuest());
+        msg.writeShort(PlayerInfo.getLevel(playerId, con));
+        msg.writeShort(questState.getRemainMatches());
+        msg.writeInt(PlayerInfo.getPoints(playerId, con));
 
         return msg;
     }
@@ -1428,21 +1428,21 @@ public class MessageBuilder {
 
         MessageUtils.appendResult((byte) 0, msg);
 
-        msg.append(PlayerInfo.getStatsPoints(playerId, con));
+        msg.writeShort(PlayerInfo.getStatsPoints(playerId, con));
         MessageUtils.appendStats(playerId, msg, con);
 
         return msg;
     }
 
-    public static ServerMessage udpPing(int playerId) {
+    public static ServerMessage udpPing() {
         return new ServerMessage(MessageId.UDP_PING);
     }
 
     public static ServerMessage proxyUpdatePort(int playerId, short port) {
         ServerMessage msg = new ServerMessage(MessageId.PROXY_UPDATE_PORT);
 
-        msg.append(playerId);
-        msg.append(port);
+        msg.writeInt(playerId);
+        msg.writeShort(port);
 
         return msg;
     }

@@ -16,17 +16,17 @@ public class TeamResult {
     private final short ballControl;
 
     public void appendResult(ServerMessage msg) {
-        msg.append(getResult());
-        msg.append(getGoals());
-        msg.append(assists);
-        msg.append(blocks);
-        msg.append(shots);
-        msg.append(steals);
-        msg.append(tackles);
-        msg.appendZeros(10);
-        msg.append(votePoints);
-        msg.appendZeros(2);
-        msg.append(ballControl);
+        msg.writeShort(getResult());
+        msg.writeShort(getGoals());
+        msg.writeShort(assists);
+        msg.writeShort(blocks);
+        msg.writeShort(shots);
+        msg.writeShort(steals);
+        msg.writeShort(tackles);
+        msg.writeZeros(10);
+        msg.writeShort(votePoints);
+        msg.writeZeros(2);
+        msg.writeShort(ballControl);
     }
 
     public static TeamResult fromMessage(ClientMessage msg) {

@@ -136,7 +136,7 @@ public class KicksEmu {
      *
      * @param messages error message/s
      */
-    public static void handleFatalError(String... messages) {
+    private static void handleFatalError(String... messages) {
         String message = messages[0];
 
         for (int i = 1; i < messages.length; i++) {
