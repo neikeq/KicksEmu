@@ -745,7 +745,7 @@ public class MessageBuilder {
             msg.writeByte((byte) 1);
             msg.writeByte((byte) 1);
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
-            msg.writeBool(session.getPing() < 100, 4);
+            msg.writeInt(session.getPingRay());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.writeShort(session.getUdpPort());
 

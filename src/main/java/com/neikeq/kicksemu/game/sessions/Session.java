@@ -209,6 +209,18 @@ public class Session {
         return ping;
     }
 
+    public int getPingRay() {
+        int pingRay = 0; // red ping by default
+
+        if (ping <= 100) {
+            pingRay = 64; // green ping
+        } else if (ping <= 100) {
+            pingRay = 32; // yellow ping
+        }
+
+        return pingRay;
+    }
+
     public void setPing(int ping) {
         this.ping = ping;
     }
