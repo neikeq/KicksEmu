@@ -311,6 +311,18 @@ public class Room {
         }
     }
 
+    public ServerMessage getRoomPlayerInfo(Session session, Connection ... con) {
+        switch (ServerManager.getServerType()) {
+            case CLUB:
+                return MessageBuilder.clubRoomPlayerInfo(session, this, con);
+            case NORMAL:
+            case PRACTICE:
+            case TOURNAMENT:
+            default:
+                return MessageBuilder.roomPlayerInfo(session, this, con);
+        }
+    }
+
     private void onPlayerJoined(Session session) {
         int playerId = session.getPlayerId();
 
@@ -322,10 +334,12 @@ public class Room {
 
         // Notify players in room about the new player
         if (!disconnectedPlayers.containsKey(playerId)) {
-            try (Connection con = MySqlManager.getConnection()) {
-                sendBroadcast(MessageBuilder.roomPlayerInfo(session, this, con),
-                        s -> s.getPlayerId() != playerId);
-            } catch (SQLException ignored) {}
+            if (players.size() > 1) {
+                try (Connection con = MySqlManager.getConnection()) {
+                    sendBroadcast(getRoomPlayerInfo(session, con),
+                            s -> s.getPlayerId() != playerId);
+                } catch (SQLException ignored) {}
+            }
         } else {
             disconnectedPlayers.remove(playerId);
             getReconnectedPlayers().add(playerId);
@@ -367,7 +381,7 @@ public class Room {
     private void sendRoomPlayersInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
             getPlayers().values().stream().forEach(s ->
-                    session.sendAndFlush(MessageBuilder.roomPlayerInfo(s, this, con)));
+                    session.sendAndFlush(getRoomPlayerInfo(session, con)));
         } catch (SQLException ignored) {}
     }
 

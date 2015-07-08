@@ -732,15 +732,17 @@ public class RoomMessages {
 
             room.setState(RoomState.WAITING);
 
-            room.getReconnectedPlayers().forEach(playerId -> {
-                Session playerSession = room.getPlayers().get(playerId);
+            try (Connection con = MySqlManager.getConnection()) {
+                room.getReconnectedPlayers().forEach(playerId -> {
+                    Session playerSession = room.getPlayers().get(playerId);
 
-                room.sendBroadcast(MessageBuilder.leaveRoom(playerId, (short) 4),
-                        s -> s.getPlayerId() != playerId);
+                    room.sendBroadcast(MessageBuilder.leaveRoom(playerId, (short) 4),
+                            s -> s.getPlayerId() != playerId);
 
-                room.sendBroadcast(MessageBuilder.roomPlayerInfo(playerSession, room),
-                        s -> s.getPlayerId() != playerId);
-            });
+                    room.sendBroadcast(room.getRoomPlayerInfo(playerSession, con),
+                            s -> s.getPlayerId() != playerId);
+                });
+            } catch (SQLException ignored) {}
 
             room.getReconnectedPlayers().clear();
 

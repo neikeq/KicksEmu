@@ -742,9 +742,10 @@ public class MessageBuilder {
             msg.writeString(ClubInfo.getName(clubId, con), 15);
             msg.writeShort((short) (room.getRedTeam().contains(playerId) ? 0 : 1));
             msg.writeBool(room.isObserver(playerId));
-            msg.writeBool(false, 2);
-            msg.writeInt(UserInfo.getSettings(ownerId).getCountry());
-            msg.writeBool(session.getPing() < 100, 2);
+            msg.writeByte((byte) 1);
+            msg.writeByte((byte) 1);
+            msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
+            msg.writeBool(session.getPing() < 100, 4);
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.writeShort(session.getUdpPort());
 
@@ -1137,6 +1138,57 @@ public class MessageBuilder {
             msg.writeInt(room.getMaster());
             msg.writeByte((byte) room.getRoomMode().toInt());
             msg.writeShort((short) 0); // wins
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage clubRoomPlayerInfo(Session session, Room room, Connection ... con) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_PLAYER_INFO);
+
+        if (session != null) {
+            int playerId = session.getPlayerId();
+            int ownerId = PlayerInfo.getOwner(playerId, con);
+            int clubId = MemberInfo.getClubId(playerId, con);
+
+            msg.writeShort((short) 1);
+            msg.writeBool(false);
+            msg.writeInt(playerId);
+            msg.writeString(PlayerInfo.getName(playerId, con), 15);
+            msg.writeString(ClubInfo.getName(clubId, con), 15);
+            msg.writeBool(room.isObserver(playerId));
+            msg.writeByte((byte) 1);
+            msg.writeByte((byte) 1);
+            msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
+            msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
+            msg.writeShort(session.getUdpPort());
+
+            MessageUtils.appendCharacterInfo(playerId, msg, con);
+
+            msg.writeZeros(2);
+            msg.writeShort(PlayerInfo.getAnimation(playerId, con));
+            msg.writeShort(PlayerInfo.getFace(playerId, con));
+
+            MessageUtils.appendDefaultClothes(playerId, msg, con);
+
+            msg.writeShort(PlayerInfo.getPosition(playerId, con));
+            msg.writeZeros(1);
+            msg.writeBool(clubId > 0); // is club member
+            msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
+            msg.writeZeros(3);
+            msg.writeByte((byte) 0);
+            msg.writeByte((byte) 0);
+            msg.writeByte((byte) 0);
+
+            // Stats
+            MessageUtils.appendStats(playerId, msg, con);
+            MessageUtils.appendStatsTraining(playerId, msg, con);
+            MessageUtils.appendStatsBonus(playerId, msg, con);
+
+            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+            MessageUtils.appendClubUniform(clubId, msg, con);
+            MessageUtils.appendInventorySkillsInUse(playerId, msg, con);
+            MessageUtils.appendInventoryCelebrationsInUse(playerId, msg, con);
         }
 
         return msg;

@@ -67,6 +67,7 @@ public class MessageId {
     public static final int CLUB_ROOM_LIST = 2500;
     public static final int CLUB_CREATE_ROOM = 2501;
     public static final int CLUB_ROOM_INFO = 2510;
+    public static final int CLUB_ROOM_PLAYER_INFO = 2511;
     public static final int PURCHASE_ITEM = 2600;
     public static final int RESELL_ITEM = 2601;
     public static final int ACTIVATE_ITEM = 2603;
