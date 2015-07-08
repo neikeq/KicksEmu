@@ -736,14 +736,16 @@ public class MessageBuilder {
             int ownerId = PlayerInfo.getOwner(playerId, con);
             int clubId = MemberInfo.getClubId(playerId, con);
 
+            RoomTeam team = room.getPlayerTeam(playerId);
+            short teamIndex = team != null ? (short)team.toInt() : -1;
+
             msg.writeBool(true, 2);
             msg.writeInt(playerId);
             msg.writeString(PlayerInfo.getName(playerId, con), 15);
             msg.writeString(ClubInfo.getName(clubId, con), 15);
-            msg.writeShort((short) (room.getRedTeam().contains(playerId) ? 0 : 1));
+            msg.writeShort(teamIndex);
             msg.writeBool(room.isObserver(playerId));
-            msg.writeByte((byte) 1);
-            msg.writeByte((byte) 1);
+            msg.writeShort(teamIndex);
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeInt(session.getPingRay());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);

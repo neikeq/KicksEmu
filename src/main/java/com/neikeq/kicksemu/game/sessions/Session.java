@@ -205,10 +205,6 @@ public class Session {
         this.observer = observer;
     }
 
-    public int getPing() {
-        return ping;
-    }
-
     public int getPingRay() {
         int pingRay = 0; // red ping by default
 

@@ -59,7 +59,7 @@ public class Room {
 
     private final Object locker = new Object();
 
-    public byte tryJoinRoom(Session session, String password) {
+    public void tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
 
         byte result = 0;
@@ -74,23 +74,25 @@ public class Room {
 
                         // If player level is not allowed in room settings
                         if (playerHasInvalidLevel(level)) {
-                            result = (byte) 248; // Invalid level
+                            result = (byte) -8; // Invalid level
                         } else {
                             // Join the room
                             addPlayer(session);
                         }
                     } else {
-                        result = (byte) 250; // Match already started
+                        result = (byte) -6; // Match already started
                     }
                 } else {
-                    result = (byte) 251; // Wrong password
+                    result = (byte) -5; // Wrong password
                 }
             } else {
-                result = (byte) 252; // Room is full
+                result = (byte) -4; // Room is full
             }
         }
 
-        return result;
+        if (result != 0) {
+            session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), result));
+        }
     }
 
     public void addPlayer(Session session) {
@@ -126,6 +128,8 @@ public class Room {
         }
 
         session.setRoomId(getId());
+
+        session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), (byte) 0));
 
         onPlayerJoined(session);
     }
@@ -381,7 +385,7 @@ public class Room {
     private void sendRoomPlayersInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
             getPlayers().values().stream().forEach(s ->
-                    session.sendAndFlush(getRoomPlayerInfo(session, con)));
+                    session.sendAndFlush(getRoomPlayerInfo(s, con)));
         } catch (SQLException ignored) {}
     }
 

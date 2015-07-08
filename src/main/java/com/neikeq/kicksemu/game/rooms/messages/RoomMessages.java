@@ -135,11 +135,12 @@ public class RoomMessages {
         Room room = RoomManager.getRoomById(roomId);
 
         // Try to join the room.
-        // Result -3 means that the room does not exists.
-        byte result = room != null ? room.tryJoinRoom(session, password) : -3;
-
-        // Send the notification to the client
-        session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
+        if (room != null) {
+            room.tryJoinRoom(session, password);
+        } else {
+            // Result -3 means that the room does not exists.
+            session.send(MessageBuilder.joinRoom(null, session.getPlayerId(), (byte) -3));
+        }
     }
 
     public static void quickJoinRoom(Session session) {
@@ -152,12 +153,9 @@ public class RoomMessages {
 
         // If a valid room was found
         if (room != null) {
-            byte result = room.tryJoinRoom(session, "");
-
-            // Send the notification to the client
-            session.send(MessageBuilder.joinRoom(room, session.getPlayerId(), result));
+            room.tryJoinRoom(session, "");
         } else {
-            // Notify the player that no room were found
+            // Notify the player that no rooms were found
             session.send(MessageBuilder.quickJoinRoom((byte) -2));
         }
     }
