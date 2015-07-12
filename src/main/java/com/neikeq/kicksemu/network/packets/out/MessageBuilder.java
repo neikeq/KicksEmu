@@ -1491,13 +1491,4 @@ public class MessageBuilder {
     public static ServerMessage udpPing() {
         return new ServerMessage(MessageId.UDP_PING);
     }
-
-    public static ServerMessage proxyUpdatePort(int playerId, short port) {
-        ServerMessage msg = new ServerMessage(MessageId.PROXY_UPDATE_PORT);
-
-        msg.writeInt(playerId);
-        msg.writeShort(port);
-
-        return msg;
-    }
 }

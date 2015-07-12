@@ -348,10 +348,6 @@ public class Room {
             disconnectedPlayers.remove(playerId);
             getReconnectedPlayers().add(playerId);
 
-            // Send the new player's port to the match host
-            short port = session.getUdpPort();
-            getPlayers().get(host).sendAndFlush(MessageBuilder.proxyUpdatePort(playerId, port));
-
             // Notify about the player which reconnected
             String message = "Player reconnected: " + PlayerInfo.getName(playerId);
             sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
