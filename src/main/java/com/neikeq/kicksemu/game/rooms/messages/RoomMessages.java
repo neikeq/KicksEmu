@@ -506,7 +506,6 @@ public class RoomMessages {
             }
 
             session.send(MessageBuilder.startMatch(result));
-            session.send(MessageBuilder.hostInfo(room));
         }
     }
 
