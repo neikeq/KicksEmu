@@ -28,7 +28,7 @@ public class Session {
     private int sessionId = -1;
     private int roomId = -1;
     private int ping = -1;
-    private short udpPort = -1;
+    private int udpPort = -1;
 
     private byte pingState = 0;
 
@@ -189,11 +189,11 @@ public class Session {
         return locker;
     }
 
-    public short getUdpPort() {
+    public int getUdpPort() {
         return udpPort;
     }
 
-    public void setUdpPort(short udpPort) {
+    public void setUdpPort(int udpPort) {
         this.udpPort = udpPort;
     }
 

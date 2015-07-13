@@ -749,7 +749,7 @@ public class MessageBuilder {
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeInt(session.getPingRay());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-            msg.writeShort(session.getUdpPort());
+            msg.writeShort((short) session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
@@ -970,7 +970,7 @@ public class MessageBuilder {
 
         msg.writeInt(room.getHost());
         msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-        msg.writeShort(session.getUdpPort());
+        msg.writeShort((short) session.getUdpPort());
         msg.writeBool(room.isTraining());
         msg.writeZeros(4);
 
@@ -1163,7 +1163,7 @@ public class MessageBuilder {
             msg.writeByte((byte) 1);
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-            msg.writeShort(session.getUdpPort());
+            msg.writeShort((short) session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
