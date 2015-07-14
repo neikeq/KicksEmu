@@ -745,7 +745,8 @@ public class MessageBuilder {
             msg.writeString(ClubInfo.getName(clubId, con), 15);
             msg.writeShort(teamIndex);
             msg.writeBool(room.isObserver(playerId));
-            msg.writeShort(teamIndex);
+            msg.writeBool(false); // pc room
+            msg.writeBool(false);
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeInt(session.getPingRay());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
@@ -1159,8 +1160,8 @@ public class MessageBuilder {
             msg.writeString(PlayerInfo.getName(playerId, con), 15);
             msg.writeString(ClubInfo.getName(clubId, con), 15);
             msg.writeBool(room.isObserver(playerId));
-            msg.writeByte((byte) 1);
-            msg.writeByte((byte) 1);
+            msg.writeBool(false); // pc room
+            msg.writeBool(false);
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.writeShort((short) session.getUdpPort());
