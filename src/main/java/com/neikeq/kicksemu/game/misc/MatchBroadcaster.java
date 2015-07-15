@@ -18,17 +18,22 @@ public class MatchBroadcaster {
 
         Room room = RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null && room.isPlayerIn(targetId)) {
+        // If the room exists
+        if (room != null) {
             Session targetSession = room.getPlayers().get(targetId);
-            Channel ch = KicksEmu.getNettyUdpServer().getChannelFuture().channel();
 
-            try {
-                String targetIp = targetSession.getRemoteAddress().getAddress().getHostAddress();
+            // If the player is in the room
+            if (targetSession != null) {
+                Channel ch = KicksEmu.getNettyUdpServer().getChannelFuture().channel();
 
-                ch.writeAndFlush(new DatagramPacket(msg.getBody().readerIndex(0).retain(),
-                        new InetSocketAddress(targetIp, targetSession.getUdpPort())));
-            } finally {
-                ch.closeFuture();
+                try {
+                    String targetIp = targetSession.getRemoteAddress().getAddress().getHostAddress();
+
+                    ch.writeAndFlush(new DatagramPacket(msg.getBody().readerIndex(0).retain(),
+                            new InetSocketAddress(targetIp, targetSession.getUdpPort())));
+                } finally {
+                    ch.closeFuture();
+                }
             }
         }
     }
