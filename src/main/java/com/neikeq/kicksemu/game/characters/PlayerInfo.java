@@ -759,7 +759,7 @@ public class PlayerInfo {
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setShort(1, questState.getCurrentQuest());
-                stmt.setShort(1, questState.getRemainMatches());
+                stmt.setShort(2, questState.getRemainMatches());
                 stmt.setInt(3, id);
 
                 stmt.executeUpdate();

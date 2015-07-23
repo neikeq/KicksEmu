@@ -647,7 +647,10 @@ public class RoomMessages {
                     // Add the experience and points earned to the player
                     PlayerInfo.sumRewards(pr.getExperience(), pr.getPoints(), playerId, con);
 
-                    QuestManager.checkQuests(playerId, result, room.getPlayerTeam(playerId), con);
+                    if (room.getTrainingFactor() > 0) {
+                        QuestManager.checkQuests(playerId, result,
+                                room.getPlayerTeam(playerId), con);
+                    }
 
                     // Check if player did level up and apply level up operations if needed
                     short levels = CharacterManager.checkExperience(playerId,

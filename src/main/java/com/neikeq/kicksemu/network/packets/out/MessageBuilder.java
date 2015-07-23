@@ -1466,14 +1466,14 @@ public class MessageBuilder {
     public static ServerMessage playerProgress(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_PROGRESS);
 
-        MessageUtils.appendResult((byte)0, msg);
+        msg.writeShort((short) 1);
 
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
         msg.writeShort(questState.getCurrentQuest());
-        msg.writeShort(PlayerInfo.getLevel(playerId, con));
         msg.writeShort(questState.getRemainMatches());
         msg.writeInt(PlayerInfo.getPoints(playerId, con));
+        msg.writeInt(PlayerInfo.getLevel(playerId, con));
 
         return msg;
     }
