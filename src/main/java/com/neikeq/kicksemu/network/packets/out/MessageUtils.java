@@ -4,8 +4,8 @@ import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.PlayerRanking;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
-import com.neikeq.kicksemu.game.characters.types.QuestState;
-import com.neikeq.kicksemu.game.characters.types.TutorialState;
+import com.neikeq.kicksemu.game.misc.quests.QuestState;
+import com.neikeq.kicksemu.game.misc.tutorial.TutorialState;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.clubs.ClubUniform;
 import com.neikeq.kicksemu.game.inventory.Celebration;
@@ -15,6 +15,7 @@ import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
+import com.neikeq.kicksemu.game.rooms.enums.VictoryResult;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
@@ -281,8 +282,8 @@ class MessageUtils {
         PlayerHistory history = PlayerInfo.getHistory(id, con);
 
         msg.writeInt(history.getMatches() + (training ? 0 : 1));
-        msg.writeInt(history.getWins() + (tr.getResult() == 1 ? 1 : 0));
-        msg.writeInt(history.getDraws() + (tr.getResult() == 0 ? 1 : 0));
+        msg.writeInt(history.getWins() + (tr.getResult() == VictoryResult.WIN ? 1 : 0));
+        msg.writeInt(history.getDraws() + (tr.getResult() == VictoryResult.DRAW ? 1 : 0));
         msg.writeInt(history.getMom() + (result.getMom() == id ? 1 : 0));
         msg.writeInt(history.getValidGoals() + pr.getGoals());
         msg.writeInt(history.getValidAssists() + pr.getAssists());
@@ -300,8 +301,8 @@ class MessageUtils {
         PlayerHistory monthHistory = PlayerInfo.getMonthHistory(id, con);
 
         msg.writeInt(monthHistory.getMatches() + (training ? 0 : 1));
-        msg.writeInt(monthHistory.getWins() + (tr.getResult() == 1 ? 1 : 0));
-        msg.writeInt(monthHistory.getDraws() + (tr.getResult() == 0 ? 1 : 0));
+        msg.writeInt(monthHistory.getWins() + (tr.getResult() == VictoryResult.WIN ? 1 : 0));
+        msg.writeInt(monthHistory.getDraws() + (tr.getResult() == VictoryResult.DRAW ? 1 : 0));
         msg.writeInt(monthHistory.getMom() + (result.getMom() == id ? 1 : 0));
         msg.writeInt(monthHistory.getValidGoals() + pr.getGoals());
         msg.writeInt(monthHistory.getValidAssists() + pr.getAssists());

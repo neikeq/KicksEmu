@@ -39,10 +39,10 @@ public class MatchRewards {
         matchHistory.sumMatches(1);
 
         switch (teamResult.getResult()) {
-            case 0:
+            case DRAW:
                 matchHistory.sumDraws(1);
                 break;
-            case 1:
+            case WIN:
                 matchHistory.sumWins(1);
                 break;
             default:

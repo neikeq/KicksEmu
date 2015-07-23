@@ -4,7 +4,7 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.CharacterRemover;
 import com.neikeq.kicksemu.game.characters.StatusMessage;
-import com.neikeq.kicksemu.game.characters.TutorialManager;
+import com.neikeq.kicksemu.game.misc.tutorial.TutorialManager;
 import com.neikeq.kicksemu.game.characters.creation.CharacterCreator;
 import com.neikeq.kicksemu.game.chat.ChatManager;
 import com.neikeq.kicksemu.game.clubs.ClubManager;

@@ -1,11 +1,12 @@
 package com.neikeq.kicksemu.game.rooms.match;
 
+import com.neikeq.kicksemu.game.rooms.enums.VictoryResult;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 
 public class TeamResult {
 
-    private final short result;
+    private final VictoryResult result;
     private final short goals;
     private final short assists;
     private final short blocks;
@@ -16,7 +17,7 @@ public class TeamResult {
     private final short ballControl;
 
     public void appendResult(ServerMessage msg) {
-        msg.writeShort(getResult());
+        msg.writeShort(getResult().toShort());
         msg.writeShort(getGoals());
         msg.writeShort(assists);
         msg.writeShort(blocks);
@@ -48,7 +49,7 @@ public class TeamResult {
 
     public TeamResult(short result, short goals, short assists, short blocks, short shots,
                       short steals, short tackles, short votePoints, short ballControl) {
-        this.result = result;
+        this.result = VictoryResult.fromShort(result);
         this.goals = goals;
         this.assists = assists;
         this.blocks = blocks;
@@ -63,7 +64,7 @@ public class TeamResult {
         return goals;
     }
 
-    public short getResult() {
+    public VictoryResult getResult() {
         return result;
     }
 }

@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.characters.types;
+package com.neikeq.kicksemu.game.misc.tutorial;
 
 public class TutorialState {
 

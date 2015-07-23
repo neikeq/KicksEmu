@@ -7,6 +7,7 @@ import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
 import com.neikeq.kicksemu.game.characters.types.Position;
 import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
+import com.neikeq.kicksemu.game.misc.quests.QuestManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
@@ -644,7 +645,9 @@ public class RoomMessages {
                     Session playerSession = room.getPlayers().get(playerId);
 
                     // Add the experience and points earned to the player
-                    PlayerInfo.sumMoney(pr.getExperience(), pr.getPoints(), playerId, con);
+                    PlayerInfo.sumRewards(pr.getExperience(), pr.getPoints(), playerId, con);
+
+                    QuestManager.checkQuests(playerId, result, room.getPlayerTeam(playerId), con);
 
                     // Check if player did level up and apply level up operations if needed
                     short levels = CharacterManager.checkExperience(playerId,

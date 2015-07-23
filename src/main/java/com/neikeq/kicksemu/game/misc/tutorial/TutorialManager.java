@@ -1,6 +1,6 @@
-package com.neikeq.kicksemu.game.characters;
+package com.neikeq.kicksemu.game.misc.tutorial;
 
-import com.neikeq.kicksemu.game.characters.types.TutorialState;
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;

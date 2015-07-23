@@ -1,9 +1,9 @@
-package com.neikeq.kicksemu.game.characters.types;
+package com.neikeq.kicksemu.game.misc.quests;
 
 public class QuestState {
 
-    private final short currentQuest;
-    private final short remainMatches;
+    private short currentQuest;
+    private short remainMatches;
 
     public QuestState() {
         this((short) 0, (short) 0);
@@ -20,5 +20,14 @@ public class QuestState {
 
     public short getRemainMatches() {
         return remainMatches;
+    }
+
+    public void decreaseRemainMatches() {
+        remainMatches--;
+    }
+
+    public void nextQuest() {
+        currentQuest++;
+        remainMatches = 5;
     }
 }

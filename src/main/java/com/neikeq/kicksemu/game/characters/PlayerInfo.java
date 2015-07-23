@@ -2,8 +2,8 @@ package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
-import com.neikeq.kicksemu.game.characters.types.QuestState;
-import com.neikeq.kicksemu.game.characters.types.TutorialState;
+import com.neikeq.kicksemu.game.misc.quests.QuestState;
+import com.neikeq.kicksemu.game.misc.tutorial.TutorialState;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
@@ -750,12 +750,25 @@ public class PlayerInfo {
         SqlUtils.setShort("position", value, TABLE, id, con);
     }
 
-    public static void setCurrentQuest(short value, int id, Connection ... con) {
-        SqlUtils.setShort("quest_current", value, TABLE, id, con);
-    }
+    public static void setQuestState(QuestState questState, int id, Connection ... con) {
+        final String query = "UPDATE " + TABLE + " SET quest_current=?, quest_matches_left=? " +
+                "WHERE id = ? LIMIT 1;";
 
-    public static void setRemainingQuestMatches(short value, int id, Connection ... con) {
-        SqlUtils.setShort("quest_matches_left", value, TABLE, id, con);
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setShort(1, questState.getCurrentQuest());
+                stmt.setShort(1, questState.getRemainMatches());
+                stmt.setInt(3, id);
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException ignored) {}
     }
 
     public static void setTutorialState(TutorialState tutorial, int id, Connection ... con) {
@@ -785,7 +798,7 @@ public class PlayerInfo {
         SqlUtils.setBoolean("received_reward", value, TABLE, id, con);
     }
 
-    public static void sumMoney(int experience, int points, int id, Connection ... con) {
+    public static void sumRewards(int experience, int points, int id, Connection... con) {
         final String query = "UPDATE " + TABLE + " SET experience = experience + ?, " +
                 "points = points + ? WHERE id = ? LIMIT 1;";
 
