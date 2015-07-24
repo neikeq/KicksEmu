@@ -1470,8 +1470,19 @@ public class MessageBuilder {
 
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
-        msg.writeShort(questState.getCurrentQuest());
-        msg.writeShort(questState.getRemainMatches());
+        short currentQuest = questState.getCurrentQuest();
+        short remainMatches = questState.getRemainMatches();
+
+        // Client does not recognize quest 4 in the result screen.
+        // For this reason we must set the quest to 3 to avoid client crash.
+        // Since the remain matches equals -1, it won't appear in the result screen.
+        if (currentQuest > 3) {
+            currentQuest = 3;
+            remainMatches = -1;
+        }
+
+        msg.writeShort(currentQuest);
+        msg.writeShort(remainMatches);
         msg.writeInt(PlayerInfo.getPoints(playerId, con));
         msg.writeInt(PlayerInfo.getLevel(playerId, con));
 
