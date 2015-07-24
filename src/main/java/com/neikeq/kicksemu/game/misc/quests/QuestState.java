@@ -26,8 +26,8 @@ public class QuestState {
         remainMatches--;
     }
 
-    public void nextQuest() {
+    public void nextQuest(short requiredMatches) {
         currentQuest++;
-        remainMatches = 5;
+        remainMatches = requiredMatches;
     }
 }

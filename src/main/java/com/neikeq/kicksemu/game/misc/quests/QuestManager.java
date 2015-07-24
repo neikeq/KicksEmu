@@ -17,7 +17,7 @@ public class QuestManager {
 
                     if (questState.getRemainMatches() <= 0) {
                         PlayerInfo.sumPoints(1000, playerId, con);
-                        questState.nextQuest();
+                        questState.nextQuest((short) 5);
                     }
 
                     PlayerInfo.setQuestState(questState, playerId, con);
@@ -29,7 +29,7 @@ public class QuestManager {
 
                     if (questState.getRemainMatches() <= 0) {
                         PlayerInfo.sumPoints(2000, playerId, con);
-                        questState.nextQuest();
+                        questState.nextQuest((short) 1);
                     }
 
                     PlayerInfo.setQuestState(questState, playerId, con);
@@ -42,7 +42,7 @@ public class QuestManager {
 
                     if (questState.getRemainMatches() <= 0) {
                         PlayerInfo.sumPoints(3000, playerId, con);
-                        questState.nextQuest();
+                        questState.nextQuest((short) 0);
                     }
 
                     PlayerInfo.setQuestState(questState, playerId, con);
