@@ -24,7 +24,7 @@ public class QuestManager {
                 }
             },
             (playerId, questState, matchResult, teamResult, con) -> {
-                if (teamResult.getResult() != VictoryResult.WIN) {
+                if (teamResult.getResult() == VictoryResult.WIN) {
                     questState.decreaseRemainMatches();
 
                     if (questState.getRemainMatches() <= 0) {
