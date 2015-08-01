@@ -137,7 +137,6 @@ public class RoomMessages {
         // Try to join the room.
         if (room != null) {
             room.tryJoinRoom(session, password);
-            room.startCountDown();
         } else {
             // Result -3 means that the room does not exists.
             session.send(MessageBuilder.joinRoom(null, session.getPlayerId(), (byte) -3));

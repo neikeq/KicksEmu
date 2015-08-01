@@ -287,7 +287,7 @@ public class Room {
                                 List<Integer> failedPlayers = new ArrayList<>(players.keySet());
                                 confirmedPlayers.forEach(failedPlayers::remove);
 
-                                if (failedPlayers.isEmpty()) {
+                                if (!failedPlayers.isEmpty()) {
                                     String info = "The following players failed to connect: ";
 
                                     for (Integer playerId : failedPlayers) {
