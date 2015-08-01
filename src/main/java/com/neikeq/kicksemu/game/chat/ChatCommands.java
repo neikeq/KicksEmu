@@ -101,7 +101,7 @@ public class ChatCommands {
         int playerId = session.getPlayerId();
         Room room = RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null && room.isLobbyScreen()) {
+        if (room != null && room.isInLobbyScreen()) {
             if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
                 Session target = room.getPlayers().get(targetId);

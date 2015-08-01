@@ -10,6 +10,7 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.ThreadUtils;
 
 import java.sql.Connection;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public class Room {
@@ -31,6 +34,7 @@ public class Room {
     private byte maxLevel = 60;
 
     private long timeStart = 0;
+    private long timeLastJoin = 0;
 
     private String name = "";
     private String password = "";
@@ -55,6 +59,8 @@ public class Room {
     private final List<Short> redTeamPositions = new ArrayList<>();
     private final List<Short> blueTeamPositions = new ArrayList<>();
 
+    private ScheduledFuture<?> countdownTimeoutFuture;
+
     private final Object locker = new Object();
 
     public void tryJoinRoom(Session session, String password) {
@@ -70,12 +76,12 @@ public class Room {
                     if (!isPlaying()) {
                         short level = PlayerInfo.getLevel(playerId);
 
-                        // If player level is not allowed in room settings
-                        if (playerHasInvalidLevel(level)) {
-                            result = (byte) -8; // Invalid level
-                        } else {
+                        // If player level is allowed in room settings
+                        if (isLevelAllowed(level)) {
                             // Join the room
                             addPlayer(session);
+                        } else {
+                            result = (byte) -8; // Invalid level
                         }
                     } else {
                         result = (byte) -6; // Match already started
@@ -165,24 +171,18 @@ public class Room {
         onPlayerLeaved(playerId, reason);
     }
 
-    private void onHostLeaved(int playerId) {
-        switch (state()) {
-            case PLAYING:
-                sendBroadcast(MessageBuilder.hostInfo(this));
-                sendBroadcast(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED));
-                break;
-            case LOADING:
-                setState(RoomState.WAITING);
-                sendBroadcast(MessageBuilder.cancelLoading());
-                break;
-            case RESULT:
-                ThreadUtils.sleep(3000);
+    public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {
+        RoomTeam targetTeam = currentTeam == RoomTeam.RED ? RoomTeam.BLUE :  RoomTeam.RED;
 
-                setState(RoomState.WAITING);
-                sendBroadcast(MessageBuilder.unknown1());
-                sendBroadcast(MessageBuilder.unknown2());
-                break;
-            default:
+        synchronized (locker) {
+            if (!isTeamFull(targetTeam)) {
+                removePlayerFromTeam(playerId, currentTeam);
+                addPlayerToTeam(playerId, targetTeam);
+
+                return targetTeam;
+            } else {
+                return currentTeam;
+            }
         }
     }
 
@@ -262,60 +262,55 @@ public class Room {
         }
     }
 
-    public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {
-        RoomTeam targetTeam = currentTeam == RoomTeam.RED ? RoomTeam.BLUE :  RoomTeam.RED;
-
-        synchronized (locker) {
-            if (!isTeamFull(targetTeam)) {
-                removePlayerFromTeam(playerId, currentTeam);
-                addPlayerToTeam(playerId, targetTeam);
-
-                return targetTeam;
-            } else {
-                return currentTeam;
-            }
-        }
-    }
-
     public void startCountDown() {
         synchronized (locker) {
+            if (players.size() > 1) {
+                // There must be a delay between the last player joined the room and
+                // the countdown starts. Otherwise it will freeze on 'Connecting...'.
+                final long delay = DateUtils.currentTimeMillis() - timeLastJoin;
+                final long minDelay = 1000;
+
+                if (delay < minDelay) {
+                    ThreadUtils.sleep(minDelay - delay);
+                }
+            }
+
             setState(RoomState.COUNT_DOWN);
             getConfirmedPlayers().clear();
 
             sendBroadcast(MessageBuilder.startCountDown((byte) -1));
+
+            setCountdownTimeoutFuture(getPlayers().get(host).getChannel().eventLoop()
+                    .schedule(() -> {
+                        synchronized (locker) {
+                            if (this.state() == RoomState.COUNT_DOWN) {
+                                List<Integer> failedPlayers = new ArrayList<>(players.keySet());
+                                confirmedPlayers.forEach(failedPlayers::remove);
+
+                                if (failedPlayers.isEmpty()) {
+                                    String info = "The following players failed to connect: ";
+
+                                    for (Integer playerId : failedPlayers) {
+                                        info += PlayerInfo.getName(playerId);
+                                    }
+
+                                    ServerMessage timeoutMessage = MessageBuilder
+                                            .chatMessage(MessageType.SERVER_MESSAGE, info);
+                                    sendBroadcast(timeoutMessage);
+                                }
+
+                                this.cancelCountDown();
+                            }
+                        }
+                    }, 5, TimeUnit.SECONDS));
         }
     }
 
     public void cancelCountDown() {
         synchronized (locker) {
+            getCountdownTimeoutFuture().cancel(true);
             setState(RoomState.WAITING);
             sendBroadcast(MessageBuilder.cancelCountDown());
-        }
-    }
-
-    private void sendRoomInfo(Session session) {
-        switch (ServerManager.getServerType()) {
-            case NORMAL:
-            case PRACTICE:
-            case TOURNAMENT:
-                session.send(MessageBuilder.roomInfo(this));
-                break;
-            case CLUB:
-                session.send(MessageBuilder.clubRoomInfo(this));
-                break;
-            default:
-        }
-    }
-
-    private ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
-        switch (ServerManager.getServerType()) {
-            case CLUB:
-                return MessageBuilder.clubRoomPlayerInfo(session, this, con);
-            case NORMAL:
-            case PRACTICE:
-            case TOURNAMENT:
-            default:
-                return MessageBuilder.roomPlayerInfo(session, this, con);
         }
     }
 
@@ -327,6 +322,8 @@ public class Room {
 
         // Send to the client information about players inside the room
         sendRoomPlayersInfo(session);
+
+        timeLastJoin = DateUtils.currentTimeMillis();
 
         // Notify all the players in the room about the new player
         if (players.size() > 1) {
@@ -352,11 +349,25 @@ public class Room {
         }
     }
 
-    private void sendRoomPlayersInfo(Session session) {
-        try (Connection con = MySqlManager.getConnection()) {
-            getPlayers().values().stream().forEach(s ->
-                    session.sendAndFlush(getRoomPlayerInfo(s, con)));
-        } catch (SQLException ignored) {}
+    private void onHostLeaved(int playerId) {
+        switch (state()) {
+            case PLAYING:
+                sendBroadcast(MessageBuilder.hostInfo(this));
+                sendBroadcast(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED));
+                break;
+            case LOADING:
+                setState(RoomState.WAITING);
+                sendBroadcast(MessageBuilder.cancelLoading());
+                break;
+            case RESULT:
+                ThreadUtils.sleep(3000);
+
+                setState(RoomState.WAITING);
+                sendBroadcast(MessageBuilder.unknown1());
+                sendBroadcast(MessageBuilder.unknown2());
+                break;
+            default:
+        }
     }
 
     private void updateMaster() {
@@ -375,6 +386,48 @@ public class Room {
         }
 
         return null;
+    }
+
+    private ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
+        switch (ServerManager.getServerType()) {
+            case CLUB:
+                return MessageBuilder.clubRoomPlayerInfo(session, this, con);
+            case NORMAL:
+            case PRACTICE:
+            case TOURNAMENT:
+            default:
+                return MessageBuilder.roomPlayerInfo(session, this, con);
+        }
+    }
+
+    private void sendRoomInfo(Session session) {
+        switch (ServerManager.getServerType()) {
+            case NORMAL:
+            case PRACTICE:
+            case TOURNAMENT:
+                session.send(MessageBuilder.roomInfo(this));
+                break;
+            case CLUB:
+                session.send(MessageBuilder.clubRoomInfo(this));
+                break;
+            default:
+        }
+    }
+
+    public void sendHostInfo() {
+        synchronized (locker) {
+            if (state == RoomState.COUNT_DOWN) {
+                getCountdownTimeoutFuture().cancel(true);
+                sendBroadcast(MessageBuilder.hostInfo(this));
+            }
+        }
+    }
+
+    private void sendRoomPlayersInfo(Session session) {
+        try (Connection con = MySqlManager.getConnection()) {
+            getPlayers().values().stream().forEach(s ->
+                    session.sendAndFlush(getRoomPlayerInfo(s, con)));
+        } catch (SQLException ignored) {}
     }
 
     public void sendBroadcast(ServerMessage msg) {
@@ -422,14 +475,14 @@ public class Room {
         return getPlayers().containsKey(playerId);
     }
 
+    public boolean isObserver(int playerId) {
+        return getObservers().contains(playerId);
+    }
+
     public boolean isNotFull() {
         synchronized (locker) {
             return getPlayers().size() < getMaxSize().toInt();
         }
-    }
-
-    public boolean playerHasInvalidLevel(short level) {
-        return level < getMinLevel() || level > getMaxLevel();
     }
 
     private boolean isTeamFull(RoomTeam team) {
@@ -443,8 +496,8 @@ public class Room {
         }
     }
 
-    public boolean isObserver(int playerId) {
-        return getObservers().contains(playerId);
+    public boolean isLevelAllowed(short level) {
+        return level >= getMinLevel() && level <= getMaxLevel();
     }
 
     public boolean isValidMinLevel(byte level) {
@@ -472,6 +525,24 @@ public class Room {
         return getPlayers().values().stream().filter(s -> !observers.contains(s.getPlayerId()))
                 .count() < 6 || redTeamSize() != blueTeamSize();
     }
+
+    public boolean isPlaying() {
+        return state() != RoomState.WAITING;
+    }
+
+    public boolean isInLobbyScreen() {
+        return state() == RoomState.WAITING || state() == RoomState.COUNT_DOWN;
+    }
+
+    public void resetTrainingFactor() {
+        trainingFactor = -1;
+    }
+
+    public void updateTrainingFactor() {
+        trainingFactor = isTraining() ? 0 : redTeamSize() + blueTeamSize();
+    }
+
+    /* ---- Accessors ---- */
 
     public int getId() {
         return id;
@@ -538,7 +609,7 @@ public class Room {
     }
 
     public byte getCurrentSize() {
-        return (byte)getPlayers().size();
+        return (byte) getPlayers().size();
     }
 
     public int getHost() {
@@ -557,14 +628,6 @@ public class Room {
         this.master = master;
 
         sendBroadcast(MessageBuilder.roomMaster(master));
-    }
-
-    public boolean isPlaying() {
-        return state() != RoomState.WAITING;
-    }
-
-    public boolean isLobbyScreen() {
-        return state() == RoomState.WAITING || state() == RoomState.COUNT_DOWN;
     }
 
     public String getName() {
@@ -596,11 +659,11 @@ public class Room {
     }
 
     public int redTeamSize() {
-        return (int)getRedTeam().stream().filter(id -> !observers.contains(id)).count();
+        return (int) getRedTeam().stream().filter(id -> !observers.contains(id)).count();
     }
 
     public int blueTeamSize() {
-        return (int)getBlueTeam().stream().filter(id -> !observers.contains(id)).count();
+        return (int) getBlueTeam().stream().filter(id -> !observers.contains(id)).count();
     }
 
     public RoomLobby getRoomLobby() {
@@ -637,14 +700,6 @@ public class Room {
         return trainingFactor;
     }
 
-    public void resetTrainingFactor() {
-        trainingFactor = -1;
-    }
-
-    public void updateTrainingFactor() {
-        trainingFactor = isTraining() ? 0 : redTeamSize() + blueTeamSize();
-    }
-
     public long getTimeStart() {
         return timeStart;
     }
@@ -655,5 +710,13 @@ public class Room {
 
     public SwapLocker getSwapLocker() {
         return swapLocker;
+    }
+
+    public ScheduledFuture<?> getCountdownTimeoutFuture() {
+        return countdownTimeoutFuture;
+    }
+
+    public void setCountdownTimeoutFuture(ScheduledFuture<?> countdownTimeoutFuture) {
+        this.countdownTimeoutFuture = countdownTimeoutFuture;
     }
 }

@@ -137,6 +137,7 @@ public class RoomMessages {
         // Try to join the room.
         if (room != null) {
             room.tryJoinRoom(session, password);
+            room.startCountDown();
         } else {
             // Result -3 means that the room does not exists.
             session.send(MessageBuilder.joinRoom(null, session.getPlayerId(), (byte) -3));
@@ -321,7 +322,7 @@ public class RoomMessages {
         // If the room exist and the player is inside it
         if (room != null && room.getId() == roomId) {
             // If the player is the room master
-            if (room.getMaster() == session.getPlayerId() && room.isLobbyScreen()) {
+            if (room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
                 // If the player is in the room
                 if (room.isPlayerIn(playerToKick)) {
                     room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
@@ -383,29 +384,32 @@ public class RoomMessages {
 
     public static void startCountDown(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        byte type = msg.readByte();
 
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
-            int playerId = session.getPlayerId();
 
-            switch (type) {
-                case 1:
-                    if (!room.getConfirmedPlayers().contains(playerId)) {
-                        room.getConfirmedPlayers().add(playerId);
-                    }
+            if (room != null) {
+                int playerId = session.getPlayerId();
+                byte type = msg.readByte();
 
-                    if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
-                        room.getConfirmedPlayers().clear();
-                        room.sendBroadcast(MessageBuilder.startCountDown((byte)1));
-                    }
-                    break;
-                case -1:
-                    if (!room.isPlaying() && room.getMaster() == playerId) {
-                        room.startCountDown();
-                    }
-                    break;
-                default:
+                switch (type) {
+                    case 1:
+                        if (!room.getConfirmedPlayers().contains(playerId)) {
+                            room.getConfirmedPlayers().add(playerId);
+                        }
+
+                        if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
+                            room.getConfirmedPlayers().clear();
+                            room.sendBroadcast(MessageBuilder.startCountDown((byte) 1));
+                        }
+                        break;
+                    case -1:
+                        if (!room.isPlaying() && room.getMaster() == playerId) {
+                            room.startCountDown();
+                        }
+                        break;
+                    default:
+                }
             }
         }
     }
@@ -417,7 +421,7 @@ public class RoomMessages {
             Room room = RoomManager.getRoomById(roomId);
 
             if (room.getHost() == session.getPlayerId()) {
-                room.sendBroadcast(MessageBuilder.hostInfo(room));
+                room.sendHostInfo();
             }
         }
     }
@@ -428,7 +432,7 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.getMaster() == session.getPlayerId() && room.isLobbyScreen()) {
+        if (room != null && room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
             if (count == 0) {
                 room.setState(RoomState.LOADING);
                 room.updateTrainingFactor();

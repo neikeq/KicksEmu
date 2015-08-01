@@ -97,7 +97,7 @@ public class RoomManager {
     public static Room getQuickRoom(short level) {
         List<Room> freeRooms = ROOMS.values().stream()
                 .filter(r -> !r.isPlaying() && r.getAccessType() != RoomAccessType.PASSWORD &&
-                        r.isNotFull() && !r.playerHasInvalidLevel(level))
+                        r.isNotFull() && r.isLevelAllowed(level))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         Collections.sort(freeRooms, (r1, r2) ->
