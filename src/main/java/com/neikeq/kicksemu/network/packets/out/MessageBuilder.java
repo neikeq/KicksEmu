@@ -784,13 +784,9 @@ public class MessageBuilder {
     }
 
     public static ServerMessage leaveRoom(int playerId, RoomLeaveReason reason) {
-        return leaveRoom(playerId, reason.toShort());
-    }
-
-    public static ServerMessage leaveRoom(int playerId, short reason) {
         ServerMessage msg = new ServerMessage(MessageId.LEAVE_ROOM);
 
-        msg.writeShort(reason);
+        msg.writeShort(reason.toShort());
         msg.writeInt(playerId);
 
         return msg;

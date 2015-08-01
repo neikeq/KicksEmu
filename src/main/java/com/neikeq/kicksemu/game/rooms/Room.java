@@ -46,10 +46,8 @@ public class Room {
     private final SwapLocker swapLocker = new SwapLocker();
 
     private final Map<Integer, Session> players = new LinkedHashMap<>();
-    private final Map<Integer, RoomTeam> disconnectedPlayers = new LinkedHashMap<>();
 
     private final List<Integer> confirmedPlayers = new ArrayList<>();
-    private final List<Integer> reconnectedPlayers = new ArrayList<>();
     private final List<Integer> redTeam = new ArrayList<>();
     private final List<Integer> blueTeam = new ArrayList<>();
     private final List<Integer> observers = new ArrayList<>();
@@ -69,7 +67,7 @@ public class Room {
                 // If room does not have a password, or typed password matches room's password
                 if (getAccessType() != RoomAccessType.PASSWORD || password.equals(getPassword()) ||
                         PlayerInfo.isModerator(playerId)) {
-                    if (!isPlaying() || isPlayerReconnecting(playerId)) {
+                    if (!isPlaying()) {
                         short level = PlayerInfo.getLevel(playerId);
 
                         // If player level is not allowed in room settings
@@ -113,11 +111,7 @@ public class Room {
             getRoomLobby().addPlayer(playerId);
 
             // Add player to the correct team
-            if (disconnectedPlayers.containsKey(playerId) && state() != RoomState.WAITING) {
-                addPlayerToTeam(playerId, disconnectedPlayers.get(playerId));
-            } else {
-                addPlayerToTeam(playerId);
-            }
+            addPlayerToTeam(playerId);
 
             // If player is in observer mode add it to the observers list
             if (session.isObserver()) {
@@ -136,8 +130,6 @@ public class Room {
     
     public void removePlayer(Session session, RoomLeaveReason reason) {
         int playerId = session.getPlayerId();
-
-        RoomTeam playerTeam = getPlayerTeam(playerId);
 
         synchronized (locker) {
             // Remove player from players list and room lobby
@@ -170,7 +162,7 @@ public class Room {
         // Notify the session
         session.onLeavedRoom();
 
-        onPlayerLeaved(playerId, reason, playerTeam);
+        onPlayerLeaved(playerId, reason);
     }
 
     private void onHostLeaved(int playerId) {
@@ -315,7 +307,7 @@ public class Room {
         }
     }
 
-    public ServerMessage getRoomPlayerInfo(Session session, Connection ... con) {
+    private ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
         switch (ServerManager.getServerType()) {
             case CLUB:
                 return MessageBuilder.clubRoomPlayerInfo(session, this, con);
@@ -336,40 +328,22 @@ public class Room {
         // Send to the client information about players inside the room
         sendRoomPlayersInfo(session);
 
-        // Notify players in room about the new player
-        if (!disconnectedPlayers.containsKey(playerId)) {
-            if (players.size() > 1) {
-                try (Connection con = MySqlManager.getConnection()) {
-                    sendBroadcast(getRoomPlayerInfo(session, con),
-                            s -> s.getPlayerId() != playerId);
-                } catch (SQLException ignored) {}
-            }
-        } else {
-            disconnectedPlayers.remove(playerId);
-            getReconnectedPlayers().add(playerId);
-
-            // Notify about the player which reconnected
-            String message = "Player reconnected: " + PlayerInfo.getName(playerId);
-            sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
-
-            ThreadUtils.sleep(1000);
-            session.send(MessageBuilder.startCountDown((byte) -1));
-            session.send(MessageBuilder.hostInfo(this));
-            session.sendAndFlush(MessageBuilder.countDown((short) 0));
+        // Notify all the players in the room about the new player
+        if (players.size() > 1) {
+            try (Connection con = MySqlManager.getConnection()) {
+                sendBroadcast(getRoomPlayerInfo(session, con),
+                        s -> s.getPlayerId() != playerId);
+            } catch (SQLException ignored) {}
         }
     }
 
-    private void onPlayerLeaved(int playerId, RoomLeaveReason reason, RoomTeam team) {
+    private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
-        if (state() != RoomState.PLAYING) {
-            sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
-        } else {
-            disconnectedPlayers.put(playerId, team);
-            getReconnectedPlayers().remove(Integer.valueOf(playerId));
+        sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
 
-            // Notify about the player which disconnected
+        if (state() == RoomState.PLAYING) {
             String message = "Player disconnected: " + PlayerInfo.getName(playerId);
-            sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
+            sendBroadcast(MessageBuilder.chatMessage(MessageType.WHISPER, message));
         }
 
         // If the countdown started, cancel it
@@ -446,10 +420,6 @@ public class Room {
 
     public boolean isPlayerIn(int playerId) {
         return getPlayers().containsKey(playerId);
-    }
-
-    private boolean isPlayerReconnecting(int playerId) {
-        return state == RoomState.PLAYING && disconnectedPlayers.containsKey(playerId);
     }
 
     public boolean isNotFull() {
@@ -609,10 +579,6 @@ public class Room {
         return players;
     }
 
-    public Map<Integer, RoomTeam> getDisconnectedPlayers() {
-        return disconnectedPlayers;
-    }
-
     public List<Short> getRedTeamPositions() {
         return redTeamPositions;
     }
@@ -664,19 +630,6 @@ public class Room {
     public void setState(RoomState state) {
         synchronized (locker) {
             this.state = state;
-
-            if (state == RoomState.RESULT || state == RoomState.WAITING) {
-                // Notify players to remove disconnected player definitely
-                disconnectedPlayers.keySet().forEach(playerId -> {
-                    ServerMessage message = MessageBuilder.leaveRoom(playerId,
-                            RoomLeaveReason.DISCONNECTED);
-                    sendBroadcast(message);
-                });
-
-                disconnectedPlayers.clear();
-            } else if (state == RoomState.LOADING) {
-                getReconnectedPlayers().clear();
-            }
         }
     }
 
@@ -702,9 +655,5 @@ public class Room {
 
     public SwapLocker getSwapLocker() {
         return swapLocker;
-    }
-
-    public List<Integer> getReconnectedPlayers() {
-        return reconnectedPlayers;
     }
 }

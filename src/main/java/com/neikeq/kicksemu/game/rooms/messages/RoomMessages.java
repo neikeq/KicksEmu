@@ -41,7 +41,6 @@ import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Optional;
 
 public class RoomMessages {
 
@@ -524,15 +523,6 @@ public class RoomMessages {
         MatchResult result = MatchResult.fromMessage(msg,
                 room.redTeamSize() + room.blueTeamSize());
 
-        // Remove disconnected players from players result
-        room.getDisconnectedPlayers().keySet().forEach(playerId -> {
-            Optional<PlayerResult> optional = result.getPlayers().stream()
-                    .filter(pr -> pr.getPlayerId() == playerId).findFirst();
-            if (optional.isPresent()) {
-                result.getPlayers().remove(optional.get());
-            }
-        });
-
         // Apply level gap bonus if the levels difference in room settings is less than 10
         final boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
         final boolean goldenTime = GameEvents.isGoldenTime();
@@ -668,12 +658,15 @@ public class RoomMessages {
                 }
             });
 
-            final long delay = DateUtils.currentTimeMillis() - startTime;
-            final int minDelay = 1000;
+            // If the match was not finished manually, or was finished during golden goal
+            if (gameCountdown <= 0) {
+                final long delay = DateUtils.currentTimeMillis() - startTime;
+                final int minDelay = 1000;
 
-            // This fixed delay is necessary to avoid golden goal bug
-            if (delay < minDelay) {
-                ThreadUtils.sleep(minDelay - delay);
+                // This fixed delay is necessary to avoid golden goal bug
+                if (delay < minDelay) {
+                    ThreadUtils.sleep(minDelay - delay);
+                }
             }
 
             // Broadcast match result message after calculating rewards
@@ -737,21 +730,6 @@ public class RoomMessages {
             Room room = RoomManager.getRoomById(roomId);
 
             room.setState(RoomState.WAITING);
-
-            try (Connection con = MySqlManager.getConnection()) {
-                room.getReconnectedPlayers().forEach(playerId -> {
-                    Session playerSession = room.getPlayers().get(playerId);
-
-                    room.sendBroadcast(MessageBuilder.leaveRoom(playerId, (short) 4),
-                            s -> s.getPlayerId() != playerId);
-
-                    room.sendBroadcast(room.getRoomPlayerInfo(playerSession, con),
-                            s -> s.getPlayerId() != playerId);
-                });
-            } catch (SQLException ignored) {}
-
-            room.getReconnectedPlayers().clear();
-
             room.sendBroadcast(MessageBuilder.unknown1());
         }
     }
