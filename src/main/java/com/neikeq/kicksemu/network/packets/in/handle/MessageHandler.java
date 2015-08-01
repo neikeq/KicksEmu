@@ -94,7 +94,11 @@ public class MessageHandler {
             events.put(MessageId.CANCEL_LOADING, RoomMessages::cancelLoading);
             events.put(MessageId.START_MATCH, RoomMessages::startMatch);
             events.put(MessageId.MATCH_RESULT, RoomMessages::matchResult);
-            events.put(MessageId.MATCH_FORCED_RESULT, RoomMessages::matchResult);
+
+            if (Configuration.getBoolean("game.match.result.force")) {
+                events.put(MessageId.MATCH_FORCED_RESULT, RoomMessages::matchResult);
+            }
+
             events.put(MessageId.UNKNOWN1, RoomMessages::unknown1);
             events.put(MessageId.UNKNOWN2, RoomMessages::unknown2);
             events.put(MessageId.CLUB_ROOM_LIST, ClubRoomMessages::roomList);
