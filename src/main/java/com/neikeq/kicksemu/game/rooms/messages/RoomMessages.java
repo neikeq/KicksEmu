@@ -549,7 +549,7 @@ public class RoomMessages {
             PlayerLevelCache levelCache = new PlayerLevelCache();
             MutableInteger roomAvgLevel = new MutableInteger(0);
 
-            if (levelExpWeightingFlag) {
+            if (result.getPlayers().size() > 0 && levelExpWeightingFlag) {
                 MutableInteger avgLevel = new MutableInteger(0);
 
                 result.getPlayers().stream().forEach(pr -> {

@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
@@ -52,6 +53,7 @@ public class Room {
     private final Map<Integer, Session> players = new LinkedHashMap<>();
 
     private final List<Integer> confirmedPlayers = new ArrayList<>();
+    private final List<Integer> disconnectedPlayers = new ArrayList<>();
     private final List<Integer> redTeam = new ArrayList<>();
     private final List<Integer> blueTeam = new ArrayList<>();
     private final List<Integer> observers = new ArrayList<>();
@@ -336,7 +338,14 @@ public class Room {
 
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
-        sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
+        if (Configuration.getBoolean("game.match.result.force")) {
+            sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
+        } else {
+            disconnectedPlayers.add(playerId);
+            // With this trick, the ball won't target nor collide to the disconnected player.
+            // He will still be visible though.
+            sendBroadcast(MessageBuilder.setObserver(playerId, true));
+        }
 
         if (state() == RoomState.PLAYING) {
             String message = "Player disconnected: " + PlayerInfo.getName(playerId);
@@ -693,6 +702,16 @@ public class Room {
     public void setState(RoomState state) {
         synchronized (locker) {
             this.state = state;
+
+            if (state == RoomState.RESULT || state == RoomState.WAITING) {
+                // Notify players to remove disconnected player definitely
+                disconnectedPlayers.forEach(playerId ->
+                        sendBroadcast(
+                                MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)
+                        ));
+
+                disconnectedPlayers.clear();
+            }
         }
     }
 
