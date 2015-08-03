@@ -71,27 +71,37 @@ public class ChatCommands {
             int expForAskedLvl = lvlInfo.getExperience();
             final int exp = PlayerInfo.getExperience(playerId, con);
 
-            ChatUtils.sendServerMessage(session, df.format(expForAskedLvl - exp) + " to reach Lv " + askedLvl);
+            ChatUtils.sendServerMessage(session, df.format(expForAskedLvl - exp) +
+                    " to reach Lv " + askedLvl);
         } catch (SQLException | NumberFormatException ignored) {}
     }
 
     private static void onWho(Session session, String... args) {
         if (args.length < 2) return;
 
-        Room room = RoomManager.getRoomById(session.getRoomId());
+        try {
+            boolean specifiesRoomId = args.length > 2;
 
-        if (room != null) {
-            switch (args[1].toLowerCase()) {
-                case "master":
-                    ChatUtils.sendServerMessage(session,
-                            "Master: " + PlayerInfo.getName(room.getMaster()));
-                    break;
-                case "host":
-                    ChatUtils.sendServerMessage(session,
-                            "Host: " + PlayerInfo.getName(room.getHost()));
-                    break;
-                default:
+            Room room = RoomManager.getRoomById(specifiesRoomId ?
+                    Integer.valueOf(args[2]) : session.getRoomId());
+
+            if (room != null) {
+                switch (args[1].toLowerCase()) {
+                    case "master":
+                        ChatUtils.sendServerMessage(session,
+                                "Master: " + PlayerInfo.getName(room.getMaster()));
+                        break;
+                    case "host":
+                        ChatUtils.sendServerMessage(session,
+                                "Host: " + PlayerInfo.getName(room.getHost()));
+                        break;
+                    default:
+                }
+            } else if (specifiesRoomId) {
+                ChatUtils.sendServerMessage(session, "The room does not exist.");
             }
+        } catch (NumberFormatException ignored) {
+            ChatUtils.sendServerMessage(session, "The specified room id is invalid.");
         }
     }
 
