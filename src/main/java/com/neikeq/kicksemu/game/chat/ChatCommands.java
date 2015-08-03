@@ -12,6 +12,7 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.GameEvents;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -189,6 +190,22 @@ public class ChatCommands {
         }
     }
 
+    private static void onGoldenTime(Session session, String ... args) {
+        if (args.length < 2) return;
+
+        if (PlayerInfo.isModerator(session.getPlayerId())) {
+            try {
+                float duration = Float.valueOf(args[1]);
+                GameEvents.setCustomGoldenTime(duration <= 0 ? 0 : duration);
+
+                ChatUtils.sendServerMessage(session, "Golden time " +
+                        (duration > 0 ? "enabled for " + duration + " hours." : "disabled."));
+            } catch (NumberFormatException ignored) {
+                ChatUtils.sendServerMessage(session, "The specified duration is invalid.");
+            }
+        }
+    }
+
     public static void initialize() {
         commands.put("host", ChatCommands::onMaster);
         commands.put("progress", ChatCommands::onProgress);
@@ -198,6 +215,7 @@ public class ChatCommands {
         commands.put("notice", ChatCommands::onNotice);
         commands.put("observer", (s, a) -> ChatCommands.onObserver(s));
         commands.put("visible", (s, a) -> ChatCommands.onVisible(s));
+        commands.put("goldentime", ChatCommands::onGoldenTime);
     }
 
     @FunctionalInterface

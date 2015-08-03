@@ -10,6 +10,7 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.io.logging.Logger;
 import com.neikeq.kicksemu.network.server.ServerManager;
+import com.neikeq.kicksemu.utils.GameEvents;
 
 import java.io.IOException;
 import java.util.Map;
@@ -112,6 +113,20 @@ public class Input {
         }
     }
 
+    private void handleGoldenTime(String ... arg) {
+        if (arg.length < 2) return;
+
+        try {
+            float duration = Float.valueOf(arg[1]);
+            GameEvents.setCustomGoldenTime(duration <= 0 ? 0 : duration);
+
+            Output.println("Golden time " +
+                    (duration > 0 ? "enabled for " + duration + " hours." : "disabled."));
+        } catch (NumberFormatException ignored) {
+            System.out.println("The specified duration is invalid.");
+        }
+    }
+
     private void defineCommands() {
         commands = new TreeMap<>();
         commands.put("save", this::handleSave);
@@ -120,6 +135,7 @@ public class Input {
         commands.put("stop", (arg) -> KicksEmu.stop());
         commands.put("notice", this::handleNotice);
         commands.put("stats", (arg) -> handleStats());
+        commands.put("goldentime", this::handleGoldenTime);
     }
 
     public Input() {
