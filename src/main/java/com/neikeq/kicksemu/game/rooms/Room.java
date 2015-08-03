@@ -338,7 +338,7 @@ public class Room {
 
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
-        if (Configuration.getBoolean("game.match.result.force")) {
+        if (Configuration.getBoolean("game.match.result.force") || isInLobbyScreen()) {
             sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
         } else {
             disconnectedPlayers.add(playerId);
