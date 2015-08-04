@@ -198,8 +198,12 @@ public class ChatCommands {
                 float duration = Float.valueOf(args[1]);
                 GameEvents.setCustomGoldenTime(duration <= 0 ? 0 : duration);
 
-                ChatUtils.sendServerMessage(session, "Golden time " +
+                ChatUtils.broadcastNotice("Golden time manually " +
                         (duration > 0 ? "enabled for " + duration + " hours." : "disabled."));
+
+                if (duration <= 0 && GameEvents.isGoldenTime()) {
+                    ChatUtils.broadcastNotice("Scheduled Golden time is still active.");
+                }
             } catch (NumberFormatException ignored) {
                 ChatUtils.sendServerMessage(session, "The specified duration is invalid.");
             }
