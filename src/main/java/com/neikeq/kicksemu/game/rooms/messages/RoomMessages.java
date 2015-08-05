@@ -563,6 +563,8 @@ public class RoomMessages {
             // Reward players
             result.getPlayers().stream().forEach(pr -> {
                 int playerId = pr.getPlayerId();
+                short finishedQuest = -1;
+                Session playerSession = room.getPlayers().get(playerId);
 
                 int reward = MatchRewards.calculateReward(pr, room, gameCountdown);
 
@@ -637,8 +639,6 @@ public class RoomMessages {
                     pr.setExperience(experience.get());
                     pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
 
-                    Session playerSession = room.getPlayers().get(playerId);
-
                     // Add the experience and points earned to the player
                     PlayerInfo.sumRewards(pr.getExperience(), pr.getPoints(), playerId, con);
 
@@ -648,11 +648,7 @@ public class RoomMessages {
                             currentExp + experience.get(), con);
 
 
-                    short finishedQuest = QuestManager.checkQuests(playerId,
-                            result, playerTeam, con);
-
-                    playerSession.sendAndFlush(MessageBuilder.playerProgress(playerId,
-                            finishedQuest, con));
+                    finishedQuest = QuestManager.checkQuests(playerId, result, playerTeam, con);
 
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                     room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
@@ -661,6 +657,9 @@ public class RoomMessages {
                         playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));
                     }
                 }
+
+                playerSession.sendAndFlush(MessageBuilder.playerProgress(playerId,
+                        finishedQuest, con));
             });
 
             // If the match was not finished manually, or was finished during golden goal
