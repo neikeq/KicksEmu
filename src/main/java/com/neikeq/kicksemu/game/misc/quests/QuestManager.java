@@ -12,45 +12,63 @@ public class QuestManager {
 
     private static final Quest[] quests = {
             (playerId, questState, matchResult, teamResult, con) -> {
+                short finishedQuest = -1;
+
                 if (teamResult.getResult() != VictoryResult.NO_GAME) {
                     questState.decreaseRemainMatches();
 
                     if (questState.getRemainMatches() <= 0) {
+                        finishedQuest = questState.getCurrentQuest();
+
                         PlayerInfo.sumPoints(1000, playerId, con);
                         questState.nextQuest((short) 5);
                     }
 
                     PlayerInfo.setQuestState(questState, playerId, con);
                 }
+
+                return finishedQuest;
             },
             (playerId, questState, matchResult, teamResult, con) -> {
+                short finishedQuest = -1;
+
                 if (teamResult.getResult() == VictoryResult.WIN) {
                     questState.decreaseRemainMatches();
 
                     if (questState.getRemainMatches() <= 0) {
+                        finishedQuest = questState.getCurrentQuest();
+
                         PlayerInfo.sumPoints(2000, playerId, con);
                         questState.nextQuest((short) 1);
                     }
 
                     PlayerInfo.setQuestState(questState, playerId, con);
                 }
+
+                return finishedQuest;
             },
             (playerId, questState, matchResult, teamResult, con) -> {
+                short finishedQuest = -1;
+
                 if (teamResult.getResult() != VictoryResult.NO_GAME &&
                         matchResult.getMom() == playerId) {
                     questState.decreaseRemainMatches();
 
                     if (questState.getRemainMatches() <= 0) {
+                        finishedQuest = questState.getCurrentQuest();
+
                         PlayerInfo.sumPoints(3000, playerId, con);
                         questState.nextQuest((short) 0);
                     }
 
                     PlayerInfo.setQuestState(questState, playerId, con);
                 }
+
+                return finishedQuest;
             }
     };
 
-    public static void checkQuests(int playerId, MatchResult matchResult,
+    public static short checkQuests(int playerId, MatchResult matchResult,
                                    RoomTeam team, Connection ... con) {
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
@@ -61,8 +79,10 @@ public class QuestManager {
             if (currentQuest != null) {
                 TeamResult teamResult = team == RoomTeam.RED ?
                         matchResult.getRedTeam() : matchResult.getBlueTeam();
-                currentQuest.check(playerId, questState, matchResult, teamResult);
+                return currentQuest.check(playerId, questState, matchResult, teamResult);
             }
         }
+
+        return -1;
     }
 }

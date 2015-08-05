@@ -569,11 +569,13 @@ public class RoomMessages {
                 if (reward > 0) {
                     int appliedReward = reward;
 
+                    RoomTeam playerTeam = room.getPlayerTeam(playerId);
+
                     // If player's position is a DF branch
                     if (Position.trunk(PlayerInfo.getPosition(playerId, con)) == Position.DF) {
-                        short scoredGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                        short scoredGoals = playerTeam == RoomTeam.RED ?
                                 result.getRedTeam().getGoals() : result.getBlueTeam().getGoals();
-                        short concededGoals = room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                        short concededGoals = playerTeam == RoomTeam.RED ?
                                 result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
 
                         // If player's team did not lose and conceded 1 or less goals,
@@ -640,20 +642,20 @@ public class RoomMessages {
                     // Add the experience and points earned to the player
                     PlayerInfo.sumRewards(pr.getExperience(), pr.getPoints(), playerId, con);
 
-                    if (room.getTrainingFactor() > 0) {
-                        QuestManager.checkQuests(playerId, result,
-                                room.getPlayerTeam(playerId), con);
-                    }
-
                     // Check if player did level up and apply level up operations if needed
                     short levels = CharacterManager.checkExperience(playerId,
                             levelCache.getPlayerLevel(playerId, con),
                             currentExp + experience.get(), con);
 
+
+                    short finishedQuest = QuestManager.checkQuests(playerId,
+                            result, playerTeam, con);
+
+                    playerSession.sendAndFlush(MessageBuilder.playerProgress(playerId,
+                            finishedQuest, con));
+
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                     room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
-
-                    playerSession.sendAndFlush(MessageBuilder.playerProgress(playerId, con));
 
                     if (levels > 0) {
                         playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));

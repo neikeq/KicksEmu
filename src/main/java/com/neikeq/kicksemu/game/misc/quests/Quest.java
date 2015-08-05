@@ -7,6 +7,6 @@ import java.sql.Connection;
 
 interface Quest {
 
-    void check(int playerId, QuestState questState, MatchResult matchResult,
+    short check(int playerId, QuestState questState, MatchResult matchResult,
                      TeamResult teamResult, Connection... con);
 }

@@ -1459,7 +1459,8 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerProgress(int playerId, Connection ... con) {
+    public static ServerMessage playerProgress(int playerId,
+                                               short finishedQuest, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_PROGRESS);
 
         msg.writeShort((short) 1);
@@ -1469,11 +1470,15 @@ public class MessageBuilder {
         short currentQuest = questState.getCurrentQuest();
         short remainMatches = questState.getRemainMatches();
 
-        // Client does not recognize quest 4 in the result screen.
-        // For this reason we must set the quest to 3 to avoid client crash.
-        // Since the remain matches equals -1, it won't appear in the result screen.
-        if (currentQuest > 3) {
-            currentQuest = 3;
+        if (finishedQuest > 0) {
+            // By using the value -1 of remain matched with a finished quest,
+            // the result screen will display 'Quest X completed'.
+            currentQuest = finishedQuest;
+            remainMatches = -1;
+        } else if (currentQuest > 3) {
+            // In the result screen, the "All Quests finished" state (quest 4)
+            // must have a value of -1 in remainMatches, instead of 0.
+            currentQuest = 4;
             remainMatches = -1;
         }
 
