@@ -11,9 +11,9 @@ import com.neikeq.kicksemu.game.users.UserInfo;
 
 import com.neikeq.kicksemu.network.server.ServerManager;
 import io.netty.channel.Channel;
+import io.netty.util.concurrent.ScheduledFuture;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ScheduledFuture;
 
 public class Session {
 

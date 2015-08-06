@@ -16,7 +16,7 @@ public class EventsManager {
         scheduleEvent(new TournamentEvent());
     }
 
-    private static void scheduleEvent(GameEvent event) throws SchedulerException {
+    public static void scheduleEvent(GameEvent event) throws SchedulerException {
         scheduler.scheduleJob(event.getJob(), event.getTrigger());
     }
 }
