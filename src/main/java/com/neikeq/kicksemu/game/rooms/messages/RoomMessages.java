@@ -647,7 +647,6 @@ public class RoomMessages {
                             levelCache.getPlayerLevel(playerId, con),
                             currentExp + experience.get(), con);
 
-
                     finishedQuest = QuestManager.checkQuests(playerId, result, playerTeam, con);
 
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));

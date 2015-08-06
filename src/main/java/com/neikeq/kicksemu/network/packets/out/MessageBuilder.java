@@ -1470,15 +1470,13 @@ public class MessageBuilder {
         short currentQuest = questState.getCurrentQuest();
         short remainMatches = questState.getRemainMatches();
 
+        // By using the value -1 of remain matched with a finished quest,
+        // the result screen will display 'Quest X completed'.
         if (finishedQuest > 0) {
-            // By using the value -1 of remain matched with a finished quest,
-            // the result screen will display 'Quest X completed'.
             currentQuest = finishedQuest;
             remainMatches = -1;
         } else if (currentQuest > 3) {
-            // In the result screen, the "All Quests finished" state (quest 4)
-            // must have a value of -1 in remainMatches, instead of 0.
-            currentQuest = 4;
+            currentQuest = 3;
             remainMatches = -1;
         }
 
