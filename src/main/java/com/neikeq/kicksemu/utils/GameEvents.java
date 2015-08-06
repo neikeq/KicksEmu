@@ -2,32 +2,31 @@ package com.neikeq.kicksemu.utils;
 
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameEvents {
 
-    private static long customGoldenTimeStart = 0;
-    private static float customGoldenTimeDuration = 0;
+    private static boolean customGoldenTime = false;
+    private static Timer customGoldenTimeTimer = new Timer();
 
     public static void setCustomGoldenTime(float duration) {
-        customGoldenTimeDuration = duration;
 
         if (duration > 0) {
-            customGoldenTimeStart = DateUtils.currentTimeMillis();
+            customGoldenTimeTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    customGoldenTime = false;
+                }
+            }, (long) (duration * 3600000));
+        } else {
+            customGoldenTimeTimer.cancel();
+            customGoldenTime = false;
         }
     }
 
     public static boolean isGoldenTime() {
-        if (customGoldenTimeDuration > 0) {
-            // Hours to Milliseconds
-            long durationMillis = (long) (customGoldenTimeDuration * 3600000);
-
-            // If the custom golden time is still active
-            if (DateUtils.currentTimeMillis() - customGoldenTimeStart < durationMillis) {
-                return true;
-            } else {
-                customGoldenTimeDuration = 0;
-            }
-        }
+        if (customGoldenTime) return true;
 
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("CET"));
         int day = c.get(Calendar.DAY_OF_WEEK);
