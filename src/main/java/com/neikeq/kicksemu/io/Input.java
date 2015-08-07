@@ -11,6 +11,7 @@ import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.io.logging.Logger;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.utils.GameEvents;
+import org.quartz.SchedulerException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -113,17 +114,50 @@ public class Input {
         }
     }
 
+    /**
+     * -- Usage --
+     * Print the state of golden time: "goldentime"
+     * Start custom golden time with H:m duration: "goldentime H:m"
+     * Stop custom golden time: "goldentime 0:0" or "goldentime 0"
+     * @param arg arguments
+     */
     private void handleGoldenTime(String ... arg) {
-        if (arg.length < 2) return;
+        if (arg.length < 2) {
+            Output.println("Golden time is " +
+                    (GameEvents.isGoldenTime() ? "enabled." : "disabled."));
+            return;
+        }
 
         try {
-            float duration = Float.valueOf(arg[1]);
-            GameEvents.setCustomGoldenTime(duration <= 0 ? 0 : duration);
+            if (arg[1].equals("0")) {
+                GameEvents.setCustomGoldenTime(0);
+                ChatUtils.broadcastNotice("Golden time disabled.");
+            } else {
+                String[] duration = arg[1].split(":");
+                int minutes = (Integer.valueOf(duration[0]) * 60) + Integer.valueOf(duration[1]);
 
-            Output.println("Golden time " +
-                    (duration > 0 ? "enabled for " + duration + " hours." : "disabled."));
-        } catch (NumberFormatException ignored) {
-            System.out.println("The specified duration is invalid.");
+                GameEvents.setCustomGoldenTime(minutes <= 0 ? 0 : minutes);
+
+                if (minutes > 0) {
+                    int hours = minutes / 60;
+                    int mins = minutes % 60;
+
+                    ChatUtils.broadcastNotice("Golden time enabled for " +
+                            (hours > 0 ? hours + " hours" : "") +
+                            (hours > 0 && mins > 0 ? " and " : "") +
+                            (mins > 0 ? mins + " minutes" : "") + ".");
+                } else {
+                    ChatUtils.broadcastNotice("Golden time disabled.");
+                }
+
+                if (minutes <= 0 && GameEvents.isGoldenTime()) {
+                    ChatUtils.broadcastNotice("Scheduled Golden time is still active.");
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
+            System.out.println("The specified duration is invalid. Expected: H:m");
+        } catch (SchedulerException e) {
+            System.out.println("Something went wrong with the scheduler: " + e.getMessage());
         }
     }
 
@@ -136,6 +170,7 @@ public class Input {
         commands.put("notice", this::handleNotice);
         commands.put("stats", (arg) -> handleStats());
         commands.put("goldentime", this::handleGoldenTime);
+        commands.put("gt", (arg) -> System.out.println(GameEvents.isGoldenTime()));
     }
 
     public Input() {

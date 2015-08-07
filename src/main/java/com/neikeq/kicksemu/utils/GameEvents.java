@@ -1,29 +1,30 @@
 package com.neikeq.kicksemu.utils;
 
+import com.neikeq.kicksemu.game.events.EventsManager;
+import com.neikeq.kicksemu.game.events.GoldenTimeEvent;
+import org.quartz.SchedulerException;
+
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class GameEvents {
 
     private static boolean customGoldenTime = false;
-    private static Timer customGoldenTimeTimer = new Timer();
 
-    public static void setCustomGoldenTime(float duration) {
+    public static void setCustomGoldenTime(int durationMinutes) throws SchedulerException {
+        GoldenTimeEvent customGoldenTimeEvent = new GoldenTimeEvent(durationMinutes);
 
-        if (duration > 0) {
+        if (durationMinutes > 0) {
+            EventsManager.scheduleEvent(customGoldenTimeEvent);
             customGoldenTime = true;
-            customGoldenTimeTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    customGoldenTime = false;
-                }
-            }, (long) (duration * 3600000));
         } else {
-            customGoldenTimeTimer.cancel();
+            EventsManager.cancelEvent(customGoldenTimeEvent.getJob().getKey());
             customGoldenTime = false;
         }
+    }
+
+    public static void cancelCustomGoldenTime() {
+        customGoldenTime = false;
     }
 
     public static boolean isGoldenTime() {
