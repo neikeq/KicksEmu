@@ -13,6 +13,7 @@ public class GameEvents {
     public static void setCustomGoldenTime(float duration) {
 
         if (duration > 0) {
+            customGoldenTime = true;
             customGoldenTimeTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
