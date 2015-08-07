@@ -16,6 +16,7 @@ import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.Password;
 import com.neikeq.kicksemu.utils.ThreadUtils;
+import io.netty.util.concurrent.ScheduledFuture;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -24,7 +25,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Authenticator {
