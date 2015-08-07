@@ -72,7 +72,7 @@ public class UserManager {
         if (settings.isValid()) {
             UserInfo.setSettings(settings, session.getUserId());
         } else {
-            result = (byte)255;
+            result = (byte) -1;
         }
 
         session.send(MessageBuilder.updateSettings(result));
@@ -89,10 +89,10 @@ public class UserManager {
                 SessionInfo.setPlayerId(charId, session.getSessionId());
                 session.setPlayerId(charId);
             } else {
-                result = (byte)255; // System problem
+                result = (byte) -1; // System problem
             }
         } else {
-            result = (byte)254; // Character does not exist
+            result = (byte) -2; // Character does not exist
         }
 
         session.send(MessageBuilder.choiceCharacter(charId, result));

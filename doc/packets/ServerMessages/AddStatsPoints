@@ -8,9 +8,9 @@ Data:
 int packet_id
 byte reason
 /*
- * Problem with character's values: 253
- * Character problem: 254
- * System problem: 255
+ * Problem with character's values: -3
+ * Character problem: -2
+ * System problem: -1
  */
 byte response
 int character_id

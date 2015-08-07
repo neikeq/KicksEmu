@@ -6,8 +6,8 @@ Size: 8 + 23 per training
 
 Data:
 int packet_id
-byte reason // Invalid information: 254, System problem: 255
-byte response // Success: 0, Rejected: 255
+byte reason // Invalid information: -2, System problem: -1
+byte response // Success: 0, Rejected: .1
 short amount
 // Apply the following for each training
 int inventory_id

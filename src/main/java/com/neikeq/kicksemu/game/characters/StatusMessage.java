@@ -21,7 +21,7 @@ public class StatusMessage {
         byte result = 0;
 
         if (containsCensuredWord(statusMessage)) {
-            result = (byte)254;
+            result = (byte) -2;
         }
 
         if (result == 0) {

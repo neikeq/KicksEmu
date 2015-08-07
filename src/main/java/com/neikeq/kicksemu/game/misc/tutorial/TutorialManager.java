@@ -60,7 +60,7 @@ public class TutorialManager {
                 } catch (SQLException ignored) {}
             }
         } else {
-            result = (byte)255; // System problem
+            result = (byte) -1; // System problem
         }
 
         session.send(MessageBuilder.updateTutorial(dribbling, passing,

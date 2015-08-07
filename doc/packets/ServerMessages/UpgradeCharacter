@@ -8,7 +8,7 @@ Data:
 int packet_id
 byte reason
 /*
- * Name already in use: 254
- * System problem: 255
+ * Name already in use: -2
+ * System problem: -1
  */
 byte response

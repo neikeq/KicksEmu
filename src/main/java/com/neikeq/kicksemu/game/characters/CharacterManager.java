@@ -203,7 +203,7 @@ public class CharacterManager {
             total += values[i];
 
             if (values[i] < 0) {
-                result = (byte) 254; // Invalid value
+                result = (byte) -2; // Invalid value
                 break;
             }
         }
@@ -225,7 +225,7 @@ public class CharacterManager {
                     PlayerInfo.setStats(stats, playerId, con);
                     PlayerInfo.sumStatsPoints((short) -(total - remain.get()), playerId, con);
                 } else {
-                    result = (byte) 253; // Not enough stats points
+                    result = (byte) -3; // Not enough stats points
                 }
             }
 

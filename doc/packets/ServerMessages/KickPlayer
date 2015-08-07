@@ -8,11 +8,11 @@ Data:
 int packet_id
 byte reason
 /*
- * Player not found: 252
- * You are not the room master: 253
- * Room does not exist: 254
+ * Player not found: -4
+ * You are not the room master: -3
+ * Room does not exist: -2
  */
 byte response
 
 Note:
-// This packet is sent to the client only if something went wrong, so response is always 255
+// This packet is sent to the client only if something went wrong, so response is always -1

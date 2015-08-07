@@ -8,8 +8,8 @@ Data:
 int packet_id
 byte reason
 /*
- * Character does not exist: 254
- * System has found a problem: 255
+ * Character does not exist: -2
+ * System has found a problem: -1
  */
-byte response // Rejected: 255, Success: 0
+byte response // Rejected: -1, Success: 0
 int character_id

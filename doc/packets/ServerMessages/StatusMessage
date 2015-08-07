@@ -8,8 +8,8 @@ Data:
 int packet_id
 byte reason
 /*
- * Invalid word or characters: 254
- * System problem: 255
+ * Invalid word or characters: -2
+ * System problem: -1
  */
 byte response
 char[35] status_message

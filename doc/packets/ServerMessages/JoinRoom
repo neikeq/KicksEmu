@@ -9,14 +9,14 @@ int packet_id
 byte reason
 /*
  * Success: 0
- * You are not in player list: 247
- * Invalid level: 248
- * Room problem: 249
- * Match already started: 250
- * Wrong password: 251
- * Room is full: 252
- * Room does not exist: 253/254
- * System problem: 255
+ * You are not in player list: -9
+ * Invalid level: -8
+ * Room problem: -7
+ * Match already started: -6
+ * Wrong password: -5
+ * Room is full: -4
+ * Room does not exist: -3/-2
+ * System problem: -1
  */
 byte response
 short room_id

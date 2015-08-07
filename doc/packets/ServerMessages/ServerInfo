@@ -8,12 +8,13 @@ Data:
 int packet_id
 byte reason
 /*
- * You cannot access private server: 251
- * You need to be a club member: 252
- * Level not allowed: 253
- * Server is full: 254
+ * You cannot access private server: -5
+ * You need to be a club member: -4
+ * Level not allowed: -3
+ * Server is full: -2
+ * System problem: -1
  */
-byte response // Rejected: 255, Success: 0
+byte response // Rejected: -1, Success: 0
 short server_id
 /*
  * Server type codes:

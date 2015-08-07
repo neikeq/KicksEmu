@@ -21,7 +21,7 @@ public class ServerUtils {
     public static void serverList(Session session, ClientMessage msg) {
         List<Short> servers = getServerList(msg.readShort());
 
-        byte result = (byte)(servers == null ? 255 : 0);
+        byte result = (byte)(servers == null ? -1 : 0);
 
         session.send(MessageBuilder.serverList(servers, result));
     }

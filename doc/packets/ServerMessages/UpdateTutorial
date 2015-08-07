@@ -6,7 +6,7 @@ Size: 14
 
 Data:
 int packet_id
-byte reason // System found a problem: 255
+byte reason // System found a problem: -1
 byte response
 byte tutorial_dribbling
 byte tutorial_passing

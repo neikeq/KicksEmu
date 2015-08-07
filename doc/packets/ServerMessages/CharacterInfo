@@ -8,10 +8,10 @@ Data:
 int packet_id
 byte reason
 /*
- * Problem with the character: 252
- * Banned: 254
+ * Problem with the character: -3
+ * Banned: -2
  */
-byte response // Rejected: 255 // Success: 0
+byte response // Rejected: -1 // Success: 0
 int account_id
 int character_id
 short slot // 0, 1, 2

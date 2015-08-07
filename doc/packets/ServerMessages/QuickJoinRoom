@@ -8,7 +8,7 @@ Data:
 int packet_id
 byte reason
 /*
- * Could not find a room: 254
- * System problem: 255
+ * Could not find a room: -2
+ * System problem: -1
  */
 byte response

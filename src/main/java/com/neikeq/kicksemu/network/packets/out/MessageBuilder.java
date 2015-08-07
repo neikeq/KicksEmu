@@ -106,7 +106,7 @@ public class MessageBuilder {
 
         boolean blocked = PlayerInfo.isBlocked(playerId, con);
 
-        MessageUtils.appendResult((byte) (blocked ? 254 : 0), msg);
+        MessageUtils.appendResult((byte) (blocked ? -2 : 0), msg);
 
         if (!blocked) {
             msg.writeInt(ownerId);
@@ -284,7 +284,7 @@ public class MessageBuilder {
     public static ServerMessage udpConfirm(boolean result) {
         ServerMessage msg = new ServerMessage(MessageId.UDP_CONFIRM);
 
-        MessageUtils.appendResult((byte) (result ? 0 : 253), msg);
+        MessageUtils.appendResult((byte) (result ? 0 : -3), msg);
 
         return msg;
     }

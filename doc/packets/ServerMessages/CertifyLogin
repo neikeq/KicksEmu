@@ -9,18 +9,18 @@ int packet_id
 byte reason
 /*
  * Success: 0
- * Term of validity expired, buy new KASH pack: 246
- * Account blocked: 247
- * Wrong client version: 248
- * Server is full: 249
- * Authentication server failure: 250
- * Access server failure: 251
- * Already connected: 252
- * Wrong password: 253
- * Invalid account: 254
- * System has found a problem: 255
+ * Term of validity expired, buy new KASH pack: -10
+ * Account blocked: -9
+ * Wrong client version: -8
+ * Server is full: -7
+ * Authentication server failure: -6
+ * Access server failure: -5
+ * Already connected: -4
+ * Wrong password: -3
+ * Invalid account: -2
+ * System has found a problem: -1
  */
-byte response // Rejected: 255, Success: 0
+byte response // Rejected: -1, Success: 0
 // The following data is ignored if response equals 'rejected'
 int account_id
 byte camera // Side1: 0, Front1: 9, Front2: 5, Front3: 7

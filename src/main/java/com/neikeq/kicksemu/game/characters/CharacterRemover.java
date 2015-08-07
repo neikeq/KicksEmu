@@ -15,9 +15,9 @@ public class CharacterRemover {
 
     private static class RemoverResult {
         static final byte SUCCESS = 0;
-        static final byte TIME_LIMIT = (byte)253;
-        static final byte WRONG_PASSWORD = (byte)254;
-        static final byte SYSTEM_PROBLEM = (byte)255;
+        static final byte TIME_LIMIT = (byte) -3;
+        static final byte WRONG_PASSWORD = (byte) -2;
+        static final byte SYSTEM_PROBLEM = (byte) -1;
     }
 
     public static void removeCharacter(Session session, ClientMessage msg) {

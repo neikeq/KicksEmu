@@ -255,19 +255,19 @@ public class Authenticator {
                         authResult = AuthResult.SUCCESS;
                     } else {
                         // Already connected
-                        authResult = (byte)253;
+                        authResult = (byte) -3;
                     }
                 } else {
                     // Character problem: Invalid owner
-                    authResult = (byte)254;
+                    authResult = (byte) -2;
                 }
             } else {
                 // Character problem: Character does not exist
-                authResult = (byte)254;
+                authResult = (byte) -2;
             }
         } else {
             // Server is full
-            authResult = (byte)252;
+            authResult = (byte) -4;
         }
 
         return authResult;

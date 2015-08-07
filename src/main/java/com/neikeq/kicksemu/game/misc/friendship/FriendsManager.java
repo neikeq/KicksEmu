@@ -37,16 +37,16 @@ public class FriendsManager {
                         ServerMessage request = MessageBuilder.friendRequest(playerId, result);
                         ServerManager.getSessionById(targetId).sendAndFlush(request);
                     } else {
-                        result = (byte)252; // Target friend list is full
+                        result = (byte) -5; // Target friend list is full
                     }
                 } else {
-                    result = (byte)251; // Already in the friend list
+                    result = (byte) -4; // Already in the friend list
                 }
             } else {
-                result = (byte)253; // Friend list is full
+                result = (byte) -3; // Friend list is full
             }
         } else {
-            result = (byte)254; // Player not found
+            result = (byte) -2; // Player not found
         }
 
         if (result != 0) {
@@ -86,17 +86,17 @@ public class FriendsManager {
             }
 
             if (!accepted) {
-                result = (byte)253; // Rejected the request
+                result = (byte) -3; // Rejected the request
             }
 
             ServerMessage friendResponse = MessageBuilder.friendResponse(result);
             ServerManager.getSessionById(targetId).sendAndFlush(friendResponse);
         } else {
             // Player not found. May occur if the player disconnected after sending the request.
-            result = (byte)254;
+            result = (byte) -2;
         }
 
-        if (result != (byte)253) {
+        if (result != (byte) -3) {
             session.send(MessageBuilder.friendResponse(result));
         }
     }
@@ -120,7 +120,7 @@ public class FriendsManager {
             targetFriendList.removeFriend(playerId);
             PlayerInfo.setFriendsList(targetFriendList, friendId);
         } else {
-            result = (byte) 254; // Player not found
+            result = (byte) -2; // Player not found
         }
 
         session.send(MessageBuilder.deleteFriend(result));

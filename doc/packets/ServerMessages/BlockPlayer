@@ -8,11 +8,11 @@ Data:
 int packet_id
 byte reason
 /*
- * Cannot ignore yourself: 251
- * Already ignoring: 252
- * Ignore list limit: 253
- * Account not found: 254
- * System problem: 255
+ * Cannot ignore yourself: -5
+ * Already ignoring: -4
+ * Ignore list limit: -3
+ * Account not found: -2
+ * System problem: -1
  */
 byte response
 // Info of the player to add to the ignore list

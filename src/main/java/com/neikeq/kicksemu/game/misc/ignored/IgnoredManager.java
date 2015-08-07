@@ -34,16 +34,16 @@ public class IgnoredManager {
 
                         PlayerInfo.setIgnoredList(ignoredList, playerId);
                     } else {
-                        result = (byte) 252; // Already ignoring
+                        result = (byte) -4; // Already ignoring
                     }
                 } else {
-                    result = (byte) 253; // Ignored list is full
+                    result = (byte)  -3; // Ignored list is full
                 }
             } else {
-                result = (byte)251; // Cannot ignore yourself
+                result = (byte) -5; // Cannot ignore yourself
             }
         } else {
-            result = (byte)254; // Player not found
+            result = (byte) -2; // Player not found
         }
 
         session.send(MessageBuilder.blockPlayer(targetId, result));
@@ -62,7 +62,7 @@ public class IgnoredManager {
 
             PlayerInfo.setIgnoredList(ignoredList, playerId);
         } else {
-            result = (byte) 252; // Player not found
+            result = (byte) -4; // Player not found
         }
 
         session.send(MessageBuilder.unblockPlayer(result));

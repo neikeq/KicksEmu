@@ -30,8 +30,7 @@ import java.sql.SQLException;
 class MessageUtils {
 
     public static void appendResult(byte result, ServerMessage msg) {
-        msg.writeByte(result);
-        msg.writeByte(result == 0 ? result : (byte) -1);
+        msg.writeShort(result);
     }
 
     public static void appendQuestInfo(int playerId, ServerMessage msg, Connection ... con) {

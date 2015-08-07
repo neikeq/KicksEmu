@@ -8,10 +8,10 @@ Data:
 int packet_id
 byte reason
 /*
- * The player does not meet the level requirements: 251
- * The player refused your invitation: 252
- * The player is currently refusing invitations: 253
- * There are not free players to invite in the room: 254
+ * The player does not meet the level requirements: -5
+ * The player refused your invitation: -4
+ * The player is currently refusing invitations: -3
+ * There are not free players to invite in the room: -2
  */
 byte response
 char[15] name

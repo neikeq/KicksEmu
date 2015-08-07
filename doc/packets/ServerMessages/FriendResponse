@@ -8,11 +8,11 @@ Data:
 int packet_id
 byte reason
 /*
- * Player rejected the request: 253
- * Account not found: 254
- * System problem: 255
+ * Player rejected the request: -3
+ * Account not found: -2
+ * System problem: -1
  */
-byte response // Friend request... accepted: 0, rejected: 255
+byte response // Friend request... accepted: 0, rejected: -1
 
 Notes:
 // This message is sent to the player who sent the request after the target accepted or rejected it,

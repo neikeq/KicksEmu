@@ -9,16 +9,16 @@ int packet_id
 byte reason
 /*
  * Success: 0
- * Term of validity expired, buy new KASH pack: 246
- * Account blocked: 247
- * Wrong client version: 248
- * Server is full: 249
- * Authentication server failure: 250
- * Access server failure: 251
- * Already connected: 252
- * Wrong password: 253
- * Invalid account: 254
- * System found a problem: 255
+ * Term of validity expired, buy new KASH pack: -10
+ * Account blocked: -9
+ * Wrong client version: -8
+ * Server is full: -7
+ * Authentication server failure: -6
+ * Access server failure: -5
+ * Already connected: -4
+ * Wrong password: -3
+ * Invalid account: -2
+ * System found a problem: -1
  */
-byte response // Success: 0, Rejected: 255
+byte response // Success: 0, Rejected: -1
 int account_id

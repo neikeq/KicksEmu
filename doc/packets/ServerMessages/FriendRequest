@@ -8,11 +8,11 @@ Data:
 int packet_id
 byte reason
 /*
- * Already in friend list: 251
- * Target friend list limit: 252
- * Friend list limit: 253
- * Account not found: 254
- * System problem: 255
+ * Already in friend list: -5
+ * Target friend list limit: -4
+ * Friend list limit: -3
+ * Account not found: -2
+ * System problem: -1
  */
 byte response
 // Info of the player who sent the friend request

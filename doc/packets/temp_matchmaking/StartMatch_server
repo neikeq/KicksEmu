@@ -7,7 +7,7 @@ Size: 6
 Data:
 int packet_id
 byte reason
-byte response // Success: 0, Rejected: 255
+byte response // Success: 0, Rejected: -1
 
 Notes:
 // If response equals rejected match won't start

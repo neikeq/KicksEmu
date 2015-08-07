@@ -8,9 +8,9 @@ Data:
 int packet_id
 byte reason
 /*
- * Problem with the character: 252
- * Account already has 3 characters: 253
- * Invalid name or already in use: 254
- * System found a problem: 255
+ * Problem with the character: -4
+ * Account already has 3 characters: -3
+ * Invalid name or already in use: -2
+ * System found a problem: -1
  */
-byte response // Success: 0, Rejected: 255
+byte response // Success: 0, Rejected: -1

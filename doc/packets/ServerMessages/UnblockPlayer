@@ -8,7 +8,7 @@ Data:
 int packet_id
 byte reason
 /*
- * Account not found: 254
- * System problem: 255
+ * Account not found: -2
+ * System problem: -1
  */
 byte response

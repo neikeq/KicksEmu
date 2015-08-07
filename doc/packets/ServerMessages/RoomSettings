@@ -8,14 +8,14 @@ Data:
 int packet_id
 byte reason
 /*
- * Cannot decrease level limit: 248
- * Cannot increase level limit: 249
- * Invalid level: 250
- * Wrong level settings: 251
- * Cannot decrease players number: 252
- * You are not room master: 253
- * Room does not exist: 254
- * System problem: 255
+ * Cannot decrease level limit: -8
+ * Cannot increase level limit: -7
+ * Invalid level: -6
+ * Wrong level settings: -5
+ * Cannot decrease players number: -4
+ * You are not room master: -3
+ * Room does not exist: -2
+ * System problem: -1
  */
 byte response
 short type // Free: 1, Password: 2
