@@ -202,7 +202,7 @@ public class ChatCommands {
     private static void onGoldenTime(Session session, String ... args) {
         if (args.length < 2) {
             ChatUtils.sendServerMessage(session, "Golden time is " +
-                    (GameEvents.isGoldenTime() ? "enabled." : "disabled."));
+                    (GameEvents.isGoldenTime() ? "" : "not ") + "active.");
             return;
         }
 

@@ -124,7 +124,7 @@ public class Input {
     private void handleGoldenTime(String ... arg) {
         if (arg.length < 2) {
             Output.println("Golden time is " +
-                    (GameEvents.isGoldenTime() ? "enabled." : "disabled."));
+                    (GameEvents.isGoldenTime() ? "" : "not ") + "active.");
             return;
         }
 
