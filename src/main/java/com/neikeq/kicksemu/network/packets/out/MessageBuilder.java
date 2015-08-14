@@ -516,7 +516,7 @@ public class MessageBuilder {
 
         int clubId = MemberInfo.getClubId(playerId);
 
-        List<Integer> membersForPage = ClubInfo.getMembers(clubId, page * 10);
+        List<Integer> membersForPage = ClubInfo.getMembers(clubId, page * 10, 10);
 
         membersForPage.forEach(memberId -> {
             msg.writeInt(memberId);

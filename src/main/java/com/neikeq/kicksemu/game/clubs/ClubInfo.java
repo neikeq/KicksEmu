@@ -82,9 +82,9 @@ public class ClubInfo {
         }
     }
 
-    public static List<Integer> getMembers(int id, int offset, Connection ... con) {
+    public static List<Integer> getMembers(int id, int offset, int limit, Connection ... con) {
         final String query = "SELECT id FROM club_members " +
-                "WHERE club_id = ? AND role NOT IN(?, ?) LIMIT 10 OFFSET ?";
+                "WHERE club_id = ? AND role NOT IN(?, ?) LIMIT ? OFFSET ?";
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
@@ -93,7 +93,8 @@ public class ClubInfo {
                 stmt.setInt(1, id);
                 stmt.setString(2, "PENDING");
                 stmt.setString(3, "REJECTED");
-                stmt.setInt(4, offset);
+                stmt.setInt(4, limit);
+                stmt.setInt(5, offset);
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     List<Integer> members = new ArrayList<>();

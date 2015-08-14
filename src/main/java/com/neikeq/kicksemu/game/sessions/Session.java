@@ -1,10 +1,15 @@
 package com.neikeq.kicksemu.game.sessions;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.chat.MessageType;
+import com.neikeq.kicksemu.game.clubs.ClubInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.Lobby;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -14,6 +19,9 @@ import io.netty.channel.Channel;
 import io.netty.util.concurrent.ScheduledFuture;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class Session {
 
@@ -74,15 +82,19 @@ public class Session {
     public boolean leaveRoom(RoomLeaveReason reason) {
         Room room = RoomManager.getRoomById(roomId);
 
-        boolean isInsideRoom = room != null && room.isPlayerIn(playerId);
+        boolean insideRoom = room != null && room.isPlayerIn(playerId);
 
         // If room exist and player is inside the room
-        if (isInsideRoom) {
+        if (insideRoom) {
             room.removePlayer(this, reason);
             sendAndFlush(MessageBuilder.leaveRoom(playerId, reason));
+
+            if (reason == RoomLeaveReason.DISCONNECTED) {
+                roomId = room.getId();
+            }
         }
 
-        return isInsideRoom;
+        return insideRoom;
     }
 
     /** Returns the room lobby if player is inside a room, otherwise return main lobby */
@@ -130,6 +142,39 @@ public class Session {
 
             // If session player is inside a room, leave it
             leaveRoom(RoomLeaveReason.DISCONNECTED);
+
+            // Notify club members
+            if (ServerManager.getServerType() != ServerType.MAIN) {
+                int clubId = MemberInfo.getClubId(playerId);
+
+                List<Integer> members = clubId > 0 ?
+                        ClubInfo.getMembers(clubId, 0, 30) : new ArrayList<>();
+
+                members.remove((Integer) playerId);
+
+                if (members.size() > 0) {
+                    ServerMessage notification = MessageBuilder.chatMessage(
+                            MessageType.SERVER_MESSAGE,
+                            PlayerInfo.getName(playerId) + " has disconnected"
+                    );
+
+                    try {
+                        Predicate<Integer> filter = ServerManager::isPlayerConnected;
+                        Room room = RoomManager.getRoomById(roomId);
+
+                        if (room != null) {
+                            filter = filter.and(member -> !room.isPlayerIn(member));
+                        }
+
+                        members.stream().filter(filter).forEach(member -> {
+                            notification.retain();
+                            ServerManager.getSessionById(member).sendAndFlush(notification);
+                        });
+                    } finally {
+                        notification.release();
+                    }
+                }
+            }
         }
     }
 

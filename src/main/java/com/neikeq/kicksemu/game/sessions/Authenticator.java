@@ -4,18 +4,23 @@ import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.types.Position;
+import com.neikeq.kicksemu.game.chat.MessageType;
+import com.neikeq.kicksemu.game.clubs.ClubInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.misc.Moderation;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserUtils;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
+import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.Password;
 import com.neikeq.kicksemu.utils.ThreadUtils;
+
 import io.netty.util.concurrent.ScheduledFuture;
 
 import java.security.NoSuchAlgorithmException;
@@ -24,8 +29,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 public class Authenticator {
 
@@ -223,6 +231,32 @@ public class Authenticator {
 
                 ServerManager.addPlayer(characterId, session);
                 LobbyManager.addPlayer(characterId);
+
+                // Notify club members
+                int clubId = MemberInfo.getClubId(characterId);
+
+                List<Integer> members = clubId > 0 ?
+                        ClubInfo.getMembers(clubId, 0, 30) : new ArrayList<>();
+
+                members.remove((Integer) characterId);
+
+                if (members.size() > 0) {
+                    ServerMessage notification = MessageBuilder.chatMessage(
+                            MessageType.SERVER_MESSAGE,
+                            PlayerInfo.getName(characterId) + " is online"
+                    );
+
+                    try {
+                        Predicate<Integer> filter = ServerManager::isPlayerConnected;
+
+                        members.stream().filter(filter).forEach(member -> {
+                            notification.retain();
+                            ServerManager.getSessionById(member).sendAndFlush(notification);
+                        });
+                    } finally {
+                        notification.release();
+                    }
+                }
             }
         } else {
             result = AuthResult.SYSTEM_PROBLEM;
