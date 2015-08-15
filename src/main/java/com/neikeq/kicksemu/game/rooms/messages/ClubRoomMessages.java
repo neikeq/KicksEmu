@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms.messages;
 
+import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
@@ -39,7 +40,7 @@ public class ClubRoomMessages extends RoomMessages {
 
         // If everything is correct, create the room
         if (result == 0) {
-            Room room = new Room();
+            ClubRoom room = new ClubRoom();
 
             // Limit the length of the name
             if (name.length() > MAX_ROOM_NAME_LENGTH) {

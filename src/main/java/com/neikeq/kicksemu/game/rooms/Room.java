@@ -9,7 +9,6 @@ import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
-import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.ThreadUtils;
@@ -63,7 +62,7 @@ public class Room {
 
     private ScheduledFuture<?> countdownTimeoutFuture;
 
-    private final Object locker = new Object();
+    protected final Object locker = new Object();
 
     public void tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
@@ -123,7 +122,7 @@ public class Room {
 
             // If player is in observer mode add it to the observers list
             if (session.isObserver()) {
-                observers.add(playerId);
+                addObserver(playerId);
             }
 
             swapLocker.lockPlayer(playerId);
@@ -188,7 +187,7 @@ public class Room {
         }
     }
 
-    private void addPlayerToTeam(int playerId) {
+    protected void addPlayerToTeam(int playerId) {
         if (getRedTeam().size() > getBlueTeam().size()) {
             if (!getBlueTeam().contains(playerId)) {
                 addPlayerToBlueTeam(playerId);
@@ -200,7 +199,7 @@ public class Room {
         }
     }
 
-    private void addPlayerToTeam(int playerId, RoomTeam team) {
+    protected void addPlayerToTeam(int playerId, RoomTeam team) {
         switch (team) {
             case RED:
                 addPlayerToRedTeam(playerId);
@@ -212,14 +211,14 @@ public class Room {
         }
     }
 
-    private void addPlayerToRedTeam(int playerId) {
+    protected void addPlayerToRedTeam(int playerId) {
         getRedTeam().add(playerId);
 
         short position = PlayerInfo.getPosition(playerId);
         getRedTeamPositions().add(position);
     }
 
-    private void addPlayerToBlueTeam(int playerId) {
+    protected void addPlayerToBlueTeam(int playerId) {
         getBlueTeam().add(playerId);
 
         short position = PlayerInfo.getPosition(playerId);
@@ -397,30 +396,12 @@ public class Room {
         return null;
     }
 
-    private ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
-        switch (ServerManager.getServerType()) {
-            case CLUB:
-                return MessageBuilder.clubRoomPlayerInfo(session, this, con);
-            case NORMAL:
-            case PRACTICE:
-            case TOURNAMENT:
-            default:
-                return MessageBuilder.roomPlayerInfo(session, this, con);
-        }
+    protected ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
+        return MessageBuilder.roomPlayerInfo(session, this, con);
     }
 
-    private void sendRoomInfo(Session session) {
-        switch (ServerManager.getServerType()) {
-            case NORMAL:
-            case PRACTICE:
-            case TOURNAMENT:
-                session.send(MessageBuilder.roomInfo(this));
-                break;
-            case CLUB:
-                session.send(MessageBuilder.clubRoomInfo(this));
-                break;
-            default:
-        }
+    protected void sendRoomInfo(Session session) {
+        session.send(MessageBuilder.roomInfo(this));
     }
 
     public void sendHostInfo() {
@@ -681,6 +662,10 @@ public class Room {
 
     public List<Integer> getObservers() {
         return observers;
+    }
+
+    protected void addObserver(int playerId) {
+        observers.add(playerId);
     }
 
     public String getPassword() {

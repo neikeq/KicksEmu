@@ -115,7 +115,7 @@ public class ChatManager {
                 if (targetSession != null) {
                     // If the target player accepts whispers and is not ignoring this player
                     if (UserInfo.getSettings(targetSession.getUserId()).getWhispers() &&
-                            !PlayerInfo.getIgnoredList(targetId) .containsPlayer(playerId)) {
+                            !PlayerInfo.getIgnoredList(targetId).containsPlayer(playerId)) {
                         ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
                                 MessageType.WHISPER_FROM, whisper);
                         targetSession.sendAndFlush(msgWhisper);
@@ -142,8 +142,6 @@ public class ChatManager {
                 List<Session> clubSessions = ServerManager.getPlayers().values().stream()
                         .filter(s -> MemberInfo.getClubId(s.getPlayerId()) == clubId)
                         .collect(Collectors.toList());
-
-
 
                 if (clubSessions.size() > 1) {
                     ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
