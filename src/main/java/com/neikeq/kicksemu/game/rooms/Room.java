@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Room {
 
@@ -263,7 +264,7 @@ public class Room {
         }
     }
 
-    public void startCountDown() {
+    public void startCountdown() {
         synchronized (locker) {
             if (players.size() > 1) {
                 // There must be a delay between the last player joined the room and
@@ -289,25 +290,37 @@ public class Room {
                                 confirmedPlayers.forEach(failedPlayers::remove);
 
                                 if (!failedPlayers.isEmpty()) {
-                                    String info = "The following players failed to connect: ";
+                                    List<String> info = failedPlayers.stream()
+                                            .map(playerId -> PlayerInfo.getName(playerId))
+                                            .collect(Collectors.toList());
 
-                                    for (Integer playerId : failedPlayers) {
-                                        info += PlayerInfo.getName(playerId);
-                                    }
-
-                                    ServerMessage timeoutMessage = MessageBuilder
-                                            .chatMessage(MessageType.SERVER_MESSAGE, info);
-                                    sendBroadcast(timeoutMessage);
+                                    sendBroadcast(MessageBuilder.hostInfo(this));
+                                    sendBroadcast(MessageBuilder.chatMessage(
+                                            MessageType.SERVER_MESSAGE,
+                                            "Failed to connect: " + String.join(", ", info)));
                                 }
 
-                                this.cancelCountDown();
+                                this.cancelCountdown();
                             }
                         }
                     }, 5, TimeUnit.SECONDS));
         }
     }
 
-    public void cancelCountDown() {
+    public void onCountdown(short count) {
+        synchronized (locker) {
+            if (state() == RoomState.COUNT_DOWN) {
+                if (count == 0) {
+                    setState(RoomState.LOADING);
+                    updateTrainingFactor();
+                }
+
+                sendBroadcast(MessageBuilder.countDown(count));
+            }
+        }
+    }
+
+    public void cancelCountdown() {
         synchronized (locker) {
             getCountdownTimeoutFuture().cancel(true);
             setState(RoomState.WAITING);
@@ -344,16 +357,16 @@ public class Room {
             // With this trick, the ball won't target nor collide to the disconnected player.
             // He will still be visible though.
             sendBroadcast(MessageBuilder.setObserver(playerId, true));
-        }
 
-        if (state() == RoomState.PLAYING) {
-            String message = "Player disconnected: " + PlayerInfo.getName(playerId);
-            sendBroadcast(MessageBuilder.chatMessage(MessageType.WHISPER, message));
+            if (state() == RoomState.PLAYING) {
+                String message = PlayerInfo.getName(playerId) + " has been disconnected.";
+                sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
+            }
         }
 
         // If the countdown started, cancel it
         if (state() == RoomState.COUNT_DOWN) {
-            cancelCountDown();
+            cancelCountdown();
         }
     }
 

@@ -33,10 +33,10 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    public void startCountDown() { }
+    public void startCountdown() { }
 
     @Override
-    public void cancelCountDown() { }
+    public void cancelCountdown() { }
 
     @Override
     protected ServerMessage getRoomPlayerInfo(Session session, Connection... con) {

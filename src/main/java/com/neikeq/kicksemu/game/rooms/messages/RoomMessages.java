@@ -404,7 +404,7 @@ public class RoomMessages {
                         break;
                     case -1:
                         if (!room.isPlaying() && room.getMaster() == playerId) {
-                            room.startCountDown();
+                            room.startCountdown();
                         }
                         break;
                     default:
@@ -431,13 +431,8 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
-            if (count == 0) {
-                room.setState(RoomState.LOADING);
-                room.updateTrainingFactor();
-            }
-
-            room.sendBroadcast(MessageBuilder.countDown(count));
+        if (room != null && room.getMaster() == session.getPlayerId()) {
+            room.onCountdown(count);
         }
     }
 
@@ -448,7 +443,7 @@ public class RoomMessages {
             Room room = RoomManager.getRoomById(roomId);
 
             if (room.state() == RoomState.COUNT_DOWN) {
-                room.cancelCountDown();
+                room.cancelCountdown();
             }
         }
     }
