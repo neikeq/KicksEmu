@@ -1,5 +1,8 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
+import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -11,6 +14,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClubRoom extends Room {
+
+    @Override
+    public void tryJoinRoom(Session session, String password) {
+        int playerId = session.getPlayerId();
+
+        byte result = 0;
+
+        synchronized (locker) {
+            if (isNotFull()) {
+                if (!isPlaying()) {
+                    if (MemberInfo.getClubId(playerId) == getId()) {
+                        // Check password (moderators can bypass this)
+                        if (getAccessType() != RoomAccessType.PASSWORD ||
+                                password.equals(getPassword()) ||
+                                PlayerInfo.isModerator(playerId)) {
+                            short level = PlayerInfo.getLevel(playerId);
+
+                            // If player level is allowed in room settings
+                            if (isLevelAllowed(level)) {
+                                // Join the room
+                                addPlayer(session);
+                            } else {
+                                result = (byte) -8; // Invalid level
+                            }
+                        } else {
+                            result = (byte) -5; // Wrong password
+                        }
+                    } else {
+                        result = (byte) -9; // Not in the players list (not a member of the club)
+                    }
+                } else {
+                    result = (byte) -6; // Match already started
+                }
+            } else {
+                result = (byte) -4; // Room is full
+            }
+        }
+
+        if (result != 0) {
+            session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), result));
+        }
+    }
 
     @Override
     public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {

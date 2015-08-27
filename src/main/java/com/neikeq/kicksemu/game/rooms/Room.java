@@ -72,10 +72,11 @@ public class Room {
 
         synchronized (locker) {
             if (isNotFull()) {
-                // If room does not have a password, or typed password matches room's password
-                if (getAccessType() != RoomAccessType.PASSWORD || password.equals(getPassword()) ||
-                        PlayerInfo.isModerator(playerId)) {
-                    if (!isPlaying()) {
+                if (!isPlaying()) {
+                    // Check password (moderators can bypass this)
+                    if (getAccessType() != RoomAccessType.PASSWORD ||
+                            password.equals(getPassword()) ||
+                            PlayerInfo.isModerator(playerId)) {
                         short level = PlayerInfo.getLevel(playerId);
 
                         // If player level is allowed in room settings
@@ -86,10 +87,10 @@ public class Room {
                             result = (byte) -8; // Invalid level
                         }
                     } else {
-                        result = (byte) -6; // Match already started
+                        result = (byte) -5; // Wrong password
                     }
                 } else {
-                    result = (byte) -5; // Wrong password
+                    result = (byte) -6; // Match already started
                 }
             } else {
                 result = (byte) -4; // Room is full
