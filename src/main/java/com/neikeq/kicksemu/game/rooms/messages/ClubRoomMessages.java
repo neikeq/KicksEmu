@@ -22,6 +22,7 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
+    static final byte MIN_ROOM_LEVEL = 3;
 
     public static void createRoom(Session session, ClientMessage msg) {
         RoomAccessType type = RoomAccessType.fromShort(msg.readShort());
@@ -40,7 +41,7 @@ public class ClubRoomMessages extends RoomMessages {
 
         if (type == null || roomMode == null || roomMode.notValidForServer(serverType)) {
             result = (byte) -1; // System problem
-        } else if (PlayerInfo.getLevel(playerId) < 5) {
+        } else if (PlayerInfo.getLevel(playerId) < MIN_ROOM_LEVEL) {
             result = (byte) -3; // Does not meet the level requirements
         } else if (clubId <= 0) {
             result = (byte) -4; // Not a club member
