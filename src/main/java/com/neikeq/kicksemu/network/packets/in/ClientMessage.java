@@ -62,8 +62,9 @@ public class ClientMessage {
         return new String(bytes, Charset.forName("windows-1252"));
     }
 
-    public void ignoreBytes(int length) {
+    public ClientMessage ignoreBytes(int length) {
         body.readerIndex(body.readerIndex() + length);
+        return this;
     }
 
     public ByteBuf getBody() {
