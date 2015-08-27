@@ -103,6 +103,8 @@ public class MessageHandler {
             events.put(MessageId.UNKNOWN2, RoomMessages::unknown2);
             events.put(MessageId.CLUB_ROOM_LIST, ClubRoomMessages::roomList);
             events.put(MessageId.CLUB_CREATE_ROOM, ClubRoomMessages::createRoom);
+            events.put(MessageId.CLUB_JOIN_ROOM, ClubRoomMessages::joinRoom);
+            events.put(MessageId.CLUB_LEAVE_ROOM, ClubRoomMessages::leaveRoom);
             events.put(MessageId.PURCHASE_ITEM, Shop::purchaseItem);
             events.put(MessageId.RESELL_ITEM, InventoryManager::resellItem);
             events.put(MessageId.ACTIVATE_ITEM, InventoryManager::activateItem);

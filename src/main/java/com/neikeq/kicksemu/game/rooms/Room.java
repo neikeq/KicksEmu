@@ -131,7 +131,7 @@ public class Room {
 
         session.setRoomId(getId());
 
-        session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), (byte) 0));
+        session.send(getJoinRoom(this, session.getPlayerId(), (byte) 0));
 
         onPlayerJoined(session);
     }
@@ -169,6 +169,7 @@ public class Room {
 
         // Notify the session
         session.onLeavedRoom();
+        session.sendAndFlush(getLeaveRoom(playerId, reason));
 
         onPlayerLeaved(playerId, reason);
     }
@@ -351,7 +352,7 @@ public class Room {
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
         if (Configuration.getBoolean("game.match.result.force") || isInLobbyScreen()) {
-            sendBroadcast(MessageBuilder.leaveRoom(playerId, reason));
+            sendBroadcast(getLeaveRoom(playerId, reason));
         } else {
             disconnectedPlayers.add(playerId);
             // With this trick, the ball won't target nor collide to the disconnected player.
@@ -411,6 +412,14 @@ public class Room {
 
     protected ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
         return MessageBuilder.roomPlayerInfo(session, this, con);
+    }
+
+    protected ServerMessage getLeaveRoom(int playerId, RoomLeaveReason reason) {
+        return MessageBuilder.leaveRoom(playerId, reason);
+    }
+
+    protected ServerMessage getJoinRoom(Room room, int playerId, byte result) {
+        return MessageBuilder.joinRoom(room, playerId, result);
     }
 
     protected void sendRoomInfo(Session session) {

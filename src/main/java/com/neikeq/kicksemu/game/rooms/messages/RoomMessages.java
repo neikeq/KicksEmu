@@ -40,7 +40,6 @@ import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
 
 public class RoomMessages {
 
@@ -168,19 +167,14 @@ public class RoomMessages {
 
         if (room != null && room.isPlayerIn(playerId) &&
                 (room.state() == RoomState.WAITING || room.state() == RoomState.COUNT_DOWN)) {
-            RoomLeaveReason reason = RoomLeaveReason.LEAVED;
-
-            session.leaveRoom(reason);
+            session.leaveRoom(RoomLeaveReason.LEAVED);
         }
     }
 
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
-
-        Map<Integer, Room> pageRooms = RoomManager.getRoomsFromPage(page);
-
-        // TODO I think it should use clubRoomList message instead
-        session.send(MessageBuilder.roomList(pageRooms, page, (byte) 0));
+        session.send(MessageBuilder.roomList(RoomManager.getRoomsFromPage(page),
+                page, (byte) 0));
     }
 
     public static void roomMap(Session session, ClientMessage msg) {

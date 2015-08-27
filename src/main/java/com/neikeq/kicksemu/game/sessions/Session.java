@@ -87,8 +87,8 @@ public class Session {
         // If room exist and player is inside the room
         if (insideRoom) {
             room.removePlayer(this, reason);
-            sendAndFlush(MessageBuilder.leaveRoom(playerId, reason));
 
+            // Needed to notify club members in the same room
             if (reason == RoomLeaveReason.DISCONNECTED) {
                 roomId = room.getId();
             }

@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
-import com.neikeq.kicksemu.game.rooms.enums.RoomState;
+import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -44,18 +44,18 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    protected void sendRoomInfo(Session session) {
-        session.send(MessageBuilder.clubRoomInfo(this));
+    protected ServerMessage getLeaveRoom(int playerId, RoomLeaveReason reason) {
+        return MessageBuilder.clubLeaveRoom(playerId, reason);
     }
 
     @Override
-    public void sendHostInfo() {
-        synchronized (locker) {
-            if (state() == RoomState.COUNT_DOWN) {
-                getCountdownTimeoutFuture().cancel(true);
-                sendBroadcast(MessageBuilder.hostInfo(this)); // TODO must be clubHostInfo
-            }
-        }
+    protected ServerMessage getJoinRoom(Room room, int playerId, byte result) {
+        return MessageBuilder.clubJoinRoom(room, result);
+    }
+
+    @Override
+    protected void sendRoomInfo(Session session) {
+        session.send(MessageBuilder.clubRoomInfo(this));
     }
 
     @Override

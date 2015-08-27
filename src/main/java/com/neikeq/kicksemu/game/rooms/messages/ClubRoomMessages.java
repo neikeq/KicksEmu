@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.messages;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
@@ -24,6 +26,9 @@ public class ClubRoomMessages extends RoomMessages {
         String password = msg.readString(4);
         msg.ignoreBytes(1);
 
+        int playerId = session.getPlayerId();
+        int clubId = MemberInfo.getClubId(playerId);
+
         RoomMode roomMode = RoomMode.fromInt(msg.readByte());
 
         // Check that everything is correct
@@ -33,7 +38,15 @@ public class ClubRoomMessages extends RoomMessages {
 
         if (type == null || roomMode == null || roomMode.notValidForServer(serverType)) {
             result = (byte) -1; // System problem
+        } else if (PlayerInfo.getLevel(playerId) < 5) {
+            result = (byte) -3; // Does not meet the level requirements
+        } else if (clubId <= 0) {
+            result = (byte) -4; // Not a club member
+        } else if (RoomManager.getRoomById(clubId) != null) {
+            result = (byte) -5; // The club already has a team
         }
+
+        // TODO Check result -2: Too many players in the opponent team. What does that even mean?
 
         // Send the result to the client
         session.send(MessageBuilder.clubCreateRoom((short) 0, result));
@@ -65,12 +78,35 @@ public class ClubRoomMessages extends RoomMessages {
 
             synchronized (RoomManager.ROOMS_LOCKER) {
                 // Get the room id
-                room.setId(RoomManager.getSmallestMissingIndex());
+                room.setId(clubId);
                 // Add it to the rooms list
                 RoomManager.addRoom(room);
                 // Add the player to the room
                 room.addPlayer(session);
             }
         }
+    }
+
+    public static void joinRoom(Session session, ClientMessage msg) {
+        if (session.getRoomId() > 0) return;
+
+        int roomId = msg.readShort();
+        String password = msg.readString(4);
+
+        Room room = RoomManager.getRoomById(roomId);
+
+        // Try to join the room.
+        if (room != null) {
+            room.tryJoinRoom(session, password);
+        } else {
+            // Result -3 means that the room does not exists.
+            session.send(MessageBuilder.clubJoinRoom(null, (byte) -3));
+        }
+    }
+
+    public static void roomList(Session session, ClientMessage msg) {
+        short page = msg.readShort();
+        session.send(MessageBuilder.clubRoomList(RoomManager.getRoomsFromPage(page),
+                page, (byte) 0));
     }
 }

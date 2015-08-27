@@ -615,7 +615,6 @@ public class MessageBuilder {
             msg.writeShort(page);
 
             for (Room room : rooms.values()) {
-                // Visibility. Hide if player is moderator.
                 msg.writeByte((byte) room.getAccessType().toInt());
                 msg.writeBool(room.isPlaying());
                 msg.writeShort((short) room.getId());
@@ -1111,6 +1110,39 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage clubRoomList(Map<Integer, Room> rooms, short page, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_LIST);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0) {
+            msg.writeShort(page);
+
+            for (Room room : rooms.values()) {
+                msg.writeByte((byte) room.getAccessType().toInt());
+                msg.writeBool(room.isPlaying());
+                msg.writeShort((short) room.getId());
+                msg.writeString(room.getName(), 15);
+                msg.writeByte((byte) room.getMaxSize().toInt());
+                msg.writeByte(room.getCurrentSize());
+
+                // Red team positions
+
+                int i = 0;
+
+                for (short position : room.getRedTeamPositions()) {
+                    msg.writeByte((byte) position);
+                    i++;
+                }
+
+                // Fill the remain spaces if red team is not full
+                msg.writeZeros(5 - i);
+            }
+        }
+
+        return msg;
+    }
+
     public static ServerMessage clubCreateRoom(short roomId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_CREATE_ROOM);
 
@@ -1119,6 +1151,27 @@ public class MessageBuilder {
         if (result == 0) {
             msg.writeShort(roomId);
         }
+
+        return msg;
+    }
+
+    public static ServerMessage clubJoinRoom(Room room, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_JOIN_ROOM);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0 && room != null) {
+            msg.writeShort((short) room.getId());
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage clubLeaveRoom(int playerId, RoomLeaveReason reason) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_LEAVE_ROOM);
+
+        msg.writeShort(reason.toShort());
+        msg.writeInt(playerId);
 
         return msg;
     }
