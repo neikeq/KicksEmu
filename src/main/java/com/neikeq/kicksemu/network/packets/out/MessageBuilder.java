@@ -1246,6 +1246,34 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage clubRoomSettings(Room room, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_SETTINGS);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (room != null) {
+            msg.writeShort((short) room.getAccessType().toInt());
+            msg.writeString(room.getName(), 15);
+            msg.writeString(room.getPassword(), 4);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage clubInvitePlayer(byte result, Room room, String name) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_INVITE_PLAYER);
+
+        MessageUtils.appendResult(result, msg);
+
+        if (result == 0 && room != null) {
+            msg.writeString(name, 15);
+            msg.writeShort((short) room.getId());
+            msg.writeString(room.getPassword(), 5);
+        }
+
+        return msg;
+    }
+
     public static ServerMessage purchaseItem(int playerId, byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_ITEM);
 

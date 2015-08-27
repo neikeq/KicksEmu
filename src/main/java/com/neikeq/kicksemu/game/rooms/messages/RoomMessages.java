@@ -44,6 +44,7 @@ import java.sql.SQLException;
 public class RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 30;
+    static final int MAX_ROOM_PASSWORD_LENGTH = 4;
     static final byte MAX_ROOM_LEVEL = 60;
     static final byte MIN_ROOM_LEVEL = 1;
 
@@ -52,8 +53,7 @@ public class RoomMessages {
         if (session.getRoomId() <= 0) {
             RoomAccessType type = RoomAccessType.fromShort(msg.readShort());
             String name = msg.readString(45);
-            String password = msg.readString(4);
-            msg.ignoreBytes(1);
+            String password = msg.readString(5);
 
             RoomMode roomMode = RoomMode.fromInt(msg.readByte());
 
@@ -89,9 +89,13 @@ public class RoomMessages {
             if (result == 0) {
                 Room room = new Room();
 
-                // Limit the length of the name
+                // Limit the length of the name and the password
                 if (name.length() > MAX_ROOM_NAME_LENGTH) {
                     name = name.substring(0, MAX_ROOM_NAME_LENGTH);
+                }
+
+                if (password.length() > MAX_ROOM_PASSWORD_LENGTH) {
+                    password = password.substring(0, MAX_ROOM_PASSWORD_LENGTH);
                 }
 
                 // If password is blank, disable password usage
@@ -217,8 +221,7 @@ public class RoomMessages {
         int roomId = msg.readShort();
         RoomAccessType type = RoomAccessType.fromShort(msg.readShort());
         String name = msg.readString(45);
-        String password = msg.readString(4);
-        msg.ignoreBytes(1);
+        String password = msg.readString(5);
         RoomMode roomMode = RoomMode.fromInt(msg.readByte());
         byte minLevel = msg.readByte();
         byte maxLevel = msg.readByte();
@@ -261,9 +264,13 @@ public class RoomMessages {
             if (playerLevel < minLevel || playerLevel > maxLevel) {
                 result = (byte) -6; // Invalid level
             } else {
-                // Limit the length of the name
+                // Limit the length of the name and the password
                 if (name.length() > MAX_ROOM_NAME_LENGTH) {
                     name = name.substring(0, MAX_ROOM_NAME_LENGTH);
+                }
+
+                if (password.length() > MAX_ROOM_PASSWORD_LENGTH) {
+                    password = password.substring(0, MAX_ROOM_PASSWORD_LENGTH);
                 }
 
                 // Update room settings
