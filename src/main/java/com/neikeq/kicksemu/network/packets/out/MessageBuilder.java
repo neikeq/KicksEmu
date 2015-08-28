@@ -1176,6 +1176,14 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage clubQuickJoinRoom(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_QUICK_JOIN);
+
+        MessageUtils.appendResult(result, msg);
+
+        return msg;
+    }
+
     public static ServerMessage clubRoomCaptain(int playerId) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_CAPTAIN);
 
@@ -1251,6 +1259,14 @@ public class MessageBuilder {
             MessageUtils.appendInventorySkillsInUse(playerId, msg, con);
             MessageUtils.appendInventoryCelebrationsInUse(playerId, msg, con);
         }
+
+        return msg;
+    }
+
+    public static ServerMessage clubKickPlayer(byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_KICK_PLAYER);
+
+        MessageUtils.appendResult(result, msg);
 
         return msg;
     }

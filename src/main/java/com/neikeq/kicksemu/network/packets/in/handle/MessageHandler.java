@@ -105,6 +105,8 @@ public class MessageHandler {
             events.put(MessageId.CLUB_CREATE_ROOM, ClubRoomMessages::createRoom);
             events.put(MessageId.CLUB_JOIN_ROOM, ClubRoomMessages::joinRoom);
             events.put(MessageId.CLUB_LEAVE_ROOM, ClubRoomMessages::leaveRoom);
+            events.put(MessageId.CLUB_QUICK_JOIN, (s, m) -> ClubRoomMessages.quickJoinRoom(s));
+            events.put(MessageId.CLUB_KICK_PLAYER, ClubRoomMessages::kickPlayer);
             events.put(MessageId.CLUB_ROOM_SETTINGS, ClubRoomMessages::roomSettings);
             events.put(MessageId.CLUB_INVITE_PLAYER, ClubRoomMessages::invitePlayer);
             events.put(MessageId.PURCHASE_ITEM, Shop::purchaseItem);

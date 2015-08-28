@@ -7,6 +7,7 @@ import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
+import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMode;
 import com.neikeq.kicksemu.game.rooms.enums.RoomSize;
@@ -23,6 +24,12 @@ public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
     static final byte MIN_ROOM_LEVEL = 3;
+
+    public static void roomList(Session session, ClientMessage msg) {
+        short page = msg.readShort();
+        session.send(MessageBuilder.clubRoomList(RoomManager.getRoomsFromPage(page),
+                page, (byte) 0));
+    }
 
     public static void createRoom(Session session, ClientMessage msg) {
         RoomAccessType type = RoomAccessType.fromShort(msg.readShort());
@@ -111,10 +118,51 @@ public class ClubRoomMessages extends RoomMessages {
         }
     }
 
-    public static void roomList(Session session, ClientMessage msg) {
-        short page = msg.readShort();
-        session.send(MessageBuilder.clubRoomList(RoomManager.getRoomsFromPage(page),
-                page, (byte) 0));
+    public static void quickJoinRoom(Session session) {
+        // Ignore the message if the player is already in a room
+        if (session.getRoomId() > 0) return;
+
+        int playerId = session.getPlayerId();
+        Room room = RoomManager.getRoomById(MemberInfo.getClubId(playerId));
+
+        // If a valid room was found
+        if (room != null) {
+            room.tryJoinRoom(session, "");
+        } else {
+            // Notify the player that no rooms were found
+            session.send(MessageBuilder.clubQuickJoinRoom((byte) -2));
+        }
+    }
+
+    public static void kickPlayer(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+        int playerToKick = msg.readInt();
+
+        byte result = 0;
+
+        Room room = RoomManager.getRoomById(session.getRoomId());
+
+        // If the room exist and the player is inside it
+        if (room != null && room.getId() == roomId) {
+            // If the player is the room master
+            if (room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
+                // If the player is in the room
+                if (room.isPlayerIn(playerToKick)) {
+                    room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
+                } else {
+                    result = (byte) -4; // Player not found
+                }
+            } else {
+                result = (byte) -3; // Not the room master
+            }
+        } else {
+            result = (byte)- 2; // Invalid room
+        }
+
+        // If there is something wrong, notify the client
+        if (result != 0) {
+            session.send(MessageBuilder.clubKickPlayer(result));
+        }
     }
 
     public static void roomSettings(Session session, ClientMessage msg) {

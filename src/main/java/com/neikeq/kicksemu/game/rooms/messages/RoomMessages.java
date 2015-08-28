@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
 import com.neikeq.kicksemu.game.characters.types.Position;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.misc.quests.QuestManager;
@@ -47,6 +48,12 @@ public class RoomMessages {
     static final int MAX_ROOM_PASSWORD_LENGTH = 4;
     static final byte MAX_ROOM_LEVEL = 60;
     static final byte MIN_ROOM_LEVEL = 1;
+
+    public static void roomList(Session session, ClientMessage msg) {
+        short page = msg.readShort();
+        session.send(MessageBuilder.roomList(RoomManager.getRoomsFromPage(page),
+                page, (byte) 0));
+    }
 
     public static void createRoom(Session session, ClientMessage msg) {
         // If player is not already in a room
@@ -150,9 +157,8 @@ public class RoomMessages {
         // Ignore the message if the player is already in a room
         if (session.getRoomId() > 0) return;
 
-        short level = PlayerInfo.getLevel(session.getPlayerId());
-
-        Room room = RoomManager.getQuickRoom(level);
+        int playerId = session.getPlayerId();
+        Room room = RoomManager.getQuickRoom(PlayerInfo.getLevel(playerId));
 
         // If a valid room was found
         if (room != null) {
@@ -173,12 +179,6 @@ public class RoomMessages {
                 (room.state() == RoomState.WAITING || room.state() == RoomState.COUNT_DOWN)) {
             session.leaveRoom(RoomLeaveReason.LEAVED);
         }
-    }
-
-    public static void roomList(Session session, ClientMessage msg) {
-        short page = msg.readShort();
-        session.send(MessageBuilder.roomList(RoomManager.getRoomsFromPage(page),
-                page, (byte) 0));
     }
 
     public static void roomMap(Session session, ClientMessage msg) {
@@ -315,30 +315,32 @@ public class RoomMessages {
         int roomId = msg.readShort();
         int playerToKick = msg.readInt();
 
-        byte result = 0;
+        if (ServerManager.getServerType() != ServerType.CLUB) {
+            byte result = 0;
 
-        Room room = RoomManager.getRoomById(session.getRoomId());
+            Room room = RoomManager.getRoomById(session.getRoomId());
 
-        // If the room exist and the player is inside it
-        if (room != null && room.getId() == roomId) {
-            // If the player is the room master
-            if (room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
-                // If the player is in the room
-                if (room.isPlayerIn(playerToKick)) {
-                    room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
+            // If the room exist and the player is inside it
+            if (room != null && room.getId() == roomId) {
+                // If the player is the room master
+                if (room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
+                    // If the player is in the room
+                    if (room.isPlayerIn(playerToKick)) {
+                        room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
+                    } else {
+                        result = (byte) -4; // Player not found
+                    }
                 } else {
-                    result = (byte) -4; // Player not found
+                    result = (byte) -3; // Not the room master
                 }
             } else {
-                result = (byte) -3; // Not the room master
+                result = (byte) -2; // Invalid room
             }
-        } else {
-            result = (byte)- 2; // Invalid room
-        }
 
-        // If there is something wrong, notify the client
-        if (result != 0) {
-            session.send(MessageBuilder.kickPlayer(result));
+            // If there is something wrong, notify the client
+            if (result != 0) {
+                session.send(MessageBuilder.kickPlayer(result));
+            }
         }
     }
 
