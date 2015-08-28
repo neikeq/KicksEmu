@@ -14,9 +14,10 @@ public class FriendsManager {
     public static void friendsList(Session session, ClientMessage msg) {
         byte page = msg.readByte();
 
-        FriendsList friends = PlayerInfo.getFriendsList(session.getPlayerId());
-
-        session.send(MessageBuilder.friendList(friends.fromPage(page), page));
+        if (page >= 0) {
+            FriendsList friends = PlayerInfo.getFriendsList(session.getPlayerId());
+            session.send(MessageBuilder.friendList(friends.fromPage(page), page));
+        }
     }
 
     public static void friendRequest(Session session, ClientMessage msg) {

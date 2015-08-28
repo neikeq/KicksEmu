@@ -13,16 +13,21 @@ public class IgnoredManager {
     public static void ignoreList(Session session, ClientMessage msg) {
         byte page = msg.readByte();
 
-        IgnoredList ignoredPlayers = PlayerInfo.getIgnoredList(session.getPlayerId());
-
-        session.send(MessageBuilder.ignoredList(ignoredPlayers.getIgnoredPlayers(), page));
+        if (page >= 0) {
+            IgnoredList ignoredPlayers = PlayerInfo.getIgnoredList(session.getPlayerId());
+            session.send(MessageBuilder.ignoredList(ignoredPlayers.getIgnoredPlayers(), page));
+        }
     }
 
     public static void blockPlayer(Session session, ClientMessage msg) {
         int targetId = msg.readInt();
-        int playerId = session.getPlayerId();
+        byte result = blockPlayer(session, targetId);
 
-        byte result = 0;
+        session.send(MessageBuilder.blockPlayer(targetId, result));
+    }
+
+    public static byte blockPlayer(Session session, int targetId) {
+        int playerId = session.getPlayerId();
 
         if (CharacterUtils.characterExist(targetId)) {
             if (targetId != playerId) {
@@ -34,26 +39,30 @@ public class IgnoredManager {
 
                         PlayerInfo.setIgnoredList(ignoredList, playerId);
                     } else {
-                        result = (byte) -4; // Already ignoring
+                        return -4; // Already ignoring
                     }
                 } else {
-                    result = (byte)  -3; // Ignored list is full
+                    return -3; // Ignored list is full
                 }
             } else {
-                result = (byte) -5; // Cannot ignore yourself
+                return -5; // Cannot ignore yourself
             }
         } else {
-            result = (byte) -2; // Player not found
+            return -2; // Player not found
         }
 
-        session.send(MessageBuilder.blockPlayer(targetId, result));
+        return 0;
     }
 
     public static void unblockPlayer(Session session, ClientMessage msg) {
         int targetId = msg.readInt();
-        int playerId = session.getPlayerId();
+        byte result = unblockPlayer(session, targetId);
 
-        byte result = 0;
+        session.send(MessageBuilder.unblockPlayer(result));
+    }
+
+    public static byte unblockPlayer(Session session, int targetId) {
+        int playerId = session.getPlayerId();
 
         IgnoredList ignoredList = PlayerInfo.getIgnoredList(playerId);
 
@@ -62,9 +71,9 @@ public class IgnoredManager {
 
             PlayerInfo.setIgnoredList(ignoredList, playerId);
         } else {
-            result = (byte) -4; // Player not found
+            return -4; // Player not found
         }
 
-        session.send(MessageBuilder.unblockPlayer(result));
+        return 0;
     }
 }

@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.chat;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.misc.ignored.IgnoredManager;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -243,6 +244,63 @@ public class ChatCommands {
         }
     }
 
+    private static void onBlock(Session session, String ... args) {
+        if (args.length < 2) return;
+
+        String targetName = args[1];
+        int targetId = CharacterUtils.getCharacterIdByName(targetName);
+
+        byte result = IgnoredManager.blockPlayer(session, targetId);
+
+        String response;
+
+        switch (result) {
+            case 0:
+                response = "Player blocked: " + targetName;
+                break;
+            case -2:
+                response = "Player not found: " + targetName;
+                break;
+            case -3:
+                response = "Ignored list is full";
+                break;
+            case -4:
+                response = "The player is already blocked";
+                break;
+            case -5:
+                response = "You cannot block yourself";
+                break;
+            default:
+                response = "Received unknown result... ";
+        }
+
+        ChatUtils.sendServerMessage(session, response);
+    }
+
+    private static void onUnblock(Session session, String ... args) {
+        if (args.length < 2) return;
+
+        String targetName = args[1];
+        int targetId = CharacterUtils.getCharacterIdByName(targetName);
+
+        byte result = IgnoredManager.unblockPlayer(session, targetId);
+
+        String response;
+
+        switch (result) {
+            case 0:
+                response = "Player unblocked: " + targetName;
+                break;
+            case -4:
+                response = "Player not found: " + targetName;
+                break;
+            default:
+                response = "Received unknown result... ";
+        }
+
+        ChatUtils.sendServerMessage(session, response);
+    }
+
     public static void initialize() {
         commands.put("host", ChatCommands::onMaster);
         commands.put("progress", ChatCommands::onProgress);
@@ -253,6 +311,8 @@ public class ChatCommands {
         commands.put("observer", (s, a) -> ChatCommands.onObserver(s));
         commands.put("visible", (s, a) -> ChatCommands.onVisible(s));
         commands.put("goldentime", ChatCommands::onGoldenTime);
+        commands.put("block", ChatCommands::onBlock);
+        commands.put("unblock", ChatCommands::onUnblock);
     }
 
     @FunctionalInterface
