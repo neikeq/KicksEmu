@@ -616,7 +616,7 @@ public class MessageBuilder {
 
             for (Room room : rooms.values()) {
                 msg.writeByte((byte) room.getAccessType().toInt());
-                msg.writeBool(room.isPlaying());
+                msg.writeBool(!room.isWaiting());
                 msg.writeShort((short) room.getId());
                 msg.writeString(room.getName(), 46);
                 msg.writeByte(room.getMinLevel());
@@ -1120,7 +1120,7 @@ public class MessageBuilder {
 
             for (Room room : rooms.values()) {
                 msg.writeByte((byte) room.getAccessType().toInt());
-                msg.writeBool(room.isPlaying());
+                msg.writeBool(!room.isWaiting());
                 msg.writeShort((short) room.getId());
                 msg.writeString(room.getName(), 15);
                 msg.writeByte((byte) room.getMaxSize().toInt());

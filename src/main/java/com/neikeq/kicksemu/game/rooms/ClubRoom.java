@@ -23,7 +23,7 @@ public class ClubRoom extends Room {
 
         synchronized (locker) {
             if (isNotFull()) {
-                if (!isPlaying()) {
+                if (isWaiting()) {
                     if (MemberInfo.getClubId(playerId) == getId()) {
                         // Check password (moderators can bypass this)
                         if (getAccessType() != RoomAccessType.PASSWORD ||

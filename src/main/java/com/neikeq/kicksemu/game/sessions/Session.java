@@ -115,7 +115,7 @@ public class Session {
         }
 
         // Close Udp Ping schedule
-        if (getUdpPingFuture() != null && !getUdpPingFuture().isCancelled()) {
+        if (getUdpPingFuture() != null && getUdpPingFuture().isCancellable()) {
             getUdpPingFuture().cancel(true);
         }
 

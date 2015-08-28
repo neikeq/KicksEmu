@@ -5,7 +5,6 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
 import com.neikeq.kicksemu.game.characters.types.Position;
-import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.misc.quests.QuestManager;
@@ -250,7 +249,7 @@ public class RoomMessages {
             result = (byte) -2; // Room does not exist
         } else if (room.getMaster() != session.getPlayerId()) {
             result = (byte) -3; // Player is not room's master
-        } else if (maxSize.toInt() < room.getPlayers().size()) {
+        } else if (maxSize.toInt() < room.getCurrentSize()) {
             result = (byte) -4; // Size is lower than players in room
         } else if (minLevel > maxLevel) {
             result = (byte) -5; // Wrong level settings
@@ -400,13 +399,13 @@ public class RoomMessages {
                             room.getConfirmedPlayers().add(playerId);
                         }
 
-                        if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
+                        if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
                             room.getConfirmedPlayers().clear();
                             room.sendBroadcast(MessageBuilder.startCountDown((byte) 1));
                         }
                         break;
                     case -1:
-                        if (!room.isPlaying() && room.getMaster() == playerId) {
+                        if (room.isWaiting() && room.getMaster() == playerId) {
                             room.startCountdown();
                         }
                         break;
@@ -460,7 +459,7 @@ public class RoomMessages {
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
 
-            if (room.state() == RoomState.LOADING) {
+            if (room.isLoading()) {
                 room.sendBroadcast(MessageBuilder.matchLoading(playerId, roomId, status));
             }
         }
@@ -473,7 +472,7 @@ public class RoomMessages {
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
 
-            if (room.state() == RoomState.LOADING) {
+            if (room.isLoading()) {
                 if (!room.getConfirmedPlayers().contains(playerId)) {
                     room.getConfirmedPlayers().add(playerId);
 
@@ -482,10 +481,14 @@ public class RoomMessages {
                     UdpPing.sendUdpPing(session);
                 }
 
-                if (room.getConfirmedPlayers().size() >= room.getPlayers().size()) {
+                if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
                     room.setState(RoomState.PLAYING);
                     room.setTimeStart(DateUtils.currentTimeMillis());
                     room.sendBroadcast(MessageBuilder.playerReady((byte) 0));
+
+                    if (room.getLoadingTimeoutFuture().isCancellable()) {
+                        room.getLoadingTimeoutFuture().cancel(true);
+                    }
                 }
             } else {
                 session.send(MessageBuilder.playerReady((byte) 0));
@@ -501,8 +504,7 @@ public class RoomMessages {
 
             byte result = 0;
 
-            if (room.state() == RoomState.LOADING &&
-                    room.getConfirmedPlayers().size() < room.getPlayers().size()) {
+            if (room.isLoading() && room.getConfirmedPlayers().size() < room.getCurrentSize()) {
                 result = -1;
             }
 
@@ -754,8 +756,7 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.state() == RoomState.LOADING &&
-                room.getHost() == session.getPlayerId()) {
+        if (room != null && room.isLoading() && room.getHost() == session.getPlayerId()) {
             room.setState(RoomState.WAITING);
             room.sendBroadcast(MessageBuilder.cancelLoading());
         }

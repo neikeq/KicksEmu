@@ -62,6 +62,7 @@ public class Room {
     private final List<Short> blueTeamPositions = new ArrayList<>();
 
     private ScheduledFuture<?> countdownTimeoutFuture;
+    private ScheduledFuture<?> loadingTimeoutFuture;
 
     protected final Object locker = new Object();
 
@@ -72,7 +73,7 @@ public class Room {
 
         synchronized (locker) {
             if (isNotFull()) {
-                if (!isPlaying()) {
+                if (isWaiting()) {
                     // Check password (moderators can bypass this)
                     if (getAccessType() != RoomAccessType.PASSWORD ||
                             password.equals(getPassword()) ||
@@ -302,7 +303,7 @@ public class Room {
                                             "Failed to connect: " + String.join(", ", info)));
                                 }
 
-                                this.cancelCountdown();
+                                cancelCountdown();
                             }
                         }
                     }, 5, TimeUnit.SECONDS));
@@ -313,8 +314,7 @@ public class Room {
         synchronized (locker) {
             if (state() == RoomState.COUNT_DOWN) {
                 if (count == 0) {
-                    setState(RoomState.LOADING);
-                    updateTrainingFactor();
+                    startLoading();
                 }
 
                 sendBroadcast(MessageBuilder.countDown(count));
@@ -324,9 +324,35 @@ public class Room {
 
     public void cancelCountdown() {
         synchronized (locker) {
-            getCountdownTimeoutFuture().cancel(true);
+            if (getCountdownTimeoutFuture().isCancellable()) {
+                getCountdownTimeoutFuture().cancel(true);
+            }
             setState(RoomState.WAITING);
             sendBroadcast(MessageBuilder.cancelCountDown());
+        }
+    }
+
+    public void startLoading() {
+        synchronized (locker) {
+            setState(RoomState.LOADING);
+            updateTrainingFactor();
+
+            setLoadingTimeoutFuture(getPlayers().get(host).getChannel().eventLoop()
+                    .schedule(() -> {
+                        synchronized (locker) {
+                            cancelLoading();
+                        }
+                    }, 30, TimeUnit.SECONDS));
+        }
+    }
+
+    public void cancelLoading() {
+        synchronized (locker) {
+            if (getLoadingTimeoutFuture().isCancellable()) {
+                getLoadingTimeoutFuture().cancel(true);
+            }
+            setState(RoomState.WAITING);
+            sendBroadcast(MessageBuilder.cancelLoading());
         }
     }
 
@@ -352,23 +378,19 @@ public class Room {
 
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
-        if (Configuration.getBoolean("game.match.result.force") || isInLobbyScreen()) {
+        if (Configuration.getBoolean("game.match.result.force") || !isPlaying()) {
             sendBroadcast(leaveRoomMessage(playerId, reason));
+
+            if (isLoading()) {
+                cancelLoading();
+            } else if (state() == RoomState.COUNT_DOWN) {
+                cancelCountdown();
+            }
         } else {
             disconnectedPlayers.add(playerId);
-            // With this trick, the ball won't target nor collide to the disconnected player.
-            // He will still be visible though.
-            sendBroadcast(MessageBuilder.setObserver(playerId, true));
 
-            if (state() == RoomState.PLAYING) {
-                String message = PlayerInfo.getName(playerId) + " has been disconnected.";
-                sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
-            }
-        }
-
-        // If the countdown started, cancel it
-        if (state() == RoomState.COUNT_DOWN) {
-            cancelCountdown();
+            String message = PlayerInfo.getName(playerId) + " has been disconnected.";
+            sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
         }
     }
 
@@ -379,8 +401,7 @@ public class Room {
                 sendBroadcast(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED));
                 break;
             case LOADING:
-                setState(RoomState.WAITING);
-                sendBroadcast(MessageBuilder.cancelLoading());
+                cancelLoading();
                 break;
             case RESULT:
                 ThreadUtils.sleep(3000);
@@ -434,7 +455,9 @@ public class Room {
     public void sendHostInfo() {
         synchronized (locker) {
             if (state == RoomState.COUNT_DOWN) {
-                getCountdownTimeoutFuture().cancel(true);
+                if (getCountdownTimeoutFuture().isCancellable()) {
+                    getCountdownTimeoutFuture().cancel(true);
+                }
                 sendBroadcast(MessageBuilder.hostInfo(this));
             }
         }
@@ -543,8 +566,16 @@ public class Room {
                 .count() < 6 || redTeamSize() != blueTeamSize();
     }
 
+    public boolean isWaiting() {
+        return state() == RoomState.WAITING;
+    }
+
+    public boolean isLoading() {
+        return state() == RoomState.LOADING;
+    }
+
     public boolean isPlaying() {
-        return state() != RoomState.WAITING;
+        return state() == RoomState.PLAYING;
     }
 
     public boolean isInLobbyScreen() {
@@ -748,5 +779,13 @@ public class Room {
 
     public void setCountdownTimeoutFuture(ScheduledFuture<?> countdownTimeoutFuture) {
         this.countdownTimeoutFuture = countdownTimeoutFuture;
+    }
+
+    public ScheduledFuture<?> getLoadingTimeoutFuture() {
+        return loadingTimeoutFuture;
+    }
+
+    public void setLoadingTimeoutFuture(ScheduledFuture<?> loadingTimeoutFuture) {
+        this.loadingTimeoutFuture = loadingTimeoutFuture;
     }
 }

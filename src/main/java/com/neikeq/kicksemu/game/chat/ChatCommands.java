@@ -174,7 +174,7 @@ public class ChatCommands {
             if (session.getRoomId() > 0) {
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
-                if (room != null && !room.isPlaying()) {
+                if (room != null && room.isWaiting()) {
                     room.getObservers().add(playerId);
                     room.sendBroadcast(MessageBuilder.setObserver(playerId, observer));
                 }
