@@ -1176,6 +1176,15 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage clubRoomCaptain(int playerId) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_CAPTAIN);
+
+        msg.writeZeros(2);
+        msg.writeInt(playerId);
+
+        return msg;
+    }
+
     public static ServerMessage clubRoomInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_INFO);
 

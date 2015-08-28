@@ -132,7 +132,7 @@ public class Room {
 
         session.setRoomId(getId());
 
-        session.send(getJoinRoom(this, session.getPlayerId(), (byte) 0));
+        session.send(joinRoomMessage(this, session.getPlayerId(), (byte) 0));
 
         onPlayerJoined(session);
     }
@@ -170,7 +170,7 @@ public class Room {
 
         // Notify the session
         session.onLeavedRoom();
-        session.sendAndFlush(getLeaveRoom(playerId, reason));
+        session.sendAndFlush(leaveRoomMessage(playerId, reason));
 
         onPlayerLeaved(playerId, reason);
     }
@@ -344,7 +344,7 @@ public class Room {
         // Notify all the players in the room about the new player
         if (players.size() > 1) {
             try (Connection con = MySqlManager.getConnection()) {
-                sendBroadcast(getRoomPlayerInfo(session, con),
+                sendBroadcast(roomPlayerInfoMessage(session, con),
                         s -> s.getPlayerId() != playerId);
             } catch (SQLException ignored) {}
         }
@@ -353,7 +353,7 @@ public class Room {
     private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
         if (Configuration.getBoolean("game.match.result.force") || isInLobbyScreen()) {
-            sendBroadcast(getLeaveRoom(playerId, reason));
+            sendBroadcast(leaveRoomMessage(playerId, reason));
         } else {
             disconnectedPlayers.add(playerId);
             // With this trick, the ball won't target nor collide to the disconnected player.
@@ -411,15 +411,19 @@ public class Room {
         return null;
     }
 
-    protected ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
+    protected ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
         return MessageBuilder.roomPlayerInfo(session, this, con);
     }
 
-    protected ServerMessage getLeaveRoom(int playerId, RoomLeaveReason reason) {
+    protected ServerMessage leaveRoomMessage(int playerId, RoomLeaveReason reason) {
         return MessageBuilder.leaveRoom(playerId, reason);
     }
 
-    protected ServerMessage getJoinRoom(Room room, int playerId, byte result) {
+    protected ServerMessage roomMasterMessage(int master) {
+        return MessageBuilder.roomMaster(master);
+    }
+
+    protected ServerMessage joinRoomMessage(Room room, int playerId, byte result) {
         return MessageBuilder.joinRoom(room, playerId, result);
     }
 
@@ -439,7 +443,7 @@ public class Room {
     private void sendRoomPlayersInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
             getPlayers().values().stream().forEach(s ->
-                    session.sendAndFlush(getRoomPlayerInfo(s, con)));
+                    session.sendAndFlush(roomPlayerInfoMessage(s, con)));
         } catch (SQLException ignored) {}
     }
 
@@ -639,8 +643,7 @@ public class Room {
 
     public void setMaster(int master) {
         this.master = master;
-
-        sendBroadcast(MessageBuilder.roomMaster(master));
+        sendBroadcast(roomMasterMessage(master));
     }
 
     public String getName() {

@@ -68,6 +68,7 @@ public class MessageId {
     public static final int CLUB_CREATE_ROOM = 2501;
     public static final int CLUB_JOIN_ROOM = 2502;
     public static final int CLUB_LEAVE_ROOM = 2503;
+    public static final int CLUB_ROOM_CAPTAIN = 2505;
     public static final int CLUB_ROOM_INFO = 2510;
     public static final int CLUB_ROOM_PLAYER_INFO = 2511;
     public static final int CLUB_ROOM_SETTINGS = 2513;

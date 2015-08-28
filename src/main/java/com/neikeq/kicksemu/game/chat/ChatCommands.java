@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.chat;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredManager;
+import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -40,20 +41,24 @@ public class ChatCommands {
         if (args.length < 2) return;
 
         int playerId = session.getPlayerId();
-        Room room = RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null && room.state() == RoomState.WAITING) {
-            if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
-                int targetId = CharacterUtils.getCharacterIdByName(args[1]);
+        if (ServerManager.getServerType() != ServerType.CLUB) {
+            Room room = RoomManager.getRoomById(session.getRoomId());
 
-                if (targetId > 0 && targetId != room.getMaster() && room.isPlayerIn(targetId)) {
-                    room.setMaster(targetId);
-                    room.setHost(targetId);
+            if (room != null && room.state() == RoomState.WAITING) {
+                if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
+                    int targetId = CharacterUtils.getCharacterIdByName(args[1]);
+
+                    if (targetId > 0 && targetId != room.getMaster() &&
+                            room.isPlayerIn(targetId)) {
+                        room.setMaster(targetId);
+                        room.setHost(targetId);
+                    } else {
+                        ChatUtils.sendServerMessage(session, "Player not found.");
+                    }
                 } else {
-                    ChatUtils.sendServerMessage(session, "Player not found.");
+                    ChatUtils.sendServerMessage(session, "You are not the room's master.");
                 }
-            } else {
-                ChatUtils.sendServerMessage(session, "You are not the room's master.");
             }
         }
     }

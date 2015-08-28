@@ -84,17 +84,22 @@ public class ClubRoom extends Room {
     public void cancelCountdown() { }
 
     @Override
-    protected ServerMessage getRoomPlayerInfo(Session session, Connection... con) {
+    protected ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
         return MessageBuilder.clubRoomPlayerInfo(session, this, con);
     }
 
     @Override
-    protected ServerMessage getLeaveRoom(int playerId, RoomLeaveReason reason) {
+    protected ServerMessage leaveRoomMessage(int playerId, RoomLeaveReason reason) {
         return MessageBuilder.clubLeaveRoom(playerId, reason);
     }
 
     @Override
-    protected ServerMessage getJoinRoom(Room room, int playerId, byte result) {
+    protected ServerMessage roomMasterMessage(int master) {
+        return MessageBuilder.clubRoomCaptain(master);
+    }
+
+    @Override
+    protected ServerMessage joinRoomMessage(Room room, int playerId, byte result) {
         return MessageBuilder.clubJoinRoom(room, result);
     }
 
