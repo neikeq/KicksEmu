@@ -84,7 +84,8 @@ public class ChatManager {
 
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
-                if (room != null && room.isPlayerIn(playerId)) {
+                if (room != null && room.isPlayerIn(playerId) &&
+                        room.getRoomLobby().isTeamChatEnabled()) {
                     ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
                     room.sendTeamBroadcast(msg, room.getPlayerTeam(playerId), playerId);
                 }

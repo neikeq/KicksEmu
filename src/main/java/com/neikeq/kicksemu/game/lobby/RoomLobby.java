@@ -8,6 +8,8 @@ public class RoomLobby implements Lobby {
     private final List<Integer> players = new ArrayList<>();
     private final Object locker = new Object();
 
+    private boolean teamChatEnabled = true;
+
     public List<Integer> getPlayers() {
         return players;
     }
@@ -30,5 +32,13 @@ public class RoomLobby implements Lobby {
                 players.remove(index);
             }
         }
+    }
+
+    public boolean isTeamChatEnabled() {
+        return teamChatEnabled;
+    }
+
+    public void setTeamChatEnabled(boolean teamChatEnabled) {
+        this.teamChatEnabled = teamChatEnabled;
     }
 }

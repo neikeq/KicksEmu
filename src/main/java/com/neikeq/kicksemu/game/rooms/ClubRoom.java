@@ -15,6 +15,8 @@ import java.util.List;
 
 public class ClubRoom extends Room {
 
+    { super.getRoomLobby().setTeamChatEnabled(false); }
+
     @Override
     public void tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
