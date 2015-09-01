@@ -169,7 +169,7 @@ public class RoomMessages {
     }
 
     public static void leaveRoom(Session session, ClientMessage msg) {
-        short roomId = msg.readShort();
+        int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
         Room room = RoomManager.getRoomById(roomId);

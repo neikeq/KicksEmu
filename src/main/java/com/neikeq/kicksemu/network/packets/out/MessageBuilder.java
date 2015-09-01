@@ -41,7 +41,7 @@ public class MessageBuilder {
     public static ServerMessage certifyLogin(int sessionId, int userId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_LOGIN);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == AuthResult.SUCCESS) {
             msg.writeInt(sessionId);
@@ -69,8 +69,7 @@ public class MessageBuilder {
     public static ServerMessage instantLogin(int sessionId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_LOGIN);
 
-        MessageUtils.appendResult(result, msg);
-
+        msg.writeShort(result);
         msg.writeInt(sessionId);
 
         return msg;
@@ -79,10 +78,8 @@ public class MessageBuilder {
     public static ServerMessage instantExit() {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_EXIT);
 
-        MessageUtils.appendResult((byte)0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeZeros(2);
-
         // Request the client to close the connection
         msg.setShort(0, (short) -1);
 
@@ -92,8 +89,7 @@ public class MessageBuilder {
     public static ServerMessage certifyExit() {
         ServerMessage msg = new ServerMessage(MessageId.CERTIFY_EXIT);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         // Request the client to close the connection
         msg.setShort(0, (short) -1);
 
@@ -106,7 +102,7 @@ public class MessageBuilder {
 
         boolean blocked = PlayerInfo.isBlocked(playerId, con);
 
-        MessageUtils.appendResult((byte) (blocked ? -2 : 0), msg);
+        msg.writeShort((short) (blocked ? -2 : 0));
 
         if (!blocked) {
             msg.writeInt(ownerId);
@@ -141,17 +137,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage createCharacter(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.CREATE_CHARACTER);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.CREATE_CHARACTER).writeShort(result);
     }
 
     public static ServerMessage choiceCharacter(int characterId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CHOICE_CHARACTER);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(characterId);
@@ -163,8 +155,7 @@ public class MessageBuilder {
     public static ServerMessage removeCharacter(int characterId, String date, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.REMOVE_CHARACTER);
 
-        MessageUtils.appendResult(result, msg);
-
+        msg.writeShort(result);
         msg.writeInt(characterId);
         msg.writeString(date, 20);
 
@@ -174,8 +165,7 @@ public class MessageBuilder {
     public static ServerMessage serverList(List<Short> servers, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SERVER_LIST);
 
-        MessageUtils.appendResult(result, msg);
-
+        msg.writeShort(result);
         msg.writeShort((short) servers.size());
 
         for (short serverId : servers) {
@@ -207,7 +197,7 @@ public class MessageBuilder {
     public static ServerMessage serverInfo(short serverId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SERVER_INFO);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             final String query = "SELECT type, min_level, max_level, address, port " +
@@ -234,18 +224,14 @@ public class MessageBuilder {
     }
 
     public static ServerMessage upgradeCharacter(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.UPGRADE_CHARACTER);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.UPGRADE_CHARACTER).writeShort(result);
     }
 
     public static ServerMessage updateTutorial(byte dribbling, byte passing, byte shooting,
                                                byte defense, int reward, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.UPDATE_TUTORIAL);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeByte(dribbling);
@@ -259,18 +245,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage gameLogin(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.GAME_LOGIN);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.GAME_LOGIN).writeShort(result);
     }
 
     public static ServerMessage gameExit(InetSocketAddress clientIp, int characterId) {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_EXIT);
 
-        MessageUtils.appendResult((byte)0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeInt(characterId);
         msg.writeString(clientIp.getAddress().getHostAddress(), 16);
         msg.writeZeros(2);
@@ -282,17 +263,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage udpConfirm(boolean result) {
-        ServerMessage msg = new ServerMessage(MessageId.UDP_CONFIRM);
-
-        MessageUtils.appendResult((byte) (result ? 0 : -3), msg);
-
-        return msg;
+        return new ServerMessage(MessageId.UDP_CONFIRM).writeShort((short) (result ? 0 : -3));
     }
 
     public static ServerMessage playerInfo(int playerId, byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_INFO);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             int clubId = MemberInfo.getClubId(playerId, con);
@@ -341,7 +318,7 @@ public class MessageBuilder {
     public static ServerMessage itemList(Map<Integer, Item> items, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ITEM_LIST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeShort((short) items.size());
@@ -357,7 +334,7 @@ public class MessageBuilder {
     public static ServerMessage trainingList(Map<Integer, Training> trainings, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.TRAINING_LIST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeShort((short) trainings.size());
@@ -373,7 +350,7 @@ public class MessageBuilder {
     public static ServerMessage skillList(Map<Integer, Skill> skills, byte slots, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.SKILL_LIST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeByte(slots);
@@ -390,7 +367,7 @@ public class MessageBuilder {
     public static ServerMessage celebrationList(Map<Integer, Celebration> celebs, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CELEBRATION_LIST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeShort((short) celebs.size());
@@ -406,8 +383,7 @@ public class MessageBuilder {
     public static ServerMessage friendList(List<Integer> friends, byte page) {
         ServerMessage msg = new ServerMessage(MessageId.FRIENDS_LIST);
 
-        MessageUtils.appendResult((byte)0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeByte(page);
 
         for (int friendId : friends) {
@@ -452,7 +428,7 @@ public class MessageBuilder {
     public static ServerMessage friendRequest(int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.FRIEND_REQUEST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(playerId);
@@ -463,34 +439,23 @@ public class MessageBuilder {
     }
 
     public static ServerMessage friendResponse(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.FRIEND_RESPONSE);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.FRIEND_RESPONSE).writeShort(result);
     }
 
     public static ServerMessage deleteFriend(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.DELETE_FRIEND);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.DELETE_FRIEND).writeShort(result);
     }
 
     public static ServerMessage clubInfo(int playerId) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_INFO);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
         int clubId = MemberInfo.getClubId(playerId);
 
+        msg.writeShort((short) 0);
         msg.writeString(ClubInfo.getName(clubId), 15);
         msg.writeShort(ClubInfo.getMembersCount(clubId));
         msg.writeShort(ClubInfo.getMembersLimit(clubId));
-
-        int manager = ClubInfo.getManager(clubId);
-        msg.writeString(PlayerInfo.getName(manager), 15);
+        msg.writeString(PlayerInfo.getName(ClubInfo.getManager(clubId)), 15);
 
         List<Integer> captains = ClubInfo.getCaptains(clubId);
 
@@ -510,12 +475,10 @@ public class MessageBuilder {
     public static ServerMessage clubMembers(int playerId, byte page) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_MEMBERS);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeByte(page);
 
         int clubId = MemberInfo.getClubId(playerId);
-
         List<Integer> membersForPage = ClubInfo.getMembers(clubId, page * 10, 10);
 
         membersForPage.forEach(memberId -> {
@@ -560,8 +523,7 @@ public class MessageBuilder {
     public static ServerMessage ignoredList(List<Integer> ignoredPlayers, byte page) {
         ServerMessage msg = new ServerMessage(MessageId.IGNORED_LIST);
 
-        MessageUtils.appendResult((byte)0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeByte(page);
 
         for (int playerId : ignoredPlayers) {
@@ -576,7 +538,7 @@ public class MessageBuilder {
     public static ServerMessage blockPlayer(int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.BLOCK_PLAYER);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(playerId);
@@ -587,17 +549,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage unblockPlayer(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.UNBLOCK_PLAYER);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.UNBLOCK_PLAYER).writeShort(result);
     }
 
     public static ServerMessage statusMessage(String statusMessage, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.STATUS_MESSAGE);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeString(statusMessage, statusMessage.length());
@@ -609,7 +567,7 @@ public class MessageBuilder {
     public static ServerMessage roomList(Map<Integer, Room> rooms, short page, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_LIST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeShort(page);
@@ -656,7 +614,7 @@ public class MessageBuilder {
     public static ServerMessage createRoom(short roomId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CREATE_ROOM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeShort(roomId);
@@ -668,7 +626,7 @@ public class MessageBuilder {
     public static ServerMessage joinRoom(Room room, int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.JOIN_ROOM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0 && room != null) {
             msg.writeShort((short) room.getId());
@@ -683,17 +641,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage quickJoinRoom(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.QUICK_JOIN_ROOM);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.QUICK_JOIN_ROOM).writeShort(result);
     }
 
     public static ServerMessage nextTip(String tip, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.NEXT_TIP);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeBool(GameEvents.isGoldenTime());
@@ -708,7 +662,7 @@ public class MessageBuilder {
     public static ServerMessage roomInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_INFO);
 
-        MessageUtils.appendResult((byte) 0, msg);
+        msg.writeShort((short) 0);
 
         if (room != null) {
             msg.writeByte((byte) room.getAccessType().toInt());
@@ -803,8 +757,7 @@ public class MessageBuilder {
     public static ServerMessage swapTeam(int playerId, RoomTeam newTeam) {
         ServerMessage msg = new ServerMessage(MessageId.SWAP_TEAM);
 
-        MessageUtils.appendResult((byte)0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeInt(playerId);
         msg.writeZeros(2);
         msg.writeShort((short) newTeam.toInt());
@@ -815,8 +768,7 @@ public class MessageBuilder {
     public static ServerMessage roomMap(short map) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_MAP);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeShort(map);
 
         return msg;
@@ -825,8 +777,7 @@ public class MessageBuilder {
     public static ServerMessage roomBall(short ball) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_BALL);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeShort(ball);
 
         return msg;
@@ -835,7 +786,7 @@ public class MessageBuilder {
     public static ServerMessage roomSettings(Room room, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_SETTINGS);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (room != null) {
             msg.writeShort((short) room.getAccessType().toInt());
@@ -852,18 +803,14 @@ public class MessageBuilder {
     }
 
     public static ServerMessage kickPlayer(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.KICK_PLAYER);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.KICK_PLAYER).writeShort(result);
     }
 
     public static ServerMessage lobbyList(Integer[] players, byte page,
                                           byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.LOBBY_LIST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeByte(page);
@@ -907,7 +854,7 @@ public class MessageBuilder {
     public static ServerMessage invitePlayer(byte result, Room room, String name) {
         ServerMessage msg = new ServerMessage(MessageId.INVITE_PLAYER);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0 && room != null) {
             msg.writeString(name, 15);
@@ -926,8 +873,7 @@ public class MessageBuilder {
                                             MessageType messageType, String message) {
         ServerMessage msg = new ServerMessage(MessageId.CHAT_MESSAGE);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeInt(playerId);
         msg.writeString(name, 15);
         msg.writeByte((byte) messageType.toInt());
@@ -939,8 +885,7 @@ public class MessageBuilder {
     public static ServerMessage setObserver(int playerId, boolean observer) {
         ServerMessage msg = new ServerMessage(MessageId.SET_OBSERVER);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeInt(playerId);
         msg.writeBool(observer, 2);
 
@@ -950,8 +895,7 @@ public class MessageBuilder {
     public static ServerMessage startCountDown(byte type) {
         ServerMessage msg = new ServerMessage(MessageId.START_COUNT_DOWN);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeByte(type);
 
         return msg;
@@ -960,10 +904,9 @@ public class MessageBuilder {
     public static ServerMessage hostInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.HOST_INFO);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
         Session session = ServerManager.getSessionById(room.getHost());
 
+        msg.writeShort((short) 0);
         msg.writeInt(room.getHost());
         msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
         msg.writeShort((short) session.getUdpPort());
@@ -990,19 +933,11 @@ public class MessageBuilder {
     }
 
     public static ServerMessage countDown(short count) {
-        ServerMessage msg = new ServerMessage(MessageId.COUNT_DOWN);
-
-        msg.writeShort(count);
-
-        return msg;
+        return new ServerMessage(MessageId.COUNT_DOWN).writeShort(count);
     }
 
     public static ServerMessage cancelCountDown() {
-        ServerMessage msg = new ServerMessage(MessageId.CANCEL_COUNT_DOWN);
-
-        MessageUtils.appendResult((byte) 0, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.CANCEL_COUNT_DOWN).writeShort((short) 0);
     }
 
     public static ServerMessage matchLoading(int playerId, int roomId, short status) {
@@ -1016,34 +951,22 @@ public class MessageBuilder {
     }
 
     public static ServerMessage playerReady(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.PLAYER_READY);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.PLAYER_READY).writeShort(result);
     }
 
     public static ServerMessage cancelLoading() {
-        ServerMessage msg = new ServerMessage(MessageId.CANCEL_LOADING);
-
-        MessageUtils.appendResult((byte) 0, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.CANCEL_LOADING).writeShort((short) 0);
     }
 
     public static ServerMessage startMatch(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.START_MATCH);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.START_MATCH).writeShort(result);
     }
 
     public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult,
                                             Room room, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
 
-        MessageUtils.appendResult((byte) 0, msg);
+        msg.writeShort((short) 0);
 
         if (result != null && playerResult != null && room != null) {
             msg.writeInt(result.getMom());
@@ -1069,26 +992,17 @@ public class MessageBuilder {
     }
 
     public static ServerMessage unknown1() {
-        ServerMessage msg = new ServerMessage(MessageId.UNKNOWN1);
-
-        MessageUtils.appendResult((byte) 0, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.UNKNOWN1).writeShort((short) 0);
     }
 
     public static ServerMessage unknown2() {
-        ServerMessage msg = new ServerMessage(MessageId.UNKNOWN2);
-
-        MessageUtils.appendResult((byte) 0, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.UNKNOWN2).writeShort((short) 0);
     }
 
     public static ServerMessage updateRoomPlayer(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.UPDATE_ROOM_PLAYER);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeInt(playerId);
         msg.writeBool(true);
 
@@ -1101,8 +1015,7 @@ public class MessageBuilder {
     public static ServerMessage playerBonusStats(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_BONUS_STATS);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeInt(playerId);
 
         MessageUtils.appendStatsBonus(playerId, msg, con);
@@ -1113,7 +1026,7 @@ public class MessageBuilder {
     public static ServerMessage clubRoomList(Map<Integer, Room> rooms, short page, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_LIST);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeShort(page);
@@ -1146,7 +1059,7 @@ public class MessageBuilder {
     public static ServerMessage clubCreateRoom(short roomId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_CREATE_ROOM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeShort(roomId);
@@ -1158,7 +1071,7 @@ public class MessageBuilder {
     public static ServerMessage clubJoinRoom(Room room, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_JOIN_ROOM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0 && room != null) {
             msg.writeShort((short) room.getId());
@@ -1177,11 +1090,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage clubQuickJoinRoom(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.CLUB_QUICK_JOIN);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.CLUB_QUICK_JOIN).writeShort(result);
     }
 
     public static ServerMessage clubRoomCaptain(int playerId) {
@@ -1196,7 +1105,7 @@ public class MessageBuilder {
     public static ServerMessage clubRoomInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_INFO);
 
-        MessageUtils.appendResult((byte) 0, msg);
+        msg.writeShort((short) 0);
 
         if (room != null) {
             msg.writeBool(false);
@@ -1264,17 +1173,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage clubKickPlayer(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.CLUB_KICK_PLAYER);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.CLUB_KICK_PLAYER).writeShort(result);
     }
 
     public static ServerMessage clubRoomSettings(Room room, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_SETTINGS);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (room != null) {
             msg.writeShort((short) room.getAccessType().toInt());
@@ -1285,10 +1190,36 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage clubRegisterTeam(byte result) {
+        return new ServerMessage(MessageId.CLUB_REGISTER_TEAM).writeShort(result);
+    }
+
+    public static ServerMessage clubUnregisterTeam(byte result) {
+        return new ServerMessage(MessageId.CLUB_UNREGISTER_TEAM).writeShort(result);
+    }
+
+    public static ServerMessage clubTeamList(Map<Integer, Room> teams, short page) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_TEAMS_LIST);
+
+        msg.writeShort((short) 0);
+        msg.writeShort(page);
+
+        for (Room team : teams.values()) {
+            msg.writeByte((byte) team.getAccessType().toInt());
+            msg.writeBool(!team.isWaiting());
+            msg.writeShort((short) team.getId());
+            msg.writeString(team.getName(), 15);
+            msg.writeByte((byte) 3); // Rank?
+            msg.writeByte((byte) 2); // Wins
+        }
+
+        return msg;
+    }
+
     public static ServerMessage clubInvitePlayer(byte result, Room room, String name) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_INVITE_PLAYER);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0 && room != null) {
             msg.writeString(name, 15);
@@ -1302,7 +1233,7 @@ public class MessageBuilder {
     public static ServerMessage purchaseItem(int playerId, byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_ITEM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
@@ -1318,7 +1249,7 @@ public class MessageBuilder {
                                            byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.RESELL_ITEM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
@@ -1336,7 +1267,7 @@ public class MessageBuilder {
     public static ServerMessage activateItem(int inventoryId, int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ACTIVATE_ITEM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendStatsBonus(playerId, msg);
@@ -1350,7 +1281,7 @@ public class MessageBuilder {
     public static ServerMessage deactivateItem(int inventoryId, int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_ITEM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendStatsBonus(playerId, msg);
@@ -1365,7 +1296,7 @@ public class MessageBuilder {
                                           short usages, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.MERGE_ITEM);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendStatsBonus(playerId, msg);
@@ -1380,7 +1311,7 @@ public class MessageBuilder {
                                               byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_LEARN);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
@@ -1395,7 +1326,7 @@ public class MessageBuilder {
                                               byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_SKILL);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
@@ -1408,7 +1339,7 @@ public class MessageBuilder {
     public static ServerMessage activateSkill(int inventoryId, byte index, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ACTIVATE_SKILL);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(inventoryId);
@@ -1421,7 +1352,7 @@ public class MessageBuilder {
     public static ServerMessage deactivateSkill(int skillId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_SKILL);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(skillId);
@@ -1434,7 +1365,7 @@ public class MessageBuilder {
                                              byte result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_CELE);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
@@ -1447,7 +1378,7 @@ public class MessageBuilder {
     public static ServerMessage activateCele(int inventoryId, byte index, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.ACTIVATE_CELE);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(inventoryId);
@@ -1460,7 +1391,7 @@ public class MessageBuilder {
     public static ServerMessage deactivateCele(int inventoryId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_CELE);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(inventoryId);
@@ -1474,17 +1405,13 @@ public class MessageBuilder {
     }
 
     public static ServerMessage updateSettings(byte result) {
-        ServerMessage msg = new ServerMessage(MessageId.UPDATE_SETTINGS);
-
-        MessageUtils.appendResult(result, msg);
-
-        return msg;
+        return new ServerMessage(MessageId.UPDATE_SETTINGS).writeShort(result);
     }
 
     public static ServerMessage playerDetails(int playerId, byte result) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_DETAILS);
 
-        MessageUtils.appendResult(result, msg);
+        msg.writeShort(result);
 
         if (result == 0) {
             msg.writeInt(playerId);
@@ -1555,11 +1482,10 @@ public class MessageBuilder {
     public static ServerMessage addStatsPoints(int playerId, byte result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.ADD_STATS_POINTS);
 
-        MessageUtils.appendResult(result, msg);
-
+        msg.writeShort(result);
         msg.writeInt(playerId);
-
         msg.writeShort(PlayerInfo.getStatsPoints(playerId));
+
         MessageUtils.appendStats(playerId, msg, con);
 
         return msg;
@@ -1568,8 +1494,6 @@ public class MessageBuilder {
     public static ServerMessage playerProgress(int playerId,
                                                short finishedQuest, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_PROGRESS);
-
-        msg.writeShort((short) 1);
 
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
@@ -1586,6 +1510,7 @@ public class MessageBuilder {
             remainMatches = -1;
         }
 
+        msg.writeShort((short) 1);
         msg.writeShort(currentQuest);
         msg.writeShort(remainMatches);
         msg.writeInt(PlayerInfo.getPoints(playerId, con));
@@ -1597,9 +1522,9 @@ public class MessageBuilder {
     public static ServerMessage playerStats(int playerId, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_STATS);
 
-        MessageUtils.appendResult((byte) 0, msg);
-
+        msg.writeShort((short) 0);
         msg.writeShort(PlayerInfo.getStatsPoints(playerId, con));
+
         MessageUtils.appendStats(playerId, msg, con);
 
         return msg;

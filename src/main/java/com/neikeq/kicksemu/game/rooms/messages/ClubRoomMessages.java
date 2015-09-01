@@ -6,6 +6,7 @@ import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
+import com.neikeq.kicksemu.game.rooms.TeamManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
@@ -20,10 +21,13 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 
+import java.util.Map;
+
 public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
     static final byte MIN_ROOM_LEVEL = 3;
+    static final byte MIN_TEAM_PLAYERS = 4;
 
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
@@ -245,6 +249,63 @@ public class ClubRoomMessages extends RoomMessages {
             if (result != 0) {
                 session.send(MessageBuilder.clubInvitePlayer(result, null, ""));
             }
+        }
+    }
+
+    public static void registerTeam(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        byte result = 0;
+
+        if (roomId == session.getRoomId() && !TeamManager.isRegistered(roomId)) {
+            Room room = RoomManager.getRoomById(roomId);
+
+            if (room != null) {
+                if (room.getCurrentSize() == MIN_TEAM_PLAYERS) {
+                    TeamManager.register(room);
+                    room.sendBroadcast(MessageBuilder.clubRegisterTeam(result));
+                } else {
+                    result = -3; // Not enough players
+                }
+            } else {
+                result = -2; // The club doesn't exist
+            }
+        }
+
+        if (result != 0) {
+            session.send(MessageBuilder.clubRegisterTeam(result));
+        }
+    }
+
+    public static void unregisterTeam(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+
+        byte result = 0;
+
+        if (roomId == session.getRoomId() && TeamManager.isRegistered(roomId)) {
+            Room room = RoomManager.getRoomById(roomId);
+
+            if (room != null) {
+                TeamManager.unregister(room.getId());
+                room.sendBroadcast(MessageBuilder.clubUnregisterTeam(result));
+            } else {
+                result = -2; // The club doesn't exist
+            }
+        }
+
+        if (result != 0) {
+            session.send(MessageBuilder.clubRegisterTeam(result));
+        }
+    }
+
+    public static void teamList(Session session, ClientMessage msg) {
+        short page = msg.readShort();
+
+        int roomId = session.getRoomId();
+
+        if (roomId > 0 && TeamManager.isRegistered(roomId)) {
+            Map<Integer, Room> teams = TeamManager.getTeamsFromPage(page);
+            session.send(MessageBuilder.clubTeamList(teams, page));
         }
     }
 }

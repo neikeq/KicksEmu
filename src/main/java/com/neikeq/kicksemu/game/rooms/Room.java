@@ -66,6 +66,10 @@ public class Room {
 
     protected final Object locker = new Object();
 
+    protected void removeRoom() {
+        RoomManager.removeRoom(getId());
+    }
+
     public void tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
 
@@ -154,7 +158,7 @@ public class Room {
 
             // If room is empty, remove it
             if (getPlayers().size() < 1) {
-                RoomManager.removeRoom(getId());
+                removeRoom();
             } else {
                 // If the leaver was room master, set a new one
                 if (playerId == getMaster()) {

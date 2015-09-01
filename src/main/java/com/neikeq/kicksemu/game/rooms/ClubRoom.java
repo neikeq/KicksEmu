@@ -18,6 +18,14 @@ public class ClubRoom extends Room {
     { super.getRoomLobby().setTeamChatEnabled(false); }
 
     @Override
+    protected void removeRoom() {
+        if (TeamManager.isRegistered(getId())) {
+            TeamManager.unregister(getId());
+        }
+        super.removeRoom();
+    }
+
+    @Override
     public void tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
 

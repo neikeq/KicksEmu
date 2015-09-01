@@ -71,7 +71,7 @@ public class ClientMessage {
         return body;
     }
 
-    public short getSize() {
+    public short getBodySize() {
         return body.getShort(Constants.BODY_SIZE_INDEX);
     }
 
@@ -85,6 +85,10 @@ public class ClientMessage {
 
     public int getTargetId() {
         return body.getInt(Constants.TARGET_ID_INDEX);
+    }
+
+    public int getReadableBytes() {
+        return body.readableBytes();
     }
 
     public ClientMessage(ByteBuf data) {

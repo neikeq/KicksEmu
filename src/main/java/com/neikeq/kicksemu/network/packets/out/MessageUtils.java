@@ -29,10 +29,6 @@ import java.sql.SQLException;
 
 class MessageUtils {
 
-    public static void appendResult(byte result, ServerMessage msg) {
-        msg.writeShort(result);
-    }
-
     public static void appendQuestInfo(int playerId, ServerMessage msg, Connection ... con) {
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 

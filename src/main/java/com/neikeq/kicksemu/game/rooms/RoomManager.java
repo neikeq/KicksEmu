@@ -17,7 +17,7 @@ public class RoomManager {
     private static final Map<Integer, Room> ROOMS = new HashMap<>();
     private static final int ROOMS_PER_PAGE = 5;
 
-    public static Room getRoomById(int id) {
+    public static Room getRoomById(Integer id) {
         synchronized (ROOMS_LOCKER) {
             return ROOMS.get(id);
         }
@@ -31,7 +31,7 @@ public class RoomManager {
         }
     }
 
-    public static void removeRoom(int id) {
+    public static void removeRoom(Integer id) {
         synchronized (ROOMS_LOCKER) {
             ROOMS.remove(id);
         }
