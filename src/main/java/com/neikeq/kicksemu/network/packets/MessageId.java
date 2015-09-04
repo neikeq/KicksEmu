@@ -77,6 +77,10 @@ public class MessageId {
     public static final int CLUB_REGISTER_TEAM = 2514;
     public static final int CLUB_UNREGISTER_TEAM = 2515;
     public static final int CLUB_TEAMS_LIST = 2516;
+    public static final int CLUB_CHALLENGE_TEAM = 2517;
+    public static final int CLUB_CHALLENGE_RESPONSE = 2518;
+    public static final int CLUB_UPDATE_WINS_RANKS = 2522; // not sure if ranks
+    public static final int CLUB_UPDATE_WINS = 2523;
     public static final int CLUB_INVITE_PLAYER = 2524;
     public static final int PURCHASE_ITEM = 2600;
     public static final int RESELL_ITEM = 2601;

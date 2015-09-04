@@ -67,22 +67,12 @@ public class RoomManager {
      */
     public static Map<Integer, Room> getRoomsFromPage(int page) {
         Set<Integer> indexes = ROOMS.keySet();
-        Map<Integer, Room> pageRooms = new HashMap<>();
+        final Map<Integer, Room> pageRooms = new HashMap<>();
 
         int startIndex = page * ROOMS_PER_PAGE;
-        int i = 0;
 
-        for (int index : indexes) {
-            if (i >= startIndex) {
-                pageRooms.put(index, ROOMS.get(index));
-
-                if (pageRooms.size() > ROOMS_PER_PAGE) {
-                    break;
-                }
-            }
-
-            i++;
-        }
+        indexes.stream().filter(id -> id >= startIndex).limit(ROOMS_PER_PAGE)
+                .forEach(id -> pageRooms.put(id, ROOMS.get(id)));
 
         return pageRooms;
     }

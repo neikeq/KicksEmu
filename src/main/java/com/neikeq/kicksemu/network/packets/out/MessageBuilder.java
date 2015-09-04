@@ -10,6 +10,7 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
@@ -1198,20 +1199,41 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.CLUB_UNREGISTER_TEAM).writeShort(result);
     }
 
-    public static ServerMessage clubTeamList(Map<Integer, Room> teams, short page) {
+    public static ServerMessage clubTeamList(Map<Integer, ClubRoom> teams, short page) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_TEAMS_LIST);
 
         msg.writeShort((short) 0);
         msg.writeShort(page);
 
-        for (Room team : teams.values()) {
-            msg.writeByte((byte) team.getAccessType().toInt());
+        for (ClubRoom team : teams.values()) {
+            msg.writeBool(true);
             msg.writeBool(!team.isWaiting());
             msg.writeShort((short) team.getId());
             msg.writeString(team.getName(), 15);
-            msg.writeByte((byte) 3); // Rank?
-            msg.writeByte((byte) 2); // Wins
+            msg.writeByte((byte) 0); // Rank
+            msg.writeByte(team.getWins());
         }
+
+        return msg;
+    }
+
+    public static ServerMessage clubChallengeTeam(int targetTeam, boolean isSender, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_CHALLENGE_TEAM);
+
+        msg.writeShort(result);
+        msg.writeShort((short) targetTeam);
+        msg.writeBool(!isSender, 2);
+
+        return msg;
+    }
+
+    public static ServerMessage clubChallengeResponse(int requestedTeam,
+                                                      boolean accepted, byte result) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_CHALLENGE_RESPONSE);
+
+        msg.writeShort(result);
+        msg.writeShort((short) requestedTeam);
+        msg.writeBool(accepted);
 
         return msg;
     }

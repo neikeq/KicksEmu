@@ -258,7 +258,7 @@ public class ClubRoomMessages extends RoomMessages {
         byte result = 0;
 
         if (roomId == session.getRoomId() && !TeamManager.isRegistered(roomId)) {
-            Room room = RoomManager.getRoomById(roomId);
+            ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
 
             if (room != null) {
                 if (room.getCurrentSize() == MIN_TEAM_PLAYERS) {
@@ -304,8 +304,88 @@ public class ClubRoomMessages extends RoomMessages {
         int roomId = session.getRoomId();
 
         if (roomId > 0 && TeamManager.isRegistered(roomId)) {
-            Map<Integer, Room> teams = TeamManager.getTeamsFromPage(page);
+            Map<Integer, ClubRoom> teams = TeamManager.getTeamsFromPage(page, roomId);
             session.send(MessageBuilder.clubTeamList(teams, page));
         }
+    }
+
+    public static void challengeTeam(Session session, ClientMessage msg) {
+        int roomId = msg.readShort();
+        int targetId = msg.readShort();
+
+        ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
+
+        if (room == null || room.getMaster() != session.getPlayerId()) return;
+
+        byte result;
+
+        if (roomId == targetId) {
+            result = -10; // Cannot challenge own team
+        } else if (roomId != session.getRoomId()) {
+            result = -4; // Problem detected. Invalid room
+        } else if (!TeamManager.isRegistered(roomId) || !TeamManager.isRegistered(targetId)) {
+            result = -2; // Problem with the team information. Not registered.
+        } else {
+            ClubRoom targetRoom = (ClubRoom) RoomManager.getRoomById(targetId);
+
+            if (targetRoom == null) {
+                result = -5; // Problem detected. The club doesn't exist
+            } else if (!room.isWaiting() || !targetRoom.isWaiting()) {
+                result = -8; // The club is playing a match
+            } else if (room.isChallenging() || targetRoom.isChallenging()) {
+                result = -6; // The club is applying for a match
+            } else {
+                // Send the request to the target team
+                result = targetRoom.onChallengeRequest(roomId);
+
+                if (result == 0) {
+                    room.setChallengeTarget(targetId);
+                }
+            }
+        }
+
+        session.send(MessageBuilder.clubChallengeTeam(targetId, true, result));
+    }
+
+    public static void challengeResponse(Session session, ClientMessage msg) {
+        int requesterId = msg.readShort();
+        int roomId = msg.readShort();
+        boolean accepted = msg.readBoolean();
+
+        ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
+
+        // Ignore the message if at least one of the following checks fails
+        if (room == null || room.getMaster() != session.getPlayerId() ||
+                roomId == requesterId || roomId != session.getRoomId()) return;
+
+        byte result;
+
+        // Not enough result messages, so we will need to reuse some...
+
+        if (!TeamManager.isRegistered(roomId) || !TeamManager.isRegistered(requesterId)) {
+            result = -2; // Problem with the team information. Not registered.
+        } else {
+            ClubRoom requester = (ClubRoom) RoomManager.getRoomById(requesterId);
+
+            if (requester == null) {
+                result = -2; // Problem with the team information. Requester team does not exist.
+            } else if (requester.getChallengeTarget() != roomId) {
+                result = -6; // Failed to create the match room... Invalid target.
+            } else {
+                result = requester.onChallengeResponse(roomId, accepted);
+
+                if (result == 0) {
+                    result = accepted ?
+                            (byte) 0 : // Challenge request accepted
+                            -5; // Challenge request refused by the team leader
+                }
+            }
+        }
+
+        if (!accepted || result != 0) {
+            room.setChallengeTarget(0);
+        }
+
+        session.send(MessageBuilder.clubChallengeResponse(requesterId, accepted, result));
     }
 }

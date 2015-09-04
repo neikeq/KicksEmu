@@ -380,7 +380,7 @@ public class Room {
         }
     }
 
-    private void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
+    protected void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         // Notify players in room about player leaving
         if (Configuration.getBoolean("game.match.result.force") || !isPlaying()) {
             sendBroadcast(leaveRoomMessage(playerId, reason));
@@ -571,7 +571,8 @@ public class Room {
     }
 
     public boolean isWaiting() {
-        return state() == RoomState.WAITING;
+        // TODO temporal, until I find the way to display the APPLYING icon
+        return state() == RoomState.WAITING || state() == RoomState.APPLYING;
     }
 
     public boolean isLoading() {
