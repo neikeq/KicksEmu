@@ -1,16 +1,11 @@
 package com.neikeq.kicksemu.game.sessions;
 
-import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.chat.MessageType;
-import com.neikeq.kicksemu.game.clubs.ClubInfo;
-import com.neikeq.kicksemu.game.clubs.MemberInfo;
+import com.neikeq.kicksemu.game.clubs.ClubManager;
 import com.neikeq.kicksemu.game.lobby.Lobby;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
-import com.neikeq.kicksemu.game.servers.ServerType;
-import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.game.users.UserInfo;
 
@@ -24,13 +19,12 @@ import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class Session {
 
     private final Channel channel;
     private final Object locker = new Object();
-    private final PlayerCache playerCache = new PlayerCache();
+    private final SessionCache sessionCache = new SessionCache();
     private final List<ByteBuf> packetsQueue = new ArrayList<>();
 
     private ScheduledFuture<?> udpPingFuture;
@@ -147,7 +141,7 @@ public class Session {
             UserInfo.setServer((short)-1, userId);
             UserInfo.setOnline(-1, userId);
 
-            playerCache.clear();
+            sessionCache.clear();
 
             if (playerId > 0) {
                 // Remove session from the list of connected clients
@@ -159,38 +153,7 @@ public class Session {
             // If session player is inside a room, leave it
             leaveRoom(RoomLeaveReason.DISCONNECTED);
 
-            // Notify club members
-            if (ServerManager.getServerType() != ServerType.MAIN) {
-                int clubId = MemberInfo.getClubId(playerId);
-
-                List<Integer> members = clubId > 0 ?
-                        ClubInfo.getMembers(clubId, 0, 30) : new ArrayList<>();
-
-                members.remove((Integer) playerId);
-
-                if (members.size() > 0) {
-                    ServerMessage notification = MessageBuilder.chatMessage(
-                            MessageType.SERVER_MESSAGE,
-                            PlayerInfo.getName(playerId) + " has disconnected"
-                    );
-
-                    try {
-                        Predicate<Integer> filter = ServerManager::isPlayerConnected;
-                        Room room = RoomManager.getRoomById(roomId);
-
-                        if (room != null) {
-                            filter = filter.and(member -> !room.isPlayerIn(member));
-                        }
-
-                        members.stream().filter(filter).forEach(member -> {
-                            notification.retain();
-                            ServerManager.getSessionById(member).sendAndFlush(notification);
-                        });
-                    } finally {
-                        notification.release();
-                    }
-                }
-            }
+            ClubManager.onMemberConnectedStateChanged(this);
         }
     }
 
@@ -290,8 +253,8 @@ public class Session {
         this.pingState = pingState;
     }
 
-    public PlayerCache getPlayerCache() {
-        return playerCache;
+    public SessionCache getCache() {
+        return sessionCache;
     }
 
     public int getSessionId() {

@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerLevelCache {
+public class LevelCache {
 
     private final Map<Integer, Short> levels = new HashMap<>();
 

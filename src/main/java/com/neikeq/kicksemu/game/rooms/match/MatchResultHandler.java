@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.game.rooms.match;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
+import com.neikeq.kicksemu.game.characters.LevelCache;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
@@ -27,7 +27,7 @@ public class MatchResultHandler implements AutoCloseable {
     private final Room room;
     private final MatchResult result;
     private final Connection connection;
-    private final PlayerLevelCache levelCache = new PlayerLevelCache();
+    private final LevelCache levelCache = new LevelCache();
     private final MutableInteger roomAverageLevel = new MutableInteger();
 
     private final long resultTime = DateUtils.currentTimeMillis();
@@ -210,7 +210,7 @@ public class MatchResultHandler implements AutoCloseable {
         return connection;
     }
 
-    public PlayerLevelCache getLevelCache() {
+    public LevelCache getLevelCache() {
         return levelCache;
     }
 

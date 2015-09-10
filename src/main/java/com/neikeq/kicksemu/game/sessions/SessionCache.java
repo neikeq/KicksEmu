@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PlayerCache {
+public class SessionCache {
 
     private Integer owner = null;
 

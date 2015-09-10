@@ -112,7 +112,7 @@ public class UserManager {
 
                 if (Position.isValidNewPosition(currentPosition, position)) {
                     PlayerInfo.setPosition(position, playerId, con);
-                    session.getPlayerCache().setPosition(position);
+                    session.getCache().setPosition(position);
 
                     MutableInteger statsPoints = new MutableInteger(0);
 

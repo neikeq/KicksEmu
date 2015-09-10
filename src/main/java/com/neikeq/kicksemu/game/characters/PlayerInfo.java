@@ -52,11 +52,11 @@ public class PlayerInfo {
 
     public static int getOwner(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        int owner = s != null && s.getPlayerCache().getOwner() != null ?
-                s.getPlayerCache().getOwner() : SqlUtils.getInt("owner", TABLE, id, con);
+        int owner = s != null && s.getCache().getOwner() != null ?
+                s.getCache().getOwner() : SqlUtils.getInt("owner", TABLE, id, con);
 
         if (s != null) {
-            s.getPlayerCache().setOwner(owner);
+            s.getCache().setOwner(owner);
         }
 
         return owner;
@@ -64,11 +64,11 @@ public class PlayerInfo {
 
     public static String getName(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        String name = s != null && s.getPlayerCache().getName() != null ?
-                s.getPlayerCache().getName() : SqlUtils.getString("name", TABLE, id, con);
+        String name = s != null && s.getCache().getName() != null ?
+                s.getCache().getName() : SqlUtils.getString("name", TABLE, id, con);
 
         if (s != null) {
-            s.getPlayerCache().setName(name);
+            s.getCache().setName(name);
         }
 
         return name;
@@ -117,7 +117,7 @@ public class PlayerInfo {
         Session s = ServerManager.getSessionById(id);
 
         if (s != null) {
-            Short position = s.getPlayerCache().getPosition();
+            Short position = s.getCache().getPosition();
 
             if (position != null) {
                 return position;
@@ -127,7 +127,7 @@ public class PlayerInfo {
         short position = SqlUtils.getShort("position", TABLE, id, con);
 
         if (s != null) {
-            s.getPlayerCache().setPosition(position);
+            s.getCache().setPosition(position);
         }
 
         return position;
@@ -212,11 +212,11 @@ public class PlayerInfo {
 
     public static short getAnimation(int id, Connection ... con) {
         Session s = ServerManager.getSessionById(id);
-        short animation = s != null && s.getPlayerCache().getAnimation() != null ?
-                s.getPlayerCache().getAnimation() : SqlUtils.getShort("animation", TABLE, id, con);
+        short animation = s != null && s.getCache().getAnimation() != null ?
+                s.getCache().getAnimation() : SqlUtils.getShort("animation", TABLE, id, con);
 
         if (s != null) {
-            s.getPlayerCache().setAnimation(animation);
+            s.getCache().setAnimation(animation);
         }
 
         return animation;
@@ -232,7 +232,7 @@ public class PlayerInfo {
         DefaultClothes defaultClothes = null;
 
         if (s != null) {
-            defaultClothes = s.getPlayerCache().getDefaultClothes();
+            defaultClothes = s.getCache().getDefaultClothes();
 
             if (defaultClothes != null) {
                 return defaultClothes;
@@ -267,7 +267,7 @@ public class PlayerInfo {
         }
 
         if (s != null) {
-            s.getPlayerCache().setDefaultClothes(defaultClothes);
+            s.getCache().setDefaultClothes(defaultClothes);
         }
 
         return defaultClothes;
@@ -539,7 +539,7 @@ public class PlayerInfo {
         Session s = ServerManager.getSessionById(id);
 
         if (s != null) {
-            Map<Integer, Item> items = s.getPlayerCache().getItems();
+            Map<Integer, Item> items = s.getCache().getItems();
 
             if (items != null) {
                 return items;
@@ -576,7 +576,7 @@ public class PlayerInfo {
         } catch (SQLException ignored) {}
 
         if (s != null) {
-            s.getPlayerCache().setItems(items);
+            s.getCache().setItems(items);
         }
 
         return items;
@@ -586,7 +586,7 @@ public class PlayerInfo {
         Session s = ServerManager.getSessionById(id);
 
         if (s != null) {
-            Map<Integer, Training> learns = s.getPlayerCache().getLearns();
+            Map<Integer, Training> learns = s.getCache().getLearns();
 
             if (learns != null) {
                 return learns;
@@ -619,7 +619,7 @@ public class PlayerInfo {
         } catch (SQLException ignored) {}
 
         if (s != null) {
-            s.getPlayerCache().setLearns(learns);
+            s.getCache().setLearns(learns);
         }
 
         return learns;
@@ -629,7 +629,7 @@ public class PlayerInfo {
         Session s = ServerManager.getSessionById(id);
 
         if (s != null) {
-            Map<Integer, Skill> skills = s.getPlayerCache().getSkills();
+            Map<Integer, Skill> skills = s.getCache().getSkills();
 
             if (skills != null) {
                 return skills;
@@ -677,7 +677,7 @@ public class PlayerInfo {
         } catch (SQLException ignored) {}
 
         if (s != null) {
-            s.getPlayerCache().setSkills(skills);
+            s.getCache().setSkills(skills);
         }
 
         return skills;
@@ -687,7 +687,7 @@ public class PlayerInfo {
         Session s = ServerManager.getSessionById(id);
 
         if (s != null) {
-            Map<Integer, Celebration> celes = s.getPlayerCache().getCeles();
+            Map<Integer, Celebration> celes = s.getCache().getCeles();
 
             if (celes != null) {
                 return celes;
@@ -722,7 +722,7 @@ public class PlayerInfo {
         } catch (SQLException ignored) {}
 
         if (s != null) {
-            s.getPlayerCache().setCeles(celes);
+            s.getCache().setCeles(celes);
         }
 
         return celes;

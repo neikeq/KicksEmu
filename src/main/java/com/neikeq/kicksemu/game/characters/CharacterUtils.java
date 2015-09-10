@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.characters;
 
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
+import com.neikeq.kicksemu.game.characters.types.Position;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -188,6 +189,11 @@ public class CharacterUtils {
         if (itemIn != null) {
             itemIn.activateGracefully(itemType, session);
         }
+    }
+
+    public static boolean shouldUpdatePosition(int characterId) {
+        return PlayerInfo.getLevel(characterId) >= 18 &&
+                !Position.isAdvancedPosition(PlayerInfo.getPosition(characterId));
     }
 
     public static boolean characterExist(int characterId) {

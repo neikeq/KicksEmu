@@ -1,14 +1,23 @@
 package com.neikeq.kicksemu.game.clubs;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.chat.MessageType;
+import com.neikeq.kicksemu.game.rooms.Room;
+import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
+import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class ClubManager {
 
@@ -34,6 +43,43 @@ public class ClubManager {
 
         } catch (SQLException e) {
             return false;
+        }
+    }
+
+    public static void onMemberConnectedStateChanged(Session session) {
+        int playerId = session.getPlayerId();
+        int clubId = MemberInfo.getClubId(playerId);
+
+        boolean disconnected = !session.isAuthenticated();
+
+        List<Integer> members = clubId > 0 ?
+                ClubInfo.getMembers(clubId, 0, 30) : new ArrayList<>();
+
+        members.remove((Integer) playerId);
+
+        if (members.size() > 0) {
+            String message = disconnected ? " has been disconnected" : " is online";
+            ServerMessage notification = MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE,
+                    PlayerInfo.getName(playerId) + message);
+
+            try {
+                Predicate<Integer> filter = ServerManager::isPlayerConnected;
+
+                if (disconnected) {
+                    Room room = RoomManager.getRoomById(session.getRoomId());
+
+                    if (room != null) {
+                        filter = filter.and(member -> !room.isPlayerIn(member));
+                    }
+                }
+
+                members.stream().filter(filter).forEach(member -> {
+                    notification.retain();
+                    ServerManager.getSessionById(member).sendAndFlush(notification);
+                });
+            } finally {
+                notification.release();
+            }
         }
     }
 }
