@@ -4,6 +4,10 @@ public class MutableInteger {
 
     private int value;
 
+    public MutableInteger() {
+        this.value = 0;
+    }
+
     public MutableInteger(int value) {
         this.value = value;
     }
@@ -20,19 +24,19 @@ public class MutableInteger {
         this.value = value.get();
     }
 
-    public void add(int value) {
+    public void sum(int value) {
         this.value += value;
     }
 
-    public void add(MutableInteger value) {
+    public void sum(MutableInteger value) {
         this.value += value.get();
     }
 
-    public void mult(int add) {
+    public void multiply(int add) {
         this.value *= add;
     }
 
-    public void mult(MutableInteger add) {
+    public void multiply(MutableInteger add) {
         this.value *= add.get();
     }
 }

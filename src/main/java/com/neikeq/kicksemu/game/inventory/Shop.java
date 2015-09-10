@@ -46,7 +46,7 @@ public class Shop {
         // Get the information about the skill with the requested id which
         // is available for the player's position or its base position
         SkillInfo skillInfo = TableManager.getSkillInfo(s -> s.getId() == skillId &&
-                (s.getPosition() == position || s.getPosition() == Position.trunk(position)));
+                (s.getPosition() == position || s.getPosition() == Position.basePosition(position)));
 
         Skill skill = null;
         byte result = 0;

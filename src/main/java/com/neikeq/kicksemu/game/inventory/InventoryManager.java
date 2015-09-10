@@ -271,7 +271,7 @@ public class InventoryManager {
                                         i.getBonusOne() == item.getBonusOne() &&
                                         i.getBonusTwo() == item.getBonusTwo()).forEach(i -> {
                             // Add the item's usages to the stacked amount
-                            usagesToAdd.add(i.getUsages());
+                            usagesToAdd.sum(i.getUsages());
 
                             // Remove the item
                             toRemove.add(i.getInventoryId());

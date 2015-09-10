@@ -15,10 +15,13 @@ import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.game.users.UserInfo;
 
 import com.neikeq.kicksemu.network.server.ServerManager;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.ScheduledFuture;
 
 import java.net.InetSocketAddress;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -28,6 +31,7 @@ public class Session {
     private final Channel channel;
     private final Object locker = new Object();
     private final PlayerCache playerCache = new PlayerCache();
+    private final List<ByteBuf> packetsQueue = new ArrayList<>();
 
     private ScheduledFuture<?> udpPingFuture;
 
@@ -53,9 +57,7 @@ public class Session {
      * This increases the performance when writing multiple messages during a single reading.
      */
     public synchronized void send(ServerMessage msg) {
-        if (getChannel().isOpen() && getChannel().isWritable()) {
-            getChannel().write(msg.getByteBuf(playerId));
-        }
+        packetsQueue.add(msg.getByteBuf(playerId));
     }
 
     /**
@@ -63,8 +65,22 @@ public class Session {
      * Useful for chat messages and non-response messages.
      */
     public synchronized void sendAndFlush(ServerMessage msg)  {
+        send(msg);
+        flush();
+    }
+
+    public synchronized void flush() {
+        final ByteBuf mergedPackets = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
+
+        packetsQueue.forEach(packet -> {
+            mergedPackets.writeBytes(packet);
+            packet.release();
+        });
+
+        packetsQueue.clear();
+
         if (getChannel().isOpen() && getChannel().isWritable()) {
-            getChannel().writeAndFlush(msg.getByteBuf(playerId));
+            getChannel().writeAndFlush(mergedPackets);
         }
     }
 
@@ -109,7 +125,7 @@ public class Session {
     public void close() {
         if (getChannel().isOpen()) {
             // Ensure we have sent everything
-            getChannel().flush();
+            flush();
             // Close connection with the client
             getChannel().close();
         }

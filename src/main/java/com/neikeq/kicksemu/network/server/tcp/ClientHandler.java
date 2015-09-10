@@ -35,7 +35,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.flush();
+        SessionManager.getSession(ctx.channel()).flush();
     }
     
     @Override

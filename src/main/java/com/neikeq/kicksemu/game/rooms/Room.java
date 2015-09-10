@@ -473,15 +473,15 @@ public class Room {
         try (Connection con = MySqlManager.getConnection()) {
             getPlayers().values().forEach(s ->
                     session.send(roomPlayerInfoMessage(s, con)));
-            session.getChannel().flush();
+            session.flush();
         } catch (SQLException ignored) {}
     }
 
     public void sendBroadcast(ServerMessage msg) {
         try {
-            getPlayers().values().stream().forEach(s -> {
+            getPlayers().values().stream().forEach(currentSession -> {
                 msg.retain();
-                s.sendAndFlush(msg);
+                currentSession.sendAndFlush(msg);
             });
         } finally {
             msg.release();
@@ -490,9 +490,9 @@ public class Room {
 
     public void sendBroadcast(ServerMessage msg, Predicate<? super Session> filter) {
         try {
-            getPlayers().values().stream().filter(filter).forEach(s -> {
+            getPlayers().values().stream().filter(filter).forEach(currentSession -> {
                 msg.retain();
-                s.sendAndFlush(msg);
+                currentSession.sendAndFlush(msg);
             });
         } finally {
             msg.release();
@@ -592,7 +592,7 @@ public class Room {
     }
 
     public void updateTrainingFactor() {
-        trainingFactor = isTraining() ? 0 : redTeamSize() + blueTeamSize();
+        trainingFactor = isTraining() ? 0 : getTeamSizes();
     }
 
     /* ---- Accessors ---- */
@@ -708,6 +708,10 @@ public class Room {
 
     public List<Integer> getBlueTeam() {
         return blueTeam;
+    }
+
+    public int getTeamSizes() {
+        return redTeamSize() + blueTeamSize();
     }
 
     public int redTeamSize() {

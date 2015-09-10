@@ -16,7 +16,7 @@ public class Position {
     public static final short CB = 32;
     public static final short SW = 33;
 
-    public static short trunk(short position) {
+    public static short basePosition(short position) {
         return (short)(position - (position % 10));
     }
 

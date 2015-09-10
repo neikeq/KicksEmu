@@ -14,9 +14,9 @@ public enum Soda {
 
     public void applyBonus(int base, MutableInteger experience, MutableInteger points) {
         if (isPointsBonus()) {
-            points.add((base * getPercentage()) / 100);
+            points.sum((base * getPercentage()) / 100);
         } else {
-            experience.add((base * getPercentage()) / 100);
+            experience.sum((base * getPercentage()) / 100);
         }
     }
 

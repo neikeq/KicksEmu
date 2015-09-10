@@ -1,13 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.messages;
 
-import com.neikeq.kicksemu.config.Configuration;
-import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.characters.PlayerLevelCache;
-import com.neikeq.kicksemu.game.characters.types.Position;
-import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
-import com.neikeq.kicksemu.game.misc.quests.QuestManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
@@ -19,27 +13,19 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
-import com.neikeq.kicksemu.game.rooms.match.MatchRewards;
-import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
-import com.neikeq.kicksemu.game.rooms.match.TeamResult;
+import com.neikeq.kicksemu.game.rooms.match.MatchResultHandler;
 import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.sessions.Session;
-import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.users.UserInfo;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
-import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.GameEvents;
-import com.neikeq.kicksemu.utils.ThreadUtils;
-import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class RoomMessages {
 
@@ -520,210 +506,19 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        // If match was not playing
         if (room.state() != RoomState.PLAYING) return;
-
-        MatchResult result = MatchResult.fromMessage(msg,
-                room.redTeamSize() + room.blueTeamSize());
-
-        // Apply level gap bonus if the levels difference in room settings is less than 10
-        final boolean levelGapReward = room.getMaxLevel() - room.getMinLevel() < 10;
-        final boolean goldenTime = GameEvents.isGoldenTime();
-        final boolean levelExpWeightingFlag = Configuration.getBoolean("game.match.bonus.lowers");
-
-        // Check the match countdown
-        final long startTime = DateUtils.currentTimeMillis();
-        final long countdown = 300 - ((startTime - room.getTimeStart()) / 1000);
-        final short gameCountdown = result.getCountdown();
-
-        // If countdown sent by client is not valid (more than 20 secs less than server's),
-        // disable rewards and player's history updating
-        if (gameCountdown < countdown && gameCountdown - countdown > 20) {
-            room.resetTrainingFactor();
-        }
 
         room.setState(RoomState.RESULT);
 
-        try (Connection con = MySqlManager.getConnection()) {
-            // Calculate average level
-            PlayerLevelCache levelCache = new PlayerLevelCache();
-            MutableInteger roomAvgLevel = new MutableInteger(0);
+        MatchResult result = MatchResult.fromMessage(msg, room.getTeamSizes());
 
-            if (result.getPlayers().size() > 0 && levelExpWeightingFlag) {
-                MutableInteger avgLevel = new MutableInteger(0);
+        try (MatchResultHandler resultHandler = new MatchResultHandler(room, result)) {
+            resultHandler.handleResult();
+        } catch (Exception e) {
+            Output.println("Match result exception: " + e.getMessage(), Level.DEBUG);
+        }
 
-                result.getPlayers().stream().forEach(pr -> {
-                    int playerId = pr.getPlayerId();
-                    avgLevel.add(levelCache.getPlayerLevel(playerId, con));
-                });
-
-                roomAvgLevel.add(avgLevel.get() / result.getPlayers().size());
-            }
-
-            // Reward players
-            result.getPlayers().stream().forEach(pr -> {
-                int playerId = pr.getPlayerId();
-                short finishedQuest = -1;
-                Session playerSession = room.getPlayers().get(playerId);
-
-                int reward = MatchRewards.calculateReward(pr, room, gameCountdown);
-
-                if (reward > 0) {
-                    int appliedReward = reward;
-
-                    RoomTeam playerTeam = room.getPlayerTeam(playerId);
-
-                    // If player's position is a DF branch
-                    if (Position.trunk(PlayerInfo.getPosition(playerId, con)) == Position.DF) {
-                        short scoredGoals = playerTeam == RoomTeam.RED ?
-                                result.getRedTeam().getGoals() : result.getBlueTeam().getGoals();
-                        short concededGoals = playerTeam == RoomTeam.RED ?
-                                result.getBlueTeam().getGoals() : result.getRedTeam().getGoals();
-
-                        // If player's team did not lose and conceded 1 or less goals,
-                        // increase his rewards by 30%
-                        appliedReward += concededGoals <= 1 && scoredGoals >= concededGoals ?
-                                (reward * 30) / 100 : 0;
-                    }
-
-                    if (levelExpWeightingFlag) {
-                        int lvl = levelCache.getPlayerLevel(playerId, con);
-                        int diff = roomAvgLevel.get() - lvl;
-                        boolean levelExpWeighting = (diff > 0);
-
-                        if (levelExpWeighting) {
-                            diff = diff * 2;
-                            if (diff > 75) diff = 75;
-                        }
-
-                        appliedReward += levelExpWeighting ? (reward * (diff)) / 100 : 0;
-                    }
-
-                    appliedReward += levelGapReward ? (reward * 10) / 100 : 0;
-                    appliedReward += goldenTime ? (reward * 50) / 100 : 0;
-                    // If player is mvp increase his rewards by 25%
-                    appliedReward += result.getMom() == playerId ? (reward * 25) / 100 : 0;
-
-                    final MutableInteger points = new MutableInteger(appliedReward);
-                    final MutableInteger experience = new MutableInteger(appliedReward);
-
-                    if (room.getTrainingFactor() > 0) {
-                        // Apply item reward bonuses
-                        PlayerInfo.getInventoryItems(playerId, con).values().stream()
-                                .filter(i -> i.getExpiration().isUsage() && i.isSelected())
-                                .forEach(i -> {
-                                    Soda bonusOne = Soda.fromId(i.getBonusOne());
-
-                                    if (bonusOne != null) {
-                                        bonusOne.applyBonus(reward, experience, points);
-                                    }
-
-                                    Soda bonusTwo = Soda.fromId(i.getBonusTwo());
-
-                                    if (bonusTwo != null) {
-                                        bonusTwo.applyBonus(reward, experience, points);
-                                    }
-                                });
-                    }
-
-                    // Avoid the player to earn more experience than the limit
-                    experience.mult(Configuration.getInt("game.rewards.exp"));
-
-                    int currentExp = PlayerInfo.getExperience(pr.getPlayerId(), con);
-
-                    if (currentExp + experience.get() > TableManager.EXPERIENCE_LIMIT) {
-                        experience.set(TableManager.EXPERIENCE_LIMIT - currentExp);
-                    }
-
-                    // Update the definitive experience and points rewards for this player
-                    pr.setExperience(experience.get());
-                    pr.setPoints(points.get() * Configuration.getInt("game.rewards.point"));
-
-                    // Add the experience and points earned to the player
-                    PlayerInfo.sumRewards(pr.getExperience(), pr.getPoints(), playerId, con);
-
-                    // Check if player did level up and apply level up operations if needed
-                    short levels = CharacterManager.checkExperience(playerId,
-                            levelCache.getPlayerLevel(playerId, con),
-                            currentExp + experience.get(), con);
-
-                    finishedQuest = QuestManager.checkQuests(playerId, result, playerTeam, con);
-
-                    room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
-                    room.sendBroadcast(MessageBuilder.playerBonusStats(playerId, con));
-
-                    if (levels > 0) {
-                        playerSession.sendAndFlush(MessageBuilder.playerStats(playerId, con));
-                    }
-                }
-
-                playerSession.sendAndFlush(MessageBuilder.playerProgress(playerId,
-                        finishedQuest, con));
-            });
-
-            // If the match was not finished manually, or was finished during golden goal
-            if (gameCountdown <= 0) {
-                final long delay = DateUtils.currentTimeMillis() - startTime;
-                final int minDelay = 1000;
-
-                // This fixed delay is necessary to avoid golden goal bug
-                if (delay < minDelay) {
-                    ThreadUtils.sleep(minDelay - delay);
-                }
-            }
-
-            // Broadcast match result message after calculating rewards
-            result.getPlayers().stream().forEach(pr ->
-                            room.getPlayers().get(pr.getPlayerId()).sendAndFlush(
-                                    MessageBuilder.matchResult(result, pr, room, con))
-            );
-
-            // Send match result message to observers players in the room
-            if (room.getObservers().size() > 0) {
-                // Because observer players does not count in stats,
-                // we pass an empty PlayerResult instance
-                ServerMessage observerMsg = MessageBuilder.matchResult(result,
-                        new PlayerResult(), room, con);
-
-                room.getObservers().stream().forEach(o ->
-                        room.getPlayers().get(o).sendAndFlush(observerMsg));
-            }
-
-            result.getPlayers().stream().forEach(pr -> {
-                int playerId = pr.getPlayerId();
-
-                // If match was not in training mode, update player's history
-                if (room.getTrainingFactor() > 0) {
-                    TeamResult teamResult = room.getPlayerTeam(playerId) == RoomTeam.RED ?
-                            result.getRedTeam() : result.getBlueTeam();
-
-                    MatchRewards.updatePlayerHistory(pr, teamResult,
-                            result.getMom(), con);
-
-                    if (pr.getExperience() > 0 || pr.getPoints() > 0) {
-                        MutableBoolean expired = new MutableBoolean(false);
-
-                        // Decrease by 1 the remain usage of usage items
-                        PlayerInfo.getInventoryItems(playerId, con).values().stream()
-                                .filter(i -> i.getExpiration().isUsage() && i.isSelected())
-                                .forEach(item -> {
-                                    item.sumUsages((short) -1);
-                                    PlayerInfo.setInventoryItem(item, playerId, con);
-
-                                    if (item.getUsages() <= 0) {
-                                        expired.set(true);
-                                    }
-                                });
-
-                        if (expired.get()) {
-                            CharacterManager.sendItemList(room.getPlayers().get(playerId));
-                        }
-                    }
-                }
-            });
-
-            room.getConfirmedPlayers().clear();
-        } catch (SQLException ignored) {}
+        room.getConfirmedPlayers().clear();
     }
 
     public static void unknown1(Session session, ClientMessage msg) {

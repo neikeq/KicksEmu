@@ -94,7 +94,7 @@ public class CharacterManager {
     public static void resetStats(int playerId) {
         short position = PlayerInfo.getPosition(playerId);
         short level = PlayerInfo.getLevel(playerId);
-        short branchPosition = Position.trunk(position);
+        short branchPosition = Position.basePosition(position);
 
         PlayerStats newStats = new PlayerStats(StatsInfo.getInstance()
                 .getCreationStats().get(branchPosition));
@@ -156,7 +156,7 @@ public class CharacterManager {
         MutableInteger statsPoints = new MutableInteger(0);
 
         for (int i = from; i < level; i++) {
-            statsPoints.add(StatsInfo.getInstance().statsPointsForLevel(i + 1));
+            statsPoints.sum(StatsInfo.getInstance().statsPointsForLevel(i + 1));
         }
 
         PlayerStats stats = PlayerInfo.getStats(id, con);
@@ -180,14 +180,14 @@ public class CharacterManager {
         MutableInteger statsPoints = new MutableInteger(0);
 
         for (int i = from; i < level; i++) {
-            statsPoints.add(StatsInfo.getInstance().statsPointsForLevel(i + 1));
+            statsPoints.sum(StatsInfo.getInstance().statsPointsForLevel(i + 1));
         }
 
         // Add auto stats
         PlayerStats.sumStats(StatsInfo.getInstance().getAutoStats().get(position),
                 levels, stats, statsPoints);
 
-        statPoints.add(statsPoints);
+        statPoints.sum(statsPoints);
     }
 
     public static void addStatsPoints(Session session, ClientMessage msg) {

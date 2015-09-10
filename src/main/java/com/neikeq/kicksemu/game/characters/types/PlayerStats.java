@@ -25,7 +25,7 @@ public class PlayerStats {
 
     private static short sumStatsUpToHundred(int value, short current, MutableInteger statsPoints) {
         short add = CharacterUtils.statsUpToHundred(current, value);
-        statsPoints.add(value - add);
+        statsPoints.sum(value - add);
 
         return add;
     }
