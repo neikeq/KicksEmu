@@ -41,7 +41,7 @@ public class ChallengeRoom extends Room implements Observer {
 
     public void removePlayer(Session session, RoomLeaveReason reason) {
         synchronized (locker) {
-            onPlayerLeaved(session.getPlayerId(), reason);
+            onPlayerLeaved(session, reason);
         }
     }
 
@@ -51,9 +51,9 @@ public class ChallengeRoom extends Room implements Observer {
     }
 
     @Override
-    protected void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
+    protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
         synchronized (locker) {
-            super.onPlayerLeaved(playerId, reason);
+            super.onPlayerLeaved(session, reason);
             removeRoom();
         }
     }

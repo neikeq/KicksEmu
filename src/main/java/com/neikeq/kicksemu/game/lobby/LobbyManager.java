@@ -45,7 +45,7 @@ public class LobbyManager {
                 Integer[] playersArray = new Integer[players.size()];
 
                 session.send(MessageBuilder.lobbyList(players.toArray(playersArray),
-                        page, (byte) 0, con));
+                        page, (short) 0, con));
             }
         } catch (SQLException ignored) {}
     }

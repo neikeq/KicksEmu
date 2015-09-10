@@ -7,6 +7,7 @@ import com.neikeq.kicksemu.game.characters.LevelCache;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -91,6 +92,7 @@ public class MatchResultHandler implements AutoCloseable {
     private void doAfterResultUpdates() {
         getResult().getPlayers().forEach(playerResult -> {
             int playerId = playerResult.getPlayerId();
+            Session session = room.getPlayers().get(playerId);
 
             // If match was not in training mode
             if (getRoom().getTrainingFactor() > 0) {
@@ -100,7 +102,7 @@ public class MatchResultHandler implements AutoCloseable {
                     MutableBoolean mustNotifyExpiration = new MutableBoolean(false);
 
                     // Decrease by 1 the remain usages of usage based items
-                    PlayerInfo.getInventoryItems(playerId, getConnection()).values().stream()
+                    session.getCache().getItems(connection).values().stream()
                             .filter(item -> item.getExpiration().isUsage() && item.isSelected())
                             .forEach(item -> {
                                 item.sumUsages((short) -1);

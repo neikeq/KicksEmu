@@ -15,7 +15,7 @@ public class Celebration implements Product, IndexedProduct {
     private final boolean visible;
 
     public Celebration() {
-        this(0, 0, 0, (byte)0, DateUtils.getTimestamp(), false);
+        this(0, 0, 0, (byte) 0, DateUtils.getTimestamp(), false);
     }
 
     public Celebration(int id, int inventoryId, int expiration, byte selectionIndex,

@@ -27,13 +27,13 @@ public class InventoryManager {
         int playerId = session.getPlayerId();
         int skillId = msg.readInt();
 
-        byte result = 0;
+        short result = 0;
         byte newIndex = 0;
 
-        Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
+        Map<Integer, Skill> skills = session.getCache().getSkills();
         Skill skill = (Skill) InventoryUtils.getByIdFromMap(skills, skillId);
 
-        byte slots = PlayerInfo.getSkillSlots(playerId);
+        byte slots = PlayerInfo.getSkillSlots(session.getCache().getItems());
         byte skillsInUse = (byte) skills.values().stream()
                 .filter(s -> s.getSelectionIndex() > 0).count();
 
@@ -57,17 +57,15 @@ public class InventoryManager {
 
     public static void deactivateSkill(Session session, ClientMessage msg) {
         int skillId = msg.readInt();
-
-        byte result = deactivateSkill(session, skillId,
-                PlayerInfo.getInventorySkills(session.getPlayerId()));
+        short result = deactivateSkill(session, skillId, session.getCache().getSkills());
 
         if (result != 0) {
             session.send(MessageBuilder.deactivateSkill(skillId, result));
         }
     }
 
-    private static byte deactivateSkill(Session s, int skillId, Map<Integer, Skill> skills) {
-        byte result = 0;
+    private static short deactivateSkill(Session s, int skillId, Map<Integer, Skill> skills) {
+        short result = 0;
 
         int playerId = s.getPlayerId();
         Skill skill = (Skill) InventoryUtils.getByIdFromMap(skills, skillId);
@@ -90,10 +88,10 @@ public class InventoryManager {
         int playerId = session.getPlayerId();
         int celeId = msg.readInt();
 
-        byte result = 0;
+        short result = 0;
         byte newIndex = 0;
 
-        Map<Integer, Celebration> celes = PlayerInfo.getInventoryCelebration(playerId);
+        Map<Integer, Celebration> celes = session.getCache().getCeles();
         Celebration cele = (Celebration) InventoryUtils.getByIdFromMap(celes, celeId);
 
         // If cele exists and cele is not yet activated
@@ -120,16 +118,15 @@ public class InventoryManager {
     public static void deactivateCele(Session session, ClientMessage msg) {
         int celeId = msg.readInt();
 
-        byte result = deactivateCele(session, celeId,
-                PlayerInfo.getInventoryCelebration(session.getPlayerId()));
+        short result = deactivateCele(session, celeId, session.getCache().getCeles());
 
         if (result != 0) {
             session.send(MessageBuilder.deactivateCele(celeId, result));
         }
     }
 
-    private static byte deactivateCele(Session s, int celeId, Map<Integer, Celebration> celes) {
-        byte result = 0;
+    private static short deactivateCele(Session s, int celeId, Map<Integer, Celebration> celes) {
+        short result = 0;
 
         int playerId = s.getPlayerId();
         Celebration cele = (Celebration) InventoryUtils.getByIdFromMap(celes, celeId);
@@ -152,9 +149,9 @@ public class InventoryManager {
         int playerId = session.getPlayerId();
         int inventoryId = msg.readInt();
 
-        byte result = 0;
+        short result = 0;
 
-        Item item = PlayerInfo.getInventoryItems(playerId).get(inventoryId);
+        Item item = session.getCache().getItems().get(inventoryId);
 
         // If item exists
         if (item != null && !item.isSelected()) {
@@ -164,25 +161,24 @@ public class InventoryManager {
             result = -2; // Skill does not exists
         }
 
-        session.send(MessageBuilder.activateItem(inventoryId, playerId, result));
+        session.send(MessageBuilder.activateItem(inventoryId, session, result));
     }
 
     public static void deactivateItem(Session session, ClientMessage msg) {
         int inventoryId = msg.readInt();
-        int playerId = session.getPlayerId();
 
-        byte result = deactivateItem(session,
-                PlayerInfo.getInventoryItems(playerId).get(inventoryId));
+        short result = deactivateItem(session,
+                session.getCache().getItems().get(inventoryId));
 
         if (result != 0) {
-            session.send(MessageBuilder.deactivateItem(inventoryId, playerId, result));
+            session.send(MessageBuilder.deactivateItem(inventoryId, session, result));
         }
     }
 
-    private static byte deactivateItem(Session s, Item item) {
-        byte result = 0;
+    private static short deactivateItem(Session session, Item item) {
+        short result = 0;
 
-        int playerId = s.getPlayerId();
+        int playerId = session.getPlayerId();
 
         // If item exists
         if (item != null) {
@@ -190,8 +186,8 @@ public class InventoryManager {
                     o.getId() == item.getId());
 
             // Deactivate item
-            item.deactivateGracefully(ItemType.fromInt(itemInfo.getType()), s);
-            s.send(MessageBuilder.deactivateItem(item.getInventoryId(), playerId,  result));
+            item.deactivateGracefully(ItemType.fromInt(itemInfo.getType()), session);
+            session.send(MessageBuilder.deactivateItem(item.getInventoryId(), session, result));
 
             PlayerInfo.setInventoryItem(item, playerId);
         } else {
@@ -206,9 +202,9 @@ public class InventoryManager {
         int inventoryId = msg.readInt();
         int refund = msg.readInt();
 
-        Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+        Map<Integer, Item> items = session.getCache().getItems();
 
-        byte result = 0;
+        short result = 0;
 
         if (items.containsKey(inventoryId)) {
             Item item = items.get(inventoryId);
@@ -240,7 +236,7 @@ public class InventoryManager {
             result = -2; // Item does not exists
         }
 
-        session.send(MessageBuilder.resellItem(playerId, inventoryId, refund, result));
+        session.send(MessageBuilder.resellItem(session, inventoryId, refund, result));
     }
 
     public static void mergeItem(Session session, ClientMessage msg) {
@@ -249,12 +245,12 @@ public class InventoryManager {
 
         // If the player is not in a room
         if (session.getRoomId() <= 0) {
-            byte result = 0;
+            short result = 0;
             short usages = 0;
             boolean selected = false;
 
             try (Connection con = MySqlManager.getConnection()) {
-                Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+                Map<Integer, Item> items = session.getCache().getItems(con);
                 Item item = items.get(inventoryId);
 
                 final MutableInteger usagesToAdd = new MutableInteger(0);
@@ -301,10 +297,10 @@ public class InventoryManager {
                 result = -1; // System problem
             }
 
-            session.send(MessageBuilder.mergeItem(playerId, inventoryId, usages, result));
+            session.send(MessageBuilder.mergeItem(session, inventoryId, usages, result));
 
             if (result == 0 && selected) {
-                session.send(MessageBuilder.activateItem(inventoryId, playerId, result));
+                session.send(MessageBuilder.activateItem(inventoryId, session, result));
             }
         }
     }

@@ -26,7 +26,7 @@ class Decoder extends ByteToMessageDecoder {
             in.readerIndex(in.readerIndex() + Constants.BODY_SIZE_INDEX);
 
             short dataSize = in.order(ByteOrder.LITTLE_ENDIAN).readShort();
-            short totalSize = (short)(dataSize + Constants.HEADER_SIZE);
+            short totalSize = (short) (dataSize + Constants.HEADER_SIZE);
             
             if (length >= totalSize) {
                 in.resetReaderIndex();

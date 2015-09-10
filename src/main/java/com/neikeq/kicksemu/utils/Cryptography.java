@@ -3,7 +3,7 @@ package com.neikeq.kicksemu.utils;
 import io.netty.buffer.ByteBuf;
 
 public class Cryptography {
-    private static final byte ENCRYPTION_KEY = (byte) 229;
+    private static final byte ENCRYPTION_KEY = -27; // unsigned 229
     
     /**
      * Simple XOR encryption.

@@ -79,94 +79,94 @@ public class CharacterUtils {
         }
     }
 
-    private static Item getItemInUseByType(ItemType type, int playerId) {
+    private static Item getItemInUseByType(ItemType type, Session session) {
         switch (type) {
             case HEAD:
-                return PlayerInfo.getItemHead(playerId);
+                return PlayerInfo.getItemHead(session);
             case GLASSES:
-                return PlayerInfo.getItemGlasses(playerId);
+                return PlayerInfo.getItemGlasses(session);
             case SHIRTS:
-                return PlayerInfo.getItemShirts(playerId);
+                return PlayerInfo.getItemShirts(session);
             case PANTS:
-                return PlayerInfo.getItemPants(playerId);
+                return PlayerInfo.getItemPants(session);
             case GLOVES:
-                return PlayerInfo.getItemGlove(playerId);
+                return PlayerInfo.getItemGlove(session);
             case SHOES:
-                return PlayerInfo.getItemShoes(playerId);
+                return PlayerInfo.getItemShoes(session);
             case SOCKS:
-                return PlayerInfo.getItemSocks(playerId);
+                return PlayerInfo.getItemSocks(session);
             case WRIST:
-                return PlayerInfo.getItemWrist(playerId);
+                return PlayerInfo.getItemWrist(session);
             case ARM:
-                return PlayerInfo.getItemArm(playerId);
+                return PlayerInfo.getItemArm(session);
             case KNEE:
-                return PlayerInfo.getItemKnee(playerId);
+                return PlayerInfo.getItemKnee(session);
             case EAR:
-                return PlayerInfo.getItemEar(playerId);
+                return PlayerInfo.getItemEar(session);
             case NECK:
-                return PlayerInfo.getItemNeck(playerId);
+                return PlayerInfo.getItemNeck(session);
             case MASK:
-                return PlayerInfo.getItemMask(playerId);
+                return PlayerInfo.getItemMask(session);
             case MUFFLER:
-                return PlayerInfo.getItemMuffler(playerId);
+                return PlayerInfo.getItemMuffler(session);
             case PACKAGE:
-                return PlayerInfo.getItemPackage(playerId);
+                return PlayerInfo.getItemPackage(session);
             case SODA:
-                return PlayerInfo.getItemInUseByType(ItemType.SODA, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.SODA, session);
             case SKILL_SLOT:
-                return PlayerInfo.getItemInUseByType(ItemType.SKILL_SLOT, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.SKILL_SLOT, session);
             case CHARACTER_SLOT:
-                return PlayerInfo.getItemInUseByType(ItemType.CHARACTER_SLOT, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.CHARACTER_SLOT, session);
             case STATS_RESET:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_RESET, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_RESET, session);
             case CASH_TICKET:
-                return PlayerInfo.getItemInUseByType(ItemType.CASH_TICKET, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.CASH_TICKET, session);
             case POINTS_TICKET:
-                return PlayerInfo.getItemInUseByType(ItemType.POINTS_TICKET, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.POINTS_TICKET, session);
             case CLUB_SPONSORSHIP:
-                return PlayerInfo.getItemInUseByType(ItemType.CLUB_SPONSORSHIP, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_SPONSORSHIP, session);
             case RANDOM_BOX:
-                return PlayerInfo.getItemInUseByType(ItemType.RANDOM_BOX, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.RANDOM_BOX, session);
             case STATS_211:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_211, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_211, session);
             case STATS_212:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_212, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_212, session);
             case STATS_213:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_213, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_213, session);
             case STATS_214:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_214, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_214, session);
             case STATS_215:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_215, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_215, session);
             case STATS_216:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_216, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_216, session);
             case STATS_217:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_217, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_217, session);
             case STATS_218:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_218, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_218, session);
             case STATS_219:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_219, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_219, session);
             case STATS_220:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_220, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_220, session);
             case STATS_221:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_221, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_221, session);
             case STATS_222:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_222, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_222, session);
             case STATS_223:
-                return PlayerInfo.getItemInUseByType(ItemType.STATS_223, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.STATS_223, session);
             case CLUB_UNIFORM:
-                return PlayerInfo.getItemInUseByType(ItemType.CLUB_UNIFORM, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_UNIFORM, session);
             case EMBLEM:
-                return PlayerInfo.getItemInUseByType(ItemType.EMBLEM, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.EMBLEM, session);
             case BACK_NUMBER:
-                return PlayerInfo.getItemInUseByType(ItemType.BACK_NUMBER, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.BACK_NUMBER, session);
             case CLUB_RENAME:
-                return PlayerInfo.getItemInUseByType(ItemType.CLUB_RENAME, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_RENAME, session);
             case MEMBERS_SLOTS:
-                return PlayerInfo.getItemInUseByType(ItemType.MEMBERS_SLOTS, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.MEMBERS_SLOTS, session);
             case CLUB_BROADCAST:
-                return PlayerInfo.getItemInUseByType(ItemType.CLUB_BROADCAST, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.CLUB_BROADCAST, session);
             case BACK_NUMBER_COLOR:
-                return PlayerInfo.getItemInUseByType(ItemType.BACK_NUMBER_COLOR, playerId);
+                return PlayerInfo.getItemInUseByType(ItemType.BACK_NUMBER_COLOR, session);
             default:
                 return null;
         }
@@ -179,7 +179,7 @@ public class CharacterUtils {
         ItemType itemType = ItemType.fromInt(itemInfo.getType());
 
         if (!DEACTIVATION_EXCEPTIONS.contains(itemType)) {
-            Item itemOut = getItemInUseByType(itemType, session.getPlayerId());
+            Item itemOut = getItemInUseByType(itemType, session);
 
             if (itemOut != null) {
                 itemOut.deactivateGracefully(itemType, session);
@@ -233,7 +233,7 @@ public class CharacterUtils {
     }
 
     public static short statsUpToHundred(short stats, int add) {
-        if (add < 0) return (short)add;
+        if (add < 0) return (short) add;
 
         short i;
         for (i = 0; i < add; i++) {

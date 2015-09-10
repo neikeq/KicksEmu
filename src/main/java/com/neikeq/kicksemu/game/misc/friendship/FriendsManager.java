@@ -24,7 +24,7 @@ public class FriendsManager {
         int targetId = msg.readInt();
         int playerId = session.getPlayerId();
 
-        byte result = 0;
+        short result = 0;
 
         if (ServerManager.isPlayerConnected(targetId)) {
             FriendsList friendsList = PlayerInfo.getFriendsList(playerId);
@@ -35,23 +35,23 @@ public class FriendsManager {
 
                     if (targetFriendList.size() < FRIENDS_LIST_LIMIT) {
                         // Send the friend request to the target
-                        ServerMessage request = MessageBuilder.friendRequest(playerId, result);
+                        ServerMessage request = MessageBuilder.friendRequest(session, result);
                         ServerManager.getSessionById(targetId).sendAndFlush(request);
                     } else {
-                        result = (byte) -5; // Target friend list is full
+                        result = -5; // Target friend list is full
                     }
                 } else {
-                    result = (byte) -4; // Already in the friend list
+                    result = -4; // Already in the friend list
                 }
             } else {
-                result = (byte) -3; // Friend list is full
+                result = -3; // Friend list is full
             }
         } else {
-            result = (byte) -2; // Player not found
+            result = -2; // Player not found
         }
 
         if (result != 0) {
-            session.send(MessageBuilder.friendRequest(playerId, result));
+            session.send(MessageBuilder.friendRequest(session, result));
         }
     }
 
@@ -60,7 +60,7 @@ public class FriendsManager {
         int playerId = session.getPlayerId();
         boolean accepted = msg.readBoolean();
 
-        byte result = 0;
+        short result = 0;
 
         if (ServerManager.isPlayerConnected(targetId)) {
             // TODO Check if the target actually sent a friend request
@@ -87,17 +87,17 @@ public class FriendsManager {
             }
 
             if (!accepted) {
-                result = (byte) -3; // Rejected the request
+                result = -3; // Rejected the request
             }
 
             ServerMessage friendResponse = MessageBuilder.friendResponse(result);
             ServerManager.getSessionById(targetId).sendAndFlush(friendResponse);
         } else {
             // Player not found. May occur if the player disconnected after sending the request.
-            result = (byte) -2;
+            result = -2;
         }
 
-        if (result != (byte) -3) {
+        if (result != -3) {
             session.send(MessageBuilder.friendResponse(result));
         }
     }
@@ -107,7 +107,7 @@ public class FriendsManager {
 
         int playerId = session.getPlayerId();
 
-        byte result = 0;
+        short result = 0;
 
         FriendsList friendList = PlayerInfo.getFriendsList(playerId);
 
@@ -121,7 +121,7 @@ public class FriendsManager {
             targetFriendList.removeFriend(playerId);
             PlayerInfo.setFriendsList(targetFriendList, friendId);
         } else {
-            result = (byte) -2; // Player not found
+            result = -2; // Player not found
         }
 
         session.send(MessageBuilder.deleteFriend(result));

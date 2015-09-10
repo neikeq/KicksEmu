@@ -37,7 +37,7 @@ public class RoomMessages {
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
         session.send(MessageBuilder.roomList(RoomManager.getRoomsFromPage(page),
-                page, (byte) 0));
+                page, (short) 0));
     }
 
     public static void createRoom(Session session, ClientMessage msg) {
@@ -57,20 +57,20 @@ public class RoomMessages {
             RoomSize maxSize = RoomSize.fromInt(msg.readByte());
 
             // Check that everything is correct
-            byte result = 0;
+            short result = 0;
 
             ServerType serverType = ServerManager.getServerType();
 
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
-                result = (byte) -3; // Wrong level settings
+                result = -3; // Wrong level settings
             } else if (maxSize == null || type == null || map == null || ball == null ||
                     roomMode == null || roomMode.notValidForServer(serverType)) {
-                result = (byte) -1; // System problem
+                result = -1; // System problem
             } else {
                 short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
                 if (playerLevel < minLevel || playerLevel > maxLevel) {
-                    result = (byte) -4; // Invalid level
+                    result = -4; // Invalid level
                 }
             }
 
@@ -134,7 +134,7 @@ public class RoomMessages {
             room.tryJoinRoom(session, password);
         } else {
             // Result -3 means that the room does not exists.
-            session.send(MessageBuilder.joinRoom(null, session.getPlayerId(), (byte) -3));
+            session.send(MessageBuilder.joinRoom(null, session.getPlayerId(), (short) -3));
         }
     }
 
@@ -150,7 +150,7 @@ public class RoomMessages {
             room.tryJoinRoom(session, "");
         } else {
             // Notify the player that no rooms were found
-            session.send(MessageBuilder.quickJoinRoom((byte) -2));
+            session.send(MessageBuilder.quickJoinRoom((short) -2));
         }
     }
 
@@ -220,9 +220,9 @@ public class RoomMessages {
             maxLevel = MAX_ROOM_LEVEL;
         }
 
-        // Check that settings are valid
+        // Check that the settings are valid
 
-        byte result = 0;
+        short result = 0;
 
         Room room = RoomManager.getRoomById(roomId);
 
@@ -230,24 +230,24 @@ public class RoomMessages {
 
         if (maxSize == null || type == null || roomMode == null ||
                 roomMode.notValidForServer(serverType)) {
-            result = (byte) -1; // System problem
+            result = -1; // System problem
         } else if (room == null) {
-            result = (byte) -2; // Room does not exist
+            result = -2; // Room does not exist
         } else if (room.getMaster() != session.getPlayerId()) {
-            result = (byte) -3; // Player is not room's master
+            result = -3; // Player is not room's master
         } else if (maxSize.toInt() < room.getCurrentSize()) {
-            result = (byte) -4; // Size is lower than players in room
+            result = -4; // Size is lower than players in room
         } else if (minLevel > maxLevel) {
-            result = (byte) -5; // Wrong level settings
+            result = -5; // Wrong level settings
         } else if (!room.isValidMaxLevel(maxLevel)) {
-            result = (byte) -7; // Invalid maximum level
+            result = -7; // Invalid maximum level
         } else if (!room.isValidMinLevel(minLevel)) {
-            result = (byte) -8; // Invalid minimum level
+            result = -8; // Invalid minimum level
         } else {
             short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
             if (playerLevel < minLevel || playerLevel > maxLevel) {
-                result = (byte) -6; // Invalid level
+                result = -6; // Invalid level
             } else {
                 // Limit the length of the name and the password
                 if (name.length() > MAX_ROOM_NAME_LENGTH) {
@@ -301,7 +301,7 @@ public class RoomMessages {
         int playerToKick = msg.readInt();
 
         if (ServerManager.getServerType() != ServerType.CLUB) {
-            byte result = 0;
+            short result = 0;
 
             Room room = RoomManager.getRoomById(session.getRoomId());
 
@@ -313,13 +313,13 @@ public class RoomMessages {
                     if (room.isPlayerIn(playerToKick)) {
                         room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
                     } else {
-                        result = (byte) -4; // Player not found
+                        result = -4; // Player not found
                     }
                 } else {
-                    result = (byte) -3; // Not the room master
+                    result = -3; // Not the room master
                 }
             } else {
-                result = (byte) -2; // Invalid room
+                result = -2; // Invalid room
             }
 
             // If there is something wrong, notify the client
@@ -336,7 +336,7 @@ public class RoomMessages {
         if (room != null) {
             int playerToInvite = msg.readInt();
 
-            byte result = 0;
+            short result = 0;
 
             if (room.isNotFull()) {
                 // If the player to invite is in the main lobby
@@ -349,16 +349,16 @@ public class RoomMessages {
                         // If player level meets the level requirement of the room
                         if (room.getMinLevel() <= level && room.getMaxLevel() >= level) {
                             ServerMessage invitation = MessageBuilder.invitePlayer(result,
-                                    room, PlayerInfo.getName(session.getPlayerId()));
+                                    room, session.getCache().getName());
                             sessionToInvite.sendAndFlush(invitation);
                         } else {
-                            result = (byte) -5; // Player does not meet the level requirements
+                            result = -5; // Player does not meet the level requirements
                         }
                     } else {
-                        result = (byte) -3; // Player does not accept invitations
+                        result = -3; // Player does not accept invitations
                     }
                 } else {
-                    result = (byte) -2; // Player not found
+                    result = -2; // Player not found
                 }
             }
 
@@ -470,14 +470,14 @@ public class RoomMessages {
                 if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
                     room.setState(RoomState.PLAYING);
                     room.setTimeStart(DateUtils.currentTimeMillis());
-                    room.sendBroadcast(MessageBuilder.playerReady((byte) 0));
+                    room.sendBroadcast(MessageBuilder.playerReady((short) 0));
 
                     if (room.getLoadingTimeoutFuture().isCancellable()) {
                         room.getLoadingTimeoutFuture().cancel(true);
                     }
                 }
             } else {
-                session.send(MessageBuilder.playerReady((byte) 0));
+                session.send(MessageBuilder.playerReady((short) 0));
             }
         }
     }
@@ -488,7 +488,7 @@ public class RoomMessages {
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
 
-            byte result = 0;
+            short result = 0;
 
             if (room.isLoading() && room.getConfirmedPlayers().size() < room.getCurrentSize()) {
                 result = -1;
@@ -541,7 +541,7 @@ public class RoomMessages {
             room.sendBroadcast(MessageBuilder.unknown2());
 
             if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
-                room.sendBroadcast(MessageBuilder.nextTip("", (byte) 0));
+                room.sendBroadcast(MessageBuilder.nextTip("", (short) 0));
             }
         }
     }

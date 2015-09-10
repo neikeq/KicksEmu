@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.game.clubs;
 
-import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
@@ -60,7 +59,7 @@ public class ClubManager {
         if (members.size() > 0) {
             String message = disconnected ? " has been disconnected" : " is online";
             ServerMessage notification = MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE,
-                    PlayerInfo.getName(playerId) + message);
+                    session.getCache().getName() + message);
 
             try {
                 Predicate<Integer> filter = ServerManager::isPlayerConnected;

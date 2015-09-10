@@ -24,7 +24,7 @@ class ClientIdleHandler extends ChannelDuplexHandler {
                     session.close();
                 } else {
                     session.sendAndFlush(MessageBuilder.tcpPing());
-                    session.setPingState((byte)(session.getPingState() + 1));
+                    session.setPingState((byte) (session.getPingState() + 1));
                 }
             }
         }

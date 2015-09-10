@@ -18,10 +18,10 @@ public class StatusMessage {
     public static void statusMessage(Session session, ClientMessage msg) {
         String statusMessage = msg.readString(35);
 
-        byte result = 0;
+        short result = 0;
 
         if (containsCensuredWord(statusMessage)) {
-            result = (byte) -2;
+            result = -2;
         }
 
         if (result == 0) {

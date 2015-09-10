@@ -15,7 +15,7 @@ public class Skill implements Product, IndexedProduct {
     private final boolean visible;
 
     public Skill() {
-        this(0, 0, 0, (byte)0, DateUtils.getTimestamp(), false);
+        this(0, 0, 0, (byte) 0, DateUtils.getTimestamp(), false);
     }
 
     public Skill(int id, int inventoryId, int expiration,

@@ -36,7 +36,7 @@ public class ClubRoom extends Room {
     public void tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
 
-        byte result = 0;
+        short result = 0;
 
         synchronized (locker) {
             if (isNotFull()) {
@@ -53,19 +53,19 @@ public class ClubRoom extends Room {
                                 // Join the room
                                 addPlayer(session);
                             } else {
-                                result = (byte) -8; // Invalid level
+                                result = -8; // Invalid level
                             }
                         } else {
-                            result = (byte) -5; // Wrong password
+                            result = -5; // Wrong password
                         }
                     } else {
-                        result = (byte) -9; // Not in the players list (not a member of the club)
+                        result = -9; // Not in the players list (not a member of the club)
                     }
                 } else {
-                    result = (byte) -6; // Match already started
+                    result = -6; // Match already started
                 }
             } else {
-                result = (byte) -4; // Room is full
+                result = -4; // Room is full
             }
         }
 
@@ -101,8 +101,8 @@ public class ClubRoom extends Room {
     public void cancelCountdown() { }
 
     @Override
-    protected void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
-        super.onPlayerLeaved(playerId, reason);
+    protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
+        super.onPlayerLeaved(session, reason);
             TeamManager.unregister(getId());
     }
 
@@ -122,7 +122,7 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    protected ServerMessage joinRoomMessage(Room room, int playerId, byte result) {
+    protected ServerMessage joinRoomMessage(Room room, int playerId, short result) {
         return MessageBuilder.clubJoinRoom(room, result);
     }
 
@@ -131,11 +131,11 @@ public class ClubRoom extends Room {
         return MessageBuilder.clubRoomInfo(this);
     }
 
-    public byte onChallengeRequest(int fromId) {
+    public byte onChallengeRequest(int from) {
         synchronized (locker) {
             if (!isChallenging()) {
-                setChallengeTarget(fromId);
-                ServerMessage request = MessageBuilder.clubChallengeTeam(fromId, false, (byte) 0);
+                setChallengeTarget(from);
+                ServerMessage request = MessageBuilder.clubChallengeTeam(from, false, (short) 0);
                 getPlayers().get(getMaster()).sendAndFlush(request);
 
                 return 0;
@@ -145,15 +145,15 @@ public class ClubRoom extends Room {
         }
     }
 
-    public byte onChallengeResponse(int fromId, boolean accepted) {
+    public short onChallengeResponse(int fromId, boolean accepted) {
         synchronized (locker) {
             if (challengeTarget == fromId) {
                 if (!accepted) {
                     setChallengeTarget(0);
                 }
 
-                byte result = accepted ?
-                        (byte) 0 : // Challenge request accepted
+                short result = accepted ?
+                        (short) 0 : // Challenge request accepted
                         -4; // The opponent club refused the request
                 ServerMessage response = MessageBuilder.clubChallengeResponse(fromId,
                         accepted, result);

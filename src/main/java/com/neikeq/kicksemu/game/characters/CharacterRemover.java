@@ -15,9 +15,9 @@ public class CharacterRemover {
 
     private static class RemoverResult {
         static final byte SUCCESS = 0;
-        static final byte TIME_LIMIT = (byte) -3;
-        static final byte WRONG_PASSWORD = (byte) -2;
-        static final byte SYSTEM_PROBLEM = (byte) -1;
+        static final byte TIME_LIMIT = -3;
+        static final byte WRONG_PASSWORD = -2;
+        static final byte SYSTEM_PROBLEM = -1;
     }
 
     public static void removeCharacter(Session session, ClientMessage msg) {
@@ -27,7 +27,7 @@ public class CharacterRemover {
 
         int slot = UserInfo.characterSlot(charId, userId);
 
-        byte result = RemoverResult.SUCCESS;
+        short result = RemoverResult.SUCCESS;
 
         try {
             if (slot >= 0 && Password.validate(password, UserInfo.getPassword(userId))) {

@@ -48,7 +48,7 @@ public class Authenticator {
             UserInfo.setOnline(0, session.getUserId());
 
             session.send(MessageBuilder.certifyLogin(session.getSessionId(),
-                    session.getUserId(), (byte) 0));
+                    session.getUserId(), (short) 0));
         } catch (AuthenticationException e) {
             session.sendAndFlush(MessageBuilder.certifyLogin(session.getSessionId(),
                     session.getUserId(), (short) e.getErrorCode()));

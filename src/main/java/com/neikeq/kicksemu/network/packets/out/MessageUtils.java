@@ -19,6 +19,7 @@ import com.neikeq.kicksemu.game.rooms.enums.VictoryResult;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
@@ -75,9 +76,8 @@ class MessageUtils {
         } catch (SQLException ignored) {}
     }
 
-    public static void appendDefaultClothes(int playerId, ServerMessage msg, Connection ... con) {
-        DefaultClothes defaultClothes = PlayerInfo.getDefaultClothes(playerId, con);
-
+    public static void appendDefaultClothes(DefaultClothes defaultClothes,
+                                            ServerMessage msg) {
         msg.writeInt(defaultClothes.getHead());
         msg.writeInt(defaultClothes.getShirts());
         msg.writeInt(defaultClothes.getPants());
@@ -174,8 +174,8 @@ class MessageUtils {
         msg.writeShort(stats.getDefense());
     }
 
-    public static void appendStatsTraining(int playerId, ServerMessage msg, Connection ... con) {
-        PlayerStats learnStats = PlayerInfo.getTrainingStats(playerId, con);
+    public static void appendStatsTraining(Session session, ServerMessage msg, Connection ... con) {
+        PlayerStats learnStats = PlayerInfo.getTrainingStats(session, con);
 
         msg.writeShort(learnStats.getRunning());
         msg.writeShort(learnStats.getEndurance());
@@ -196,8 +196,8 @@ class MessageUtils {
         msg.writeShort(learnStats.getDefense());
     }
 
-    public static void appendStatsBonus(int playerId, ServerMessage msg, Connection ... con) {
-        PlayerStats bonusStats = PlayerInfo.getBonusStats(playerId, con);
+    public static void appendStatsBonus(Session session, ServerMessage msg, Connection ... con) {
+        PlayerStats bonusStats = PlayerInfo.getBonusStats(session, con);
 
         msg.writeShort(bonusStats.getRunning());
         msg.writeShort(bonusStats.getEndurance());
@@ -268,11 +268,11 @@ class MessageUtils {
         TeamResult tr = !training ?
                 (room.getPlayerTeam(id) == RoomTeam.RED ?
                         result.getRedTeam() : result.getBlueTeam()) :
-                new TeamResult((short)-1, (short)0, (short)0, (short)0, (short)0, (short)0,
-                        (short)0, (short)0, (short)0);
+                new TeamResult((short) -1, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0,
+                        (short) 0, (short) 0, (short) 0);
 
-        PlayerResult pr = !training ? playerResult : new PlayerResult(-1, (short)0,
-                (short)0, (short)0, (short)0, (short)0, (short)0, (short)0, (short)0);
+        PlayerResult pr = !training ? playerResult : new PlayerResult(-1, (short) 0,
+                (short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0);
 
         PlayerHistory history = PlayerInfo.getHistory(id, con);
 
@@ -374,46 +374,46 @@ class MessageUtils {
         msg.writeZeros(20);
     }
 
-    public static void appendItemsInUse(int playerId, ServerMessage msg, Connection ... con) {
-        appendItemInUse(PlayerInfo.getItemHead(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemGlasses(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemShirts(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemPants(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemGlove(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemShoes(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemSocks(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemWrist(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemArm(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemKnee(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemEar(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemNeck(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemMask(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemMuffler(playerId, con), msg);
-        appendItemInUse(PlayerInfo.getItemPackage(playerId, con), msg);
+    public static void appendItemsInUse(Session session, ServerMessage msg, Connection ... con) {
+        appendItemInUse(PlayerInfo.getItemHead(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemGlasses(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemShirts(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemPants(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemGlove(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemShoes(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemSocks(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemWrist(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemArm(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemKnee(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemEar(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemNeck(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemMask(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemMuffler(session, con), msg);
+        appendItemInUse(PlayerInfo.getItemPackage(session, con), msg);
     }
 
-    public static void appendInventoryItemsInUse(int playerId,
+    public static void appendInventoryItemsInUse(Session session,
                                                  ServerMessage msg, Connection ... con) {
-        appendInventoryItem(PlayerInfo.getItemHead(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemGlasses(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemShirts(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemPants(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemGlove(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemShoes(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemSocks(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemWrist(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemArm(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemKnee(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemEar(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemNeck(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemMask(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemMuffler(playerId, con), msg);
-        appendInventoryItem(PlayerInfo.getItemPackage(playerId, con), msg);
+        appendInventoryItem(PlayerInfo.getItemHead(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemGlasses(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemShirts(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemPants(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemGlove(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemShoes(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemSocks(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemWrist(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemArm(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemKnee(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemEar(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemNeck(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemMask(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemMuffler(session, con), msg);
+        appendInventoryItem(PlayerInfo.getItemPackage(session, con), msg);
     }
 
-    public static void appendInventorySkillsInUse(int playerId, ServerMessage msg,
+    public static void appendInventorySkillsInUse(Session session, ServerMessage msg,
                                                   Connection ... con) {
-        Skill[] skills = PlayerInfo.getInventorySkills(playerId, con).values().stream()
+        Skill[] skills = session.getCache().getSkills(con).values().stream()
                 .filter(s -> s.getSelectionIndex() > 0).toArray(Skill[]::new);
 
         for (int i = 0; i < 30; i++) {
@@ -421,9 +421,9 @@ class MessageUtils {
         }
     }
 
-    public static void appendInventoryCelebrationsInUse(int playerId, ServerMessage msg,
+    public static void appendInventoryCelebrationsInUse(Session session, ServerMessage msg,
                                                         Connection ... con) {
-        Celebration[] celebrations = PlayerInfo.getInventoryCelebration(playerId, con).values()
+        Celebration[] celebrations = session.getCache().getCeles(con).values()
                 .stream().filter(c -> c.getSelectionIndex() > 0).toArray(Celebration[]::new);
 
         for (int i = 0; i < 5; i++) {

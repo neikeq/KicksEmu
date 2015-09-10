@@ -75,7 +75,7 @@ public class Room {
     public void tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
 
-        byte result = 0;
+        short result = 0;
 
         synchronized (locker) {
             if (isNotFull()) {
@@ -91,16 +91,16 @@ public class Room {
                             // Join the room
                             addPlayer(session);
                         } else {
-                            result = (byte) -8; // Invalid level
+                            result = -8; // Invalid level
                         }
                     } else {
-                        result = (byte) -5; // Wrong password
+                        result = -5; // Wrong password
                     }
                 } else {
-                    result = (byte) -6; // Match already started
+                    result = -6; // Match already started
                 }
             } else {
-                result = (byte) -4; // Room is full
+                result = -4; // Room is full
             }
         }
 
@@ -137,7 +137,7 @@ public class Room {
             swapLocker.lockPlayer(playerId);
 
             session.setRoomId(getId());
-            session.send(joinRoomMessage(this, session.getPlayerId(), (byte) 0));
+            session.send(joinRoomMessage(this, session.getPlayerId(), (short) 0));
             onPlayerJoined(session);
         }
     }
@@ -176,7 +176,7 @@ public class Room {
             session.onLeavedRoom();
             session.sendAndFlush(leaveRoomMessage(playerId, reason));
 
-            onPlayerLeaved(playerId, reason);
+            onPlayerLeaved(session, reason);
         }
     }
 
@@ -222,14 +222,14 @@ public class Room {
     protected void addPlayerToRedTeam(int playerId) {
         getRedTeam().add(playerId);
 
-        short position = PlayerInfo.getPosition(playerId);
+        short position = getPlayers().get(playerId).getCache().getPosition();
         getRedTeamPositions().add(position);
     }
 
     protected void addPlayerToBlueTeam(int playerId) {
         getBlueTeam().add(playerId);
 
-        short position = PlayerInfo.getPosition(playerId);
+        short position = getPlayers().get(playerId).getCache().getPosition();
         getBlueTeamPositions().add(position);
     }
 
@@ -298,7 +298,8 @@ public class Room {
 
                                 if (!failedPlayers.isEmpty()) {
                                     List<String> info = failedPlayers.stream()
-                                            .map(playerId -> PlayerInfo.getName(playerId))
+                                            .map(player ->
+                                                    getPlayers().get(player).getCache().getName())
                                             .collect(Collectors.toList());
 
                                     sendBroadcast(MessageBuilder.hostInfo(this));
@@ -375,7 +376,9 @@ public class Room {
         }
     }
 
-    protected void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
+    protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
+        int playerId = session.getPlayerId();
+
         // Notify players in room about player leaving
         if (Configuration.getBoolean("game.match.result.force") || !isPlaying()) {
             sendBroadcast(leaveRoomMessage(playerId, reason));
@@ -388,7 +391,7 @@ public class Room {
         } else {
             disconnectedPlayers.add(playerId);
 
-            String message = PlayerInfo.getName(playerId) + " has been disconnected.";
+            String message = session.getCache().getName() + " has been disconnected.";
             sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
         }
     }
@@ -450,7 +453,7 @@ public class Room {
         return MessageBuilder.roomMaster(master);
     }
 
-    protected ServerMessage joinRoomMessage(Room room, int playerId, byte result) {
+    protected ServerMessage joinRoomMessage(Room room, int playerId, short result) {
         return MessageBuilder.joinRoom(room, playerId, result);
     }
 

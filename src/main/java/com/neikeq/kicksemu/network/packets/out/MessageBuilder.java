@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.network.packets.out;
 
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.misc.quests.QuestState;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
@@ -98,10 +99,11 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage characterInfo(int playerId, int ownerId,
+    public static ServerMessage characterInfo(Session session, int ownerId,
                                               short slot, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.CHARACTER_INFO);
 
+        int playerId = session.getPlayerId();
         boolean blocked = PlayerInfo.isBlocked(playerId, con);
 
         msg.writeShort((short) (blocked ? -2 : 0));
@@ -111,28 +113,20 @@ public class MessageBuilder {
             msg.writeInt(playerId);
             msg.writeShort(slot);
             msg.writeString(PlayerInfo.getName(playerId, con), 15);
-
             MessageUtils.appendQuestInfo(playerId, msg, con);
             MessageUtils.appendTutorialInfo(playerId, msg, con);
-
             msg.writeZeros(3);
-
             MessageUtils.appendCharacterInfo(playerId, msg, con);
-
             msg.writeZeros(2);
             msg.writeShort(PlayerInfo.getAnimation(playerId, con));
             msg.writeShort(PlayerInfo.getFace(playerId, con));
-
-            MessageUtils.appendDefaultClothes(playerId, msg, con);
-
+            DefaultClothes defaultClothes = PlayerInfo.getDefaultClothes(playerId, con);
+            MessageUtils.appendDefaultClothes(defaultClothes, msg);
             msg.writeShort(PlayerInfo.getPosition(playerId, con));
             msg.writeZeros(6);
-
             MessageUtils.appendStats(playerId, msg, con);
-
             msg.writeZeros(4);
-
-            MessageUtils.appendItemsInUse(playerId, msg, con);
+            MessageUtils.appendItemsInUse(session, msg, con);
         }
 
         return msg;
@@ -268,40 +262,36 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.UDP_CONFIRM).writeShort((short) (result ? 0 : -3));
     }
 
-    public static ServerMessage playerInfo(int playerId, short result, Connection ... con) {
+    public static ServerMessage playerInfo(Session session, short result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_INFO);
 
         msg.writeShort(result);
 
         if (result == 0) {
+            int playerId = session.getPlayerId();
             int clubId = MemberInfo.getClubId(playerId, con);
 
             msg.writeInt(playerId);
             msg.writeZeros(54);
-            msg.writeString(PlayerInfo.getName(playerId, con), 15);
+            msg.writeString(session.getCache().getName(con), 15);
             msg.writeString(ClubInfo.getName(clubId), 15);
             msg.writeString(PlayerInfo.getStatusMessage(playerId, con), 35);
-
             MessageUtils.appendQuestInfo(playerId, msg, con);
             MessageUtils.appendTutorialInfo(playerId, msg, con);
-
             msg.writeZeros(24);
-
             MessageUtils.appendCharacterInfo(playerId, msg, con);
-
             msg.writeZeros(2);
-            msg.writeShort(PlayerInfo.getAnimation(playerId, con));
+            msg.writeShort(session.getCache().getAnimation(con));
             msg.writeShort(PlayerInfo.getFace(playerId, con));
-
-            MessageUtils.appendDefaultClothes(playerId, msg, con);
-
-            msg.writeShort(PlayerInfo.getPosition(playerId, con));
+            DefaultClothes defaultClothes = session.getCache().getDefaultClothes(con);
+            MessageUtils.appendDefaultClothes(defaultClothes, msg);
+            msg.writeShort(session.getCache().getPosition(con));
             msg.writeZeros(6);
 
             // Stats
             MessageUtils.appendStats(playerId, msg, con);
-            MessageUtils.appendStatsTraining(playerId, msg, con);
-            MessageUtils.appendStatsBonus(playerId, msg, con);
+            MessageUtils.appendStatsTraining(session, msg, con);
+            MessageUtils.appendStatsBonus(session, msg, con);
 
             // History
             MessageUtils.appendHistory(playerId, msg, con);
@@ -310,7 +300,7 @@ public class MessageBuilder {
             // Ranking
             MessageUtils.appendRanking(playerId, msg, con);
             MessageUtils.appendRankingLastMonth(playerId, msg, con);
-            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+            MessageUtils.appendInventoryItemsInUse(session, msg, con);
             MessageUtils.appendClubUniform(clubId, msg, con);
         }
 
@@ -402,7 +392,7 @@ public class MessageBuilder {
             if (!ServerManager.isPlayerConnected(friendId)) {
                 server = UserInfo.getServer(userId);
 
-                status = (byte)(server > 0 && UserInfo.getOnline(userId) == friendId ? 1 : 0);
+                status = (byte) (server > 0 && UserInfo.getOnline(userId) == friendId ? 1 : 0);
             } else {
                 status = 2;
             }
@@ -412,10 +402,10 @@ public class MessageBuilder {
                     location = server;
                     break;
                 case 2:
-                    location = (short)ServerManager.getSessionById(friendId).getRoomId();
+                    location = (short) ServerManager.getSessionById(friendId).getRoomId();
                     break;
                 case 3:
-                    location = (short)ServerManager.getSessionById(friendId).getRoomId();
+                    location = (short) ServerManager.getSessionById(friendId).getRoomId();
                     break;
                 default:
             }
@@ -427,14 +417,14 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage friendRequest(int playerId, short result) {
+    public static ServerMessage friendRequest(Session session, short result) {
         ServerMessage msg = new ServerMessage(MessageId.FRIEND_REQUEST);
 
         msg.writeShort(result);
 
         if (result == 0) {
-            msg.writeInt(playerId);
-            msg.writeString(PlayerInfo.getName(playerId), 15);
+            msg.writeInt(session.getPlayerId());
+            msg.writeString(session.getCache().getName(), 15);
         }
 
         return msg;
@@ -528,10 +518,10 @@ public class MessageBuilder {
         msg.writeShort((short) 0);
         msg.writeByte(page);
 
-        for (int playerId : ignoredPlayers) {
-            msg.writeInt(playerId);
-            msg.writeString(PlayerInfo.getName(playerId), 15);
-            msg.writeByte((byte) PlayerInfo.getPosition(playerId));
+        for (int ignoredPlayer : ignoredPlayers) {
+            msg.writeInt(ignoredPlayer);
+            msg.writeString(PlayerInfo.getName(ignoredPlayer), 15);
+            msg.writeByte((byte) PlayerInfo.getPosition(ignoredPlayer));
         }
 
         return msg;
@@ -634,7 +624,7 @@ public class MessageBuilder {
             msg.writeShort((short) room.getId());
 
             RoomTeam team = room.getPlayerTeam(playerId);
-            short teamIndex = team != null ? (short)team.toInt() : -1;
+            short teamIndex = team != null ? (short) team.toInt() : -1;
             msg.writeShort(teamIndex);
             msg.writeShort(teamIndex);
         }
@@ -688,15 +678,15 @@ public class MessageBuilder {
 
         if (session != null) {
             int playerId = session.getPlayerId();
-            int ownerId = PlayerInfo.getOwner(playerId, con);
+            int ownerId = session.getCache().getOwner(con);
             int clubId = MemberInfo.getClubId(playerId, con);
 
             RoomTeam team = room.getPlayerTeam(playerId);
-            short teamIndex = team != null ? (short)team.toInt() : -1;
+            short teamIndex = team != null ? (short) team.toInt() : -1;
 
             msg.writeBool(true, 2);
             msg.writeInt(playerId);
-            msg.writeString(PlayerInfo.getName(playerId, con), 15);
+            msg.writeString(session.getCache().getName(con), 15);
             msg.writeString(ClubInfo.getName(clubId, con), 15);
             msg.writeShort(teamIndex);
             msg.writeBool(room.isObserver(playerId));
@@ -710,12 +700,13 @@ public class MessageBuilder {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
             msg.writeZeros(2);
-            msg.writeShort(PlayerInfo.getAnimation(playerId, con));
+            msg.writeShort(session.getCache().getAnimation(con));
             msg.writeShort(PlayerInfo.getFace(playerId, con));
 
-            MessageUtils.appendDefaultClothes(playerId, msg, con);
+            DefaultClothes defaultClothes = session.getCache().getDefaultClothes(con);
+            MessageUtils.appendDefaultClothes(defaultClothes, msg);
 
-            msg.writeShort(PlayerInfo.getPosition(playerId, con));
+            msg.writeShort(session.getCache().getPosition(con));
             msg.writeZeros(1);
             msg.writeBool(clubId > 0); // is club member
             msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
@@ -726,13 +717,13 @@ public class MessageBuilder {
 
             // Stats
             MessageUtils.appendStats(playerId, msg, con);
-            MessageUtils.appendStatsTraining(playerId, msg, con);
-            MessageUtils.appendStatsBonus(playerId, msg, con);
+            MessageUtils.appendStatsTraining(session, msg, con);
+            MessageUtils.appendStatsBonus(session, msg, con);
 
-            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+            MessageUtils.appendInventoryItemsInUse(session, msg, con);
             MessageUtils.appendClubUniform(clubId, msg, con);
-            MessageUtils.appendInventorySkillsInUse(playerId, msg, con);
-            MessageUtils.appendInventoryCelebrationsInUse(playerId, msg, con);
+            MessageUtils.appendInventorySkillsInUse(session, msg, con);
+            MessageUtils.appendInventoryCelebrationsInUse(session, msg, con);
         }
 
         return msg;
@@ -915,7 +906,7 @@ public class MessageBuilder {
         msg.writeBool(room.isTraining());
         msg.writeZeros(4);
 
-        byte hostIndex = (byte)(room.getPlayerTeam(room.getHost()) == RoomTeam.RED ?
+        byte hostIndex = (byte) (room.getPlayerTeam(room.getHost()) == RoomTeam.RED ?
                 room.getRedTeam() : room.getBlueTeam()).indexOf(room.getHost());
 
         msg.writeInt(room.getHost());
@@ -1014,13 +1005,13 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerBonusStats(int playerId, Connection ... con) {
+    public static ServerMessage playerBonusStats(Session session, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_BONUS_STATS);
 
         msg.writeShort((short) 0);
-        msg.writeInt(playerId);
+        msg.writeInt(session.getPlayerId());
 
-        MessageUtils.appendStatsBonus(playerId, msg, con);
+        MessageUtils.appendStatsBonus(session, msg, con);
 
         return msg;
     }
@@ -1128,13 +1119,13 @@ public class MessageBuilder {
 
         if (session != null) {
             int playerId = session.getPlayerId();
-            int ownerId = PlayerInfo.getOwner(playerId, con);
+            int ownerId = session.getCache().getOwner(con);
             int clubId = MemberInfo.getClubId(playerId, con);
 
             msg.writeShort((short) 1);
             msg.writeBool(false);
             msg.writeInt(playerId);
-            msg.writeString(PlayerInfo.getName(playerId, con), 15);
+            msg.writeString(session.getCache().getName(con), 15);
             msg.writeString(ClubInfo.getName(clubId, con), 15);
             msg.writeBool(room.isObserver(playerId));
             msg.writeBool(false); // pc room
@@ -1146,12 +1137,13 @@ public class MessageBuilder {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
             msg.writeZeros(2);
-            msg.writeShort(PlayerInfo.getAnimation(playerId, con));
+            msg.writeShort(session.getCache().getAnimation(con));
             msg.writeShort(PlayerInfo.getFace(playerId, con));
 
-            MessageUtils.appendDefaultClothes(playerId, msg, con);
+            DefaultClothes defaultClothes = session.getCache().getDefaultClothes(con);
+            MessageUtils.appendDefaultClothes(defaultClothes, msg);
 
-            msg.writeShort(PlayerInfo.getPosition(playerId, con));
+            msg.writeShort(session.getCache().getPosition(con));
             msg.writeZeros(1);
             msg.writeBool(clubId > 0); // is club member
             msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
@@ -1162,13 +1154,13 @@ public class MessageBuilder {
 
             // Stats
             MessageUtils.appendStats(playerId, msg, con);
-            MessageUtils.appendStatsTraining(playerId, msg, con);
-            MessageUtils.appendStatsBonus(playerId, msg, con);
+            MessageUtils.appendStatsTraining(session, msg, con);
+            MessageUtils.appendStatsBonus(session, msg, con);
 
-            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
+            MessageUtils.appendInventoryItemsInUse(session, msg, con);
             MessageUtils.appendClubUniform(clubId, msg, con);
-            MessageUtils.appendInventorySkillsInUse(playerId, msg, con);
-            MessageUtils.appendInventoryCelebrationsInUse(playerId, msg, con);
+            MessageUtils.appendInventorySkillsInUse(session, msg, con);
+            MessageUtils.appendInventoryCelebrationsInUse(session, msg, con);
         }
 
         return msg;
@@ -1279,32 +1271,34 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseItem(int playerId, short result, Connection ... con) {
+    public static ServerMessage purchaseItem(Session session, short result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_ITEM);
 
         msg.writeShort(result);
 
         if (result == 0) {
+            int playerId = session.getPlayerId();
             MessageUtils.appendCharacterInfo(playerId, msg, con);
-            MessageUtils.appendStatsBonus(playerId, msg, con);
-            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
-            msg.writeByte(PlayerInfo.getSkillSlots(playerId, con));
+            MessageUtils.appendStatsBonus(session, msg, con);
+            MessageUtils.appendInventoryItemsInUse(session, msg, con);
+            msg.writeByte(PlayerInfo.getSkillSlots(session.getCache().getItems(con)));
         }
 
         return msg;
     }
 
-    public static ServerMessage resellItem(int playerId, int inventoryId, int refund,
+    public static ServerMessage resellItem(Session session, int inventoryId, int refund,
                                            short result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.RESELL_ITEM);
 
         msg.writeShort(result);
 
         if (result == 0) {
+            int playerId = session.getPlayerId();
             MessageUtils.appendCharacterInfo(playerId, msg, con);
-            MessageUtils.appendStatsBonus(playerId, msg, con);
-            MessageUtils.appendInventoryItemsInUse(playerId, msg, con);
-            msg.writeByte(PlayerInfo.getSkillSlots(playerId, con));
+            MessageUtils.appendStatsBonus(session, msg, con);
+            MessageUtils.appendInventoryItemsInUse(session, msg, con);
+            msg.writeByte(PlayerInfo.getSkillSlots(session.getCache().getItems(con)));
             msg.writeZeros(3);
             msg.writeInt(refund);
             msg.writeInt(inventoryId);
@@ -1313,42 +1307,42 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage activateItem(int inventoryId, int playerId, short result) {
+    public static ServerMessage activateItem(int inventoryId, Session session, short result) {
         ServerMessage msg = new ServerMessage(MessageId.ACTIVATE_ITEM);
 
         msg.writeShort(result);
 
         if (result == 0) {
-            MessageUtils.appendStatsBonus(playerId, msg);
-            MessageUtils.appendInventoryItemsInUse(playerId, msg);
+            MessageUtils.appendStatsBonus(session, msg);
+            MessageUtils.appendInventoryItemsInUse(session, msg);
             msg.writeInt(inventoryId);
         }
 
         return msg;
     }
 
-    public static ServerMessage deactivateItem(int inventoryId, int playerId, short result) {
+    public static ServerMessage deactivateItem(int inventoryId, Session session, short result) {
         ServerMessage msg = new ServerMessage(MessageId.DEACTIVATE_ITEM);
 
         msg.writeShort(result);
 
         if (result == 0) {
-            MessageUtils.appendStatsBonus(playerId, msg);
-            MessageUtils.appendInventoryItemsInUse(playerId, msg);
+            MessageUtils.appendStatsBonus(session, msg);
+            MessageUtils.appendInventoryItemsInUse(session, msg);
             msg.writeInt(inventoryId);
         }
 
         return msg;
     }
 
-    public static ServerMessage mergeItem(int playerId, int inventoryId,
+    public static ServerMessage mergeItem(Session session, int inventoryId,
                                           short usages, short result) {
         ServerMessage msg = new ServerMessage(MessageId.MERGE_ITEM);
 
         msg.writeShort(result);
 
         if (result == 0) {
-            MessageUtils.appendStatsBonus(playerId, msg);
+            MessageUtils.appendStatsBonus(session, msg);
             msg.writeInt(inventoryId);
             msg.writeShort(usages);
         }
@@ -1356,15 +1350,15 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseLearn(int playerId, Training learn,
+    public static ServerMessage purchaseLearn(Session session, Training learn,
                                               short result, Connection con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_LEARN);
 
         msg.writeShort(result);
 
         if (result == 0) {
-            MessageUtils.appendCharacterInfo(playerId, msg, con);
-            MessageUtils.appendStatsTraining(playerId, msg, con);
+            MessageUtils.appendCharacterInfo(session.getPlayerId(), msg, con);
+            MessageUtils.appendStatsTraining(session, msg, con);
             MessageUtils.appendInventoryTraining(learn, msg);
         }
 
@@ -1457,15 +1451,17 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.UPDATE_SETTINGS).writeShort(result);
     }
 
-    public static ServerMessage playerDetails(int playerId, short result) {
+    public static ServerMessage playerDetails(Session session, short result) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_DETAILS);
 
         msg.writeShort(result);
 
         if (result == 0) {
+            int playerId = session.getPlayerId();
+
             msg.writeInt(playerId);
-            msg.writeString(PlayerInfo.getName(playerId), 15);
-            msg.writeShort(PlayerInfo.getPosition(playerId));
+            msg.writeString(session.getCache().getName(), 15);
+            msg.writeShort(session.getCache().getPosition());
             msg.writeShort(PlayerInfo.getLevel(playerId));
             msg.writeString(ClubInfo.getName(MemberInfo.getClubId(playerId)), 15);
 

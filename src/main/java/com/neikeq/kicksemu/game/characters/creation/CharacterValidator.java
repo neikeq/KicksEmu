@@ -35,8 +35,8 @@ class CharacterValidator {
     private static final int MIN_STATS_POINTS = 0;
     private static final int MAX_STATS_POINTS = 10;
 
-    public static byte validate(CharacterBase character) {
-        byte result = CreationResult.SUCCESS;
+    public static short validate(CharacterBase character) {
+        short result = CreationResult.SUCCESS;
 
         if (!isValidName(character.getName()) || nameAlreadyInUse(character.getName())) {
             result = CreationResult.NAME_ALREADY_IN_USE;

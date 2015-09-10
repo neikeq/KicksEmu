@@ -39,8 +39,8 @@ public class Shop {
         if (payment == null || payment == Payment.BOTH) return;
 
         int playerId = session.getPlayerId();
-        int money = getMoneyFromPaymentMode(payment, playerId);
-        short position = PlayerInfo.getPosition(playerId);
+        int money = getMoneyFromPaymentMode(payment, session);
+        short position = session.getCache().getPosition();
         short level = PlayerInfo.getLevel(playerId);
 
         // Get the information about the skill with the requested id which
@@ -49,7 +49,7 @@ public class Shop {
                 (s.getPosition() == position || s.getPosition() == Position.basePosition(position)));
 
         Skill skill = null;
-        byte result = 0;
+        short result = 0;
 
         // If there is a skill with this id and the player position is valid for this skill
         if (skillInfo != null && expiration != null) {
@@ -65,16 +65,17 @@ public class Shop {
                         skillInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
                     if (price <= money) {
-                        Map<Integer, Skill> skills = PlayerInfo.getInventorySkills(playerId);
+                        Map<Integer, Skill> skills = session.getCache().getSkills();
 
                         // If the item is not already purchased
                         if (notAlreadyPurchased(skillId, skills.values())) {
-                            byte skillsInUse = (byte)skills.values().stream()
+                            byte skillsInUse = (byte) skills.values().stream()
                                     .filter(s -> s.getSelectionIndex() > 0).count();
 
                             // Initialize skill with the requested data
                             int id = InventoryUtils.getSmallestMissingId(skills.values());
-                            byte index = skillsInUse >= PlayerInfo.getSkillSlots(playerId) ? 0 :
+                            int slots = PlayerInfo.getSkillSlots(session.getCache().getItems());
+                            byte index = skillsInUse >= slots ? 0 :
                                     InventoryUtils.getSmallestMissingIndex(skills.values());
 
                             skill = new Skill(skillId, id, expiration.toInt(), index,
@@ -84,18 +85,18 @@ public class Shop {
                             skills.put(id, skill);
                             PlayerInfo.addInventorySkill(skill, playerId);
                             // Deduct the price from the player's money
-                            sumMoneyToPaymentMode(payment, playerId, -price);
+                            sumMoneyToPaymentMode(payment, session, -price);
                         } else {
                             // Already purchased
                             result = -10;
                         }
                     } else {
                         // Not enough money
-                        result = (byte) (payment == Payment.CASH ? -8 : -5);
+                        result = (short) (payment == Payment.CASH ? -8 : -5);
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.CASH ? -2 : -3);
+                    result = (short) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -122,14 +123,14 @@ public class Shop {
         if (payment == null || payment == Payment.BOTH) return;
 
         int playerId = session.getPlayerId();
-        int money = getMoneyFromPaymentMode(payment, playerId);
+        int money = getMoneyFromPaymentMode(payment, session);
         short level = PlayerInfo.getLevel(playerId);
 
         // Get the information about the celebration with the requested id
         CeleInfo celeInfo = TableManager.getCeleInfo(c -> c.getId() == celeId);
 
         Celebration cele = null;
-        byte result = 0;
+        short result = 0;
 
         // If there is a cele with this id and the player position is valid for this cele
         if (celeInfo != null && expiration != null) {
@@ -140,7 +141,7 @@ public class Shop {
             if (level >= celeInfo.getLevel()) {
                 int celePrice = celeInfo.getPrice().getPriceFor(expiration, payment);
 
-                Map<Integer, Celebration> celes = PlayerInfo.getInventoryCelebration(playerId);
+                Map<Integer, Celebration> celes = session.getCache().getCeles();
 
                 // If the price sent by the client is valid
                 if (celePrice != -1 && celePrice == price &&
@@ -161,18 +162,18 @@ public class Shop {
                             celes.put(id, cele);
                             PlayerInfo.addInventoryCele(cele, playerId);
                             // Deduct the price from the player's money
-                            sumMoneyToPaymentMode(payment, playerId, -price);
+                            sumMoneyToPaymentMode(payment, session, -price);
                         } else {
                             // Already purchased
                             result = -10;
                         }
                     } else {
                         // Not enough money
-                        result = (byte) (payment == Payment.CASH ? -8 : -5);
+                        result = (short) (payment == Payment.CASH ? -8 : -5);
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.CASH ? -2 : -3);
+                    result = (short) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -198,14 +199,14 @@ public class Shop {
         if (payment == null || payment == Payment.BOTH) return;
 
         int playerId = session.getPlayerId();
-        int money = getMoneyFromPaymentMode(payment, playerId);
+        int money = getMoneyFromPaymentMode(payment, session);
         short level = PlayerInfo.getLevel(playerId);
 
         // Get the information about the learn with the requested id
         LearnInfo learnInfo = TableManager.getLearnInfo(c -> c.getId() == learnId);
 
         Training learn = null;
-        byte result = 0;
+        short result = 0;
 
         // If there is a learn with this id and the player position is valid for this learn
         if (learnInfo != null) {
@@ -219,7 +220,7 @@ public class Shop {
                         learnInfo.getPayment().accepts(payment)) {
                     // If the player has enough money
                     if (price <= money) {
-                        Map<Integer, Training> learns = PlayerInfo.getInventoryTraining(playerId);
+                        Map<Integer, Training> learns = session.getCache().getLearns();
 
                         // If the item is not already purchased
                         if (notAlreadyPurchased(learnId, learns.values())) {
@@ -232,18 +233,18 @@ public class Shop {
                             learns.put(id, learn);
                             PlayerInfo.addInventoryTraining(learn, playerId);
                             // Deduct the price from the player's money
-                            sumMoneyToPaymentMode(payment, playerId, -price);
+                            sumMoneyToPaymentMode(payment, session, -price);
                         } else {
                             // Already purchased
                             result = -10;
                         }
                     } else {
                         // Not enough money
-                        result = (byte) (payment == Payment.CASH ? -8 : -5);
+                        result = (short) (payment == Payment.CASH ? -8 : -5);
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.CASH ? -2 : -3);
+                    result = (short) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -256,7 +257,7 @@ public class Shop {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
-            session.send(MessageBuilder.purchaseLearn(playerId, learn, result, con));
+            session.send(MessageBuilder.purchaseLearn(session, learn, result, con));
         } catch (SQLException ignored) {}
     }
 
@@ -273,9 +274,9 @@ public class Shop {
         if (payment == Payment.POINTS && expiration == Expiration.DAYS_PERM) return;
 
         int playerId = session.getPlayerId();
-        int money = getMoneyFromPaymentMode(payment, playerId);
+        int money = getMoneyFromPaymentMode(payment, session);
         short level = PlayerInfo.getLevel(playerId);
-        byte skillSlots = PlayerInfo.getSkillSlots(playerId);
+        byte skillSlots = PlayerInfo.getSkillSlots(session.getCache().getItems());
 
         // Get the information about the item with the requested id
         ItemInfo itemInfo = TableManager.getItemInfo(c -> c.getId() == itemId);
@@ -294,9 +295,9 @@ public class Shop {
                 (optionInfoTwo == null || optionInfoTwo.isValidLevel(level, payment));
 
         boolean validGender = itemInfo != null && (itemInfo.getGender() == 0 ||
-                itemInfo.getGender() == PlayerInfo.getAnimation(playerId));
+                itemInfo.getGender() == session.getCache().getAnimation());
 
-        byte result = 0;
+        short result = 0;
 
         // If the item is a face, set the expiration mode to permanent
         if (itemInfo != null && (itemInfo.getType() == 100 || itemInfo.getType() == 204)) {
@@ -327,7 +328,7 @@ public class Shop {
                 boolean canPurchaseSlots =  optionInfoOne != null &&
                         optionInfoOne.getValue() <= SLOTS_LIMIT - skillSlots;
 
-                Map<Integer, Item> items = PlayerInfo.getInventoryItems(playerId);
+                Map<Integer, Item> items = session.getCache().getItems();
 
                 // If the price sent by the client is valid
                 if (itemPrice != -1 && itemPrice == price &&
@@ -335,10 +336,10 @@ public class Shop {
                     // If the player has enough money
                     if (price > money) {
                         // Not enough money
-                        result = (byte) (payment == Payment.CASH ? -8 : -5);
+                        result = (short) (payment == Payment.CASH ? -8 : -5);
                     } else if (items.size() >= InventoryManager.MAX_INVENTORY_ITEMS) {
                         // Inventory is full
-                        result = (byte) -10;
+                        result = -10;
                     } else if (canPurchaseSlots ||
                             itemInfo.getType() != ItemType.SKILL_SLOT.toInt()) {
                         if (!SpecialItem.isSpecialItem(itemInfo.getType())) {
@@ -361,14 +362,14 @@ public class Shop {
                         }
 
                         // Deduct the price from the player's money
-                        sumMoneyToPaymentMode(payment, playerId, -price);
+                        sumMoneyToPaymentMode(payment, session, -price);
                     } else {
                         // Skill slots limit
-                        result = (byte) -12;
+                        result = -12;
                     }
                 } else {
                     // The payment mode or price sent by the client is invalid
-                    result = (byte) (payment == Payment.CASH ? -2 : -3);
+                    result = (short) (payment == Payment.CASH ? -2 : -3);
                 }
             } else {
                 // Invalid level
@@ -381,7 +382,7 @@ public class Shop {
         }
 
         try (Connection con = MySqlManager.getConnection()) {
-            session.send(MessageBuilder.purchaseItem(playerId, result, con));
+            session.send(MessageBuilder.purchaseItem(session, result, con));
 
             if (result == 0) {
                 CharacterManager.sendItemList(session);
@@ -394,24 +395,24 @@ public class Shop {
         return !product.stream().filter(p -> p.getId() == id).findFirst().isPresent();
     }
 
-    private static int getMoneyFromPaymentMode(Payment payment, int playerId) {
+    private static int getMoneyFromPaymentMode(Payment payment, Session session) {
         switch (payment) {
             case CASH:
-                return UserInfo.getCash(PlayerInfo.getOwner(playerId));
+                return UserInfo.getCash(session.getCache().getOwner());
             case POINTS:
-                return PlayerInfo.getPoints(playerId);
+                return PlayerInfo.getPoints(session.getPlayerId());
             default:
                 return 0;
         }
     }
 
-    private static void sumMoneyToPaymentMode(Payment payment, int playerId, int value) {
+    private static void sumMoneyToPaymentMode(Payment payment, Session session, int value) {
         switch (payment) {
             case CASH:
-                UserInfo.sumCash(value, PlayerInfo.getOwner(playerId));
+                UserInfo.sumCash(value, session.getCache().getOwner());
                 break;
             case POINTS:
-                PlayerInfo.sumPoints(value, playerId);
+                PlayerInfo.sumPoints(value, session.getPlayerId());
                 break;
             default:
         }

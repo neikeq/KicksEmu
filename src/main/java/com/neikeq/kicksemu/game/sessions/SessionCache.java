@@ -1,29 +1,27 @@
 package com.neikeq.kicksemu.game.sessions;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
-import com.neikeq.kicksemu.game.servers.ServerType;
-import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 
-import java.sql.Timestamp;
+import java.sql.Connection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SessionCache {
 
-    private Integer owner = null;
+    private final Session parent;
 
     private DefaultClothes defaultClothes = null;
-
+    private String name = null;
+    private Integer owner = null;
     private Short animation = null;
     private Short position = null;
-
-    private String name = null;
 
     private Map<Integer, Item> items = null;
     private Map<Integer, Skill> skills = null;
@@ -58,108 +56,100 @@ public class SessionCache {
         }
     }
 
-    public Integer getOwner() {
+    public SessionCache(Session parent) {
+        this.parent = parent;
+    }
+
+    public Integer getOwner(Connection ... con) {
+        if (owner == null) {
+            owner = PlayerInfo.getOwner(parent.getPlayerId(), con);
+        }
+
         return owner;
     }
 
-    public void setOwner(Integer owner) {
-        this.owner = owner;
-    }
+    public Short getAnimation(Connection ... con) {
+        if (animation == null) {
+            animation = PlayerInfo.getAnimation(parent.getPlayerId(), con);
+        }
 
-    public Short getAnimation() {
         return animation;
     }
 
-    public void setAnimation(Short animation) {
-        this.animation = animation;
-    }
+    public String getName(Connection ... con) {
+        if (name == null) {
+            PlayerInfo.getName(parent.getPlayerId(), con);
+        }
 
-    public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Map<Integer, Item> getItems() {
-        Timestamp currentTimestamp = DateUtils.getTimestamp();
-
-        if (items != null) {
-            items = items.values().stream()
-                    .filter(i ->
-                            (i.getExpiration().isUsage() && i.getUsages() > 0) ||
-                            (i.getExpiration().isDays() &&
-                                    i.getTimestampExpire().after(currentTimestamp)) ||
-                            i.getExpiration().isPermanent())
-                    .collect(Collectors.toMap(Item::getInventoryId, i -> i,
-                            (i1, i2) -> null, LinkedHashMap::new));
+    public Map<Integer, Item> getItems(Connection ... con) {
+        if (items == null) {
+            items = PlayerInfo.getInventoryItems(parent.getPlayerId(), con);
         }
+
+        items = items.values().stream()
+                .filter(i ->
+                        (i.getExpiration().isUsage() && i.getUsages() > 0) ||
+                                (i.getExpiration().isDays() &&
+                                        i.getTimestampExpire().after(DateUtils.getTimestamp())) ||
+                                i.getExpiration().isPermanent())
+                .collect(Collectors.toMap(Item::getInventoryId, i -> i,
+                        (i1, i2) -> null, LinkedHashMap::new));
 
         return items;
     }
 
-    public void setItems(Map<Integer, Item> items) {
-        this.items = items;
-    }
-
-    public Map<Integer, Skill> getSkills() {
-        Timestamp currentTimestamp = DateUtils.getTimestamp();
-
-        if (skills != null) {
-            skills = skills.values().stream()
-                    .filter(s -> s.getTimestampExpire().after(currentTimestamp) ||
-                            s.getExpiration().isPermanent())
-                    .collect(Collectors.toMap(Skill::getInventoryId, s -> s,
-                            (s1, s2) -> null, LinkedHashMap::new));
+    public Map<Integer, Skill> getSkills(Connection ... con) {
+        if (skills == null) {
+            skills = PlayerInfo.getInventorySkills(parent, con);
         }
+
+        skills = skills.values().stream()
+                .filter(s -> s.getTimestampExpire().after(DateUtils.getTimestamp()) ||
+                        s.getExpiration().isPermanent())
+                .collect(Collectors.toMap(Skill::getInventoryId, s -> s,
+                        (s1, s2) -> null, LinkedHashMap::new));
 
         return skills;
     }
 
-    public void setSkills(Map<Integer, Skill> skills) {
-        this.skills = skills;
-    }
-
-    public Map<Integer, Celebration> getCeles() {
-        Timestamp currentTimestamp = DateUtils.getTimestamp();
-
-        if (celes != null) {
-            celes = celes.values().stream()
-                    .filter(c -> c.getTimestampExpire().after(currentTimestamp) ||
-                            c.getExpiration().isPermanent())
-                    .collect(Collectors.toMap(Celebration::getInventoryId, c -> c,
-                            (c1, c2) -> null, LinkedHashMap::new));
+    public Map<Integer, Celebration> getCeles(Connection ... con) {
+        if (celes == null) {
+            celes = PlayerInfo.getInventoryCelebration(parent.getPlayerId(), con);
         }
+
+        celes = celes.values().stream()
+                .filter(c -> c.getTimestampExpire().after(DateUtils.getTimestamp()) ||
+                        c.getExpiration().isPermanent())
+                .collect(Collectors.toMap(Celebration::getInventoryId, c -> c,
+                        (c1, c2) -> null, LinkedHashMap::new));
 
         return celes;
     }
 
-    public void setCeles(Map<Integer, Celebration> celes) {
-        this.celes = celes;
-    }
+    public Map<Integer, Training> getLearns(Connection ... con) {
+        if (learns == null) {
+            learns = PlayerInfo.getInventoryTraining(parent.getPlayerId(), con);
+        }
 
-    public Map<Integer, Training> getLearns() {
         return learns;
     }
 
-    public void setLearns(Map<Integer, Training> learns) {
-        this.learns = learns;
-    }
+    public DefaultClothes getDefaultClothes(Connection ... con) {
+        if (defaultClothes == null) {
+            return PlayerInfo.getDefaultClothes(parent.getPlayerId(), con);
+        }
 
-    public DefaultClothes getDefaultClothes() {
         return defaultClothes;
     }
 
-    public void setDefaultClothes(DefaultClothes defaultClothes) {
-        this.defaultClothes = defaultClothes;
-    }
+    public Short getPosition(Connection ... con) {
+        if (position == null) {
+            position = PlayerInfo.getPosition(parent.getPlayerId(), con);
+        }
 
-    public Short getPosition() {
-        return ServerManager.getServerType() != ServerType.MAIN ? position : null;
-    }
-
-    public void setPosition(Short position) {
-        this.position = position;
+        return position;
     }
 }

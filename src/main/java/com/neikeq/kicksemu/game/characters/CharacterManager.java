@@ -34,61 +34,54 @@ public class CharacterManager {
     }
 
     public static void playerDetails(Session session, ClientMessage msg) {
-        int playerId = msg.readInt();
+        int targetId = msg.readInt();
 
-        if (ServerManager.isPlayerConnected(playerId)) {
-            session.send(MessageBuilder.playerDetails(playerId, (byte) 0));
+        Session targetSession = ServerManager.getSessionById(targetId);
+
+        if (targetSession != null) {
+            session.send(MessageBuilder.playerDetails(targetSession, (short) 0));
         }
     }
 
     private static void sendPlayerInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
-            session.send(MessageBuilder.playerInfo(session.getPlayerId(), (byte) 0, con));
+            session.send(MessageBuilder.playerInfo(session, (short) 0, con));
         } catch (SQLException ignored) {}
     }
 
     public static void sendItemList(Session session) {
-        Map<Integer, Item> items = PlayerInfo.getInventoryItems(session.getPlayerId());
+        Map<Integer, Item> items = session.getCache().getItems();
 
-        session.send(MessageBuilder.itemList(items, (byte) 0));
+        session.send(MessageBuilder.itemList(items, (short) 0));
     }
 
     /** This is a trick to update client's inventory items in use. */
     public static void sendItemsInUse(Session session) {
-        int playerId = session.getPlayerId();
-
-        Map<Integer, Item> items = PlayerInfo.getInventoryItems(session.getPlayerId());
+        Map<Integer, Item> items = session.getCache().getItems();
 
         if (items.size() > 0) {
             Item item = items.values().iterator().next();
 
             session.send(item.isSelected() ?
-                    MessageBuilder.activateItem(item.getInventoryId(), playerId, (byte) 0) :
-                    MessageBuilder.deactivateItem(item.getInventoryId(), playerId, (byte) 0));
+                    MessageBuilder.activateItem(item.getInventoryId(), session, (short) 0) :
+                    MessageBuilder.deactivateItem(item.getInventoryId(), session, (short) 0));
         }
     }
 
     private static void sendTrainingList(Session session) {
-        Map<Integer, Training> trainings = PlayerInfo.getInventoryTraining(session.getPlayerId());
-
-        session.send(MessageBuilder.trainingList(trainings, (byte) 0));
+        Map<Integer, Training> trainings = session.getCache().getLearns();
+        session.send(MessageBuilder.trainingList(trainings, (short) 0));
     }
 
     public static void sendSkillList(Session session) {
-        int playerId = session.getPlayerId();
-
-        Map<Integer, Skill> items = PlayerInfo.getInventorySkills(session.getPlayerId());
-
-        byte slots = PlayerInfo.getSkillSlots(playerId);
-
-        session.send(MessageBuilder.skillList(items, slots, (byte) 0));
+        Map<Integer, Skill> items = session.getCache().getSkills();
+        byte slots = PlayerInfo.getSkillSlots(session.getCache().getItems());
+        session.send(MessageBuilder.skillList(items, slots, (short) 0));
     }
 
     private static void sendCelebrationList(Session session) {
-        Map<Integer, Celebration> items =
-                PlayerInfo.getInventoryCelebration(session.getPlayerId());
-
-        session.send(MessageBuilder.celebrationList(items, (byte) 0));
+        Map<Integer, Celebration> items = session.getCache().getCeles();
+        session.send(MessageBuilder.celebrationList(items, (short) 0));
     }
 
     public static void resetStats(int playerId) {
@@ -119,11 +112,11 @@ public class CharacterManager {
             PlayerInfo.setStats(newStats, playerId, con);
 
             // Set stats point
-            PlayerInfo.setStatsPoints((short)statsPoints.get(), playerId, con);
+            PlayerInfo.setStatsPoints((short) statsPoints.get(), playerId, con);
         } catch (SQLException ignored) {}
     }
 
-    public static short checkExperience(int playerId, short level,
+    public static short checkExperience(Session session, short level,
                                         int experience, Connection ... con) {
         short levels = 0;
 
@@ -134,13 +127,13 @@ public class CharacterManager {
             short newLevel = newLevelInfo.getLevel();
 
             if (newLevel > level) {
-                levels = (short)(newLevel - level);
+                levels = (short) (newLevel - level);
             }
 
             if (levels > 0) {
+                int playerId = session.getPlayerId();
                 PlayerInfo.setLevel(newLevel, playerId, con);
-
-                short position = PlayerInfo.getPosition(playerId, con);
+                short position = session.getCache().getPosition(con);
                 onPlayerLevelUp(playerId, newLevel, levels, position, con);
             }
         }
@@ -193,7 +186,7 @@ public class CharacterManager {
     public static void addStatsPoints(Session session, ClientMessage msg) {
         msg.readInt();
 
-        byte result = 0;
+        short result = 0;
 
         short[] values = new short[17];
         short total = 0;
@@ -203,7 +196,7 @@ public class CharacterManager {
             total += values[i];
 
             if (values[i] < 0) {
-                result = (byte) -2; // Invalid value
+                result = -2; // Invalid value
                 break;
             }
         }
@@ -225,7 +218,7 @@ public class CharacterManager {
                     PlayerInfo.setStats(stats, playerId, con);
                     PlayerInfo.sumStatsPoints((short) -(total - remain.get()), playerId, con);
                 } else {
-                    result = (byte) -3; // Not enough stats points
+                    result = -3; // Not enough stats points
                 }
             }
 

@@ -8,7 +8,7 @@ public class ServerBase {
     private final short filter = Configuration.getShort("game.filter");
     private final String name = Configuration.get("game.name");
     private final String address = Configuration.get("game.address");
-    private final short port = (short)(Configuration.getShort("game.tcp.port.factor") + id);
+    private final short port = (short) (Configuration.getShort("game.tcp.port.factor") + id);
     private final byte minLevel = Configuration.getByte("game.level.min");
     private final byte maxLevel = Configuration.getByte("game.level.max");
     private final short maxUsers = Configuration.getShort("game.users.max");

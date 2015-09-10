@@ -19,7 +19,6 @@ import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsList;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredList;
 import com.neikeq.kicksemu.game.sessions.Session;
-import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 
@@ -51,27 +50,11 @@ public class PlayerInfo {
     // getters
 
     public static int getOwner(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        int owner = s != null && s.getCache().getOwner() != null ?
-                s.getCache().getOwner() : SqlUtils.getInt("owner", TABLE, id, con);
-
-        if (s != null) {
-            s.getCache().setOwner(owner);
-        }
-
-        return owner;
+        return SqlUtils.getInt("owner", TABLE, id, con);
     }
 
     public static String getName(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        String name = s != null && s.getCache().getName() != null ?
-                s.getCache().getName() : SqlUtils.getString("name", TABLE, id, con);
-
-        if (s != null) {
-            s.getCache().setName(name);
-        }
-
-        return name;
+        return SqlUtils.getString("name", TABLE, id, con);
     }
 
     public static boolean isBlocked(int id, Connection ... con) {
@@ -114,23 +97,7 @@ public class PlayerInfo {
     }
 
     public static short getPosition(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-
-        if (s != null) {
-            Short position = s.getCache().getPosition();
-
-            if (position != null) {
-                return position;
-            }
-        }
-
-        short position = SqlUtils.getShort("position", TABLE, id, con);
-
-        if (s != null) {
-            s.getCache().setPosition(position);
-        }
-
-        return position;
+        return SqlUtils.getShort("position", TABLE, id, con);
     }
 
     public static QuestState getQuestState(int id, Connection ... con) {
@@ -211,15 +178,7 @@ public class PlayerInfo {
     }
 
     public static short getAnimation(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-        short animation = s != null && s.getCache().getAnimation() != null ?
-                s.getCache().getAnimation() : SqlUtils.getShort("animation", TABLE, id, con);
-
-        if (s != null) {
-            s.getCache().setAnimation(animation);
-        }
-
-        return animation;
+        return SqlUtils.getShort("animation", TABLE, id, con);
     }
 
     public static short getFace(int id, Connection ... con) {
@@ -227,17 +186,7 @@ public class PlayerInfo {
     }
 
     public static DefaultClothes getDefaultClothes(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-
-        DefaultClothes defaultClothes = null;
-
-        if (s != null) {
-            defaultClothes = s.getCache().getDefaultClothes();
-
-            if (defaultClothes != null) {
-                return defaultClothes;
-            }
-        }
+        DefaultClothes defaultClothes;
 
         final String query = "SELECT default_head, default_shirts, default_pants, " +
                 "default_shoes FROM " + TABLE + " WHERE id = ? LIMIT 1;";
@@ -266,15 +215,11 @@ public class PlayerInfo {
             defaultClothes = new DefaultClothes(-1, -1, -1, -1);
         }
 
-        if (s != null) {
-            s.getCache().setDefaultClothes(defaultClothes);
-        }
-
         return defaultClothes;
     }
 
-    public static byte getSkillSlots(int id, Connection ... con) {
-        Iterator<Item> items = getInventoryItems(id, con).values().stream()
+    public static byte getSkillSlots(Map<Integer, Item> itemList) {
+        Iterator<Item> items = itemList.values().stream()
                 .filter(i -> i.getId() == 2021010 && i.isSelected()).iterator();
 
         // Default and minimum skill slots is 6
@@ -291,8 +236,8 @@ public class PlayerInfo {
         return slots;
     }
 
-    public static Item getItemInUseByType(ItemType type, int id, Connection ... con) {
-        Optional<Item> result = getInventoryItems(id, con).values().stream().filter(item -> {
+    public static Item getItemInUseByType(ItemType type, Session session, Connection ... con) {
+        Optional<Item> result = session.getCache().getItems(con).values().stream().filter(item -> {
             ItemInfo itemInfo = TableManager.getItemInfo(i -> i.getId() == item.getId());
             return itemInfo != null && itemInfo.getType() == type.toInt() && item.isSelected();
         }).findFirst();
@@ -300,64 +245,64 @@ public class PlayerInfo {
         return result.isPresent() ? result.get() : null;
     }
 
-    public static Item getItemHead(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.HEAD, id, con);
+    public static Item getItemHead(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.HEAD, session, con);
     }
 
-    public static Item getItemGlasses(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.GLASSES, id, con);
+    public static Item getItemGlasses(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.GLASSES, session, con);
     }
 
-    public static Item getItemShirts(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.SHIRTS, id, con);
+    public static Item getItemShirts(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.SHIRTS, session, con);
     }
 
-    public static Item getItemPants(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.PANTS, id, con);
+    public static Item getItemPants(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.PANTS, session, con);
     }
 
-    public static Item getItemGlove(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.GLOVES, id, con);
+    public static Item getItemGlove(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.GLOVES, session, con);
     }
 
-    public static Item getItemShoes(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.SHOES, id, con);
+    public static Item getItemShoes(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.SHOES, session, con);
     }
 
-    public static Item getItemSocks(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.SOCKS, id, con);
+    public static Item getItemSocks(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.SOCKS, session, con);
     }
 
-    public static Item getItemWrist(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.WRIST, id, con);
+    public static Item getItemWrist(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.WRIST, session, con);
     }
 
-    public static Item getItemArm(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.ARM, id, con);
+    public static Item getItemArm(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.ARM, session, con);
     }
 
-    public static Item getItemKnee(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.KNEE, id, con);
+    public static Item getItemKnee(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.KNEE, session, con);
     }
 
-    public static Item getItemEar(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.EAR, id, con);
+    public static Item getItemEar(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.EAR, session, con);
     }
 
-    public static Item getItemNeck(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.NECK, id, con);
+    public static Item getItemNeck(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.NECK, session, con);
     }
 
-    public static Item getItemMask(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.MASK, id, con);
+    public static Item getItemMask(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.MASK, session, con);
     }
 
-    public static Item getItemMuffler(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.MUFFLER, id, con);
+    public static Item getItemMuffler(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.MUFFLER, session, con);
     }
 
-    public static Item getItemPackage(int id, Connection ... con) {
-        return getItemInUseByType(ItemType.PACKAGE, id, con);
+    public static Item getItemPackage(Session session, Connection ... con) {
+        return getItemInUseByType(ItemType.PACKAGE, session, con);
     }
 
     public static short getStatsPoints(int id, Connection ... con) {
@@ -403,10 +348,10 @@ public class PlayerInfo {
         }
     }
 
-    public static PlayerStats getTrainingStats(int id, Connection ... con) {
+    public static PlayerStats getTrainingStats(Session session, Connection ... con) {
         PlayerStats learnStats = new PlayerStats();
 
-        getInventoryTraining(id, con).values().stream().forEach(learn -> {
+        session.getCache().getLearns(con).values().stream().forEach(learn -> {
             LearnInfo learnInfo = TableManager.getLearnInfo(l -> l.getId() == learn.getId());
 
             if (learnInfo != null) {
@@ -418,10 +363,10 @@ public class PlayerInfo {
         return learnStats;
     }
 
-    public static PlayerStats getBonusStats(int id, Connection ... con) {
+    public static PlayerStats getBonusStats(Session session, Connection ... con) {
         PlayerStats bonusStats = new PlayerStats();
 
-        getInventoryItems(id, con).values().stream().filter(Item::isSelected).forEach(item -> {
+        session.getCache().getItems(con).values().stream().filter(Item::isSelected).forEach(item -> {
             OptionInfo optionInfoOne = TableManager.getOptionInfo(of ->
                     of.getId() == item.getBonusOne());
             OptionInfo optionInfoTwo = TableManager.getOptionInfo(of ->
@@ -536,16 +481,6 @@ public class PlayerInfo {
     }
 
     public static Map<Integer, Item> getInventoryItems(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-
-        if (s != null) {
-            Map<Integer, Item> items = s.getCache().getItems();
-
-            if (items != null) {
-                return items;
-            }
-        }
-
         Map<Integer, Item> items = new LinkedHashMap<>();
 
         final String query = "SELECT * FROM items WHERE player_id = ? AND " + ITEM_ACTIVE +
@@ -575,24 +510,10 @@ public class PlayerInfo {
             }
         } catch (SQLException ignored) {}
 
-        if (s != null) {
-            s.getCache().setItems(items);
-        }
-
         return items;
     }
 
     public static Map<Integer, Training> getInventoryTraining(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-
-        if (s != null) {
-            Map<Integer, Training> learns = s.getCache().getLearns();
-
-            if (learns != null) {
-                return learns;
-            }
-        }
-
         Map<Integer, Training> learns = new LinkedHashMap<>();
 
         final String query = "SELECT * FROM learns WHERE player_id = ?";
@@ -618,36 +539,22 @@ public class PlayerInfo {
             }
         } catch (SQLException ignored) {}
 
-        if (s != null) {
-            s.getCache().setLearns(learns);
-        }
-
         return learns;
     }
 
-    public static Map<Integer, Skill> getInventorySkills(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-
-        if (s != null) {
-            Map<Integer, Skill> skills = s.getCache().getSkills();
-
-            if (skills != null) {
-                return skills;
-            }
-        }
-
+    public static Map<Integer, Skill> getInventorySkills(Session session, Connection ... con) {
         Map<Integer, Skill> skills = new LinkedHashMap<>();
 
         final String query = "SELECT * FROM skills WHERE player_id = ? AND " + PRODUCT_ACTIVE;
 
-        byte slots = PlayerInfo.getSkillSlots(id, con);
+        byte slots = PlayerInfo.getSkillSlots(session.getCache().getItems(con));
         byte slotsUsed = 0;
 
         try {
             Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, id);
+                stmt.setInt(1, session.getPlayerId());
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
@@ -676,24 +583,10 @@ public class PlayerInfo {
             }
         } catch (SQLException ignored) {}
 
-        if (s != null) {
-            s.getCache().setSkills(skills);
-        }
-
         return skills;
     }
 
     public static Map<Integer, Celebration> getInventoryCelebration(int id, Connection ... con) {
-        Session s = ServerManager.getSessionById(id);
-
-        if (s != null) {
-            Map<Integer, Celebration> celes = s.getCache().getCeles();
-
-            if (celes != null) {
-                return celes;
-            }
-        }
-
         Map<Integer, Celebration> celes = new LinkedHashMap<>();
 
         final String query = "SELECT * FROM ceres WHERE player_id = ? AND " + PRODUCT_ACTIVE;
@@ -720,10 +613,6 @@ public class PlayerInfo {
                 }
             }
         } catch (SQLException ignored) {}
-
-        if (s != null) {
-            s.getCache().setCeles(celes);
-        }
 
         return celes;
     }

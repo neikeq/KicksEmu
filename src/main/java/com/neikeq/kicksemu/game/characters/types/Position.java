@@ -17,7 +17,7 @@ public class Position {
     public static final short SW = 33;
 
     public static short basePosition(short position) {
-        return (short)(position - (position % 10));
+        return (short) (position - (position % 10));
     }
 
     public static boolean isValidNewPosition(short currentPos, short newPos) {

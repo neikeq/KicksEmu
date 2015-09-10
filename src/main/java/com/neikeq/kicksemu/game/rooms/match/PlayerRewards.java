@@ -85,7 +85,7 @@ class PlayerRewards {
         rewardWithBonus = baseReward;
 
         // If player's base position is DF
-        short playerPosition = PlayerInfo.getPosition(playerId, connection());
+        short playerPosition = session.getCache().getPosition(connection());
         if (Position.basePosition(playerPosition) == Position.DF) {
             short scoredGoals = resultHandler.getPlayerTeamResult(playerId).getGoals();
             short concededGoals = resultHandler.getRivalTeamResult(playerId).getGoals();
@@ -107,7 +107,7 @@ class PlayerRewards {
         points.set(rewardWithBonus);
         experience.set(rewardWithBonus);
 
-        PlayerInfo.getInventoryItems(playerId, connection()).values().stream()
+        session.getCache().getItems(connection()).values().stream()
                 .filter(item -> item.getExpiration().isUsage() && item.isSelected())
                 .forEach(item -> {
                     Soda bonusOne = Soda.fromId(item.getBonusOne());
@@ -144,7 +144,7 @@ class PlayerRewards {
     }
 
     private void checkExperienceAndTryLevelUp() {
-        levelsEarned = CharacterManager.checkExperience(playerId, getPlayerLevel(),
+        levelsEarned = CharacterManager.checkExperience(session, getPlayerLevel(),
                 currentExperience + experience.get(), connection());
     }
 
@@ -155,7 +155,7 @@ class PlayerRewards {
     private void sendRequiredMessages() {
         if (baseReward > 0) {
             room().sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, connection()));
-            room().sendBroadcast(MessageBuilder.playerBonusStats(playerId, connection()));
+            room().sendBroadcast(MessageBuilder.playerBonusStats(session, connection()));
 
             if (levelsEarned > 0) {
                 session.send(MessageBuilder.playerStats(playerId, connection()));

@@ -21,7 +21,7 @@ public class UserManager {
         int ping = msg.readInt();
 
         session.setPing(ping);
-        session.setPingState((byte)0);
+        session.setPingState((byte) 0);
     }
 
     public static void certifyExit(Session session) {
@@ -56,23 +56,28 @@ public class UserManager {
                     UserInfo.getSlotThree(userId, con)
             };
 
+            int playerId = session.getPlayerId();
+
             for (short i = 0; i < slots.length; i++) {
                 if (slots[i] > 0) {
-                    session.send(MessageBuilder.characterInfo(slots[i], userId, i, con));
+                    session.setPlayerId(slots[i]);
+                    session.send(MessageBuilder.characterInfo(session, userId, i, con));
                 }
             }
+
+            session.setPlayerId(playerId);
         } catch (SQLException ignored) {}
     }
 
     public static void updateSettings(Session session, ClientMessage msg) {
         UserSettings settings = UserSettings.fromMessage(msg);
 
-        byte result = 0;
+        short result = 0;
 
         if (settings.isValid()) {
             UserInfo.setSettings(settings, session.getUserId());
         } else {
-            result = (byte) -1;
+            result = -1;
         }
 
         session.send(MessageBuilder.updateSettings(result));
@@ -82,17 +87,17 @@ public class UserManager {
         int charId = msg.readInt();
         int userId = session.getUserId();
 
-        byte result = 0;
+        short result = 0;
 
         if (UserInfo.hasCharacter(charId, userId) && CharacterUtils.characterExist(charId)) {
             if (!PlayerInfo.isBlocked(charId)) {
                 SessionInfo.setPlayerId(charId, session.getSessionId());
                 session.setPlayerId(charId);
             } else {
-                result = (byte) -1; // System problem
+                result = -1; // System problem
             }
         } else {
-            result = (byte) -2; // Character does not exist
+            result = -2; // Character does not exist
         }
 
         session.send(MessageBuilder.choiceCharacter(charId, result));
@@ -105,14 +110,14 @@ public class UserManager {
         short position = msg.readShort();
 
         if (UserInfo.hasCharacter(playerId, userId)) {
-            byte result = 0;
+            short result = 0;
 
             try (Connection con = MySqlManager.getConnection()) {
                 short currentPosition = PlayerInfo.getPosition(playerId, con);
 
                 if (Position.isValidNewPosition(currentPosition, position)) {
                     PlayerInfo.setPosition(position, playerId, con);
-                    session.getCache().setPosition(position);
+                    session.getCache().clear();
 
                     MutableInteger statsPoints = new MutableInteger(0);
 
@@ -122,7 +127,7 @@ public class UserManager {
                             .getUpgradeStats().get(position), 1, stats, statsPoints);
 
                     PlayerInfo.setStats(stats, playerId, con);
-                    PlayerInfo.sumStatsPoints((short)statsPoints.get(), playerId, con);
+                    PlayerInfo.sumStatsPoints((short) statsPoints.get(), playerId, con);
 
                 } else {
                     result = -1;

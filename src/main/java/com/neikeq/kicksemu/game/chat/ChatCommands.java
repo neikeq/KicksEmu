@@ -68,19 +68,20 @@ public class ChatCommands {
         DecimalFormat df = new DecimalFormat("#,###,###");
 
         try (Connection con = MySqlManager.getConnection()) {
-            short playerLvl = PlayerInfo.getLevel(playerId, con);
-            short askedLvl = args.length < 2 ? (short)(playerLvl + 1) : Short.valueOf(args[1]);
+            short playerLevel = PlayerInfo.getLevel(playerId, con);
+            short requestedLevel = args.length < 2 ?
+                    (short) (playerLevel + 1) : Short.valueOf(args[1]);
 
-            if (playerLvl >= askedLvl || askedLvl > 60) {
+            if (playerLevel >= requestedLevel || requestedLevel > 60) {
                 return;
             }
 
-            LevelInfo lvlInfo = TableManager.getLevelInfo(c -> c.getLevel() == askedLvl);
+            LevelInfo lvlInfo = TableManager.getLevelInfo(c -> c.getLevel() == requestedLevel);
             int expForAskedLvl = lvlInfo.getExperience();
             final int exp = PlayerInfo.getExperience(playerId, con);
 
             ChatUtils.sendServerMessage(session, df.format(expForAskedLvl - exp) +
-                    " to reach Lv " + askedLvl);
+                    " to reach Lv " + requestedLevel);
         } catch (SQLException | NumberFormatException ignored) {}
     }
 
@@ -96,12 +97,14 @@ public class ChatCommands {
             if (room != null) {
                 switch (args[1].toLowerCase()) {
                     case "master":
+                        Session master = room.getPlayers().get(room.getMaster());
                         ChatUtils.sendServerMessage(session,
-                                "Master: " + PlayerInfo.getName(room.getMaster()));
+                                "Master: " + master.getCache().getName());
                         break;
                     case "host":
+                        Session host = room.getPlayers().get(room.getHost());
                         ChatUtils.sendServerMessage(session,
-                                "Host: " + PlayerInfo.getName(room.getHost()));
+                                "Host: " + host.getCache().getName());
                         break;
                     default:
                 }

@@ -21,7 +21,7 @@ public class IgnoredManager {
 
     public static void blockPlayer(Session session, ClientMessage msg) {
         int targetId = msg.readInt();
-        byte result = blockPlayer(session, targetId);
+        short result = blockPlayer(session, targetId);
 
         session.send(MessageBuilder.blockPlayer(targetId, result));
     }
@@ -56,7 +56,7 @@ public class IgnoredManager {
 
     public static void unblockPlayer(Session session, ClientMessage msg) {
         int targetId = msg.readInt();
-        byte result = unblockPlayer(session, targetId);
+        short result = unblockPlayer(session, targetId);
 
         session.send(MessageBuilder.unblockPlayer(result));
     }

@@ -21,8 +21,7 @@ public class ServerUtils {
     public static void serverList(Session session, ClientMessage msg) {
         List<Short> servers = getServerList(msg.readShort());
 
-        byte result = (byte)(servers == null ? -1 : 0);
-
+        short result = (short) (servers == null ? -1 : 0);
         session.send(MessageBuilder.serverList(servers, result));
     }
 
@@ -32,7 +31,7 @@ public class ServerUtils {
         short serverId = msg.readShort();
         short level = PlayerInfo.getLevel(playerId);
 
-        byte result = 0;
+        short result = 0;
 
         // TODO Check if character can access private server... Reject code is 251
         int clubId = MemberInfo.getClubId(playerId);
@@ -130,7 +129,7 @@ public class ServerUtils {
             stmt.setByte(5, base.getMinLevel());
             stmt.setByte(6, base.getMaxLevel());
             stmt.setShort(7, base.getMaxUsers());
-            stmt.setShort(8, (short)0);
+            stmt.setShort(8, (short) 0);
             stmt.setBoolean(9, true);
             stmt.setString(10, base.getType().name());
             stmt.setInt(11, base.getExpFactor());
@@ -144,6 +143,6 @@ public class ServerUtils {
     }
 
     public static void nextTip(Session session) {
-        session.send(MessageBuilder.nextTip(Tips.getNext(), (byte)0));
+        session.send(MessageBuilder.nextTip(Tips.getNext(), (short) 0));
     }
 }

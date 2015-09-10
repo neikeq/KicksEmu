@@ -26,7 +26,7 @@ public class Item implements Product {
     private final boolean visible;
 
     public Item() {
-        this(0, 0, 0, 0, 0, (short)0, DateUtils.getTimestamp(), false, false);
+        this(0, 0, 0, 0, 0, (short) 0, DateUtils.getTimestamp(), false, false);
     }
 
     public Item(int id, int inventoryId, int expiration, int bonusOne, int bonusTwo,

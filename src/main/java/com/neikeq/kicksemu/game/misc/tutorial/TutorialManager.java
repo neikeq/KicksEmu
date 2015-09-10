@@ -24,7 +24,7 @@ public class TutorialManager {
         byte shooting = msg.readByte();
         byte defense = msg.readByte();
 
-        byte result = 0;
+        short result = 0;
         int reward = 0;
 
         if (UserInfo.hasCharacter(characterId, session.getUserId())) {
@@ -60,7 +60,7 @@ public class TutorialManager {
                 } catch (SQLException ignored) {}
             }
         } else {
-            result = (byte) -1; // System problem
+            result = -1; // System problem
         }
 
         session.send(MessageBuilder.updateTutorial(dribbling, passing,

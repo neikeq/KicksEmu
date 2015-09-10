@@ -54,7 +54,7 @@ public class ChatManager {
     private static void onMessageNormal(Session session, String name, String message) {
         int playerId = session.getPlayerId();
 
-        if (PlayerInfo.getName(playerId).equals(name)) {
+        if (session.getCache().getName().equals(name)) {
             if (!message.isEmpty()) {
                 Lobby lobby = session.getCurrentLobby();
 
@@ -78,7 +78,7 @@ public class ChatManager {
     private static void onMessageTeam(Session session, String name, String message) {
         int playerId = session.getPlayerId();
 
-        if (PlayerInfo.getName(playerId).equals(name)) {
+        if (session.getCache().getName().equals(name)) {
             if (!message.isEmpty()) {
                 MessageType type = MessageType.TEAM;
 
@@ -96,7 +96,7 @@ public class ChatManager {
     private static void onMessageWhisper(Session session, String name, String message) {
         int playerId = session.getPlayerId();
 
-        if (PlayerInfo.getName(playerId).equals(name)) {
+        if (session.getCache().getName().equals(name)) {
             MessageType type = MessageType.WHISPER_TO;
 
             String target = retrieveTargetFromWhisper(message);
@@ -136,7 +136,7 @@ public class ChatManager {
         int playerId = session.getPlayerId();
         int clubId = MemberInfo.getClubId(playerId);
 
-        if (clubId > 0 && PlayerInfo.getName(playerId).equals(name)) {
+        if (clubId > 0 && session.getCache().getName().equals(name)) {
             if (!message.isEmpty()) {
                 MessageType type = MessageType.CLUB;
 

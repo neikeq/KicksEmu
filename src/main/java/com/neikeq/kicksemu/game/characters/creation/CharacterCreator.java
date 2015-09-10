@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class CharacterCreator {
 
     public static void createCharacter(Session session, ClientMessage msg) {
-        byte result;
+        short result;
 
         int accountId = session.getUserId();
 

@@ -24,7 +24,7 @@ public class Session {
 
     private final Channel channel;
     private final Object locker = new Object();
-    private final SessionCache sessionCache = new SessionCache();
+    private final SessionCache sessionCache = new SessionCache(this);
     private final List<ByteBuf> packetsQueue = new ArrayList<>();
 
     private ScheduledFuture<?> udpPingFuture;
@@ -138,10 +138,8 @@ public class Session {
             SessionInfo.reduceExpiration(getSessionId());
 
             // Update user status on database
-            UserInfo.setServer((short)-1, userId);
+            UserInfo.setServer((short) -1, userId);
             UserInfo.setOnline(-1, userId);
-
-            sessionCache.clear();
 
             if (playerId > 0) {
                 // Remove session from the list of connected clients
@@ -154,6 +152,8 @@ public class Session {
             leaveRoom(RoomLeaveReason.DISCONNECTED);
 
             ClubManager.onMemberConnectedStateChanged(this);
+
+            sessionCache.clear();
         }
     }
 
