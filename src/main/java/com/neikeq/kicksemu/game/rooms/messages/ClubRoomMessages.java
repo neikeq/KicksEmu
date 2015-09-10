@@ -3,10 +3,13 @@ package com.neikeq.kicksemu.game.rooms.messages;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
+import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.TeamManager;
+import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
+import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
@@ -353,6 +356,7 @@ public class ClubRoomMessages extends RoomMessages {
         boolean accepted = msg.readBoolean();
 
         ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
+        ClubRoom requester = null;
 
         // Ignore the message if at least one of the following checks fails
         if (room == null || room.getMaster() != session.getPlayerId() ||
@@ -365,7 +369,7 @@ public class ClubRoomMessages extends RoomMessages {
         if (!TeamManager.isRegistered(roomId) || !TeamManager.isRegistered(requesterId)) {
             result = -2; // Problem with the team information. Not registered.
         } else {
-            ClubRoom requester = (ClubRoom) RoomManager.getRoomById(requesterId);
+            requester = (ClubRoom) RoomManager.getRoomById(requesterId);
 
             if (requester == null) {
                 result = -2; // Problem with the team information. Requester team does not exist.
@@ -384,8 +388,31 @@ public class ClubRoomMessages extends RoomMessages {
 
         if (!accepted || result != 0) {
             room.setChallengeTarget(0);
+        } else {
+            TeamManager.unregister(room.getId());
+            TeamManager.unregister(requester.getId());
+
+            Challenge challenge = ChallengeOrganizer.add(requester, room);
+            ChallengeRoom challengeRoom = new ChallengeRoom(challenge);
+            challenge.addObserver(challengeRoom);
+            challengeRoom.setMaster(challenge.getRedTeam().getMaster());
+            challengeRoom.setHost(challenge.getRedTeam().getMaster());
+            challengeRoom.addPlayersFromRooms(challenge.getRedTeam(), challenge.getBlueTeam());
         }
 
         session.send(MessageBuilder.clubChallengeResponse(requesterId, accepted, result));
+    }
+
+    public static void cancelChallenge(Session session) {
+        ClubRoom room = (ClubRoom) RoomManager.getRoomById(session.getRoomId());
+
+        if (room != null && room.getMaster() == session.getPlayerId()) {
+            Challenge challenge = ChallengeOrganizer.getChallengeById(room.getChallengeId());
+            if (challenge != null) {
+                challenge.cancel();
+            }
+        }
+
+        session.send(MessageBuilder.clubCancelChallenge());
     }
 }

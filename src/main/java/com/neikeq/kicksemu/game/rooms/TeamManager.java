@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class TeamManager {
 
-    public static final Object TEAMS_LOCKER = new Object();
+    private static final Object TEAMS_LOCKER = new Object();
 
     private static final Map<Integer, ClubRoom> TEAMS = new HashMap<>();
     private static final int TEAMS_PER_PAGE = 10;

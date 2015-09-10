@@ -20,13 +20,16 @@ public class ClubRoom extends Room {
 
     private byte wins = 0;
     private int challengeTarget = 0;
+    private int challengeId = -1;
 
     @Override
-    protected void removeRoom() {
-        if (TeamManager.isRegistered(getId())) {
-            TeamManager.unregister(getId());
+    public void removeRoom() {
+        synchronized (locker) {
+            if (TeamManager.isRegistered(getId())) {
+                TeamManager.unregister(getId());
+            }
+            super.removeRoom();
         }
-        super.removeRoom();
     }
 
     @Override
@@ -100,7 +103,7 @@ public class ClubRoom extends Room {
     @Override
     protected void onPlayerLeaved(int playerId, RoomLeaveReason reason) {
         super.onPlayerLeaved(playerId, reason);
-        TeamManager.unregister(getId());
+            TeamManager.unregister(getId());
     }
 
     @Override
@@ -124,8 +127,8 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    protected void sendRoomInfo(Session session) {
-        session.send(MessageBuilder.clubRoomInfo(this));
+    protected ServerMessage roomInfoMessage() {
+        return MessageBuilder.clubRoomInfo(this);
     }
 
     public byte onChallengeRequest(int fromId) {
@@ -163,6 +166,14 @@ public class ClubRoom extends Room {
         }
     }
 
+    public void quitChallenge() {
+        getPlayers().values().forEach(session -> {
+            session.send(roomInfoMessage());
+            session.send(roomMasterMessage(getMaster()));
+            sendRoomPlayersInfo(session);
+        });
+    }
+
     @Override
     public boolean isObserver(int playerId) {
         return false;
@@ -175,6 +186,11 @@ public class ClubRoom extends Room {
 
     @Override
     protected void addObserver(int playerId) { }
+
+    public boolean isWaiting() {
+        // TODO this should be temporal, until I find a way to display the APPLYING icon
+        return super.isWaiting() || isChallenging();
+    }
 
     public byte getWins() {
         return wins;
@@ -200,5 +216,13 @@ public class ClubRoom extends Room {
         }
 
         this.challengeTarget = challengeTarget;
+    }
+
+    public int getChallengeId() {
+        return challengeId;
+    }
+
+    public void setChallengeId(int challengeId) {
+        this.challengeId = challengeId;
     }
 }

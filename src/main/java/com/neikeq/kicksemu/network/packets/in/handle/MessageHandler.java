@@ -112,6 +112,7 @@ public class MessageHandler {
             events.put(MessageId.CLUB_UNREGISTER_TEAM, ClubRoomMessages::unregisterTeam);
             events.put(MessageId.CLUB_CHALLENGE_TEAM, ClubRoomMessages::challengeTeam);
             events.put(MessageId.CLUB_CHALLENGE_RESPONSE, ClubRoomMessages::challengeResponse);
+            events.put(MessageId.CLUB_CANCEL_CHALLENGE, (s, m) -> ClubRoomMessages.cancelChallenge(s));
             events.put(MessageId.CLUB_TEAMS_LIST, ClubRoomMessages::teamList);
             events.put(MessageId.CLUB_INVITE_PLAYER, ClubRoomMessages::invitePlayer);
             events.put(MessageId.PURCHASE_ITEM, Shop::purchaseItem);

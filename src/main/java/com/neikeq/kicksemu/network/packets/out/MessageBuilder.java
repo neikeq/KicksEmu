@@ -10,6 +10,7 @@ import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.Skill;
 import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
@@ -1234,6 +1235,32 @@ public class MessageBuilder {
         msg.writeShort(result);
         msg.writeShort((short) requestedTeam);
         msg.writeBool(accepted);
+
+        return msg;
+    }
+
+    public static ServerMessage clubCancelChallenge() {
+        return new ServerMessage(MessageId.CLUB_CANCEL_CHALLENGE).writeShort((short) 0);
+    }
+
+    public static ServerMessage challengeRoomInfo(ChallengeRoom room) {
+        ServerMessage msg = new ServerMessage(MessageId.CHALLENGE_ROOM_INFO);
+
+        msg.writeShort((short) 0);
+
+        if (room != null) {
+            msg.writeByte((byte) room.getAccessType().toInt());
+            msg.writeShort((short) room.getId());
+            msg.writeString(room.getName(), 45);
+            msg.writeString(room.getPassword(), 5);
+            msg.writeInt(room.getMaster());
+            msg.writeByte((byte) room.getRoomMode().toInt());
+            msg.writeByte(room.getMinLevel());
+            msg.writeByte(room.getMaxLevel());
+            msg.writeShort((short) room.getMap().toInt());
+            msg.writeShort((short) room.getBall().toInt());
+            msg.writeByte((byte) room.getMaxSize().toInt());
+        }
 
         return msg;
     }

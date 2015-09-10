@@ -79,6 +79,8 @@ public class MessageId {
     public static final int CLUB_TEAMS_LIST = 2516;
     public static final int CLUB_CHALLENGE_TEAM = 2517;
     public static final int CLUB_CHALLENGE_RESPONSE = 2518;
+    public static final int CLUB_CANCEL_CHALLENGE = 2520;
+    public static final int CHALLENGE_ROOM_INFO = 2521;
     public static final int CLUB_UPDATE_WINS_RANKS = 2522; // not sure if ranks
     public static final int CLUB_UPDATE_WINS = 2523;
     public static final int CLUB_INVITE_PLAYER = 2524;

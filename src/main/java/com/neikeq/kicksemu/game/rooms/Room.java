@@ -66,8 +66,10 @@ public class Room {
 
     protected final Object locker = new Object();
 
-    protected void removeRoom() {
-        RoomManager.removeRoom(getId());
+    public void removeRoom() {
+        synchronized (locker) {
+            RoomManager.removeRoom(getId());
+        }
     }
 
     public void tryJoinRoom(Session session, String password) {
@@ -133,19 +135,17 @@ public class Room {
             }
 
             swapLocker.lockPlayer(playerId);
+
+            session.setRoomId(getId());
+            session.send(joinRoomMessage(this, session.getPlayerId(), (byte) 0));
+            onPlayerJoined(session);
         }
-
-        session.setRoomId(getId());
-
-        session.send(joinRoomMessage(this, session.getPlayerId(), (byte) 0));
-
-        onPlayerJoined(session);
     }
     
     public void removePlayer(Session session, RoomLeaveReason reason) {
-        int playerId = session.getPlayerId();
-
         synchronized (locker) {
+            int playerId = session.getPlayerId();
+
             // Remove player from players list and room lobby
             getPlayers().remove(playerId);
             getRoomLobby().removePlayer(playerId);
@@ -171,13 +171,13 @@ public class Room {
                     onHostLeaved(playerId);
                 }
             }
+
+            // Notify the session
+            session.onLeavedRoom();
+            session.sendAndFlush(leaveRoomMessage(playerId, reason));
+
+            onPlayerLeaved(playerId, reason);
         }
-
-        // Notify the session
-        session.onLeavedRoom();
-        session.sendAndFlush(leaveRoomMessage(playerId, reason));
-
-        onPlayerLeaved(playerId, reason);
     }
 
     public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {
@@ -360,11 +360,9 @@ public class Room {
         }
     }
 
-    private void onPlayerJoined(Session session) {
-        int playerId = session.getPlayerId();
-
+    protected void onPlayerJoined(Session session) {
         // Send the room info to the client
-        sendRoomInfo(session);
+        session.send(roomInfoMessage());
 
         // Send to the client information about players inside the room
         sendRoomPlayersInfo(session);
@@ -373,10 +371,7 @@ public class Room {
 
         // Notify all the players in the room about the new player
         if (players.size() > 1) {
-            try (Connection con = MySqlManager.getConnection()) {
-                sendBroadcast(roomPlayerInfoMessage(session, con),
-                        s -> s.getPlayerId() != playerId);
-            } catch (SQLException ignored) {}
+            notifyAboutNewPlayer(session);
         }
     }
 
@@ -396,6 +391,13 @@ public class Room {
             String message = PlayerInfo.getName(playerId) + " has been disconnected.";
             sendBroadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
         }
+    }
+
+    protected void notifyAboutNewPlayer(Session session) {
+        try (Connection con = MySqlManager.getConnection()) {
+            sendBroadcast(roomPlayerInfoMessage(session, con),
+                    s -> s.getPlayerId() != session.getPlayerId());
+        } catch (SQLException ignored) {}
     }
 
     private void onHostLeaved(int playerId) {
@@ -452,8 +454,8 @@ public class Room {
         return MessageBuilder.joinRoom(room, playerId, result);
     }
 
-    protected void sendRoomInfo(Session session) {
-        session.send(MessageBuilder.roomInfo(this));
+    protected ServerMessage roomInfoMessage() {
+        return MessageBuilder.roomInfo(this);
     }
 
     public void sendHostInfo() {
@@ -467,10 +469,11 @@ public class Room {
         }
     }
 
-    private void sendRoomPlayersInfo(Session session) {
+    protected void sendRoomPlayersInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
-            getPlayers().values().stream().forEach(s ->
-                    session.sendAndFlush(roomPlayerInfoMessage(s, con)));
+            getPlayers().values().forEach(s ->
+                    session.send(roomPlayerInfoMessage(s, con)));
+            session.getChannel().flush();
         } catch (SQLException ignored) {}
     }
 
@@ -504,10 +507,8 @@ public class Room {
                 teamPlayers.stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(broadcaster))
                         .forEach(playerId -> {
-                            Session s = getPlayers().get(playerId);
-
                             msg.retain();
-                            s.sendAndFlush(msg);
+                            getPlayers().get(playerId).sendAndFlush(msg);
                         });
             }
         } finally {
@@ -571,8 +572,7 @@ public class Room {
     }
 
     public boolean isWaiting() {
-        // TODO temporal, until I find the way to display the APPLYING icon
-        return state() == RoomState.WAITING || state() == RoomState.APPLYING;
+        return state() == RoomState.WAITING;
     }
 
     public boolean isLoading() {

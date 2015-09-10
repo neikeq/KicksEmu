@@ -4,8 +4,6 @@ import com.neikeq.kicksemu.game.servers.ServerType;
 
 public enum RoomMode {
 
-    // TODO Add CLUB and TOURNAMENT modes
-
     AI_GOALKEEPER,
     PLAYER_GOALKEEPER,
     TRAINING_ONE,
