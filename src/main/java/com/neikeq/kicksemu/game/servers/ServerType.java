@@ -1,5 +1,8 @@
 package com.neikeq.kicksemu.game.servers;
 
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
+
 // TODO make PRIVATE a flag variable instead of a constant of this enum
 public enum ServerType {
 
@@ -31,7 +34,8 @@ public enum ServerType {
     public static ServerType fromString(String name) {
         try {
             return valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException e) {
+            Output.println("Invalid server type string: " + e.getMessage(), Level.WARNING);
             return null;
         }
     }

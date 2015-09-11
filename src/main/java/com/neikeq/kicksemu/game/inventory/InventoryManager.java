@@ -8,6 +8,8 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -293,8 +295,9 @@ public class InventoryManager {
                 } else {
                     result = -2; // The item does not exists
                 }
-            } catch (SQLException ignored) {
+            } catch (SQLException e) {
                 result = -1; // System problem
+                Output.println(e.getMessage(), Level.DEBUG);
             }
 
             session.send(MessageBuilder.mergeItem(session, inventoryId, usages, result));

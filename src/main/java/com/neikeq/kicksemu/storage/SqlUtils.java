@@ -1,5 +1,8 @@
 package com.neikeq.kicksemu.storage;
 
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -166,7 +169,9 @@ public class SqlUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setInt(String column, int value, String table, int id,
@@ -186,7 +191,9 @@ public class SqlUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setBoolean(String column, boolean value, String table, int id,
@@ -206,7 +213,9 @@ public class SqlUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setString(String column, String value, String table, int id,
@@ -226,7 +235,9 @@ public class SqlUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setTimestamp(String column, Timestamp value, String table, int id,
@@ -246,7 +257,9 @@ public class SqlUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void sumShort(String column, short value, String table, int id,
@@ -268,7 +281,9 @@ public class SqlUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void sumInt(String column, int value, String table, int id,
@@ -290,6 +305,8 @@ public class SqlUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 }

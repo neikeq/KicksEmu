@@ -1,6 +1,8 @@
 package com.neikeq.kicksemu.game.sessions;
 
 import com.neikeq.kicksemu.game.misc.Moderation;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.utils.Password;
 import com.neikeq.kicksemu.utils.RandomGenerator;
 import io.netty.channel.Channel;
@@ -43,7 +45,10 @@ public class SessionManager {
             byte[] salt = RandomGenerator.randomBytes(24);
             byte[] addressHash = Password.hashAddress(session.getRemoteAddress(), salt);
             hash = Password.toBase64(salt) + "$" + Password.toBase64(addressHash);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ignored) {}
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            Output.println("Exception when generating session hash: " +
+                    e.getMessage(), Level.DEBUG);
+        }
 
         SessionInfo.insertSession(sessionId, session.getUserId(), session.getPlayerId(), hash);
         session.setSessionId(sessionId);

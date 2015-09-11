@@ -19,6 +19,8 @@ import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsList;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredList;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 
@@ -508,7 +510,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
 
         return items;
     }
@@ -537,7 +541,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
 
         return learns;
     }
@@ -581,7 +587,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
 
         return skills;
     }
@@ -612,7 +620,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
 
         return celes;
     }
@@ -657,7 +667,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setTutorialState(TutorialState tutorial, int id, Connection ... con) {
@@ -680,7 +692,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setReceivedReward(boolean value, int id, Connection ... con) {
@@ -705,7 +719,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void sumPoints(int value, int id, Connection ... con) {
@@ -766,7 +782,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void sumHistory(PlayerHistory history, int id, Connection ... con) {
@@ -840,7 +858,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void sumStatsPoints(short value, int id, Connection ... con) {
@@ -875,7 +895,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setInventoryItem(Item item, int id, Connection ... con) {
@@ -901,7 +923,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void removeInventoryItem(Item item, int id, Connection ... con) {
@@ -919,7 +943,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void addInventoryTraining(Training training, int id, Connection ... con) {
@@ -940,7 +966,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void addInventorySkill(Skill skill, int id, Connection ... con) {
@@ -964,7 +992,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setInventorySkill(Skill skill, int id, Connection ... con) {
@@ -986,7 +1016,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void addInventoryCele(Celebration cele, int id, Connection ... con) {
@@ -1010,7 +1042,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setInventoryCele(Celebration cele, int id, Connection ... con) {
@@ -1032,7 +1066,9 @@ public class PlayerInfo {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void setFriendsList(FriendsList value, int id, Connection ... con) {

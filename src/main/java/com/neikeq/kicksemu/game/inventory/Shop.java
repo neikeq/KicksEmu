@@ -16,6 +16,8 @@ import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.game.table.SkillInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -110,7 +112,9 @@ public class Shop {
 
         try (Connection con = MySqlManager.getConnection()) {
             session.send(MessageBuilder.purchaseSkill(playerId, skill, result, con));
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void purchaseCele(Session session, ClientMessage msg) {
@@ -187,7 +191,9 @@ public class Shop {
 
         try (Connection con = MySqlManager.getConnection()) {
             session.send(MessageBuilder.purchaseCele(playerId, cele, result, con));
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void purchaseLearn(Session session, ClientMessage msg) {
@@ -258,7 +264,9 @@ public class Shop {
 
         try (Connection con = MySqlManager.getConnection()) {
             session.send(MessageBuilder.purchaseLearn(session, learn, result, con));
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void purchaseItem(Session session, ClientMessage msg) {
@@ -388,7 +396,9 @@ public class Shop {
                 CharacterManager.sendItemList(session);
                 CharacterManager.sendItemsInUse(session);
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
     private static boolean notAlreadyPurchased(int id, Collection<? extends Product> product) {

@@ -23,6 +23,8 @@ import com.neikeq.kicksemu.game.sessions.AuthenticationCode;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserSettings;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -184,7 +186,10 @@ public class MessageBuilder {
                         msg.writeZeros(20);
                     }
                 }
-            } catch (SQLException ignored) {}
+            } catch (SQLException e) {
+                Output.println("Exception when handling server list message: " +
+                        e.getMessage(), Level.DEBUG);
+            }
         }
 
         return msg;
@@ -213,7 +218,10 @@ public class MessageBuilder {
                         msg.writeShort(rs.getShort("port"));
                     }
                 }
-            } catch (SQLException ignored) {}
+            } catch (SQLException e) {
+                Output.println("Exception when handling server info message: " +
+                        e.getMessage(), Level.DEBUG);
+            }
         }
 
         return msg;
@@ -836,8 +844,9 @@ public class MessageBuilder {
                         connection.close();
                     }
                 }
-            } catch (SQLException ignored) {
-                System.out.println(ignored.getMessage());
+            } catch (SQLException e) {
+                Output.println("Exception when handling lobby list message: " +
+                        e.getMessage(), Level.DEBUG);
             }
         }
 

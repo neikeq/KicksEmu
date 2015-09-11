@@ -8,6 +8,8 @@ import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.misc.Moderation;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.game.users.UserUtils;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
@@ -262,7 +264,9 @@ public class Authenticator {
             if (!session.isUdpAuthenticated()) {
                 try {
                     session.getLocker().wait(5000);
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException e) {
+                    Output.println(e.getMessage(), Level.DEBUG);
+                }
             }
         }
 

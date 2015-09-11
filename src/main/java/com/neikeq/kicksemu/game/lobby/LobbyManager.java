@@ -1,6 +1,8 @@
 package com.neikeq.kicksemu.game.lobby;
 
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -47,7 +49,10 @@ public class LobbyManager {
                 session.send(MessageBuilder.lobbyList(players.toArray(playersArray),
                         page, (short) 0, con));
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when handling lobby list message: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static MainLobby getMainLobby() {

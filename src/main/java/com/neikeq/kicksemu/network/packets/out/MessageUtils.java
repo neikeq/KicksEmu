@@ -21,6 +21,8 @@ import com.neikeq.kicksemu.game.rooms.match.PlayerResult;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
 import java.sql.Connection;
@@ -73,7 +75,10 @@ class MessageUtils {
                     connection.close();
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when appending character info to message: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void appendDefaultClothes(DefaultClothes defaultClothes,

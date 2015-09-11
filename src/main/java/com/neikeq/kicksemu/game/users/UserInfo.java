@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.users;
 
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 import com.neikeq.kicksemu.utils.DateUtils;
@@ -131,7 +133,10 @@ public class UserInfo {
 
             stmt.executeUpdate();
 
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when updating user settings: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     // Method utils

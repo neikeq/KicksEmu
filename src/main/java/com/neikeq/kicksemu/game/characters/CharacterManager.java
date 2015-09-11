@@ -12,6 +12,8 @@ import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
@@ -46,7 +48,9 @@ public class CharacterManager {
     private static void sendPlayerInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
             session.send(MessageBuilder.playerInfo(session, (short) 0, con));
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when writing player info: " + e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void sendItemList(Session session) {
@@ -113,7 +117,9 @@ public class CharacterManager {
 
             // Set stats point
             PlayerInfo.setStatsPoints((short) statsPoints.get(), playerId, con);
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when resetting stats: " + e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static short checkExperience(Session session, short level,
@@ -231,6 +237,8 @@ public class CharacterManager {
                     room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when adding stat points: " + e.getMessage(), Level.DEBUG);
+        }
     }
 }

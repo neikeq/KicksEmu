@@ -6,6 +6,8 @@ import com.neikeq.kicksemu.game.servers.ServerInfo;
 import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.servers.ServerUtils;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
 import com.neikeq.kicksemu.storage.MySqlManager;
 
@@ -63,7 +65,10 @@ public class ServerManager {
             stmt.setShort(1, getServerId());
 
             stmt.executeUpdate();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when cleaning connected users: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     private static void updateConnectedUsers() {

@@ -3,6 +3,8 @@ package com.neikeq.kicksemu.game.misc.tutorial;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -57,7 +59,10 @@ public class TutorialManager {
                     if (checkForReward(characterId, dribbling, passing, shooting, defense)) {
                         reward = REWARD_POINTS;
                     }
-                } catch (SQLException ignored) {}
+                } catch (SQLException e) {
+                    Output.println("Exception when updating tutorial: " +
+                            e.getMessage(), Level.DEBUG);
+                }
             }
         } else {
             result = -1; // System problem

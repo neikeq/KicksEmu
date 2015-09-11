@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.sessions;
 
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 import com.neikeq.kicksemu.utils.RandomGenerator;
@@ -39,7 +41,10 @@ public class SessionInfo {
             stmt.setInt(1, sessionId);
 
             stmt.executeUpdate();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when reducing session expiration: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void remove(int sessionId) {
@@ -50,7 +55,9 @@ public class SessionInfo {
             stmt.setInt(1, sessionId);
 
             stmt.executeUpdate();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when removing session: " + e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void resetExpiration(int sessionId) {
@@ -62,7 +69,10 @@ public class SessionInfo {
             stmt.setInt(1, sessionId);
 
             stmt.executeUpdate();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when resetting session expiration: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static int generateSessionId() {
@@ -96,7 +106,10 @@ public class SessionInfo {
             stmt.setString(4, hash);
 
             stmt.executeUpdate();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when inserting session to the table: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     private static int getInt(String column, int id, Connection... con) {

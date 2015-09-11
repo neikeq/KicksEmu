@@ -7,6 +7,8 @@ import com.neikeq.kicksemu.game.characters.types.StatsInfo;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.sessions.SessionInfo;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -69,7 +71,10 @@ public class UserManager {
             }
 
             session.setPlayerId(lastPlayerId);
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when writing character info message: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     public static void updateSettings(Session session, ClientMessage msg) {
@@ -135,7 +140,10 @@ public class UserManager {
                 } else {
                     result = -1;
                 }
-            } catch (SQLException ignored) {}
+            } catch (SQLException e) {
+                Output.println("Exception when upgrading character to an advanced position: " +
+                        e.getMessage(), Level.DEBUG);
+            }
 
             session.send(MessageBuilder.upgradeCharacter(result));
         }

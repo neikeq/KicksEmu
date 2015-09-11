@@ -7,6 +7,8 @@ import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.lobby.RoomLobby;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -400,7 +402,10 @@ public class Room {
         try (Connection con = MySqlManager.getConnection()) {
             sendBroadcast(roomPlayerInfoMessage(session, con),
                     s -> s.getPlayerId() != session.getPlayerId());
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when notifying about new room player: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     private void onHostLeaved(int playerId) {
@@ -477,7 +482,10 @@ public class Room {
             getPlayers().values().forEach(s ->
                     session.send(roomPlayerInfoMessage(s, con)));
             session.flush();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            Output.println("Exception when sending room players info to a player: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     public void sendBroadcast(ServerMessage msg) {

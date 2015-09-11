@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.utils.table;
 
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.opencsv.CSVReader;
 
 import java.io.FileReader;
@@ -29,6 +31,8 @@ public class TableReader {
             while ((row = reader.readNext()) != null) {
                 rows.add(new Row(row));
             }
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            Output.println("Exception when opening table: " + path, Level.DEBUG);
+        }
     }
 }
