@@ -78,7 +78,7 @@ public class SessionCache {
 
     public String getName(Connection ... con) {
         if (name == null) {
-            PlayerInfo.getName(parent.getPlayerId(), con);
+            name = PlayerInfo.getName(parent.getPlayerId(), con);
         }
 
         return name;
@@ -139,7 +139,7 @@ public class SessionCache {
 
     public DefaultClothes getDefaultClothes(Connection ... con) {
         if (defaultClothes == null) {
-            return PlayerInfo.getDefaultClothes(parent.getPlayerId(), con);
+            defaultClothes = PlayerInfo.getDefaultClothes(parent.getPlayerId(), con);
         }
 
         return defaultClothes;

@@ -56,16 +56,19 @@ public class UserManager {
                     UserInfo.getSlotThree(userId, con)
             };
 
-            int playerId = session.getPlayerId();
+            // TODO Should not need to change the session player id, nor to clear the cache
+
+            int lastPlayerId = session.getPlayerId();
 
             for (short i = 0; i < slots.length; i++) {
                 if (slots[i] > 0) {
                     session.setPlayerId(slots[i]);
+                    session.getCache().clear();
                     session.send(MessageBuilder.characterInfo(session, userId, i, con));
                 }
             }
 
-            session.setPlayerId(playerId);
+            session.setPlayerId(lastPlayerId);
         } catch (SQLException ignored) {}
     }
 

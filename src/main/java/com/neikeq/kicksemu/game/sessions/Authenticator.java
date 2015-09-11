@@ -218,7 +218,7 @@ public class Authenticator {
     private static void gameAuthenticate(int accountId, int characterId,
                                          InetSocketAddress address,
                                          String sessionHash) throws AuthenticationException {
-        if (!ServerManager.isServerFull()) {
+        if (ServerManager.isServerFull()) {
             throw new AuthenticationException("The server is full.", -4);
         }
 
@@ -226,7 +226,7 @@ public class Authenticator {
             throw new AuthenticationException("The character does not exist.", -2);
         }
 
-        if (PlayerInfo.getOwner(characterId) == accountId) {
+        if (PlayerInfo.getOwner(characterId) != accountId) {
             throw new AuthenticationException("The account is not the character owner.", -2);
         }
 
