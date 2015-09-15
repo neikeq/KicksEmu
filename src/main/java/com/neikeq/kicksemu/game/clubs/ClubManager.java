@@ -72,10 +72,8 @@ public class ClubManager {
                     }
                 }
 
-                members.stream().filter(filter).forEach(member -> {
-                    notification.retain();
-                    ServerManager.getSessionById(member).sendAndFlush(notification);
-                });
+                members.stream().filter(filter).forEach(member ->
+                    ServerManager.getSessionById(member).sendAndFlush(notification));
             } finally {
                 notification.release();
             }

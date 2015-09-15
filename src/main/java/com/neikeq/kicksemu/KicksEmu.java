@@ -161,7 +161,7 @@ public class KicksEmu {
 
     private static void cleanNetworking() {
         if (ServerManager.getPlayers() != null) {
-            ServerManager.getPlayers().values().stream().forEach(Session::close);
+            ServerManager.getPlayers().values().forEach(Session::close);
         }
 
         if (nettyTcpServer != null) {

@@ -51,7 +51,7 @@ public class Session {
      * This increases the performance when writing multiple messages during a single reading.
      */
     public synchronized void send(ServerMessage msg) {
-        packetsQueue.add(msg.getByteBuf(playerId));
+        packetsQueue.add(msg.getByteBuf(playerId).copy());
     }
 
     /**
@@ -67,8 +67,11 @@ public class Session {
         final ByteBuf mergedPackets = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
         packetsQueue.forEach(packet -> {
-            mergedPackets.writeBytes(packet);
-            packet.release();
+            try {
+                mergedPackets.writeBytes(packet);
+            } finally {
+                packet.release();
+            }
         });
 
         packetsQueue.clear();

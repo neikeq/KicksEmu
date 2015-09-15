@@ -490,10 +490,7 @@ public class Room {
 
     public void sendBroadcast(ServerMessage msg) {
         try {
-            getPlayers().values().stream().forEach(currentSession -> {
-                msg.retain();
-                currentSession.sendAndFlush(msg);
-            });
+            getPlayers().values().forEach(currentSession -> currentSession.sendAndFlush(msg));
         } finally {
             msg.release();
         }
@@ -501,10 +498,8 @@ public class Room {
 
     public void sendBroadcast(ServerMessage msg, Predicate<? super Session> filter) {
         try {
-            getPlayers().values().stream().filter(filter).forEach(currentSession -> {
-                msg.retain();
-                currentSession.sendAndFlush(msg);
-            });
+            getPlayers().values().stream().filter(filter).forEach(currentSession ->
+                currentSession.sendAndFlush(msg));
         } finally {
             msg.release();
         }
@@ -517,10 +512,7 @@ public class Room {
 
                 teamPlayers.stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(broadcaster))
-                        .forEach(playerId -> {
-                            msg.retain();
-                            getPlayers().get(playerId).sendAndFlush(msg);
-                        });
+                        .forEach(playerId -> getPlayers().get(playerId).sendAndFlush(msg));
             }
         } finally {
             msg.release();
