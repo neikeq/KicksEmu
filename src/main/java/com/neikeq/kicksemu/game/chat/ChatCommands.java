@@ -171,16 +171,27 @@ public class ChatCommands {
         int playerId = session.getPlayerId();
 
         if (PlayerInfo.isModerator(playerId)) {
+            Room room = null;
+
+            if (session.getRoomId() > 0) {
+                room = RoomManager.getRoomById(session.getRoomId());
+
+                if (room != null && !room.isWaiting()) {
+                    return;
+                }
+            }
+
             boolean observer = !session.isObserver();
             session.setObserver(observer);
 
-            if (session.getRoomId() > 0) {
-                Room room = RoomManager.getRoomById(session.getRoomId());
-
-                if (room != null && room.isWaiting()) {
+            if (room != null) {
+                if (!observer) {
+                    room.getObservers().remove(Integer.valueOf(playerId));
+                } else {
                     room.getObservers().add(playerId);
-                    room.sendBroadcast(MessageBuilder.setObserver(playerId, observer));
                 }
+
+                room.sendBroadcast(MessageBuilder.setObserver(playerId, observer));
             }
 
             ChatUtils.sendServerMessage(session,
