@@ -66,9 +66,9 @@ public class Room {
     private ScheduledFuture<?> countdownTimeoutFuture;
     private ScheduledFuture<?> loadingTimeoutFuture;
 
-    protected final Object locker = new Object();
+    final Object locker = new Object();
 
-    public void removeRoom() {
+    void removeRoom() {
         synchronized (locker) {
             RoomManager.removeRoom(getId());
         }
@@ -197,7 +197,7 @@ public class Room {
         }
     }
 
-    protected void addPlayerToTeam(int playerId) {
+    void addPlayerToTeam(int playerId) {
         if (getRedTeam().size() > getBlueTeam().size()) {
             if (!getBlueTeam().contains(playerId)) {
                 addPlayerToBlueTeam(playerId);
@@ -209,7 +209,7 @@ public class Room {
         }
     }
 
-    protected void addPlayerToTeam(int playerId, RoomTeam team) {
+    void addPlayerToTeam(int playerId, RoomTeam team) {
         switch (team) {
             case RED:
                 addPlayerToRedTeam(playerId);
@@ -221,14 +221,14 @@ public class Room {
         }
     }
 
-    protected void addPlayerToRedTeam(int playerId) {
+    void addPlayerToRedTeam(int playerId) {
         getRedTeam().add(playerId);
 
         short position = getPlayers().get(playerId).getCache().getPosition();
         getRedTeamPositions().add(position);
     }
 
-    protected void addPlayerToBlueTeam(int playerId) {
+    void addPlayerToBlueTeam(int playerId) {
         getBlueTeam().add(playerId);
 
         short position = getPlayers().get(playerId).getCache().getPosition();
@@ -291,7 +291,7 @@ public class Room {
 
             sendBroadcast(MessageBuilder.startCountDown((byte) -1));
 
-            setCountdownTimeoutFuture(getPlayers().get(host).getChannel().eventLoop()
+            countdownTimeoutFuture = getPlayers().get(host).getChannel().eventLoop()
                     .schedule(() -> {
                         synchronized (locker) {
                             if (this.state() == RoomState.COUNT_DOWN) {
@@ -313,7 +313,7 @@ public class Room {
                                 cancelCountdown();
                             }
                         }
-                    }, 5, TimeUnit.SECONDS));
+                    }, 5, TimeUnit.SECONDS);
         }
     }
 
@@ -331,29 +331,29 @@ public class Room {
 
     public void cancelCountdown() {
         synchronized (locker) {
-            if (getCountdownTimeoutFuture().isCancellable()) {
-                getCountdownTimeoutFuture().cancel(true);
+            if (countdownTimeoutFuture.isCancellable()) {
+                countdownTimeoutFuture.cancel(true);
             }
             setState(RoomState.WAITING);
             sendBroadcast(MessageBuilder.cancelCountDown());
         }
     }
 
-    public void startLoading() {
+    private void startLoading() {
         synchronized (locker) {
             setState(RoomState.LOADING);
             updateTrainingFactor();
 
-            setLoadingTimeoutFuture(getPlayers().get(host).getChannel().eventLoop()
+            loadingTimeoutFuture = getPlayers().get(host).getChannel().eventLoop()
                     .schedule(() -> {
                         synchronized (locker) {
                             cancelLoading();
                         }
-                    }, 30, TimeUnit.SECONDS));
+                    }, 30, TimeUnit.SECONDS);
         }
     }
 
-    public void cancelLoading() {
+    private void cancelLoading() {
         synchronized (locker) {
             if (getLoadingTimeoutFuture().isCancellable()) {
                 getLoadingTimeoutFuture().cancel(true);
@@ -363,7 +363,7 @@ public class Room {
         }
     }
 
-    protected void onPlayerJoined(Session session) {
+    void onPlayerJoined(Session session) {
         // Send the room info to the client
         session.send(roomInfoMessage());
 
@@ -378,7 +378,7 @@ public class Room {
         }
     }
 
-    protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
+    void onPlayerLeaved(Session session, RoomLeaveReason reason) {
         int playerId = session.getPlayerId();
 
         // Notify players in room about player leaving
@@ -398,7 +398,7 @@ public class Room {
         }
     }
 
-    protected void notifyAboutNewPlayer(Session session) {
+    void notifyAboutNewPlayer(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
             sendBroadcast(roomPlayerInfoMessage(session, con),
                     s -> s.getPlayerId() != session.getPlayerId());
@@ -446,38 +446,38 @@ public class Room {
         return null;
     }
 
-    protected ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
+    ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
         return MessageBuilder.roomPlayerInfo(session, this, con);
     }
 
-    protected ServerMessage leaveRoomMessage(int playerId, RoomLeaveReason reason) {
+    ServerMessage leaveRoomMessage(int playerId, RoomLeaveReason reason) {
         return MessageBuilder.leaveRoom(playerId, reason);
     }
 
-    protected ServerMessage roomMasterMessage(int master) {
+    ServerMessage roomMasterMessage(int master) {
         return MessageBuilder.roomMaster(master);
     }
 
-    protected ServerMessage joinRoomMessage(Room room, int playerId, short result) {
+    ServerMessage joinRoomMessage(Room room, int playerId, short result) {
         return MessageBuilder.joinRoom(room, playerId, result);
     }
 
-    protected ServerMessage roomInfoMessage() {
+    ServerMessage roomInfoMessage() {
         return MessageBuilder.roomInfo(this);
     }
 
     public void sendHostInfo() {
         synchronized (locker) {
             if (state == RoomState.COUNT_DOWN) {
-                if (getCountdownTimeoutFuture().isCancellable()) {
-                    getCountdownTimeoutFuture().cancel(true);
+                if (countdownTimeoutFuture.isCancellable()) {
+                    countdownTimeoutFuture.cancel(true);
                 }
                 sendBroadcast(MessageBuilder.hostInfo(this));
             }
         }
     }
 
-    protected void sendRoomPlayersInfo(Session session) {
+    void sendRoomPlayersInfo(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
             getPlayers().values().forEach(s ->
                     session.send(roomPlayerInfoMessage(s, con)));
@@ -517,6 +517,10 @@ public class Room {
         } finally {
             msg.release();
         }
+    }
+
+    public boolean trainingFactorAllowsRewards() {
+        return getTrainingFactor() > 0;
     }
 
     public boolean isPlayerIn(int playerId) {
@@ -594,7 +598,7 @@ public class Room {
         trainingFactor = -1;
     }
 
-    public void updateTrainingFactor() {
+    private void updateTrainingFactor() {
         trainingFactor = isTraining() ? 0 : getTeamSizes();
     }
 
@@ -717,11 +721,11 @@ public class Room {
         return redTeamSize() + blueTeamSize();
     }
 
-    public int redTeamSize() {
+    private int redTeamSize() {
         return (int) getRedTeam().stream().filter(id -> !observers.contains(id)).count();
     }
 
-    public int blueTeamSize() {
+    private int blueTeamSize() {
         return (int) getBlueTeam().stream().filter(id -> !observers.contains(id)).count();
     }
 
@@ -733,7 +737,7 @@ public class Room {
         return observers;
     }
 
-    protected void addObserver(int playerId) {
+    void addObserver(int playerId) {
         observers.add(playerId);
     }
 
@@ -785,19 +789,7 @@ public class Room {
         return swapLocker;
     }
 
-    public ScheduledFuture<?> getCountdownTimeoutFuture() {
-        return countdownTimeoutFuture;
-    }
-
-    public void setCountdownTimeoutFuture(ScheduledFuture<?> countdownTimeoutFuture) {
-        this.countdownTimeoutFuture = countdownTimeoutFuture;
-    }
-
     public ScheduledFuture<?> getLoadingTimeoutFuture() {
         return loadingTimeoutFuture;
-    }
-
-    public void setLoadingTimeoutFuture(ScheduledFuture<?> loadingTimeoutFuture) {
-        this.loadingTimeoutFuture = loadingTimeoutFuture;
     }
 }

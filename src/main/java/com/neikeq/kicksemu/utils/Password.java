@@ -40,7 +40,7 @@ public class Password {
         return hash(address.getAddress().getHostAddress().toCharArray(), salt, 1000, 24);
     }
 
-    public static boolean validateAddress(InetSocketAddress address, String correctAddress)
+    public static boolean isInvalidAddressHash(InetSocketAddress address, String correctAddress)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
         String[] stored = correctAddress.split("\\$");
 
@@ -50,7 +50,7 @@ public class Password {
         byte[] hash = hash(address.getAddress().getHostAddress().toCharArray(),
                 salt, 1000, correctHash.length);
 
-        return compare(correctHash, hash);
+        return !compare(correctHash, hash);
     }
 
     private static byte[] fromBase64(String str) {

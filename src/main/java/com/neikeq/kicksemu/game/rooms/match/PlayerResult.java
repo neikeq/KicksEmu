@@ -18,6 +18,10 @@ public class PlayerResult {
     private int experience;
     private int points;
 
+    public boolean hasReward() {
+        return experience > 0 || points > 0;
+    }
+
     public void appendResult(ServerMessage msg) {
         msg.writeInt(playerId);
         msg.writeInt(experience);

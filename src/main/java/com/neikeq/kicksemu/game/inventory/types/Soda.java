@@ -12,7 +12,12 @@ public enum Soda {
     POINTS_150,
     POINTS_200;
 
-    public void applyBonus(int base, MutableInteger experience, MutableInteger points) {
+    public static void applyBonus(Soda soda, int base,
+                                  MutableInteger experience, MutableInteger points) {
+        soda.applyBonus(base, experience, points);
+    }
+
+    private void applyBonus(int base, MutableInteger experience, MutableInteger points) {
         if (isPointsBonus()) {
             points.sum((base * getPercentage()) / 100);
         } else {

@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.sessions;
 
-public class AuthenticationException extends Exception {
+class AuthenticationException extends Exception {
 
     private final int errorCode;
 

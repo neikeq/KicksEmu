@@ -68,6 +68,10 @@ public class Item implements Product {
         }
     }
 
+    public boolean isAnUsageItemBeingUsed() {
+        return getExpiration().isUsage() && isSelected();
+    }
+
     public int getId() {
         return id;
     }

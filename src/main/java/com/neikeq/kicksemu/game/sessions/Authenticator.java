@@ -162,7 +162,7 @@ public class Authenticator {
                             AuthenticationCode.ALREADY_CONNECTED);
                 }
 
-                if (!Password.validateAddress(address, sessionHash)) {
+                if (Password.isInvalidAddressHash(address, sessionHash)) {
                     throw new AuthenticationException("Invalid session hash.",
                             AuthenticationCode.SYSTEM_PROBLEM);
                 }
@@ -245,7 +245,7 @@ public class Authenticator {
         }
 
         try {
-            if (!Password.validateAddress(address, sessionHash)) {
+            if (Password.isInvalidAddressHash(address, sessionHash)) {
                 throw new AuthenticationException("Invalid session hash.",
                         AuthenticationCode.SYSTEM_PROBLEM);
             }

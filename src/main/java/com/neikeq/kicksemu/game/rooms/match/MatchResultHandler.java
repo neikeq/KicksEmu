@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.LevelCache;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
+import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -22,7 +23,7 @@ import java.sql.SQLException;
 
 public class MatchResultHandler implements AutoCloseable {
 
-    private static final int COUNTDOWN_SECS_DIFF_LIMIT = 20;
+    private static final int COUNTDOWN_DIFF_LIMIT = 20;
     static final int LEVEL_GAP_LIMIT = 10;
 
     private final Room room;
@@ -95,15 +96,15 @@ public class MatchResultHandler implements AutoCloseable {
             Session session = room.getPlayers().get(playerId);
 
             // If match was not in training mode
-            if (getRoom().getTrainingFactor() > 0) {
+            if (getRoom().trainingFactorAllowsRewards()) {
                 updatePlayerHistory(playerResult);
 
-                if (playerResult.getExperience() > 0 || playerResult.getPoints() > 0) {
+                if (playerResult.hasReward()) {
                     MutableBoolean mustNotifyExpiration = new MutableBoolean(false);
 
                     // Decrease by 1 the remain usages of usage based items
                     session.getCache().getItems(connection).values().stream()
-                            .filter(item -> item.getExpiration().isUsage() && item.isSelected())
+                            .filter(Item::isAnUsageItemBeingUsed)
                             .forEach(item -> {
                                 item.sumUsages((short) -1);
 
@@ -157,11 +158,12 @@ public class MatchResultHandler implements AutoCloseable {
     }
 
     private void checkCountdownValidity() {
-        final long estimatedRealCountdown = 300 - ((resultTime - getRoom().getTimeStart()) / 1000);
+        final long elapsedSeconds = (resultTime - getRoom().getTimeStart()) / 1000;
+        final long estimatedRealCountdown = 300 - elapsedSeconds;
 
         // Disable rewards and history updating if the countdown received is not valid
         if (getResult().getCountdown() < estimatedRealCountdown &&
-                getResult().getCountdown() - estimatedRealCountdown > COUNTDOWN_SECS_DIFF_LIMIT) {
+                getResult().getCountdown() - estimatedRealCountdown > COUNTDOWN_DIFF_LIMIT) {
             getRoom().resetTrainingFactor();
         }
     }

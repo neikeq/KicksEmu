@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Position;
+import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.misc.quests.QuestManager;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -52,6 +53,7 @@ class PlayerRewards {
     }
 
     private void calculateBaseReward() {
+        int rewardFactor = 0;
         short votePoints = playerResult.getVotePoints() > VOTE_POINTS_LIMIT ?
                 VOTE_POINTS_LIMIT : playerResult.getVotePoints();
 
@@ -59,20 +61,22 @@ class PlayerRewards {
             case -1:
                 if (Configuration.getBoolean("game.rewards.practice") &&
                         matchResult().getCountdown() <= 0 && playerResult.getGoals() >= 3) {
-                    baseReward = (int)(12 * (float)(votePoints / 10));
-                } else {
-                    baseReward = 0;
+                    rewardFactor = 12;
                 }
+                break;
             case 6:
-                baseReward = (int)(12 * (float)(votePoints / 10));
+                rewardFactor = 12;
+                break;
             case 8:
-                baseReward = (int)(18 * (float)(votePoints / 10));
+                rewardFactor = 18;
+                break;
             case 10:
-                baseReward = (int)(24 * (float)(votePoints / 10));
+                rewardFactor = 24;
+                break;
             default:
-                baseReward = 0;
         }
 
+        baseReward = (int) (rewardFactor * (float) (votePoints / 10));
         rewardWithBonus = baseReward;
     }
 
@@ -82,8 +86,6 @@ class PlayerRewards {
     }
 
     private void calculateMatchBonuses() {
-        rewardWithBonus = baseReward;
-
         // If player's base position is DF
         short playerPosition = session.getCache().getPosition(connection());
         if (Position.basePosition(playerPosition) == Position.DF) {
@@ -108,18 +110,10 @@ class PlayerRewards {
         experience.set(rewardWithBonus);
 
         session.getCache().getItems(connection()).values().stream()
-                .filter(item -> item.getExpiration().isUsage() && item.isSelected())
-                .forEach(item -> {
-                    Soda bonusOne = Soda.fromId(item.getBonusOne());
-                    if (bonusOne != null) {
-                        bonusOne.applyBonus(baseReward, experience, points);
-                    }
-
-                    Soda bonusTwo = Soda.fromId(item.getBonusTwo());
-                    if (bonusTwo != null) {
-                        bonusTwo.applyBonus(baseReward, experience, points);
-                    }
-                });
+                .filter(Item::isAnUsageItemBeingUsed).forEach(item -> {
+            Soda.applyBonus(Soda.fromId(item.getBonusOne()), baseReward, experience, points);
+            Soda.applyBonus(Soda.fromId(item.getBonusTwo()), baseReward, experience, points);
+        });
     }
 
     private void applyRewardRates() {
