@@ -27,6 +27,7 @@ class PlayerRewards {
     private final int playerId;
     private final int currentExperience;
     private int baseReward = 0;
+    private int onePercentOfBaseReward = 0;
     private int rewardWithBonus = 0;
     private short levelsEarned = 0;
     private short lastQuest = -1;
@@ -76,8 +77,7 @@ class PlayerRewards {
             default:
         }
 
-        baseReward = (int) (rewardFactor * (float) (votePoints / 10));
-        rewardWithBonus = baseReward;
+        setBaseReward((int) (rewardFactor * (float) (votePoints / 10)));
     }
 
     private void calculateBonuses() {
@@ -176,7 +176,7 @@ class PlayerRewards {
 
     private void applyBonusPercentageIf(boolean condition, int percentage) {
         if (condition) {
-            rewardWithBonus += (baseReward * percentage) / 100;
+            rewardWithBonus += onePercentOfBaseReward * percentage;
         }
     }
 
@@ -202,6 +202,12 @@ class PlayerRewards {
 
     private MatchResult matchResult() {
         return resultHandler.getResult();
+    }
+
+    private void setBaseReward(int baseReward) {
+        this.baseReward = baseReward;
+        this.rewardWithBonus = baseReward;
+        this.onePercentOfBaseReward = baseReward / 100;
     }
 
     public PlayerRewards(MatchResultHandler resultHandler, PlayerResult playerResult) {
