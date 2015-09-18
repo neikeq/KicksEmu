@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.network.packets.in.handle;
+package com.neikeq.kicksemu.network.packets.in;
 
 public class UndefinedMessageException extends Exception {
 

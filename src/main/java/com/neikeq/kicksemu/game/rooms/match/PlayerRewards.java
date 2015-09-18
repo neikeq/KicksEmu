@@ -46,7 +46,7 @@ class PlayerRewards {
             updateResultRewards();
             giveReward();
 
-            checkExperienceAndTryLevelUp();
+            checkExperienceLevel();
             checkQuestProgress();
         }
 
@@ -110,7 +110,7 @@ class PlayerRewards {
         experience.set(rewardWithBonus);
 
         session.getCache().getItems(connection()).values().stream()
-                .filter(Item::isAnUsageItemBeingUsed).forEach(item -> {
+                .filter(Item::isSelectedUsageItem).forEach(item -> {
             Soda.applyBonus(Soda.fromId(item.getBonusOne()), baseReward, experience, points);
             Soda.applyBonus(Soda.fromId(item.getBonusTwo()), baseReward, experience, points);
         });
@@ -137,8 +137,8 @@ class PlayerRewards {
                 playerId, connection());
     }
 
-    private void checkExperienceAndTryLevelUp() {
-        levelsEarned = CharacterManager.checkExperience(session, getPlayerLevel(),
+    private void checkExperienceLevel() {
+        levelsEarned = CharacterManager.checkIfLevelUp(session, getPlayerLevel(),
                 currentExperience + experience.get(), connection());
     }
 

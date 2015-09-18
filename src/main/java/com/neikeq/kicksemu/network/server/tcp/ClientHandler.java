@@ -5,8 +5,8 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.game.sessions.SessionManager;
 
-import com.neikeq.kicksemu.network.packets.in.handle.MessageHandler;
-import com.neikeq.kicksemu.network.packets.in.handle.UndefinedMessageException;
+import com.neikeq.kicksemu.network.packets.in.MessageHandler;
+import com.neikeq.kicksemu.network.packets.in.UndefinedMessageException;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

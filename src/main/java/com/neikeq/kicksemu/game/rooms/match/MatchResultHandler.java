@@ -39,12 +39,11 @@ public class MatchResultHandler implements AutoCloseable {
     public void handleResult() {
         checkCountdownValidity();
         calculateAverageLevel();
-
         applyRewards();
+        
         waitFixedDelayIfNeeded();
         broadcastMatchResults();
         broadcastResultToObserverPlayers();
-
         doAfterResultUpdates();
     }
 
@@ -104,7 +103,7 @@ public class MatchResultHandler implements AutoCloseable {
 
                     // Decrease by 1 the remain usages of usage based items
                     session.getCache().getItems(connection).values().stream()
-                            .filter(Item::isAnUsageItemBeingUsed)
+                            .filter(Item::isSelectedUsageItem)
                             .forEach(item -> {
                                 item.sumUsages((short) -1);
 

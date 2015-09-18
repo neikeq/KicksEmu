@@ -122,8 +122,8 @@ public class CharacterManager {
         }
     }
 
-    public static short checkExperience(Session session, short level,
-                                        int experience, Connection ... con) {
+    public static short checkIfLevelUp(Session session, short level,
+                                       int experience, Connection... con) {
         short levels = 0;
 
         LevelInfo newLevelInfo = TableManager.getLevelInfo(li ->
