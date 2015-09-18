@@ -14,7 +14,9 @@ public enum Soda {
 
     public static void applyBonus(Soda soda, int base,
                                   MutableInteger experience, MutableInteger points) {
-        soda.applyBonus(base, experience, points);
+        if (soda != null) {
+            soda.applyBonus(base, experience, points);
+        }
     }
 
     private void applyBonus(int base, MutableInteger experience, MutableInteger points) {
