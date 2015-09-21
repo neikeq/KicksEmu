@@ -1,85 +1,85 @@
-Index,Id,Description,Reward
-0,1001,Score more than 1 goal.,30
-1,1002,Score more than 2 goals.,60
-2,1003,Score more than 3 goals.,90
-3,1011,Give more than 1 assist.,40
-4,1012,Give more than 2 assists.,80
-5,1021,Achieve more than 1 steals.,20
-6,1022,Achieve more than 2 steals.,40
-7,1023,Achieve more than 3 steals.,60
-8,1024,Achieve more than 4 steals.,80
-9,1031,Make more than 1 valid tackles.,20
-10,1032,Make more than 2 valid tackles.,40
-11,1033,Make more than 3 valid tackles.,60
-12,1034,Make more than 4 valid tackles.,80
-13,1041,Intercept more than 3 balls.,20
-14,1042,Intercept more than 6 balls.,40
-15,1043,Intercept more than 9 balls.,60
-16,1044,Intercept more than 12 balls.,80
-17,2001,Your club has to score more than 1 goals.,20
-18,2002,Your club has to score more than 2 goals.,40
-19,2003,Your club has to score more than 3 goals.,60
-20,2004,Your club has to score more than 4 goals.,80
-21,2011,Get no losing score.,50
-22,2012,Get less than 1 losing score.,30
-23,2021,Your club has to achieve more than 1 assists,20
-24,2022,Your club has to achieve more than 2 assists,40
-25,2023,Your club has to achieve more than 3 assists,60
-26,2031,Your club has to achieve more than 3 steals,20
-27,2032,Your club has to achieve more than 6 steals,40
-28,2033,Your club has to achieve more than 9 steals,60
-29,2034,Your club has to achieve more than 12 steals,80
-30,2035,Your club has to achieve more than 15 steals,100
-31,2041,Your club has to make more than 3 valid tackles.,20
-32,2042,Your club has to make more than 6 valid tackles.,40
-33,2043,Your club has to make more than 9 valid tackles.,60
-34,2044,Your club has to make more than 12 valid tackles.,80
-35,2045,Your club has to make more than 15 valid tackles.,100
-36,2051,Your club has to intercept more than 9 balls.,20
-37,2052,Your club has to intercept more than 18 balls.,40
-38,2053,Your club has to intercept more than 27 balls.,60
-39,2054,Your club has to intercept more than 36 balls.,80
-40,2061,Win a game.,100
-41,2062,Win a game.,100
-42,2063,Win a game.,100
-43,2071,Don't be defeated.,50
-44,2072,Don't be defeated.,50
-45,2073,Don't be defeated.,50
-46,9001,Have a good summer vacation!!,100
-47,9002,Have a good summer vacation!!,200
-48,9003,Have a good summer vacation!!,300
-49,9004,Have a good summer vacation!!,400
-50,9005,Have a good summer vacation!!,500
-51,9006,Have a good summer vacation!!,600
-52,9007,Have a good summer vacation!!,700
-53,9008,Have a good summer vacation!!,800
-54,9009,Have a good summer vacation!!,900
-55,9010,Have a good summer vacation!!,1000
-56,9011,Happy new year!,300
-57,9012,Happy new year!,300
-58,9013,Happy new year!,300
-59,9014,Happy new year!,300
-60,9015,Happy new year!,300
-61,9016,Happy new year!,300
-62,9017,Happy new year!,300
-63,9018,Happy new year!,300
-64,9019,Happy new year!,300
-65,9020,Happy new year!,300
-66,9021,Seasons Greetings!,500
-67,9022,Seasons Greetings!,500
-68,9023,Seasons Greetings!,500
-69,9024,Seasons Greetings!,500
-70,9025,Seasons Greetings!,500
-71,9026,Seasons Greetings!,500
-72,9027,Seasons Greetings!,500
-73,9028,Seasons Greetings!,500
-74,9029,Seasons Greetings!,500
-75,9030,Seasons Greetings!,500
-76,9031,Have a Nice Year!,800
-77,9032,Have a Nice Year!,800
-78,9033,Have a Nice Year!,800
-79,9034,Have a Nice Year!,800
-80,9035,Have a Nice Year!,800
-81,9036,Always be healthy and God bless you!,1000
-82,9037,Always be healthy and God bless you!,1000
-83,9038,Always be healthy and God bless you!,1000
+Index,Id,Description,Reward,Season
+0,1001,Score more than 1 goal.,30,
+1,1002,Score more than 2 goals.,60,
+2,1003,Score more than 3 goals.,90,
+3,1011,Give more than 1 assist.,40,
+4,1012,Give more than 2 assists.,80,
+5,1021,Achieve more than 1 steals.,20,
+6,1022,Achieve more than 2 steals.,40,
+7,1023,Achieve more than 3 steals.,60,
+8,1024,Achieve more than 4 steals.,80,
+9,1031,Make more than 1 valid tackles.,20,
+10,1032,Make more than 2 valid tackles.,40,
+11,1033,Make more than 3 valid tackles.,60,
+12,1034,Make more than 4 valid tackles.,80,
+13,1041,Intercept more than 3 balls.,20,
+14,1042,Intercept more than 6 balls.,40,
+15,1043,Intercept more than 9 balls.,60,
+16,1044,Intercept more than 12 balls.,80,
+17,2001,Your club has to score more than 1 goals.,20,
+18,2002,Your club has to score more than 2 goals.,40,
+19,2003,Your club has to score more than 3 goals.,60,
+20,2004,Your club has to score more than 4 goals.,80,
+21,2011,Get no losing score.,50,
+22,2012,Get less than 1 losing score.,30,
+23,2021,Your club has to achieve more than 1 assists,20,
+24,2022,Your club has to achieve more than 2 assists,40,
+25,2023,Your club has to achieve more than 3 assists,60,
+26,2031,Your club has to achieve more than 3 steals,20,
+27,2032,Your club has to achieve more than 6 steals,40,
+28,2033,Your club has to achieve more than 9 steals,60,
+29,2034,Your club has to achieve more than 12 steals,80,
+30,2035,Your club has to achieve more than 15 steals,100,
+31,2041,Your club has to make more than 3 valid tackles.,20,
+32,2042,Your club has to make more than 6 valid tackles.,40,
+33,2043,Your club has to make more than 9 valid tackles.,60,
+34,2044,Your club has to make more than 12 valid tackles.,80,
+35,2045,Your club has to make more than 15 valid tackles.,100,
+36,2051,Your club has to intercept more than 9 balls.,20,
+37,2052,Your club has to intercept more than 18 balls.,40,
+38,2053,Your club has to intercept more than 27 balls.,60,
+39,2054,Your club has to intercept more than 36 balls.,80,
+40,2061,Win a game.,100,
+41,2062,Win a game.,100,
+42,2063,Win a game.,100,
+43,2071,Don't be defeated.,50,
+44,2072,Don't be defeated.,50,
+45,2073,Don't be defeated.,50,
+46,9001,Have a good summer vacation!!,100,15/06-31/08
+47,9002,Have a good summer vacation!!,200,15/06-31/08
+48,9003,Have a good summer vacation!!,300,15/06-31/08
+49,9004,Have a good summer vacation!!,400,15/06-31/08
+50,9005,Have a good summer vacation!!,500,15/06-31/08
+51,9006,Have a good summer vacation!!,600,15/06-31/08
+52,9007,Have a good summer vacation!!,700,15/06-31/08
+53,9008,Have a good summer vacation!!,800,15/06-31/08
+54,9009,Have a good summer vacation!!,900,15/06-31/08
+55,9010,Have a good summer vacation!!,1000,15/06-31/08
+56,9011,Happy new year!,300,31/12-02/01
+57,9012,Happy new year!,300,31/12-02/01
+58,9013,Happy new year!,300,31/12-02/01
+59,9014,Happy new year!,300,31/12-02/01
+60,9015,Happy new year!,300,31/12-02/01
+61,9016,Happy new year!,300,31/12-02/01
+62,9017,Happy new year!,300,31/12-02/01
+63,9018,Happy new year!,300,31/12-02/01
+64,9019,Happy new year!,300,31/12-02/01
+65,9020,Happy new year!,300,31/12-02/01
+66,9021,Seasons Greetings!,500,20/12-25/12
+67,9022,Seasons Greetings!,500,20/12-25/12
+68,9023,Seasons Greetings!,500,20/12-25/12
+69,9024,Seasons Greetings!,500,20/12-25/12
+70,9025,Seasons Greetings!,500,20/12-25/12
+71,9026,Seasons Greetings!,500,20/12-25/12
+72,9027,Seasons Greetings!,500,20/12-25/12
+73,9028,Seasons Greetings!,500,20/12-25/12
+74,9029,Seasons Greetings!,500,20/12-25/12
+75,9030,Seasons Greetings!,500,20/12-25/12
+76,9031,Have a Nice Year!,800,31/12-02/01
+77,9032,Have a Nice Year!,800,31/12-02/01
+78,9033,Have a Nice Year!,800,31/12-02/01
+79,9034,Have a Nice Year!,800,31/12-02/01
+80,9035,Have a Nice Year!,800,31/12-02/01
+81,9036,Always be healthy and God bless you!,1000,
+82,9037,Always be healthy and God bless you!,1000,
+83,9038,Always be healthy and God bless you!,1000,

@@ -906,14 +906,15 @@ public class MessageBuilder {
     public static ServerMessage hostInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.HOST_INFO);
 
-        Session session = ServerManager.getSessionById(room.getHost());
+        Session hostSession = room.getPlayers().get(room.getHost());
 
         msg.writeShort((short) 0);
         msg.writeInt(room.getHost());
-        msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
-        msg.writeShort((short) session.getUdpPort());
+        msg.writeString(hostSession.getRemoteAddress().getAddress().getHostAddress(), 16);
+        msg.writeShort((short) hostSession.getUdpPort());
         msg.writeBool(room.isTraining());
-        msg.writeZeros(4);
+        msg.writeZeros(2);
+        msg.writeInt(room.getMatchMission());
 
         byte hostIndex = (byte) (room.getPlayerTeam(room.getHost()) == RoomTeam.RED ?
                 room.getRedTeam() : room.getBlueTeam()).indexOf(room.getHost());

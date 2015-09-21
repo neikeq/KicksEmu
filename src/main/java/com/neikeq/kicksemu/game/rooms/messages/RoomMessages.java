@@ -408,6 +408,7 @@ public class RoomMessages {
             Room room = RoomManager.getRoomById(roomId);
 
             if (room.getHost() == session.getPlayerId()) {
+                room.determineMatchMission();
                 room.sendHostInfo();
             }
         }

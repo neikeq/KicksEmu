@@ -11,6 +11,10 @@ public class Row {
         return columns.get(index++);
     }
 
+    public String columnAt(int idx) throws IndexOutOfBoundsException {
+        return columns.get(idx);
+    }
+
     public Row(String[] row) {
         columns = Arrays.asList(row);
     }

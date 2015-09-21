@@ -27,8 +27,7 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
             try {
                 // Handle the incoming message
-                MessageHandler messageHandler = ServerManager.getMessageHandler();
-                messageHandler.handle(session, message);
+                ServerManager.getMessageHandler().handle(session, message);
             } catch (UndefinedMessageException ume) {
                 Output.println(ume.getMessage() + " from: " +
                         packet.sender().getAddress().getHostAddress(), Level.DEBUG);

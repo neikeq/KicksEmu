@@ -1,14 +1,24 @@
 package com.neikeq.kicksemu.game.table;
 
 import com.neikeq.kicksemu.config.Constants;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
+import com.neikeq.kicksemu.utils.SeasonRange;
+import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.table.Row;
 import com.neikeq.kicksemu.utils.table.TableReader;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class TableManager {
 
@@ -21,7 +31,11 @@ public class TableManager {
     private static final Map<Integer, ItemInfo> itemTable = new HashMap<>();
     private static final Map<Integer, BonusInfo> bonusTable = new HashMap<>();
     private static final Map<Integer, OptionInfo> optionTable = new HashMap<>();
-    private static final Map<Short, LevelInfo> levelInfoTable = new HashMap<>();
+    private static final Map<Short, LevelInfo> levelTable = new HashMap<>();
+    private static final Map<Short, MissionInfo> missionTable = new HashMap<>();
+
+    private static final List<Short> missionsList = new ArrayList<>();
+    private static final Map<Short, SeasonRange> seasonMissions = new HashMap<>();
 
     public static void initialize() {
         initializeItemFreeTable();
@@ -32,6 +46,7 @@ public class TableManager {
         initializeBonusTable();
         initializeOptionTable();
         initializeLevelTable();
+        initializeMissionTable();
     }
 
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
@@ -41,7 +56,7 @@ public class TableManager {
     }
 
     public static LevelInfo getLevelInfo(Predicate<LevelInfo> filter) {
-        Optional<LevelInfo> result = levelInfoTable.values().stream().filter(filter)
+        Optional<LevelInfo> result = levelTable.values().stream().filter(filter)
                 .reduce((previous, current) -> current);
 
         return result.isPresent() ? result.get() : null;
@@ -80,6 +95,12 @@ public class TableManager {
 
     public static OptionInfo getOptionInfo(Predicate<OptionInfo> filter) {
         Optional<OptionInfo> result = optionTable.values().stream().filter(filter).findFirst();
+
+        return result.isPresent() ? result.get() : null;
+    }
+
+    public static MissionInfo getMissionInfo(Predicate<MissionInfo> filter) {
+        Optional<MissionInfo> result = missionTable.values().stream().filter(filter).findFirst();
 
         return result.isPresent() ? result.get() : null;
     }
@@ -160,11 +181,51 @@ public class TableManager {
         Row line;
         while ((line = reader.nextRow()) != null) {
             LevelInfo row = new LevelInfo(line);
-            levelInfoTable.put(row.getLevel(), row);
+            levelTable.put(row.getLevel(), row);
         }
 
-        LevelInfo lastLevel = levelInfoTable.get(Collections.max(levelInfoTable.keySet()));
+        LevelInfo lastLevel = levelTable.get(Collections.max(levelTable.keySet()));
 
         EXPERIENCE_LIMIT = lastLevel.getExperience() + lastLevel.getExperienceGap();
+    }
+
+    private static void initializeMissionTable() {
+        TableReader reader = new TableReader(Constants.TABLE_MISSION_FILE);
+
+        Row line;
+        while ((line = reader.nextRow()) != null) {
+            MissionInfo row = new MissionInfo(line);
+            missionTable.put(row.getId(), row);
+
+            String season = line.nextColumn();
+            if (!season.isEmpty()) {
+                try {
+                    seasonMissions.put(row.getId(), columnToSeasonRange(season));
+                } catch (IndexOutOfBoundsException | ParseException ignored) {
+                    Output.println("Invalid season range in mission table. Index: " +
+                            line.columnAt(0), Level.WARNING);
+                }
+            }
+        }
+
+        missionsList.addAll(missionTable.keySet().stream().collect(Collectors.toList()));
+    }
+
+    private static SeasonRange columnToSeasonRange(String col)
+            throws IndexOutOfBoundsException, ParseException {
+        String[] seasons = col.split("-");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM");
+        return new SeasonRange(formatter.parse(seasons[0]), formatter.parse(seasons[1]));
+    }
+
+    private static boolean isMissionEnabled(short mission, Date date) {
+        SeasonRange eventDate = seasonMissions.get(mission);
+        return eventDate == null || eventDate.isWithinRange(date);
+    }
+
+    public static List<Short> getMissionsList() {
+        return missionsList.stream()
+                .filter(m -> isMissionEnabled(m, DateUtils.getDate()))
+                .collect(Collectors.toList());
     }
 }

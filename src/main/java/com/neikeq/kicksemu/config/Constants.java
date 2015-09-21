@@ -17,6 +17,7 @@ public class Constants {
     public static final String TABLE_BONUS_PATH = TABLE_DIR + "Table_Bonus_File.csv";
     public static final String TABLE_OPTION_PATH = TABLE_DIR + "Table_Option_File.csv";
     public static final String TABLE_LEVEL_FILE = TABLE_DIR + "Table_Level_File.csv";
+    public static final String TABLE_MISSION_FILE = TABLE_DIR + "Table_Mission_File.csv";
 
     public static final int SESSION_ID_INDEX = 2;
     public static final int TARGET_ID_INDEX = 6;

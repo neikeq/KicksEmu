@@ -6,6 +6,8 @@ import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.lobby.RoomLobby;
 import com.neikeq.kicksemu.game.rooms.enums.*;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.table.MissionInfo;
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -34,6 +37,8 @@ public class Room {
 
     private byte minLevel = 1;
     private byte maxLevel = 60;
+
+    private short matchMission = 0;
 
     private long timeStart = 0;
     private long timeLastJoin = 0;
@@ -361,6 +366,18 @@ public class Room {
         }
     }
 
+    public void determineMatchMission() {
+        Random random = new Random();
+        boolean hasMission = random.nextBoolean();
+
+        if (hasMission && !isTraining()) {
+            List<Short> missionsList = TableManager.getMissionsList();
+            matchMission = missionsList.get(random.nextInt(missionsList.size()));
+        } else {
+            matchMission = 0;
+        }
+    }
+
     void onPlayerJoined(Session session) {
         // Send the room info to the client
         session.send(roomInfoMessage());
@@ -389,16 +406,6 @@ public class Room {
         }
     }
 
-    void notifyAboutNewPlayer(Session session) {
-        try (Connection con = MySqlManager.getConnection()) {
-            sendBroadcast(roomPlayerInfoMessage(session, con),
-                    s -> s.getPlayerId() != session.getPlayerId());
-        } catch (SQLException e) {
-            Output.println("Exception when notifying about new room player: " +
-                    e.getMessage(), Level.DEBUG);
-        }
-    }
-
     private void onHostLeaved(int playerId) {
         switch (state()) {
             case PLAYING:
@@ -416,6 +423,16 @@ public class Room {
                 sendBroadcast(MessageBuilder.unknown2());
                 break;
             default:
+        }
+    }
+
+    void notifyAboutNewPlayer(Session session) {
+        try (Connection con = MySqlManager.getConnection()) {
+            sendBroadcast(roomPlayerInfoMessage(session, con),
+                    s -> s.getPlayerId() != session.getPlayerId());
+        } catch (SQLException e) {
+            Output.println("Exception when notifying about new room player: " +
+                    e.getMessage(), Level.DEBUG);
         }
     }
 
@@ -768,5 +785,14 @@ public class Room {
 
     public ScheduledFuture<?> getLoadingTimeoutFuture() {
         return loadingTimeoutFuture;
+    }
+
+    public short getMatchMission() {
+        return matchMission;
+    }
+
+    public MissionInfo getMatchMissionInfo() {
+        return matchMission == 0 ?
+                null : TableManager.getMissionInfo(m -> m.getId() == getMatchMission());
     }
 }

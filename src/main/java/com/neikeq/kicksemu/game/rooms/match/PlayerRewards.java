@@ -10,6 +10,7 @@ import com.neikeq.kicksemu.game.misc.quests.QuestManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.table.MissionInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
@@ -41,6 +42,7 @@ class PlayerRewards {
         if (baseReward > 0) {
             calculateBonuses();
             applyRewardRates();
+            applyMissionReward();
 
             limitMaximumExperience();
             updateResultRewards();
@@ -119,6 +121,15 @@ class PlayerRewards {
     private void applyRewardRates() {
         experience.multiply(Configuration.getInt("game.rewards.exp"));
         points.multiply(Configuration.getInt("game.rewards.point"));
+    }
+
+    private void applyMissionReward() {
+        MissionInfo missionInfo = room().getMatchMissionInfo();
+
+        if (missionInfo != null) {
+            experience.sum(missionInfo.getReward());
+            points.sum(missionInfo.getReward());
+        }
     }
 
     private void limitMaximumExperience() {

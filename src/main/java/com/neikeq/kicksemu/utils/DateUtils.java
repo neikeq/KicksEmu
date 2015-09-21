@@ -27,7 +27,7 @@ public class DateUtils {
         return dateTimeFormat.format(Calendar.getInstance().getTime());
     }
 
-    private static Date getDate() {
+    public static Date getDate() {
         return Calendar.getInstance().getTime();
     }
 
@@ -57,5 +57,17 @@ public class DateUtils {
 
     public static long currentTimeMillis() {
         return System.nanoTime() / 1000000;
+    }
+
+    public static int getDateMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.MONTH);
+    }
+
+    public static int getDateDayOfMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.DAY_OF_MONTH);
     }
 }
