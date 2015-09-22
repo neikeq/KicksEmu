@@ -914,7 +914,7 @@ public class MessageBuilder {
         msg.writeShort((short) hostSession.getUdpPort());
         msg.writeBool(room.isTraining());
         msg.writeZeros(2);
-        msg.writeInt(room.getMatchMission());
+        msg.writeShort(room.getMatchMission());
 
         byte hostIndex = (byte) (room.getPlayerTeam(room.getHost()) == RoomTeam.RED ?
                 room.getRedTeam() : room.getBlueTeam()).indexOf(room.getHost());
