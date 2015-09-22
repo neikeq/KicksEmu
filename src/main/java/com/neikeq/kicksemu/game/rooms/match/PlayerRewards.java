@@ -7,7 +7,6 @@ import com.neikeq.kicksemu.game.characters.types.Position;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.misc.quests.MissionTarget;
-import com.neikeq.kicksemu.game.misc.quests.MissionType;
 import com.neikeq.kicksemu.game.misc.quests.QuestManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;

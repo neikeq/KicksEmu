@@ -8,7 +8,7 @@ public enum MissionTarget {
 
     public static MissionTarget fromString(String str) {
         try {
-            return valueOf(str);
+            return valueOf(str.toUpperCase());
         } catch (IllegalArgumentException ignored) {
             return null;
         }

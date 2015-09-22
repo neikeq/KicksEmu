@@ -18,7 +18,7 @@ public enum MissionType {
 
     public static MissionType fromString(String str) {
         try {
-            return valueOf(str);
+            return valueOf(str.toUpperCase());
         } catch (IllegalArgumentException ignored) {
             return null;
         }
