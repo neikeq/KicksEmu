@@ -372,7 +372,8 @@ public class Room {
 
         if (hasMission && !isTraining()) {
             List<Short> missionsList = TableManager.getUsableMissionsList();
-            matchMission = missionsList.get(random.nextInt(missionsList.size()));
+            int randomIndex = random.nextInt(missionsList.size());
+            matchMission = randomIndex > 0 ? missionsList.get(randomIndex) : 0;
         } else {
             matchMission = 0;
         }

@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.utils.SeasonRange;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.table.Row;
 import com.neikeq.kicksemu.utils.table.TableReader;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -190,7 +191,7 @@ public class TableManager {
 
         Row line;
         while ((line = reader.nextRow()) != null) {
-            boolean enabled = Boolean.valueOf(line.columnAt(5));
+            boolean enabled = Integer.valueOf(line.columnAt(5)) == 1;
             if (enabled) {
                 MissionInfo row = new MissionInfo(line);
                 missionTable.put(row.getId(), row);
