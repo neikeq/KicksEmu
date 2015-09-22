@@ -1,15 +1,11 @@
 package com.neikeq.kicksemu.game.table;
 
 import com.neikeq.kicksemu.config.Constants;
-import com.neikeq.kicksemu.io.Output;
-import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.utils.SeasonRange;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.table.Row;
 import com.neikeq.kicksemu.utils.table.TableReader;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,7 +31,6 @@ public class TableManager {
     private static final Map<Short, MissionInfo> missionTable = new HashMap<>();
 
     private static final List<Short> missionsList = new ArrayList<>();
-    private static final Map<Short, SeasonRange> seasonMissions = new HashMap<>();
 
     public static void initialize() {
         initializeItemFreeTable();
@@ -47,6 +42,12 @@ public class TableManager {
         initializeOptionTable();
         initializeLevelTable();
         initializeMissionTable();
+
+        // After table initialization
+        missionsList.addAll(missionTable.keySet().stream().collect(Collectors.toList()));
+
+        LevelInfo lastLevel = levelTable.get(Collections.max(levelTable.keySet()));
+        EXPERIENCE_LIMIT = lastLevel.getExperience() + lastLevel.getExperienceGap();
     }
 
     public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
@@ -87,8 +88,7 @@ public class TableManager {
     }
 
     public static BonusInfo getBonusInfo(Predicate<BonusInfo> filter) {
-        Optional<BonusInfo> result = bonusTable.values().stream()
-                .filter(filter).findFirst();
+        Optional<BonusInfo> result = bonusTable.values().stream().filter(filter).findFirst();
 
         return result.isPresent() ? result.get() : null;
     }
@@ -183,10 +183,6 @@ public class TableManager {
             LevelInfo row = new LevelInfo(line);
             levelTable.put(row.getLevel(), row);
         }
-
-        LevelInfo lastLevel = levelTable.get(Collections.max(levelTable.keySet()));
-
-        EXPERIENCE_LIMIT = lastLevel.getExperience() + lastLevel.getExperienceGap();
     }
 
     private static void initializeMissionTable() {
@@ -194,38 +190,22 @@ public class TableManager {
 
         Row line;
         while ((line = reader.nextRow()) != null) {
-            MissionInfo row = new MissionInfo(line);
-            missionTable.put(row.getId(), row);
-
-            String season = line.nextColumn();
-            if (!season.isEmpty()) {
-                try {
-                    seasonMissions.put(row.getId(), columnToSeasonRange(season));
-                } catch (IndexOutOfBoundsException | ParseException ignored) {
-                    Output.println("Invalid season range in mission table. Index: " +
-                            line.columnAt(0), Level.WARNING);
-                }
+            boolean enabled = Boolean.valueOf(line.columnAt(5));
+            if (enabled) {
+                MissionInfo row = new MissionInfo(line);
+                missionTable.put(row.getId(), row);
             }
         }
-
-        missionsList.addAll(missionTable.keySet().stream().collect(Collectors.toList()));
     }
 
-    private static SeasonRange columnToSeasonRange(String col)
-            throws IndexOutOfBoundsException, ParseException {
-        String[] seasons = col.split("-");
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM");
-        return new SeasonRange(formatter.parse(seasons[0]), formatter.parse(seasons[1]));
-    }
-
-    private static boolean isMissionEnabled(short mission, Date date) {
-        SeasonRange eventDate = seasonMissions.get(mission);
+    private static boolean isMissionUsable(short mission, Date date) {
+        SeasonRange eventDate = missionTable.get(mission).getSeason();
         return eventDate == null || eventDate.isWithinRange(date);
     }
 
-    public static List<Short> getMissionsList() {
+    public static List<Short> getUsableMissionsList() {
         return missionsList.stream()
-                .filter(m -> isMissionEnabled(m, DateUtils.getDate()))
+                .filter(m -> isMissionUsable(m, DateUtils.getDate()))
                 .collect(Collectors.toList());
     }
 }
