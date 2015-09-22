@@ -4,7 +4,6 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
-import com.neikeq.kicksemu.network.packets.in.MessageHandler;
 import com.neikeq.kicksemu.network.packets.in.UndefinedMessageException;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import io.netty.channel.ChannelHandlerContext;

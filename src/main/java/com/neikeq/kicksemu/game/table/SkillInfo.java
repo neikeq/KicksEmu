@@ -13,10 +13,10 @@ public class SkillInfo {
     private final Price price;
 
     public SkillInfo(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());
         position = Short.valueOf(row.nextColumn());
-        row.nextColumn();
+        row.ignoreColumn();
         level = Short.valueOf(row.nextColumn());
         payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));
         price = new Price(row);

@@ -12,7 +12,7 @@ public class CeleInfo {
     private final Price price;
 
     public CeleInfo(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());
         level = Short.valueOf(row.nextColumn());
         payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));

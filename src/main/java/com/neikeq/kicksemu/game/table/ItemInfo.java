@@ -14,19 +14,15 @@ public class ItemInfo {
     private final Price price;
 
     public ItemInfo(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());
         type = Integer.valueOf(row.nextColumn());
-        row.nextColumn();
-        row.nextColumn();
+        row.ignoreColumns(2);
         gender = Short.valueOf(row.nextColumn());
         level = Short.valueOf(row.nextColumn());
-        row.nextColumn();
-        row.nextColumn();
-        row.nextColumn();
-        row.nextColumn();
+        row.ignoreColumns(4);
         payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));
-        row.nextColumn();
+        row.ignoreColumn();
         price = new Price(row);
     }
 

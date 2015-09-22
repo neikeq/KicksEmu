@@ -14,7 +14,7 @@ public class LearnInfo {
     private final int cash;
 
     public LearnInfo(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());
         statIndex = Integer.valueOf(row.nextColumn());
         level = Short.valueOf(row.nextColumn());

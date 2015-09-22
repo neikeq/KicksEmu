@@ -7,6 +7,14 @@ public class Row {
     private final List<String> columns;
     private int index = 0;
 
+    public void ignoreColumn() {
+        index++;
+    }
+
+    public void ignoreColumns(int count) {
+        index += count;
+    }
+
     public String nextColumn() throws IndexOutOfBoundsException {
         return columns.get(index++);
     }

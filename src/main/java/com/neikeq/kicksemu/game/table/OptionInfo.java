@@ -18,10 +18,10 @@ public class OptionInfo {
     }
 
     public OptionInfo(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());
         type = Integer.valueOf(row.nextColumn());
-        row.nextColumn();
+        row.ignoreColumn();
         value = Short.valueOf(row.nextColumn());
         cashLevel = Short.valueOf(row.nextColumn());
         pointsLevel = Short.valueOf(row.nextColumn());

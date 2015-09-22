@@ -6,9 +6,12 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Position;
 import com.neikeq.kicksemu.game.inventory.Item;
 import com.neikeq.kicksemu.game.inventory.types.Soda;
+import com.neikeq.kicksemu.game.misc.quests.MissionTarget;
+import com.neikeq.kicksemu.game.misc.quests.MissionType;
 import com.neikeq.kicksemu.game.misc.quests.QuestManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
+import com.neikeq.kicksemu.game.rooms.enums.VictoryResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.MissionInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
@@ -124,12 +127,78 @@ class PlayerRewards {
     }
 
     private void applyMissionReward() {
-        MissionInfo missionInfo = room().getMatchMissionInfo();
+        MissionInfo mission = room().getMatchMissionInfo();
 
-        if (missionInfo != null) {
-            experience.sum(missionInfo.getReward());
-            points.sum(missionInfo.getReward());
+        if (mission != null && isMissionCompleted(mission)) {
+            experience.sum(mission.getReward());
+            points.sum(mission.getReward());
         }
+    }
+
+    private boolean isMissionCompleted(MissionInfo mission) {
+        StatisticsCarrier targetResult = getMissionTarget(mission);
+        int missionValue = mission.getValue();
+
+        if (targetResult == null) return true;
+        if (mission.getType() == null) return true;
+
+        switch (mission.getType()) {
+            case GOALS:
+                return targetResult.getGoals() >= missionValue;
+            case ASSISTS:
+                return targetResult.getAssists() >= missionValue;
+            case STEALS:
+                return targetResult.getSteals() >= missionValue;
+            case TACKLES:
+                return targetResult.getTackles() >= missionValue;
+            case INTERCEPTIONS:
+                return targetResult.getBlocks() >= missionValue;
+            case GOALS_LIMIT:
+                return targetResult.getGoals() <= missionValue;
+            case ASSISTS_LIMIT:
+                return targetResult.getAssists() <= missionValue;
+            case STEALS_LIMIT:
+                return targetResult.getSteals() <= missionValue;
+            case TACKLES_LIMIT:
+                return targetResult.getTackles() <= missionValue;
+            case INTERCEPTIONS_LIMIT:
+                return targetResult.getBlocks() <= missionValue;
+            case WIN: {
+                boolean win = getMissionTargetTeam(mission).getResult() == VictoryResult.WIN;
+                return missionValue == 1 ? win : !win;
+            }
+            case DRAW: {
+                boolean draw = getMissionTargetTeam(mission).getResult() == VictoryResult.WIN;
+                return missionValue == 1 ? draw : !draw;
+            }
+            case LOSE: {
+                boolean lose = getMissionTargetTeam(mission).getResult() == VictoryResult.WIN;
+                return missionValue == 1 ? lose : !lose;
+            }
+            default:
+                return true;
+        }
+    }
+
+    private StatisticsCarrier getMissionTarget(MissionInfo mission) {
+        if (mission.getTarget() == null) return null;
+
+        switch (mission.getTarget()) {
+            case PLAYER:
+                return playerResult;
+            case TEAM:
+                return resultHandler.getPlayerTeamResult(playerId);
+            case RIVAL_TEAM:
+                resultHandler.getRivalTeamResult(playerId);
+            default:
+                return null;
+        }
+    }
+
+    private TeamResult getMissionTargetTeam(MissionInfo mission) {
+        return mission.getTarget() == MissionTarget.TEAM ?
+                resultHandler.getPlayerTeamResult(playerId) :
+                resultHandler.getRivalTeamResult(playerId);
     }
 
     private void limitMaximumExperience() {

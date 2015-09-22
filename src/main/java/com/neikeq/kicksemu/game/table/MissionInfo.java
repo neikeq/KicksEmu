@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.table;
 
+import com.neikeq.kicksemu.game.misc.quests.MissionTarget;
+import com.neikeq.kicksemu.game.misc.quests.MissionType;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.utils.SeasonRange;
@@ -13,6 +15,9 @@ public class MissionInfo {
     private final short id;
     private final int reward;
     private final SeasonRange season;
+    private final MissionTarget target;
+    private final MissionType type;
+    private final int value;
 
     private static SeasonRange columnToSeasonRange(Row row) {
         String column = row.nextColumn();
@@ -31,12 +36,21 @@ public class MissionInfo {
     }
 
     public MissionInfo(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         id = Short.valueOf(row.nextColumn());
-        row.nextColumn();
+        row.ignoreColumn();
         reward = Integer.valueOf(row.nextColumn());
         season = columnToSeasonRange(row);
+        row.ignoreColumn();
+        target = MissionTarget.fromString(row.nextColumn());
 
+        if (getTarget() != null) {
+            type = MissionType.fromString(row.nextColumn());
+            value = Integer.valueOf(row.nextColumn());
+        } else {
+            type = null;
+            value = 0;
+        }
     }
 
     public short getId() {
@@ -49,5 +63,17 @@ public class MissionInfo {
 
     public SeasonRange getSeason() {
         return season;
+    }
+
+    public MissionTarget getTarget() {
+        return target;
+    }
+
+    public MissionType getType() {
+        return type;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

@@ -9,7 +9,7 @@ public class LevelInfo {
     private final int experienceGap;
 
     public LevelInfo(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         level = Short.valueOf(row.nextColumn());
         experience = Integer.valueOf(row.nextColumn());
         experienceGap = Integer.valueOf(row.nextColumn());

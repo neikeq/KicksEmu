@@ -8,7 +8,7 @@ public class ItemFree {
     private final int type;
 
     public ItemFree(Row row) {
-        row.nextColumn();
+        row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());
         type = Integer.valueOf(row.nextColumn());
     }

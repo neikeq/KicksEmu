@@ -3,17 +3,10 @@ package com.neikeq.kicksemu.game.rooms.match;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 
-public class PlayerResult {
+public class PlayerResult extends StatisticsCarrier {
 
     private final int playerId;
-    private final short goals;
-    private final short assists;
-    private final short blocks;
-    private final short shots;
-    private final short steals;
-    private final short tackles;
     private final short votePoints;
-    private final short ballControl;
 
     private int experience;
     private int points;
@@ -63,15 +56,9 @@ public class PlayerResult {
 
     public PlayerResult(int playerId, short goals, short assists, short blocks, short shots,
                         short steals, short tackles, short votePoints, short ballControl) {
+        super(goals, assists, blocks, shots, steals, tackles, ballControl);
         this.playerId = playerId;
-        this.goals = goals;
-        this.assists = assists;
-        this.blocks = blocks;
-        this.shots = shots;
-        this.steals = steals;
-        this.tackles = tackles;
         this.votePoints = votePoints;
-        this.ballControl = ballControl;
         this.experience = 0;
         this.points = 0;
     }
@@ -80,36 +67,8 @@ public class PlayerResult {
         return playerId;
     }
 
-    public short getGoals() {
-        return goals;
-    }
-
-    public short getAssists() {
-        return assists;
-    }
-
-    public short getBlocks() {
-        return blocks;
-    }
-
-    public short getShots() {
-        return shots;
-    }
-
-    public short getSteals() {
-        return steals;
-    }
-
-    public short getTackles() {
-        return tackles;
-    }
-
     public short getVotePoints() {
         return votePoints;
-    }
-
-    public short getBallControl() {
-        return ballControl;
     }
 
     public int getExperience() {
