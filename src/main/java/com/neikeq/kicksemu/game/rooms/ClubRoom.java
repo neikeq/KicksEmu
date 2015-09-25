@@ -2,6 +2,8 @@ package com.neikeq.kicksemu.game.rooms;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
+import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
+import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
@@ -40,7 +42,7 @@ public class ClubRoom extends Room {
 
         synchronized (locker) {
             if (isNotFull()) {
-                if (isWaiting()) {
+                if (isWaiting() && !TeamManager.isRegistered(getId())) {
                     if (MemberInfo.getClubId(playerId) == getId()) {
                         // Check password (moderators can bypass this)
                         if (getAccessType() != RoomAccessType.PASSWORD ||
@@ -102,8 +104,15 @@ public class ClubRoom extends Room {
 
     @Override
     protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
+        if (challengeId >= 0) {
+            Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
+            if (challenge != null) {
+                challenge.cancel();
+            }
+        }
+
         super.onPlayerLeaved(session, reason);
-            TeamManager.unregister(getId());
+        TeamManager.unregister(getId());
     }
 
     @Override
@@ -157,7 +166,8 @@ public class ClubRoom extends Room {
                         -4; // The opponent club refused the request
                 ServerMessage response = MessageBuilder.clubChallengeResponse(fromId,
                         accepted, result);
-                getPlayers().get(getMaster()).sendAndFlush(response);
+                //getPlayers().get(getMaster()).sendAndFlush(response);
+                sendBroadcast(response);
 
                 return 0;
             }
@@ -166,12 +176,10 @@ public class ClubRoom extends Room {
         }
     }
 
-    public void quitChallenge() {
-        getPlayers().values().forEach(session -> {
-            session.send(roomInfoMessage());
-            session.send(roomMasterMessage(getMaster()));
-            sendRoomPlayersInfo(session);
-        });
+    public void onQuitChallenge() {
+        setChallengeId(-1);
+        setState(RoomState.WAITING);
+        sendBroadcast(MessageBuilder.clubCancelChallenge());
     }
 
     @Override
@@ -187,6 +195,7 @@ public class ClubRoom extends Room {
     @Override
     protected void addObserver(int playerId) { }
 
+    @Override
     public boolean isWaiting() {
         // TODO this should be temporal, until I find a way to display the APPLYING icon
         return super.isWaiting() || isChallenging();

@@ -39,7 +39,9 @@ public class TeamManager {
     }
 
     public static boolean isRegistered(Integer id) {
-        return TEAMS.containsKey(id);
+        synchronized (TEAMS_LOCKER) {
+            return TEAMS.containsKey(id);
+        }
     }
 
     /**

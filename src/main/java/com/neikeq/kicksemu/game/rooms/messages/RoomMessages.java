@@ -533,7 +533,7 @@ public class RoomMessages {
         }
     }
 
-    public static void unknown2(Session session, ClientMessage msg) {
+    public static void toRoomLobby(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
         if (session.getRoomId() == roomId) {

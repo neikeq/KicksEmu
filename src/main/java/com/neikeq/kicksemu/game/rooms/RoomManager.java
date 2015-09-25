@@ -38,7 +38,9 @@ public class RoomManager {
     }
 
     public static int roomsCount() {
-        return ROOMS.size();
+        synchronized (ROOMS_LOCKER) {
+            return ROOMS.size();
+        }
     }
 
     /**

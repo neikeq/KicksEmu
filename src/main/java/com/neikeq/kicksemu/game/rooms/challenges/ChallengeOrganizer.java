@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms.challenges;
 
+import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 
 import java.util.ArrayList;
@@ -16,12 +17,14 @@ public class ChallengeOrganizer {
         }
     }
 
-    public static Challenge add(ClubRoom redTeam, ClubRoom blueTeam) {
+    public static void add(ChallengeRoom challengeRoom, ClubRoom redTeam, ClubRoom blueTeam) {
         synchronized (LOCKER) {
-            Challenge challenge = new Challenge(redTeam, blueTeam);
+            Challenge challenge = new Challenge(challengeRoom, redTeam, blueTeam);
             CHALLENGES.add(challenge);
             challenge.setId(CHALLENGES.indexOf(challenge));
-            return challenge;
+            challengeRoom.setChallenge(challenge);
+            redTeam.setChallengeId(challenge.getId());
+            blueTeam.setChallengeId(challenge.getId());
         }
     }
 

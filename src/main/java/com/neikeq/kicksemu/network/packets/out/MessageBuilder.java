@@ -995,11 +995,11 @@ public class MessageBuilder {
     }
 
     public static ServerMessage unknown1() {
-        return new ServerMessage(MessageId.UNKNOWN1).writeShort((short) 0);
+        return new ServerMessage(MessageId.ROOM_UNKNOWN1).writeShort((short) 0);
     }
 
     public static ServerMessage unknown2() {
-        return new ServerMessage(MessageId.UNKNOWN2).writeShort((short) 0);
+        return new ServerMessage(MessageId.TO_ROOM_LOBBY).writeShort((short) 0);
     }
 
     public static ServerMessage updateRoomPlayer(int playerId, Connection ... con) {
@@ -1220,12 +1220,12 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage clubChallengeTeam(int targetTeam, boolean isSender, short result) {
+    public static ServerMessage clubChallengeTeam(int targetTeam, boolean toSender, short result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_CHALLENGE_TEAM);
 
         msg.writeShort(result);
         msg.writeShort((short) targetTeam);
-        msg.writeBool(!isSender, 2);
+        msg.writeBool(!toSender, 2);
 
         return msg;
     }

@@ -16,6 +16,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMode;
 import com.neikeq.kicksemu.game.rooms.enums.RoomSize;
 import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
+import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -29,7 +30,7 @@ import java.util.Map;
 public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
-    private static final byte MIN_TEAM_PLAYERS = 4;
+    private static final byte MIN_TEAM_PLAYERS = 1;
     static final byte MIN_ROOM_LEVEL = 3;
 
     public static void roomList(Session session, ClientMessage msg) {
@@ -264,7 +265,9 @@ public class ClubRoomMessages extends RoomMessages {
             ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
 
             if (room != null) {
-                if (room.getCurrentSize() == MIN_TEAM_PLAYERS) {
+                if (room.state() == RoomState.APPLYING) return;
+
+                if (room.getCurrentSize() >= MIN_TEAM_PLAYERS) {
                     TeamManager.register(room);
                     room.sendBroadcast(MessageBuilder.clubRegisterTeam(result));
                 } else {
@@ -392,12 +395,9 @@ public class ClubRoomMessages extends RoomMessages {
             TeamManager.unregister(room.getId());
             TeamManager.unregister(requester.getId());
 
-            Challenge challenge = ChallengeOrganizer.add(requester, room);
-            ChallengeRoom challengeRoom = new ChallengeRoom(challenge);
-            challenge.addObserver(challengeRoom);
-            challengeRoom.setMaster(challenge.getRedTeam().getMaster());
-            challengeRoom.setHost(challenge.getRedTeam().getMaster());
-            challengeRoom.addPlayersFromRooms(challenge.getRedTeam(), challenge.getBlueTeam());
+            ChallengeRoom challengeRoom = new ChallengeRoom();
+            ChallengeOrganizer.add(challengeRoom, room, requester);
+            challengeRoom.addChallengePlayers();
         }
 
         session.send(MessageBuilder.clubChallengeResponse(requesterId, accepted, result));
@@ -406,13 +406,11 @@ public class ClubRoomMessages extends RoomMessages {
     public static void cancelChallenge(Session session) {
         ClubRoom room = (ClubRoom) RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null && room.getMaster() == session.getPlayerId()) {
+        if (room != null && room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
             Challenge challenge = ChallengeOrganizer.getChallengeById(room.getChallengeId());
             if (challenge != null) {
                 challenge.cancel();
             }
         }
-
-        session.send(MessageBuilder.clubCancelChallenge());
     }
 }

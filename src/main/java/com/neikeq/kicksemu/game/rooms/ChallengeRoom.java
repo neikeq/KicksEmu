@@ -5,9 +5,14 @@ import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.MySqlManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -15,7 +20,7 @@ import java.util.Observer;
 
 public class ChallengeRoom extends Room implements Observer {
 
-    private final Challenge challenge;
+    private Challenge challenge;
 
     @Override
     public void removeRoom() {
@@ -23,22 +28,37 @@ public class ChallengeRoom extends Room implements Observer {
             if (challenge != null) {
                 ChallengeOrganizer.remove(challenge);
 
-                challenge.getRedTeam().quitChallenge();
-                challenge.getBlueTeam().quitChallenge();
+                challenge.getRedTeam().onQuitChallenge();
+                challenge.getBlueTeam().onQuitChallenge();
             }
         }
     }
 
-    public void addPlayersFromRooms(ClubRoom redTeam, ClubRoom blueTeam) {
+    public void addChallengePlayers() {
         synchronized (locker) {
-            getPlayers().putAll(redTeam.getPlayers());
-            getPlayers().putAll(blueTeam.getPlayers());
-            getRedTeam().addAll(redTeam.getRedTeam());
-            getBlueTeam().addAll(redTeam.getRedTeam());
+            getPlayers().putAll(challenge.getRedTeam().getPlayers());
+            getPlayers().putAll(challenge.getBlueTeam().getPlayers());
+            getRedTeam().addAll(challenge.getRedTeam().getRedTeam());
+            getBlueTeam().addAll(challenge.getBlueTeam().getRedTeam());
             getPlayers().values().forEach(this::onPlayerJoined);
         }
     }
 
+    @Override
+    void sendRoomPlayersInfo(Session session) {
+        List<Integer> team = getPlayerTeam(session.getPlayerId()) == RoomTeam.RED ?
+                getBlueTeam() : getRedTeam();
+        try (Connection con = MySqlManager.getConnection()) {
+            team.forEach(player ->
+                    session.send(roomPlayerInfoMessage(getPlayers().get(player), con)));
+            session.flush();
+        } catch (SQLException e) {
+            Output.println("Exception when sending room players info to a player: " +
+                    e.getMessage(), Level.DEBUG);
+        }
+    }
+
+    @Override
     public void removePlayer(Session session, RoomLeaveReason reason) {
         synchronized (locker) {
             onPlayerLeaved(session, reason);
@@ -79,26 +99,36 @@ public class ChallengeRoom extends Room implements Observer {
     @Override
     protected void addObserver(int playerId) { }
 
+    @Override
     public boolean isTraining() {
         return false;
     }
 
+    public ChallengeRoom() {
+        super();
+    }
+
+    @Override
     public void setMaster(int master) {
         if (getMaster() == 0) {
             super.setMaster(master);
         }
     }
 
+    @Override
     public void setHost(int host) {
         if (getHost() == 0) {
             super.setHost(host);
         }
     }
 
-    public ChallengeRoom(Challenge challenge) {
-        super();
+    public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
+
+        challenge.addObserver(this);
         setId(challenge.getId());
+        setMaster(challenge.getRedTeam().getMaster());
+        setHost(challenge.getRedTeam().getMaster());
     }
 
     @Override
