@@ -167,11 +167,11 @@ class PlayerRewards {
                 return missionValue == 1 ? win : !win;
             }
             case DRAW: {
-                boolean draw = getMissionTargetTeam(mission).getResult() == VictoryResult.WIN;
+                boolean draw = getMissionTargetTeam(mission).getResult() == VictoryResult.DRAW;
                 return missionValue == 1 ? draw : !draw;
             }
             case LOSE: {
-                boolean lose = getMissionTargetTeam(mission).getResult() == VictoryResult.WIN;
+                boolean lose = getMissionTargetTeam(mission).getResult() == VictoryResult.LOSE;
                 return missionValue == 1 ? lose : !lose;
             }
             default:
