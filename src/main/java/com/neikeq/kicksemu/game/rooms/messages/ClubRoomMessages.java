@@ -30,7 +30,7 @@ import java.util.Map;
 public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
-    private static final byte MIN_TEAM_PLAYERS = 1;
+    private static final byte MIN_TEAM_PLAYERS = 4;
     static final byte MIN_ROOM_LEVEL = 3;
 
     public static void roomList(Session session, ClientMessage msg) {
@@ -267,7 +267,7 @@ public class ClubRoomMessages extends RoomMessages {
             if (room != null) {
                 if (room.state() == RoomState.APPLYING) return;
 
-                if (room.getCurrentSize() >= MIN_TEAM_PLAYERS) {
+                if (room.getCurrentSize() == MIN_TEAM_PLAYERS) {
                     TeamManager.register(room);
                     room.sendBroadcast(MessageBuilder.clubRegisterTeam(result));
                 } else {
@@ -398,6 +398,7 @@ public class ClubRoomMessages extends RoomMessages {
             ChallengeRoom challengeRoom = new ChallengeRoom();
             ChallengeOrganizer.add(challengeRoom, room, requester);
             challengeRoom.addChallengePlayers();
+            challengeRoom.setMaster(room.getMaster());
         }
 
         session.send(MessageBuilder.clubChallengeResponse(requesterId, accepted, result));
@@ -406,9 +407,9 @@ public class ClubRoomMessages extends RoomMessages {
     public static void cancelChallenge(Session session) {
         ClubRoom room = (ClubRoom) RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null && room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
+        if (room != null && room.getMaster() == session.getPlayerId()) {
             Challenge challenge = ChallengeOrganizer.getChallengeById(room.getChallengeId());
-            if (challenge != null) {
+            if (challenge != null && challenge.getRoom().isInLobbyScreen()) {
                 challenge.cancel();
             }
         }

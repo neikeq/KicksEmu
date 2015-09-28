@@ -41,7 +41,7 @@ public class Room {
     private short matchMission = 0;
 
     private long timeStart = 0;
-    private long timeLastJoin = 0;
+    protected long timeLastJoin = 0;
 
     private String name = "";
     private String password = "";
@@ -49,7 +49,7 @@ public class Room {
     private RoomBall ball = RoomBall.STAR;
     private RoomMap map = RoomMap.A_BACK_STREET;
     private RoomMode roomMode = RoomMode.AI_GOALKEEPER;
-    private RoomSize maxSize = RoomSize.SIZE_4V4;
+    protected RoomSize maxSize = RoomSize.SIZE_4V4;
     private RoomState state = RoomState.WAITING;
     private RoomAccessType accessType = RoomAccessType.FREE;
 
@@ -334,11 +334,13 @@ public class Room {
 
     public void cancelCountdown() {
         synchronized (locker) {
-            if (countdownTimeoutFuture.isCancellable()) {
-                countdownTimeoutFuture.cancel(true);
+            if (state() == RoomState.COUNT_DOWN) {
+                if (countdownTimeoutFuture.isCancellable()) {
+                    countdownTimeoutFuture.cancel(true);
+                }
+                setState(RoomState.WAITING);
+                sendBroadcast(MessageBuilder.cancelCountDown());
             }
-            setState(RoomState.WAITING);
-            sendBroadcast(MessageBuilder.cancelCountDown());
         }
     }
 
@@ -382,7 +384,6 @@ public class Room {
     void onPlayerJoined(Session session) {
         // Send the room info to the client
         session.send(roomInfoMessage());
-
         // Send to the client information about players inside the room
         sendRoomPlayersInfo(session);
 
@@ -421,7 +422,7 @@ public class Room {
 
                 setState(RoomState.WAITING);
                 sendBroadcast(MessageBuilder.unknown1());
-                sendBroadcast(MessageBuilder.unknown2());
+                sendBroadcast(MessageBuilder.toRoomLobby());
                 break;
             default:
         }
@@ -499,7 +500,8 @@ public class Room {
 
     public void sendBroadcast(ServerMessage msg) {
         try {
-            getPlayers().values().forEach(currentSession -> currentSession.sendAndFlush(msg));
+            getPlayers().values().forEach(currentSession ->
+                    currentSession.sendAndFlush(msg.retain()));
         } finally {
             msg.release();
         }
@@ -508,7 +510,7 @@ public class Room {
     public void sendBroadcast(ServerMessage msg, Predicate<? super Session> filter) {
         try {
             getPlayers().values().stream().filter(filter).forEach(currentSession ->
-                currentSession.sendAndFlush(msg));
+                currentSession.sendAndFlush(msg.retain()));
         } finally {
             msg.release();
         }
@@ -521,7 +523,7 @@ public class Room {
 
                 teamPlayers.stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(broadcaster))
-                        .forEach(playerId -> getPlayers().get(playerId).sendAndFlush(msg));
+                        .forEach(playerId -> getPlayers().get(playerId).sendAndFlush(msg.retain()));
             }
         } finally {
             msg.release();

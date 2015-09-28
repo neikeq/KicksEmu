@@ -148,7 +148,7 @@ public class ChatManager {
                     ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
 
                     try {
-                        clubSessions.forEach(s -> s.sendAndFlush(msg));
+                        clubSessions.forEach(s -> s.sendAndFlush(msg.retain()));
                     } finally {
                         msg.release();
                     }

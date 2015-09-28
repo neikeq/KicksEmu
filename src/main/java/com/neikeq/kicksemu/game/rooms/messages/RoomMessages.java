@@ -160,8 +160,7 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(playerId) &&
-                (room.state() == RoomState.WAITING || room.state() == RoomState.COUNT_DOWN)) {
+        if (room != null && room.isPlayerIn(playerId) && room.isInLobbyScreen()) {
             session.leaveRoom(RoomLeaveReason.LEAVED);
         }
     }
@@ -431,7 +430,7 @@ public class RoomMessages {
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
 
-            if (room.state() == RoomState.COUNT_DOWN) {
+            if (room != null && room.getMaster() == session.getPlayerId()) {
                 room.cancelCountdown();
             }
         }
@@ -527,9 +526,10 @@ public class RoomMessages {
 
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
-
-            room.setState(RoomState.WAITING);
-            room.sendBroadcast(MessageBuilder.unknown1());
+            if (room != null && room.getMaster() == session.getPlayerId()) {
+                room.setState(RoomState.WAITING);
+                room.sendBroadcast(MessageBuilder.unknown1());
+            }
         }
     }
 
@@ -538,23 +538,27 @@ public class RoomMessages {
 
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
+            if (room != null && room.getMaster() == session.getPlayerId()) {
+                room.sendBroadcast(MessageBuilder.toRoomLobby());
 
-            room.sendBroadcast(MessageBuilder.unknown2());
-
-            if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
-                room.sendBroadcast(MessageBuilder.nextTip("", (short) 0));
+                if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
+                    room.sendBroadcast(MessageBuilder.nextTip("", (short) 0));
+                }
             }
         }
     }
 
     public static void cancelLoading(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
+        int playerId = session.getPlayerId();
 
-        Room room = RoomManager.getRoomById(roomId);
-
-        if (room != null && room.isLoading() && room.getHost() == session.getPlayerId()) {
-            room.setState(RoomState.WAITING);
-            room.sendBroadcast(MessageBuilder.cancelLoading());
+        if (session.getRoomId() == roomId) {
+            Room room = RoomManager.getRoomById(roomId);
+            if (room != null && room.isLoading() &&
+                    (room.getHost() == playerId || room.getMaster() == playerId)) {
+                room.setState(RoomState.WAITING);
+                room.sendBroadcast(MessageBuilder.cancelLoading());
+            }
         }
     }
 }

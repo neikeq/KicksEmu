@@ -89,6 +89,11 @@ public class ServerMessage {
         return this;
     }
 
+    public ServerMessage retain() {
+        body.retain();
+        return this;
+    }
+
     public ServerMessage release() {
         body.release();
         return this;

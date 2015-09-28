@@ -10,6 +10,7 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -45,20 +46,6 @@ public class ChallengeRoom extends Room implements Observer {
     }
 
     @Override
-    void sendRoomPlayersInfo(Session session) {
-        List<Integer> team = getPlayerTeam(session.getPlayerId()) == RoomTeam.RED ?
-                getBlueTeam() : getRedTeam();
-        try (Connection con = MySqlManager.getConnection()) {
-            team.forEach(player ->
-                    session.send(roomPlayerInfoMessage(getPlayers().get(player), con)));
-            session.flush();
-        } catch (SQLException e) {
-            Output.println("Exception when sending room players info to a player: " +
-                    e.getMessage(), Level.DEBUG);
-        }
-    }
-
-    @Override
     public void removePlayer(Session session, RoomLeaveReason reason) {
         synchronized (locker) {
             onPlayerLeaved(session, reason);
@@ -68,6 +55,18 @@ public class ChallengeRoom extends Room implements Observer {
     @Override
     public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {
         return currentTeam;
+    }
+
+    @Override
+    void onPlayerJoined(Session session) {
+        session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), (short) 0));
+        // Send to the client information about players inside the room
+        sendRoomPlayersInfo(session);
+        // Send the room info to the client
+        session.send(roomInfoMessage());
+        session.flush();
+
+        timeLastJoin = DateUtils.currentTimeMillis();
     }
 
     @Override
@@ -84,6 +83,19 @@ public class ChallengeRoom extends Room implements Observer {
     @Override
     protected ServerMessage roomInfoMessage() {
         return MessageBuilder.challengeRoomInfo(this);
+    }
+
+    @Override
+    void sendRoomPlayersInfo(Session session) {
+        List<Integer> team = getPlayerTeam(session.getPlayerId()) == RoomTeam.RED ?
+                getBlueTeam() : getRedTeam();
+        try (Connection con = MySqlManager.getConnection()) {
+            team.forEach(player ->
+                    session.send(roomPlayerInfoMessage(getPlayers().get(player), con)));
+        } catch (SQLException e) {
+            Output.println("Exception when sending challenge room players info to a player: " +
+                    e.getMessage(), Level.DEBUG);
+        }
     }
 
     @Override
@@ -106,20 +118,6 @@ public class ChallengeRoom extends Room implements Observer {
 
     public ChallengeRoom() {
         super();
-    }
-
-    @Override
-    public void setMaster(int master) {
-        if (getMaster() == 0) {
-            super.setMaster(master);
-        }
-    }
-
-    @Override
-    public void setHost(int host) {
-        if (getHost() == 0) {
-            super.setHost(host);
-        }
     }
 
     public void setChallenge(Challenge challenge) {

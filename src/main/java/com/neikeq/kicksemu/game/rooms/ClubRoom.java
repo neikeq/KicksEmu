@@ -6,6 +6,7 @@ import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
+import com.neikeq.kicksemu.game.rooms.enums.RoomSize;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -23,6 +24,7 @@ public class ClubRoom extends Room {
     private byte wins = 0;
     private int challengeTarget = 0;
     private int challengeId = -1;
+    protected RoomSize maxSize = RoomSize.SIZE_4V4;
 
     @Override
     public void removeRoom() {
@@ -233,5 +235,9 @@ public class ClubRoom extends Room {
 
     public void setChallengeId(int challengeId) {
         this.challengeId = challengeId;
+    }
+
+    public void setMaxSize(RoomSize maxSize) {
+        this.maxSize = RoomSize.SIZE_4V4;
     }
 }

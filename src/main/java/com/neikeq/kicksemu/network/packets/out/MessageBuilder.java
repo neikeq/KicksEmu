@@ -718,7 +718,11 @@ public class MessageBuilder {
             msg.writeZeros(1);
             msg.writeBool(clubId > 0); // is club member
             msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
-            msg.writeZeros(3);
+            msg.writeBool(false);
+            msg.writeBool(true);
+            msg.writeBool(false);
+
+            // Stars - Diamonds
             msg.writeByte((byte) 0);
             msg.writeByte((byte) 0);
             msg.writeByte((byte) 0);
@@ -998,7 +1002,7 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.ROOM_UNKNOWN1).writeShort((short) 0);
     }
 
-    public static ServerMessage unknown2() {
+    public static ServerMessage toRoomLobby() {
         return new ServerMessage(MessageId.TO_ROOM_LOBBY).writeShort((short) 0);
     }
 
@@ -1213,19 +1217,20 @@ public class MessageBuilder {
             msg.writeBool(!team.isWaiting());
             msg.writeShort((short) team.getId());
             msg.writeString(team.getName(), 15);
-            msg.writeByte((byte) 0); // Rank
+            msg.writeByte((byte) 0); // Level gap
             msg.writeByte(team.getWins());
         }
 
         return msg;
     }
 
-    public static ServerMessage clubChallengeTeam(int targetTeam, boolean toSender, short result) {
+    public static ServerMessage clubChallengeTeam(int targetTeam,
+                                                  boolean isResponseToSender, short result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_CHALLENGE_TEAM);
 
         msg.writeShort(result);
         msg.writeShort((short) targetTeam);
-        msg.writeBool(!toSender, 2);
+        msg.writeBool(!isResponseToSender, 2);
 
         return msg;
     }
