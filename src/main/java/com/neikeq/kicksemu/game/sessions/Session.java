@@ -52,6 +52,7 @@ public class Session {
      */
     public synchronized void send(ServerMessage msg) {
         packetsQueue.add(msg.getByteBuf(playerId).copy());
+        msg.release();
     }
 
     /**
@@ -78,6 +79,8 @@ public class Session {
 
         if (getChannel().isOpen() && getChannel().isWritable()) {
             getChannel().writeAndFlush(mergedPackets);
+        } else {
+            mergedPackets.release();
         }
     }
 
