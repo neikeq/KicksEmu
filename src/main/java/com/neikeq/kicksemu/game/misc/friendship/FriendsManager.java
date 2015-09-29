@@ -36,7 +36,7 @@ public class FriendsManager {
                     if (targetFriendList.size() < FRIENDS_LIST_LIMIT) {
                         // Send the friend request to the target
                         ServerMessage request = MessageBuilder.friendRequest(session, result);
-                        ServerManager.getSessionById(targetId).sendAndFlush(request);
+                        ServerManager.getSession(targetId).sendAndFlush(request);
                     } else {
                         result = -5; // Target friend list is full
                     }
@@ -91,7 +91,7 @@ public class FriendsManager {
             }
 
             ServerMessage friendResponse = MessageBuilder.friendResponse(result);
-            ServerManager.getSessionById(targetId).sendAndFlush(friendResponse);
+            ServerManager.getSession(targetId).sendAndFlush(friendResponse);
         } else {
             // Player not found. May occur if the player disconnected after sending the request.
             result = -2;

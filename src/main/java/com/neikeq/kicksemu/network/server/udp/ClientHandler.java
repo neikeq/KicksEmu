@@ -19,7 +19,7 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
         int playerId = message.readInt(2);
 
-        Session session = ServerManager.getSessionById(playerId);
+        Session session = ServerManager.getSession(playerId);
 
         if (session.getRemoteAddress().getAddress().equals(packet.sender().getAddress())) {
             session.setUdpPort(packet.sender().getPort());

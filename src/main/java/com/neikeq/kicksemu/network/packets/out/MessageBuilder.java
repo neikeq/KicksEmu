@@ -410,10 +410,10 @@ public class MessageBuilder {
                     location = server;
                     break;
                 case 2:
-                    location = (short) ServerManager.getSessionById(friendId).getRoomId();
+                    location = (short) ServerManager.getSession(friendId).getRoomId();
                     break;
                 case 3:
-                    location = (short) ServerManager.getSessionById(friendId).getRoomId();
+                    location = (short) ServerManager.getSession(friendId).getRoomId();
                     break;
                 default:
             }
@@ -505,10 +505,10 @@ public class MessageBuilder {
                     location = server;
                     break;
                 case 2:
-                    location = (short) ServerManager.getSessionById(memberId).getRoomId();
+                    location = (short) ServerManager.getSession(memberId).getRoomId();
                     break;
                 case 3:
-                    location = (short) ServerManager.getSessionById(memberId).getRoomId();
+                    location = (short) ServerManager.getSession(memberId).getRoomId();
                     break;
                 default:
             }
@@ -910,7 +910,7 @@ public class MessageBuilder {
     public static ServerMessage hostInfo(Room room) {
         ServerMessage msg = new ServerMessage(MessageId.HOST_INFO);
 
-        Session hostSession = room.getPlayers().get(room.getHost());
+        Session hostSession = room.getPlayer(room.getHost());
 
         msg.writeShort((short) 0);
         msg.writeInt(room.getHost());

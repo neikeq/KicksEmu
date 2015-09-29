@@ -97,12 +97,12 @@ public class ChatCommands {
             if (room != null) {
                 switch (args[1].toLowerCase()) {
                     case "master":
-                        Session master = room.getPlayers().get(room.getMaster());
+                        Session master = room.getPlayer(room.getMaster());
                         ChatUtils.sendServerMessage(session,
                                 "Master: " + master.getCache().getName());
                         break;
                     case "host":
-                        Session host = room.getPlayers().get(room.getHost());
+                        Session host = room.getPlayer(room.getHost());
                         ChatUtils.sendServerMessage(session,
                                 "Host: " + host.getCache().getName());
                         break;
@@ -125,7 +125,7 @@ public class ChatCommands {
         if (room != null && room.isInLobbyScreen()) {
             if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
-                Session target = room.getPlayers().get(targetId);
+                Session target = room.getPlayer(targetId);
 
                 if (target != null && !target.leaveRoom(RoomLeaveReason.KICKED)) {
                     ChatUtils.sendServerMessage(session, "Player not found.");
@@ -143,7 +143,7 @@ public class ChatCommands {
             int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
             if (ServerManager.isPlayerConnected(targetId)) {
-                Session target = ServerManager.getSessionById(targetId);
+                Session target = ServerManager.getSession(targetId);
                 ChatUtils.sendServerMessage(target, "You have been punished by a moderator.");
                 target.close();
 
@@ -191,7 +191,7 @@ public class ChatCommands {
                     room.getObservers().add(playerId);
                 }
 
-                room.sendBroadcast(MessageBuilder.setObserver(playerId, observer));
+                room.broadcast(MessageBuilder.setObserver(playerId, observer));
             }
 
             ChatUtils.sendServerMessage(session,

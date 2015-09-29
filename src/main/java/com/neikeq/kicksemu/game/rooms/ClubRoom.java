@@ -147,7 +147,7 @@ public class ClubRoom extends Room {
             if (!isChallenging()) {
                 setChallengeTarget(from);
                 ServerMessage request = MessageBuilder.clubChallengeTeam(from, false, (short) 0);
-                getPlayers().get(getMaster()).sendAndFlush(request);
+                getPlayer(getMaster()).sendAndFlush(request);
 
                 return 0;
             }
@@ -166,10 +166,7 @@ public class ClubRoom extends Room {
                 short result = accepted ?
                         (short) 0 : // Challenge request accepted
                         -4; // The opponent club refused the request
-                ServerMessage response = MessageBuilder.clubChallengeResponse(fromId,
-                        accepted, result);
-                //getPlayers().get(getMaster()).sendAndFlush(response);
-                sendBroadcast(response);
+                broadcast(MessageBuilder.clubChallengeResponse(fromId, accepted, result));
 
                 return 0;
             }
@@ -181,7 +178,7 @@ public class ClubRoom extends Room {
     public void onQuitChallenge() {
         setChallengeId(-1);
         setState(RoomState.WAITING);
-        sendBroadcast(MessageBuilder.clubCancelChallenge());
+        broadcast(MessageBuilder.clubCancelChallenge());
     }
 
     @Override

@@ -77,7 +77,7 @@ public class ServerManager {
         }
     }
 
-    public static Session getSessionById(int id) {
+    public static Session getSession(int id) {
         synchronized (locker) {
             return getPlayers().get(id);
         }

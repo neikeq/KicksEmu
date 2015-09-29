@@ -91,7 +91,7 @@ public class ChallengeRoom extends Room implements Observer {
                 getBlueTeam() : getRedTeam();
         try (Connection con = MySqlManager.getConnection()) {
             team.forEach(player ->
-                    session.send(roomPlayerInfoMessage(getPlayers().get(player), con)));
+                    session.send(roomPlayerInfoMessage(getPlayer(player), con)));
         } catch (SQLException e) {
             Output.println("Exception when sending challenge room players info to a player: " +
                     e.getMessage(), Level.DEBUG);

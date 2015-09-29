@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
@@ -59,6 +60,7 @@ public class Room {
     private final Map<Integer, Session> players = new LinkedHashMap<>();
 
     private final List<Integer> confirmedPlayers = new ArrayList<>();
+    private final List<Integer> disconnectedPlayers = new ArrayList<>();
     private final List<Integer> redTeam = new ArrayList<>();
     private final List<Integer> blueTeam = new ArrayList<>();
     private final List<Integer> observers = new ArrayList<>();
@@ -227,14 +229,14 @@ public class Room {
     void addPlayerToRedTeam(int playerId) {
         getRedTeam().add(playerId);
 
-        short position = getPlayers().get(playerId).getCache().getPosition();
+        short position = getPlayer(playerId).getCache().getPosition();
         getRedTeamPositions().add(position);
     }
 
     void addPlayerToBlueTeam(int playerId) {
         getBlueTeam().add(playerId);
 
-        short position = getPlayers().get(playerId).getCache().getPosition();
+        short position = getPlayer(playerId).getCache().getPosition();
         getBlueTeamPositions().add(position);
     }
 
@@ -292,9 +294,9 @@ public class Room {
             setState(RoomState.COUNT_DOWN);
             getConfirmedPlayers().clear();
 
-            sendBroadcast(MessageBuilder.startCountDown((byte) -1));
+            broadcast(MessageBuilder.startCountDown((byte) -1));
 
-            countdownTimeoutFuture = getPlayers().get(host).getChannel().eventLoop()
+            countdownTimeoutFuture = getPlayer(host).getChannel().eventLoop()
                     .schedule(() -> {
                         synchronized (locker) {
                             if (this.state() == RoomState.COUNT_DOWN) {
@@ -304,11 +306,11 @@ public class Room {
                                 if (!failedPlayers.isEmpty()) {
                                     List<String> info = failedPlayers.stream()
                                             .map(player ->
-                                                    getPlayers().get(player).getCache().getName())
+                                                    getPlayer(player).getCache().getName())
                                             .collect(Collectors.toList());
 
-                                    sendBroadcast(MessageBuilder.hostInfo(this));
-                                    sendBroadcast(MessageBuilder.chatMessage(
+                                    broadcast(MessageBuilder.hostInfo(this));
+                                    broadcast(MessageBuilder.chatMessage(
                                             MessageType.SERVER_MESSAGE,
                                             "Failed to connect: " + String.join(", ", info)));
                                 }
@@ -327,7 +329,7 @@ public class Room {
                     startLoading();
                 }
 
-                sendBroadcast(MessageBuilder.countDown(count));
+                broadcast(MessageBuilder.countDown(count));
             }
         }
     }
@@ -339,7 +341,7 @@ public class Room {
                     countdownTimeoutFuture.cancel(true);
                 }
                 setState(RoomState.WAITING);
-                sendBroadcast(MessageBuilder.cancelCountDown());
+                broadcast(MessageBuilder.cancelCountDown());
             }
         }
     }
@@ -349,7 +351,7 @@ public class Room {
             setState(RoomState.LOADING);
             updateTrainingFactor();
 
-            loadingTimeoutFuture = getPlayers().get(host).getChannel().eventLoop()
+            loadingTimeoutFuture = getPlayer(host).getChannel().eventLoop()
                     .schedule(() -> {
                         synchronized (locker) {
                             cancelLoading();
@@ -364,7 +366,7 @@ public class Room {
                 getLoadingTimeoutFuture().cancel(true);
             }
             setState(RoomState.WAITING);
-            sendBroadcast(MessageBuilder.cancelLoading());
+            broadcast(MessageBuilder.cancelLoading());
         }
     }
 
@@ -398,21 +400,28 @@ public class Room {
     void onPlayerLeaved(Session session, RoomLeaveReason reason) {
         int playerId = session.getPlayerId();
 
-        // Notify players in room about player leaving
-        sendBroadcast(leaveRoomMessage(playerId, reason));
+        if (isInLobbyScreen() || Configuration.getBoolean("game.match.result.force")) {
+            // Notify players in room about player leaving
+            broadcast(leaveRoomMessage(playerId, reason));
 
-        if (isLoading()) {
-            cancelLoading();
-        } else if (state() == RoomState.COUNT_DOWN) {
-            cancelCountdown();
+            if (isLoading()) {
+                cancelLoading();
+            } else if (state() == RoomState.COUNT_DOWN) {
+                cancelCountdown();
+            }
+        } else {
+            disconnectedPlayers.add(playerId);
+
+            String message = session.getCache().getName() + " has been disconnected.";
+            broadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
         }
     }
 
     private void onHostLeaved(int playerId) {
         switch (state()) {
             case PLAYING:
-                sendBroadcast(MessageBuilder.hostInfo(this));
-                sendBroadcast(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED));
+                broadcast(MessageBuilder.hostInfo(this));
+                broadcast(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED));
                 break;
             case LOADING:
                 cancelLoading();
@@ -421,8 +430,8 @@ public class Room {
                 ThreadUtils.sleep(3000);
 
                 setState(RoomState.WAITING);
-                sendBroadcast(MessageBuilder.unknown1());
-                sendBroadcast(MessageBuilder.toRoomLobby());
+                broadcast(MessageBuilder.unknown1());
+                broadcast(MessageBuilder.toRoomLobby());
                 break;
             default:
         }
@@ -430,7 +439,7 @@ public class Room {
 
     void notifyAboutNewPlayer(Session session) {
         try (Connection con = MySqlManager.getConnection()) {
-            sendBroadcast(roomPlayerInfoMessage(session, con),
+            broadcast(roomPlayerInfoMessage(session, con),
                     s -> s.getPlayerId() != session.getPlayerId());
         } catch (SQLException e) {
             Output.println("Exception when notifying about new room player: " +
@@ -482,7 +491,7 @@ public class Room {
                 if (countdownTimeoutFuture.isCancellable()) {
                     countdownTimeoutFuture.cancel(true);
                 }
-                sendBroadcast(MessageBuilder.hostInfo(this));
+                broadcast(MessageBuilder.hostInfo(this));
             }
         }
     }
@@ -498,7 +507,7 @@ public class Room {
         }
     }
 
-    public void sendBroadcast(ServerMessage msg) {
+    public void broadcast(ServerMessage msg) {
         try {
             getPlayers().values().forEach(currentSession ->
                     currentSession.sendAndFlush(msg.retain()));
@@ -507,7 +516,7 @@ public class Room {
         }
     }
 
-    public void sendBroadcast(ServerMessage msg, Predicate<? super Session> filter) {
+    public void broadcast(ServerMessage msg, Predicate<? super Session> filter) {
         try {
             getPlayers().values().stream().filter(filter).forEach(currentSession ->
                 currentSession.sendAndFlush(msg.retain()));
@@ -516,14 +525,14 @@ public class Room {
         }
     }
 
-    public void sendTeamBroadcast(ServerMessage msg, RoomTeam team, int broadcaster) {
+    public void broadcastToTeam(ServerMessage msg, RoomTeam team, int broadcaster) {
         try {
             if (team != null) {
                 List<Integer> teamPlayers = team == RoomTeam.RED ? getRedTeam() : getBlueTeam();
 
                 teamPlayers.stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(broadcaster))
-                        .forEach(playerId -> getPlayers().get(playerId).sendAndFlush(msg.retain()));
+                        .forEach(playerId -> getPlayer(playerId).sendAndFlush(msg.retain()));
             }
         } finally {
             msg.release();
@@ -693,7 +702,7 @@ public class Room {
 
     public void setMaster(int master) {
         this.master = master;
-        sendBroadcast(roomMasterMessage(master));
+        broadcast(roomMasterMessage(master));
     }
 
     public String getName() {
@@ -706,6 +715,10 @@ public class Room {
 
     public Map<Integer, Session> getPlayers() {
         return players;
+    }
+
+    public Session getPlayer(int playerId) {
+        return getPlayers().get(playerId);
     }
 
     public List<Short> getRedTeamPositions() {
@@ -767,6 +780,13 @@ public class Room {
     public void setState(RoomState state) {
         synchronized (locker) {
             this.state = state;
+
+            if (state == RoomState.RESULT) {
+                // Notify players to remove disconnected player definitely
+                disconnectedPlayers.forEach(playerId -> broadcast(
+                        MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
+                disconnectedPlayers.clear();
+            }
         }
     }
 

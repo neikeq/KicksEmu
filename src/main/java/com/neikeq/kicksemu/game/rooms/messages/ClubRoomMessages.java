@@ -156,7 +156,7 @@ public class ClubRoomMessages extends RoomMessages {
             if (room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
                 // If the player is in the room
                 if (room.isPlayerIn(playerToKick)) {
-                    room.getPlayers().get(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
+                    room.getPlayer(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
                 } else {
                     result = -4; // Player not found
                 }
@@ -208,7 +208,7 @@ public class ClubRoomMessages extends RoomMessages {
             room.setName(name);
             room.setPassword(password);
 
-            room.sendBroadcast(MessageBuilder.clubRoomSettings(room, result));
+            room.broadcast(MessageBuilder.clubRoomSettings(room, result));
         }
 
         if (result != 0) {
@@ -228,7 +228,7 @@ public class ClubRoomMessages extends RoomMessages {
             if (room.isNotFull()) {
                 // If the player to invite is in the main lobby
                 if (LobbyManager.getMainLobby().getPlayers().contains(playerToInvite)) {
-                    Session sessionToInvite = ServerManager.getPlayers().get(playerToInvite);
+                    Session sessionToInvite = ServerManager.getSession(playerToInvite);
 
                     if (UserInfo.getSettings(sessionToInvite.getUserId()).getInvites()) {
                         int targetClubId = MemberInfo.getClubId(playerToInvite);
@@ -269,7 +269,7 @@ public class ClubRoomMessages extends RoomMessages {
 
                 if (room.getCurrentSize() == MIN_TEAM_PLAYERS) {
                     TeamManager.register(room);
-                    room.sendBroadcast(MessageBuilder.clubRegisterTeam(result));
+                    room.broadcast(MessageBuilder.clubRegisterTeam(result));
                 } else {
                     result = -3; // Not enough players
                 }
@@ -293,7 +293,7 @@ public class ClubRoomMessages extends RoomMessages {
 
             if (room != null) {
                 TeamManager.unregister(room.getId());
-                room.sendBroadcast(MessageBuilder.clubUnregisterTeam(result));
+                room.broadcast(MessageBuilder.clubUnregisterTeam(result));
             } else {
                 result = -2; // The club doesn't exist
             }
@@ -350,7 +350,13 @@ public class ClubRoomMessages extends RoomMessages {
             }
         }
 
-        session.send(MessageBuilder.clubChallengeTeam(targetId, true, result));
+        ServerMessage response = MessageBuilder.clubChallengeTeam(targetId, true, result);
+
+        if (result == 0) {
+            room.broadcast(response);
+        } else {
+            session.send(response);
+        }
     }
 
     public static void challengeResponse(Session session, ClientMessage msg) {
@@ -358,12 +364,14 @@ public class ClubRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         boolean accepted = msg.readBoolean();
 
+        // Ignore the message if the room or the requester room is invalid
+        if (roomId == requesterId || roomId != session.getRoomId()) return;
+
         ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
         ClubRoom requester = null;
 
-        // Ignore the message if at least one of the following checks fails
-        if (room == null || room.getMaster() != session.getPlayerId() ||
-                roomId == requesterId || roomId != session.getRoomId()) return;
+        // Ignore the message if the room does not exist or the player is not the master
+        if (room == null || room.getMaster() != session.getPlayerId()) return;
 
         short result;
 
@@ -401,7 +409,14 @@ public class ClubRoomMessages extends RoomMessages {
             challengeRoom.setMaster(room.getMaster());
         }
 
-        session.send(MessageBuilder.clubChallengeResponse(requesterId, accepted, result));
+
+        ServerMessage response = MessageBuilder.clubChallengeResponse(requesterId, accepted, result);
+
+        if (result == 0) {
+            room.broadcast(response);
+        } else {
+            session.send(response);
+        }
     }
 
     public static void cancelChallenge(Session session) {

@@ -44,7 +44,7 @@ public class ChallengeRoomMessages {
                 room.setMap(map);
 
                 // Notify players in room that map changed
-                room.sendBroadcast(MessageBuilder.roomMap(mapId));
+                room.broadcast(MessageBuilder.roomMap(mapId));
             }
         }
     }
@@ -62,7 +62,7 @@ public class ChallengeRoomMessages {
                 room.setBall(ball);
 
                 // Notify players in room that ball changed
-                room.sendBroadcast(MessageBuilder.roomBall(ballId));
+                room.broadcast(MessageBuilder.roomBall(ballId));
             }
         }
     }
@@ -84,7 +84,7 @@ public class ChallengeRoomMessages {
 
                     if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
                         room.getConfirmedPlayers().clear();
-                        room.sendBroadcast(MessageBuilder.startCountDown((byte) 1));
+                        room.broadcast(MessageBuilder.startCountDown((byte) 1));
                     }
                     break;
                 case -1:
@@ -138,7 +138,7 @@ public class ChallengeRoomMessages {
         ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
 
         if (room != null && room.isLoading() && room.isPlayerIn(playerId)) {
-            room.sendBroadcast(MessageBuilder.matchLoading(playerId, roomId, status));
+            room.broadcast(MessageBuilder.matchLoading(playerId, roomId, status));
         }
     }
 
@@ -160,7 +160,7 @@ public class ChallengeRoomMessages {
             if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
                 room.setState(RoomState.PLAYING);
                 room.setTimeStart(DateUtils.currentTimeMillis());
-                room.sendBroadcast(MessageBuilder.playerReady((short) 0));
+                room.broadcast(MessageBuilder.playerReady((short) 0));
 
                 if (room.getLoadingTimeoutFuture().isCancellable()) {
                     room.getLoadingTimeoutFuture().cancel(true);
@@ -214,7 +214,7 @@ public class ChallengeRoomMessages {
 
         if (room != null && room.getMaster() == session.getPlayerId()) {
             room.setState(RoomState.WAITING);
-            room.sendBroadcast(MessageBuilder.unknown1());
+            room.broadcast(MessageBuilder.unknown1());
         }
     }
 
@@ -223,10 +223,10 @@ public class ChallengeRoomMessages {
         ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
 
         if (room != null && room.getMaster() == session.getPlayerId()) {
-            room.sendBroadcast(MessageBuilder.toRoomLobby());
+            room.broadcast(MessageBuilder.toRoomLobby());
 
             if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
-                room.sendBroadcast(MessageBuilder.nextTip("", (short) 0));
+                room.broadcast(MessageBuilder.nextTip("", (short) 0));
             }
         }
     }
@@ -240,7 +240,7 @@ public class ChallengeRoomMessages {
         if (room != null && room.isLoading() &&
                 (room.getHost() == playerId || room.getMaster() == playerId)) {
             room.setState(RoomState.WAITING);
-            room.sendBroadcast(MessageBuilder.cancelLoading());
+            room.broadcast(MessageBuilder.cancelLoading());
         }
     }
 }

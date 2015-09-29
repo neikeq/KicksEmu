@@ -38,7 +38,7 @@ public class CharacterManager {
     public static void playerDetails(Session session, ClientMessage msg) {
         int targetId = msg.readInt();
 
-        Session targetSession = ServerManager.getSessionById(targetId);
+        Session targetSession = ServerManager.getSession(targetId);
 
         if (targetSession != null) {
             session.send(MessageBuilder.playerDetails(targetSession, (short) 0));
@@ -234,7 +234,7 @@ public class CharacterManager {
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
                 if (room != null) {
-                    room.sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, con));
+                    room.broadcast(MessageBuilder.updateRoomPlayer(playerId, con));
                 }
             }
         } catch (SQLException e) {

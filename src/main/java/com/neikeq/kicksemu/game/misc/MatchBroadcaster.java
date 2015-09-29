@@ -20,7 +20,7 @@ public class MatchBroadcaster {
 
         // If the room exists
         if (room != null) {
-            Session targetSession = room.getPlayers().get(targetId);
+            Session targetSession = room.getPlayer(targetId);
 
             // If the player is in the room
             if (targetSession != null) {

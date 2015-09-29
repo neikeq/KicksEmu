@@ -227,8 +227,8 @@ class PlayerRewards {
 
     private void sendRequiredMessages() {
         if (baseReward > 0) {
-            room().sendBroadcast(MessageBuilder.updateRoomPlayer(playerId, connection()));
-            room().sendBroadcast(MessageBuilder.playerBonusStats(session, connection()));
+            room().broadcast(MessageBuilder.updateRoomPlayer(playerId, connection()));
+            room().broadcast(MessageBuilder.playerBonusStats(session, connection()));
 
             if (levelsEarned > 0) {
                 session.send(MessageBuilder.playerStats(playerId, connection()));
@@ -293,7 +293,7 @@ class PlayerRewards {
         this.resultHandler = resultHandler;
         this.playerResult = playerResult;
         this.playerId = playerResult.getPlayerId();
-        this.session = room().getPlayers().get(playerId);
+        this.session = room().getPlayer(playerId);
         this.playerTeam = room().getPlayerTeam(playerId);
         this.currentExperience = PlayerInfo.getExperience(playerId, connection());
     }

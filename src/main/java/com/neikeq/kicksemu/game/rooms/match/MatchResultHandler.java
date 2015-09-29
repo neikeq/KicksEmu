@@ -74,7 +74,7 @@ public class MatchResultHandler implements AutoCloseable {
         getResult().getPlayers().forEach(playerResult -> {
             ServerMessage resultMessage = MessageBuilder.matchResult(getResult(),
                     playerResult, getRoom(), getConnection());
-            getRoom().getPlayers().get(playerResult.getPlayerId()).sendAndFlush(resultMessage);
+            getRoom().getPlayer(playerResult.getPlayerId()).sendAndFlush(resultMessage);
         });
     }
 
@@ -85,14 +85,14 @@ public class MatchResultHandler implements AutoCloseable {
                     new PlayerResult(), getRoom(), getConnection());
 
             getRoom().getObservers().stream().forEach(o ->
-                    getRoom().getPlayers().get(o).sendAndFlush(observerMessage));
+                    getRoom().getPlayer(o).sendAndFlush(observerMessage));
         }
     }
 
     private void doAfterResultUpdates() {
         getResult().getPlayers().forEach(playerResult -> {
             int playerId = playerResult.getPlayerId();
-            Session session = room.getPlayers().get(playerId);
+            Session session = room.getPlayer(playerId);
 
             // If match was not in training mode
             if (getRoom().trainingFactorAllowsRewards()) {
@@ -117,7 +117,7 @@ public class MatchResultHandler implements AutoCloseable {
                             });
 
                     if (mustNotifyExpiration.get()) {
-                        CharacterManager.sendItemList(getRoom().getPlayers().get(playerId));
+                        CharacterManager.sendItemList(getRoom().getPlayer(playerId));
                     }
                 }
             }

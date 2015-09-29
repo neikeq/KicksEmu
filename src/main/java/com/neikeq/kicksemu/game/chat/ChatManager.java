@@ -64,7 +64,7 @@ public class ChatManager {
                 lobby.getPlayers().stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(playerId))
                         .forEach(targetId -> {
-                            Session targetSession = ServerManager.getSessionById(targetId);
+                            Session targetSession = ServerManager.getSession(targetId);
 
                             if (targetSession != null) {
                                 targetSession.sendAndFlush(MessageBuilder.chatMessage(playerId,
@@ -87,7 +87,7 @@ public class ChatManager {
                 if (room != null && room.isPlayerIn(playerId) &&
                         room.getRoomLobby().isTeamChatEnabled()) {
                     ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
-                    room.sendTeamBroadcast(msg, room.getPlayerTeam(playerId), playerId);
+                    room.broadcastToTeam(msg, room.getPlayerTeam(playerId), playerId);
                 }
             }
         }
@@ -110,7 +110,7 @@ public class ChatManager {
 
             if (type == MessageType.WHISPER_TO) {
                 int targetId = CharacterUtils.getCharacterIdByName(target);
-                Session targetSession = ServerManager.getSessionById(targetId);
+                Session targetSession = ServerManager.getSession(targetId);
 
                 // If target player was found
                 if (targetSession != null) {
