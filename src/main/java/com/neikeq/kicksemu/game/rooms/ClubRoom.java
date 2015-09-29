@@ -205,7 +205,9 @@ public class ClubRoom extends Room {
     }
 
     public void setWins(byte wins) {
-        this.wins = wins;
+        if (wins >= 0) {
+            this.wins = wins;
+        }
     }
 
     public boolean isChallenging() {

@@ -30,22 +30,19 @@ class PlayerRewards {
     private final int playerId;
     private final int currentExperience;
     private int baseReward = 0;
-    private int onePercentOfBaseReward = 0;
     private int rewardWithBonus = 0;
     private short levelsEarned = 0;
     private short lastQuest = -1;
 
-    private final MutableInteger experience = new MutableInteger();
-    private final MutableInteger points = new MutableInteger();
+    protected final MutableInteger experience = new MutableInteger();
+    protected final MutableInteger points = new MutableInteger();
+    protected int onePercentOfBaseReward = 0;
 
     public void applyMatchRewards() {
         calculateBaseReward();
 
         if (baseReward > 0) {
-            calculateBonuses();
-            applyRewardRates();
-            applyMissionReward();
-
+            applyRewardExtras();
             limitMaximumExperience();
             updateResultRewards();
             giveReward();
@@ -82,6 +79,12 @@ class PlayerRewards {
         }
 
         setBaseReward((int) (rewardFactor * (float) (votePoints / 10)));
+    }
+
+    protected void applyRewardExtras() {
+        calculateBonuses();
+        applyMissionReward();
+        applyRewardRates();
     }
 
     private void calculateBonuses() {
@@ -271,7 +274,7 @@ class PlayerRewards {
         return resultHandler.getLevelCache().getPlayerLevel(playerId, connection());
     }
 
-    private Room room() {
+    protected Room room() {
         return resultHandler.getRoom();
     }
 

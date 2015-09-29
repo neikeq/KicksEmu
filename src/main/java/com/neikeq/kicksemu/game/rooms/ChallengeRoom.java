@@ -120,6 +120,10 @@ public class ChallengeRoom extends Room implements Observer {
         super();
     }
 
+    public Challenge getChallenge() {
+        return challenge;
+    }
+
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
 

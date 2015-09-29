@@ -14,6 +14,7 @@ import com.neikeq.kicksemu.game.inventory.Training;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
+import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
@@ -446,10 +447,8 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.DELETE_FRIEND).writeShort(result);
     }
 
-    public static ServerMessage clubInfo(int playerId) {
+    public static ServerMessage clubInfo(int clubId) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_INFO);
-
-        int clubId = MemberInfo.getClubId(playerId);
 
         msg.writeShort((short) 0);
         msg.writeString(ClubInfo.getName(clubId), 15);
@@ -1267,6 +1266,31 @@ public class MessageBuilder {
             msg.writeShort((short) room.getMap().toInt());
             msg.writeShort((short) room.getBall().toInt());
             msg.writeByte((byte) room.getMaxSize().toInt());
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage challengeUpdateWins(Challenge challenge) {
+        ServerMessage msg = new ServerMessage(MessageId.CHALLENGE_UPDATE_WINS);
+
+        msg.writeShort((short) 0);
+
+        if (challenge != null) {
+            msg.writeShort(challenge.getRedTeam().getWins());
+            msg.writeShort(challenge.getBlueTeam().getWins());
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage clubUpdateWins(ClubRoom room) {
+        ServerMessage msg = new ServerMessage(MessageId.CLUB_UPDATE_WINS);
+
+        msg.writeShort((short) 0);
+
+        if (room != null) {
+            msg.writeShort(room.getWins());
         }
 
         return msg;

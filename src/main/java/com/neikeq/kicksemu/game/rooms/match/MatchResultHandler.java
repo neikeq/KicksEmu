@@ -47,7 +47,7 @@ public class MatchResultHandler implements AutoCloseable {
         doAfterResultUpdates();
     }
 
-    private void applyRewards() {
+    protected void applyRewards() {
         getResult().getPlayers().forEach(playerResult -> {
             PlayerRewards playerRewards = new PlayerRewards(this, playerResult);
             playerRewards.applyMatchRewards();

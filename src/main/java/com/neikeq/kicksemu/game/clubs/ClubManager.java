@@ -21,7 +21,8 @@ import java.util.function.Predicate;
 public class ClubManager {
 
     public static void clubInfo(Session session) {
-        session.send(MessageBuilder.clubInfo(session.getPlayerId()));
+        int clubId = MemberInfo.getClubId(session.getPlayerId());
+        session.send(MessageBuilder.clubInfo(clubId));
     }
 
     public static void clubMembers(Session session, ClientMessage msg) {

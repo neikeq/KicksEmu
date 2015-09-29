@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.game.chat;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredManager;
+import com.neikeq.kicksemu.game.rooms.messages.ClubRoomMessages;
 import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.LevelInfo;
@@ -320,6 +321,21 @@ public class ChatCommands {
         ChatUtils.sendServerMessage(session, response);
     }
 
+
+
+    private static void onChallenge(Session session, String... args) {
+        if (args.length < 2) return;
+
+        if (ServerManager.getServerType() == ServerType.CLUB) {
+            switch (args[1].toLowerCase()) {
+                case "cancel":
+                    ClubRoomMessages.cancelChallenge(session);
+                    break;
+                default:
+            }
+        }
+    }
+
     public static void initialize() {
         commands.put("host", ChatCommands::onMaster);
         commands.put("progress", ChatCommands::onProgress);
@@ -332,6 +348,7 @@ public class ChatCommands {
         commands.put("goldentime", ChatCommands::onGoldenTime);
         commands.put("block", ChatCommands::onBlock);
         commands.put("unblock", ChatCommands::onUnblock);
+        commands.put("challenge", ChatCommands::onChallenge);
     }
 
     @FunctionalInterface

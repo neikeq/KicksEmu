@@ -351,7 +351,6 @@ public class ClubRoomMessages extends RoomMessages {
         }
 
         ServerMessage response = MessageBuilder.clubChallengeTeam(targetId, true, result);
-
         if (result == 0) {
             room.broadcast(response);
         } else {
@@ -409,9 +408,7 @@ public class ClubRoomMessages extends RoomMessages {
             challengeRoom.setMaster(room.getMaster());
         }
 
-
         ServerMessage response = MessageBuilder.clubChallengeResponse(requesterId, accepted, result);
-
         if (result == 0) {
             room.broadcast(response);
         } else {

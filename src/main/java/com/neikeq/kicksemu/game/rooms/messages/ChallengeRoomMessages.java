@@ -6,6 +6,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
+import com.neikeq.kicksemu.game.rooms.match.ChallengeResultHandler;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.MatchResultHandler;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -199,7 +200,7 @@ public class ChallengeRoomMessages {
 
         MatchResult result = MatchResult.fromMessage(msg, room.getTeamSizes());
 
-        try (MatchResultHandler resultHandler = new MatchResultHandler(room, result)) {
+        try (ChallengeResultHandler resultHandler = new ChallengeResultHandler(room, result)) {
             resultHandler.handleResult();
         } catch (Exception e) {
             Output.println("Match result exception: " + e.getMessage(), Level.DEBUG);
