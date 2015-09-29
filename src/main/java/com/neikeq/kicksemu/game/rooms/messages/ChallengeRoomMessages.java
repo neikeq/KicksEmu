@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms.messages;
 
+import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
@@ -69,6 +70,12 @@ public class ChallengeRoomMessages {
     }
 
     public static void startCountDown(Session session, ClientMessage msg) {
+        if (!GameEvents.isClubTime()) {
+            session.send(MessageBuilder.chatMessage(0, "",
+                    MessageType.SERVER_MESSAGE, "Club time is not active."));
+            return;
+        }
+
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 

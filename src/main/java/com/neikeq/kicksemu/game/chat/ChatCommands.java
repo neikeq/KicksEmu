@@ -264,6 +264,58 @@ public class ChatCommands {
         }
     }
 
+    /**
+     * -- Usage --
+     * Print the state of club time: "#goldentime"
+     * Start custom club time with H:m duration: "#goldentime H:m"
+     * Stop custom club time: "#goldentime 0:0" or "#goldentime 0"
+     * @param session session that used the command
+     * @param args arguments
+     */
+    private static void onClubTime(Session session, String ... args) {
+        if (args.length < 2) {
+            ChatUtils.sendServerMessage(session, "Club time is " +
+                    (GameEvents.isGoldenTime() ? "" : "not ") + "active.");
+            return;
+        }
+
+        if (PlayerInfo.isModerator(session.getPlayerId())) {
+            try {
+                if (args[1].equals("0")) {
+                    GameEvents.setCustomClubTime(0);
+                    ChatUtils.broadcastNotice("Club time disabled.");
+                } else {
+                    String[] duration = args[1].split(":");
+                    int minutes = (Integer.valueOf(duration[0]) * 60) +
+                            Integer.valueOf(duration[1]);
+
+                    GameEvents.setCustomClubTime(minutes <= 0 ? 0 : minutes);
+
+                    if (minutes > 0) {
+                        int hours = minutes / 60;
+                        int mins = minutes % 60;
+
+                        ChatUtils.broadcastNotice("Club time enabled for " +
+                                (hours > 0 ? hours + " hours" : "") +
+                                (hours > 0 && mins > 0 ? " and " : "") +
+                                (mins > 0 ? mins + " minutes" : "") + ".");
+                    } else {
+                        ChatUtils.broadcastNotice("Club time disabled.");
+                    }
+
+                    if (minutes <= 0 && GameEvents.isClubTime()) {
+                        ChatUtils.broadcastNotice("Scheduled Club time is still active.");
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
+                ChatUtils.sendServerMessage(session,
+                        "The specified duration is invalid. Expected: H:m");
+            } catch (SchedulerException ignored) {
+                ChatUtils.sendServerMessage(session, "Something went wrong with the scheduler.");
+            }
+        }
+    }
+
     private static void onBlock(Session session, String ... args) {
         if (args.length < 2) return;
 
@@ -346,6 +398,7 @@ public class ChatCommands {
         commands.put("observer", (s, a) -> ChatCommands.onObserver(s));
         commands.put("visible", (s, a) -> ChatCommands.onVisible(s));
         commands.put("goldentime", ChatCommands::onGoldenTime);
+        commands.put("clubtime", ChatCommands::onClubTime);
         commands.put("block", ChatCommands::onBlock);
         commands.put("unblock", ChatCommands::onUnblock);
         commands.put("challenge", ChatCommands::onChallenge);

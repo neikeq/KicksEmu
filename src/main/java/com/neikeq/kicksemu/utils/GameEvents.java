@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.utils;
 
+import com.neikeq.kicksemu.game.events.ClubTimeEvent;
 import com.neikeq.kicksemu.game.events.EventsManager;
 import com.neikeq.kicksemu.game.events.GoldenTimeEvent;
 import org.quartz.SchedulerException;
@@ -10,6 +11,7 @@ import java.util.TimeZone;
 public class GameEvents {
 
     private static boolean customGoldenTime = false;
+    private static boolean customClubTime = false;
 
     public static void setCustomGoldenTime(int durationMinutes) throws SchedulerException {
         GoldenTimeEvent customGoldenTimeEvent = new GoldenTimeEvent(durationMinutes);
@@ -25,6 +27,22 @@ public class GameEvents {
 
     public static void cancelCustomGoldenTime() {
         customGoldenTime = false;
+    }
+
+    public static void setCustomClubTime(int durationMinutes) throws SchedulerException {
+        ClubTimeEvent customClubTimeEvent = new ClubTimeEvent(durationMinutes);
+
+        if (durationMinutes > 0) {
+            EventsManager.scheduleEvent(customClubTimeEvent);
+            customClubTime = true;
+        } else {
+            EventsManager.cancelEvent(customClubTimeEvent.getJob().getKey());
+            cancelCustomClubTime();
+        }
+    }
+
+    public static void cancelCustomClubTime() {
+        customClubTime = false;
     }
 
     public static boolean isGoldenTime() {
@@ -51,7 +69,25 @@ public class GameEvents {
     }
 
     public static boolean isClubTime() {
-        // Currently disabled
-        return false;
+        if (customClubTime) return true;
+
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("CET"));
+        int day = c.get(Calendar.DAY_OF_WEEK);
+        int hours = c.get(Calendar.HOUR_OF_DAY);
+
+        switch (day) {
+            case Calendar.SUNDAY:
+                return (hours >= 16 && hours < 18) || (hours > 20 && hours < 23);
+            case Calendar.MONDAY:
+                return hours >= 21 && hours < 23;
+            case Calendar.WEDNESDAY:
+                return hours >= 21 && hours < 23;
+            case Calendar.FRIDAY:
+                return hours >= 20 && hours < 24;
+            case Calendar.SATURDAY:
+                return hours >= 20 && hours < 24;
+            default:
+                return false;
+        }
     }
 }
