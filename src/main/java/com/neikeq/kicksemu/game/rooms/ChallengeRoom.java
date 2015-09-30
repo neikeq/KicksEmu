@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms;
 
+import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
@@ -129,8 +130,11 @@ public class ChallengeRoom extends Room implements Observer {
 
         challenge.addObserver(this);
         setId(challenge.getId());
-        setMaster(challenge.getRedTeam().getMaster());
-        setHost(challenge.getRedTeam().getMaster());
+        ClubRoom redTeam = challenge.getRedTeam();
+        ClubRoom blueTeam = challenge.getBlueTeam();
+        setMaster(redTeam.getMaster());
+        setHost(redTeam.getMaster());
+        setName(ClubInfo.getName(redTeam.getId()) + " vs " + ClubInfo.getName(blueTeam.getId()));
     }
 
     @Override

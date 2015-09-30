@@ -2,7 +2,6 @@ package com.neikeq.kicksemu.game.rooms.messages;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.chat.ChatUtils;
-import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
@@ -425,8 +424,6 @@ public class ClubRoomMessages extends RoomMessages {
             ChallengeOrganizer.add(challengeRoom, room, requester);
             challengeRoom.addChallengePlayers();
             challengeRoom.setMaster(room.getMaster());
-            challengeRoom.setName(ClubInfo.getName(roomId) +
-                    " vs " + ClubInfo.getName(requesterId));
         }
 
         ServerMessage response = MessageBuilder.clubChallengeResponse(requesterId, accepted, result);
