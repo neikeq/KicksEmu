@@ -10,10 +10,15 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomSize;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +29,7 @@ public class ClubRoom extends Room {
     private byte wins = 0;
     private int challengeTarget = 0;
     private int challengeId = -1;
+    private int totalLevels = 0;
     protected RoomSize maxSize = RoomSize.SIZE_4V4;
 
     @Override
@@ -105,16 +111,28 @@ public class ClubRoom extends Room {
     public void cancelCountdown() { }
 
     @Override
-    protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
-        if (challengeId >= 0) {
-            Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
-            if (challenge != null) {
-                challenge.cancel();
-            }
+    protected void onPlayerJoined(Session session) {
+        synchronized (locker) {
+            super.onPlayerJoined(session);
+            updateTotalLevels();
         }
+    }
 
-        super.onPlayerLeaved(session, reason);
-        TeamManager.unregister(getId());
+    @Override
+    protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
+        synchronized (locker) {
+            if (challengeId >= 0) {
+                Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
+                if (challenge != null) {
+                    challenge.cancel();
+                }
+            }
+
+            super.onPlayerLeaved(session, reason);
+            TeamManager.unregister(getId());
+
+            updateTotalLevels();
+        }
     }
 
     @Override
@@ -181,6 +199,25 @@ public class ClubRoom extends Room {
         broadcast(MessageBuilder.clubCancelChallenge());
     }
 
+    private void updateTotalLevels() {
+        final MutableInteger totalLevels = new MutableInteger();
+
+        try (Connection con = MySqlManager.getConnection()) {
+            getPlayers().keySet().forEach(playerId ->
+                    totalLevels.sum(PlayerInfo.getLevel(playerId, con)));
+        } catch (SQLException e) {
+            Output.println("Failed to calculate club room total levels: " + e.getMessage(),
+                    Level.DEBUG);
+        }
+
+        this.totalLevels = totalLevels.get();
+    }
+
+    public byte getLevelGapFactorTo(ClubRoom room) {
+        int difference = getTotalLevels() - room.getTotalLevels();
+        return (byte) -(difference / 10);
+    }
+
     @Override
     public boolean isObserver(int playerId) {
         return false;
@@ -238,5 +275,9 @@ public class ClubRoom extends Room {
 
     public void setMaxSize(RoomSize maxSize) {
         this.maxSize = RoomSize.SIZE_4V4;
+    }
+
+    public int getTotalLevels() {
+        return totalLevels;
     }
 }

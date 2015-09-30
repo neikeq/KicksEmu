@@ -1205,7 +1205,8 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.CLUB_UNREGISTER_TEAM).writeShort(result);
     }
 
-    public static ServerMessage clubTeamList(Map<Integer, ClubRoom> teams, short page) {
+    public static ServerMessage clubTeamList(Map<Integer, ClubRoom> teams,
+                                             ClubRoom room, short page) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_TEAMS_LIST);
 
         msg.writeShort((short) 0);
@@ -1216,7 +1217,7 @@ public class MessageBuilder {
             msg.writeBool(!team.isWaiting());
             msg.writeShort((short) team.getId());
             msg.writeString(team.getName(), 15);
-            msg.writeByte((byte) 0); // Level gap
+            msg.writeByte(room.getLevelGapFactorTo(team));
             msg.writeByte(team.getWins());
         }
 

@@ -5,7 +5,7 @@ public class MutableInteger {
     private int value;
 
     public MutableInteger() {
-        this.value = 0;
+        this(0);
     }
 
     public MutableInteger(int value) {

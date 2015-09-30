@@ -322,8 +322,9 @@ public class ClubRoomMessages extends RoomMessages {
         int roomId = session.getRoomId();
 
         if (roomId > 0 && TeamManager.isRegistered(roomId)) {
+            ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
             Map<Integer, ClubRoom> teams = TeamManager.getTeamsFromPage(page, roomId);
-            session.send(MessageBuilder.clubTeamList(teams, page));
+            session.send(MessageBuilder.clubTeamList(teams, room, page));
         }
     }
 
