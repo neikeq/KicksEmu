@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ClubRoom extends Room {
 
-    public static final byte MIN_TEAM_PLAYERS = 4;
+    public static final byte REQUIRED_TEAM_PLAYERS = 4;
 
     { super.getRoomLobby().setTeamChatEnabled(false); }
 
@@ -123,7 +123,7 @@ public class ClubRoom extends Room {
             super.onPlayerJoined(session);
             updateTotalLevels();
 
-            if (getPlayers().size() == MIN_TEAM_PLAYERS && winStreakCache.getWins() > 0) {
+            if (getPlayers().size() == REQUIRED_TEAM_PLAYERS && winStreakCache.getWins() > 0) {
                 if (winStreakCache.matchesTeam(getPlayers().keySet())) {
                     setWinStreak(winStreakCache.getWins());
                 }
@@ -146,7 +146,7 @@ public class ClubRoom extends Room {
 
             updateTotalLevels();
 
-            if (getPlayers().size() == MIN_TEAM_PLAYERS - 1) {
+            if (getPlayers().size() == REQUIRED_TEAM_PLAYERS - 1) {
                 winStreakCache.setWins(winStreak);
                 winStreakCache.setPlayers(getPlayers().keySet());
                 setWinStreak((byte) 0);
@@ -317,7 +317,7 @@ public class ClubRoom extends Room {
     }
 
     public void setMaxSize(RoomSize maxSize) {
-        this.maxSize = RoomSize.SIZE_4V4;
+        this.maxSize = RoomSize.SIZE_2V2;
     }
 
     public int getTotalLevels() {

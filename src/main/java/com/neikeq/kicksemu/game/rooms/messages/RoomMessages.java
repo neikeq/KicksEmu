@@ -64,7 +64,8 @@ public class RoomMessages {
             if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
                 result = -3; // Wrong level settings
             } else if (maxSize == null || type == null || map == null || ball == null ||
-                    roomMode == null || roomMode.notValidForServer(serverType)) {
+                    roomMode == null || maxSize == RoomSize.SIZE_2V2 ||
+                    roomMode.notValidForServer(serverType)) {
                 result = -1; // System problem
             } else {
                 short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
@@ -228,7 +229,7 @@ public class RoomMessages {
         ServerType serverType = ServerManager.getServerType();
 
         if (maxSize == null || type == null || roomMode == null ||
-                roomMode.notValidForServer(serverType)) {
+                maxSize == RoomSize.SIZE_2V2 || roomMode.notValidForServer(serverType)) {
             result = -1; // System problem
         } else if (room == null) {
             result = -2; // Room does not exist

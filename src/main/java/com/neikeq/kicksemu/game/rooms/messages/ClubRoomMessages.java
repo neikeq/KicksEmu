@@ -278,7 +278,7 @@ public class ClubRoomMessages extends RoomMessages {
             if (room != null) {
                 if (room.state() == RoomState.APPLYING) return;
 
-                if (room.getCurrentSize() == ClubRoom.MIN_TEAM_PLAYERS) {
+                if (room.getCurrentSize() == ClubRoom.REQUIRED_TEAM_PLAYERS) {
                     TeamManager.register(room);
                     room.broadcast(MessageBuilder.clubRegisterTeam(result));
                 } else {
