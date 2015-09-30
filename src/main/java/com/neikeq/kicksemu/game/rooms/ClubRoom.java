@@ -155,6 +155,9 @@ public class ClubRoom extends Room {
     }
 
     @Override
+    void onHostLeaved(int playerId) { }
+
+    @Override
     protected ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
         return MessageBuilder.clubRoomPlayerInfo(session, this, con);
     }
@@ -243,6 +246,16 @@ public class ClubRoom extends Room {
     }
 
     @Override
+    public boolean isWaiting() {
+        // TODO this should be temporal, until I find a way to display the APPLYING icon
+        return super.isWaiting() || isChallenging();
+    }
+
+    public boolean isChallenging() {
+        return state() == RoomState.APPLYING;
+    }
+
+    @Override
     public RoomLobby getRoomLobby() {
         if (challengeId >= 0) {
             Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
@@ -260,10 +273,14 @@ public class ClubRoom extends Room {
     @Override
     protected void addObserver(int playerId) { }
 
-    @Override
-    public boolean isWaiting() {
-        // TODO this should be temporal, until I find a way to display the APPLYING icon
-        return super.isWaiting() || isChallenging();
+    void onStateChanged() {
+        if (state() == RoomState.WAITING && getDisconnectedPlayers().size() > 0) {
+            // Notify players to remove disconnected player definitely
+            getDisconnectedPlayers().forEach(playerId -> broadcast(
+                    MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
+            getDisconnectedPlayers().clear();
+            removeRoom();
+        }
     }
 
     public byte getTotalWins() {
@@ -283,10 +300,6 @@ public class ClubRoom extends Room {
 
     public void setWinStreak(byte winStreak) {
         this.winStreak = winStreak;
-    }
-
-    public boolean isChallenging() {
-        return state() == RoomState.APPLYING;
     }
 
     public int getChallengeTarget() {

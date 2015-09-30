@@ -360,7 +360,7 @@ public class Room {
         }
     }
 
-    private void cancelLoading() {
+    void cancelLoading() {
         synchronized (locker) {
             if (getLoadingTimeoutFuture().isCancellable()) {
                 getLoadingTimeoutFuture().cancel(true);
@@ -410,14 +410,14 @@ public class Room {
                 cancelCountdown();
             }
         } else {
-            disconnectedPlayers.add(playerId);
+            getDisconnectedPlayers().add(playerId);
 
             String message = session.getCache().getName() + " has been disconnected.";
             broadcast(MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE, message));
         }
     }
 
-    private void onHostLeaved(int playerId) {
+    void onHostLeaved(int playerId) {
         switch (state()) {
             case PLAYING:
                 broadcast(MessageBuilder.hostInfo(this));
@@ -780,13 +780,16 @@ public class Room {
     public void setState(RoomState state) {
         synchronized (locker) {
             this.state = state;
+            onStateChanged();
+        }
+    }
 
-            if (state == RoomState.RESULT) {
-                // Notify players to remove disconnected player definitely
-                disconnectedPlayers.forEach(playerId -> broadcast(
-                        MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
-                disconnectedPlayers.clear();
-            }
+    void onStateChanged() {
+        if (state == RoomState.RESULT) {
+            // Notify players to remove disconnected player definitely
+            getDisconnectedPlayers().forEach(playerId -> broadcast(
+                    MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
+            getDisconnectedPlayers().clear();
         }
     }
 
@@ -817,5 +820,9 @@ public class Room {
     public MissionInfo getMatchMissionInfo() {
         return matchMission == 0 ?
                 null : TableManager.getMissionInfo(m -> m.getId() == getMatchMission());
+    }
+
+    public List<Integer> getDisconnectedPlayers() {
+        return disconnectedPlayers;
     }
 }
