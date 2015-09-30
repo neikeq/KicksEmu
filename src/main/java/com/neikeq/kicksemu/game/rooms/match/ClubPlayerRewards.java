@@ -7,20 +7,47 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 
 public class ClubPlayerRewards extends PlayerRewards {
 
+    private static final int BASE_LEVEL_GAP_POINTS = 4;
+
     private final ClubRoom clubRoom;
+    private final ClubRoom rivalRoom;
 
     public ClubPlayerRewards(MatchResultHandler resultHandler, PlayerResult playerResult) {
         super(resultHandler, playerResult);
 
+        int playerId = playerResult.getPlayerId();
+
         Challenge challenge = ((ChallengeRoom) room()).getChallenge();
-        clubRoom = room().getPlayerTeam(playerResult.getPlayerId()) == RoomTeam.RED ?
+        clubRoom = room().getPlayerTeam(playerId) == RoomTeam.RED ?
+                challenge.getRedTeam() : challenge.getBlueTeam();
+        rivalRoom = room().getPlayerTeam(playerId) == RoomTeam.BLUE ?
                 challenge.getRedTeam() : challenge.getBlueTeam();
     }
 
     @Override
     protected void applyRewardExtras() {
+        applyLevelGapPoints();
         super.applyRewardExtras();
         calculateWinStreakBonuses();
+    }
+
+    private void applyLevelGapPoints() {
+        byte levelGap = clubRoom.getLevelGapFactorTo(rivalRoom);
+        int levelGapPoints = BASE_LEVEL_GAP_POINTS + levelGap;
+
+        TeamResult teamResult = playerTeam == RoomTeam.RED ?
+                matchResult().getRedTeam() : matchResult().getBlueTeam();
+        switch (teamResult.getResult()) {
+            case WIN:
+                levelGapPoints += 6;
+                break;
+            case DRAW:
+                levelGapPoints += 3;
+                break;
+            default:
+        }
+
+        points.sum(levelGapPoints);
     }
 
     private void calculateWinStreakBonuses() {

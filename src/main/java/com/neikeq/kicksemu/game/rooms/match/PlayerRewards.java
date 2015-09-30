@@ -24,8 +24,9 @@ class PlayerRewards {
     private static final int VOTE_POINTS_LIMIT = 100;
 
     private final MatchResultHandler resultHandler;
-    private final PlayerResult playerResult;
-    private final RoomTeam playerTeam;
+    final PlayerResult playerResult;
+    final RoomTeam playerTeam;
+
     private final Session session;
     private final int playerId;
     private final int currentExperience;
@@ -282,7 +283,7 @@ class PlayerRewards {
         return resultHandler.getConnection();
     }
 
-    private MatchResult matchResult() {
+    protected MatchResult matchResult() {
         return resultHandler.getResult();
     }
 
