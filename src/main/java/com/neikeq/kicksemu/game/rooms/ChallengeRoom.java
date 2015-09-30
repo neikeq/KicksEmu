@@ -42,6 +42,7 @@ public class ChallengeRoom extends Room implements Observer {
             getPlayers().putAll(challenge.getBlueTeam().getPlayers());
             getRedTeam().addAll(challenge.getRedTeam().getRedTeam());
             getBlueTeam().addAll(challenge.getBlueTeam().getRedTeam());
+            getPlayers().keySet().forEach(playerId -> getRoomLobby().addPlayer(playerId));
             getPlayers().values().forEach(this::onPlayerJoined);
         }
     }
