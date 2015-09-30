@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.rooms;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
+import com.neikeq.kicksemu.game.lobby.RoomLobby;
 import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
@@ -221,6 +222,16 @@ public class ClubRoom extends Room {
     @Override
     public boolean isObserver(int playerId) {
         return false;
+    }
+
+    @Override
+    public RoomLobby getRoomLobby() {
+        if (challengeId >= 0) {
+            Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
+            return challenge.getRoom().getRoomLobby();
+        } else {
+            return super.getRoomLobby();
+        }
     }
 
     @Override
