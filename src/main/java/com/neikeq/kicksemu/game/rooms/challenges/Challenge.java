@@ -7,7 +7,7 @@ import java.util.Observable;
 
 public class Challenge extends Observable {
 
-    private int id = -1;
+    private final int id;
     private final ClubRoom redTeam;
     private final ClubRoom blueTeam;
     private final ChallengeRoom room;
@@ -19,7 +19,8 @@ public class Challenge extends Observable {
         notifyObservers();
     }
 
-    public Challenge(ChallengeRoom room, ClubRoom redTeam, ClubRoom blueTeam) {
+    public Challenge(int id, ChallengeRoom room, ClubRoom redTeam, ClubRoom blueTeam) {
+        this.id = id;
         this.redTeam = redTeam;
         this.blueTeam = blueTeam;
         this.room = room;
@@ -27,10 +28,6 @@ public class Challenge extends Observable {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public ClubRoom getRedTeam() {
