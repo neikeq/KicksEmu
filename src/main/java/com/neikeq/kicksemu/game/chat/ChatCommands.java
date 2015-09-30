@@ -401,7 +401,7 @@ public class ChatCommands {
             if (minutes == -1) {
                 ChatUtils.sendServerMessage(session, "No Golden time scheduled today.");
             } else {
-                ChatUtils.sendServerMessage(session, "Next Golden time is in " +
+                ChatUtils.sendServerMessage(session, "Next Golden time starts in " +
                         DateUtils.minuteToHourAndMinutes(minutes, "%d:%02d"));
             }
         }
@@ -416,7 +416,7 @@ public class ChatCommands {
             if (minutes == -1) {
                 ChatUtils.sendServerMessage(session, "No Club time scheduled today.");
             } else {
-                ChatUtils.sendServerMessage(session, "Next Club time is in " +
+                ChatUtils.sendServerMessage(session, "Next Club time starts in " +
                         DateUtils.minuteToHourAndMinutes(minutes, "%d:%02d"));
             }
         }

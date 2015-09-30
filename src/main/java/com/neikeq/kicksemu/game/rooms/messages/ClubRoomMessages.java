@@ -32,7 +32,7 @@ import java.util.Map;
 public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
-    private static final byte MIN_TEAM_PLAYERS = 4;
+    private static final byte MIN_TEAM_PLAYERS = 1;
     static final byte MIN_ROOM_LEVEL = 3;
 
     public static void roomList(Session session, ClientMessage msg) {

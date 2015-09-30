@@ -9,7 +9,7 @@ public class DayTimeRange implements Comparable<DayTimeRange> {
 
     public boolean isWithinRange(Date date) {
         int minutes = DateUtils.getDateHourOfDay(date) * 60 + DateUtils.getDateMinute(date);
-        return minutes >= startMinutes || minutes < endMinutes;
+        return minutes >= startMinutes && minutes < endMinutes;
     }
 
     public boolean isAfterRange(Date date) {

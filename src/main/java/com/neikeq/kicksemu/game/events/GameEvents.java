@@ -104,7 +104,7 @@ public class GameEvents {
 
         if (daySchedule != null) {
             Date currentTime = c.getTime();
-            daySchedule.stream().anyMatch(dayTimeRange ->
+            return daySchedule.stream().anyMatch(dayTimeRange ->
                     dayTimeRange.isWithinRange(currentTime));
         }
 
@@ -121,7 +121,7 @@ public class GameEvents {
 
         if (daySchedule != null) {
             Date currentTime = c.getTime();
-            daySchedule.stream().anyMatch(dayTimeRange ->
+            return daySchedule.stream().anyMatch(dayTimeRange ->
                     dayTimeRange.isWithinRange(currentTime));
         }
 
