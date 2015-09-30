@@ -1218,7 +1218,7 @@ public class MessageBuilder {
             msg.writeShort((short) team.getId());
             msg.writeString(team.getName(), 15);
             msg.writeByte(room.getLevelGapFactorTo(team));
-            msg.writeByte(team.getWins());
+            msg.writeByte(team.getTotalWins());
         }
 
         return msg;
@@ -1278,8 +1278,8 @@ public class MessageBuilder {
         msg.writeShort((short) 0);
 
         if (challenge != null) {
-            msg.writeShort(challenge.getRedTeam().getWins());
-            msg.writeShort(challenge.getBlueTeam().getWins());
+            msg.writeShort(challenge.getRedTeam().getTotalWins());
+            msg.writeShort(challenge.getBlueTeam().getTotalWins());
         }
 
         return msg;
@@ -1291,7 +1291,7 @@ public class MessageBuilder {
         msg.writeShort((short) 0);
 
         if (room != null) {
-            msg.writeShort(room.getWins());
+            msg.writeShort(room.getTotalWins());
         }
 
         return msg;

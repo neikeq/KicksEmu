@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.RoomLobby;
 import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
+import com.neikeq.kicksemu.game.rooms.challenges.WinStreakCache;
 import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomSize;
@@ -25,12 +26,17 @@ import java.util.List;
 
 public class ClubRoom extends Room {
 
+    public static final byte MIN_TEAM_PLAYERS = 4;
+
     { super.getRoomLobby().setTeamChatEnabled(false); }
 
-    private byte wins = 0;
+    private byte totalWins = 0;
+    private byte winStreak = 0;
     private int challengeTarget = 0;
     private int challengeId = -1;
     private int totalLevels = 0;
+
+    private WinStreakCache winStreakCache = new WinStreakCache((byte) 0, getPlayers().keySet());
     protected RoomSize maxSize = RoomSize.SIZE_4V4;
 
     @Override
@@ -116,6 +122,12 @@ public class ClubRoom extends Room {
         synchronized (locker) {
             super.onPlayerJoined(session);
             updateTotalLevels();
+
+            if (getPlayers().size() == MIN_TEAM_PLAYERS && winStreakCache.getWins() > 0) {
+                if (winStreakCache.matchesTeam(getPlayers().keySet())) {
+                    setWinStreak(winStreakCache.getWins());
+                }
+            }
         }
     }
 
@@ -133,6 +145,12 @@ public class ClubRoom extends Room {
             TeamManager.unregister(getId());
 
             updateTotalLevels();
+
+            if (getPlayers().size() == MIN_TEAM_PLAYERS - 1) {
+                winStreakCache.setWins(winStreak);
+                winStreakCache.setPlayers(getPlayers().keySet());
+                setWinStreak((byte) 0);
+            }
         }
     }
 
@@ -248,14 +266,23 @@ public class ClubRoom extends Room {
         return super.isWaiting() || isChallenging();
     }
 
-    public byte getWins() {
-        return wins;
+    public byte getTotalWins() {
+        return totalWins;
     }
 
-    public void setWins(byte wins) {
-        if (wins >= 0) {
-            this.wins = wins;
+    public void setTotalWins(byte totalWins) {
+        if (totalWins >= 0) {
+            this.totalWins = totalWins;
+            broadcast(MessageBuilder.clubUpdateWins(this));
         }
+    }
+
+    public byte getWinStreak() {
+        return winStreak;
+    }
+
+    public void setWinStreak(byte winStreak) {
+        this.winStreak = winStreak;
     }
 
     public boolean isChallenging() {
@@ -269,6 +296,7 @@ public class ClubRoom extends Room {
     public void setChallengeTarget(int challengeTarget) {
         if (challengeTarget != 0) {
             setState(RoomState.APPLYING);
+            winStreakCache.setWins((byte) 0);
         } else if (state() == RoomState.APPLYING) {
             setState(RoomState.WAITING);
         }
@@ -282,6 +310,10 @@ public class ClubRoom extends Room {
 
     public void setChallengeId(int challengeId) {
         this.challengeId = challengeId;
+
+        if (challengeId != -1) {
+            winStreakCache.setWins((byte) 0);
+        }
     }
 
     public void setMaxSize(RoomSize maxSize) {

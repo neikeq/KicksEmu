@@ -26,18 +26,18 @@ public class ClubPlayerRewards extends PlayerRewards {
     private void calculateWinStreakBonuses() {
         int percentage = 0;
 
-        if (clubRoom.getWins() > 0) {
-            if (clubRoom.getWins() >= 15) {
+        if (clubRoom.getWinStreak() > 0) {
+            if (clubRoom.getWinStreak() >= 15) {
                 percentage = 60;
-            } else if (clubRoom.getWins() >= 10) {
+            } else if (clubRoom.getWinStreak() >= 10) {
                 percentage = 50;
-            } else if (clubRoom.getWins() >= 5) {
+            } else if (clubRoom.getWinStreak() >= 5) {
                 percentage = 40;
-            } else if (clubRoom.getWins() == 4) {
+            } else if (clubRoom.getWinStreak() == 4) {
                 percentage = 30;
-            } else if (clubRoom.getWins() == 3) {
+            } else if (clubRoom.getWinStreak() == 3) {
                 percentage = 20;
-            } else if (clubRoom.getWins() == 2) {
+            } else if (clubRoom.getWinStreak() == 2) {
                 percentage = 10;
             }
         }

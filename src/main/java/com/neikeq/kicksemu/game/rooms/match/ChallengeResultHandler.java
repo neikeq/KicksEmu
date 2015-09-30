@@ -43,15 +43,14 @@ public class ChallengeResultHandler extends MatchResultHandler {
     private void updateTeamWins(ClubRoom team, TeamResult teamResult) {
         switch (teamResult.getResult()) {
             case WIN:
-                team.setWins((byte) (team.getWins() + 1));
+                team.setTotalWins((byte) (team.getTotalWins() + 1));
+                team.setWinStreak((byte) (team.getWinStreak() + 1));
                 break;
             case DRAW:
             case LOSE:
-                team.setWins((byte) 0);
+                team.setWinStreak((byte) 0);
                 break;
         }
-
-        team.broadcast(MessageBuilder.clubUpdateWins(team));
     }
 
     private void rewardClubs() {
