@@ -203,7 +203,7 @@ public class ChallengeRoomMessages {
 
         room.setState(RoomState.RESULT);
 
-        MatchResult result = MatchResult.fromMessage(msg, room.getTeamSizes());
+        MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().keySet());
 
         try (ChallengeResultHandler resultHandler = new ChallengeResultHandler(room, result)) {
             resultHandler.handleResult();

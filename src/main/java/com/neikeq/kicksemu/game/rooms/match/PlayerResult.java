@@ -31,8 +31,7 @@ public class PlayerResult extends StatisticsCarrier {
         msg.writeShort(ballControl);
     }
 
-    public static PlayerResult fromMessage(ClientMessage msg) {
-        int playerId = msg.readInt();
+    public static PlayerResult fromMessage(ClientMessage msg, int playerId) {
         msg.ignoreBytes(8);
         short goals = msg.readShort();
         short assists = msg.readShort();

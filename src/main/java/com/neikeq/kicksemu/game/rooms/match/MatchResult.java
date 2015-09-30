@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MatchResult {
 
@@ -15,24 +16,29 @@ public class MatchResult {
     private final TeamResult blueTeam;
     private final List<PlayerResult> players;
 
-    public static MatchResult fromMessage(ClientMessage msg, int roomSize) {
+    public static MatchResult fromMessage(ClientMessage msg, Set<Integer> roomPlayers) {
         int mom = msg.readInt();
         TeamResult redTeam = TeamResult.fromMessage(msg);
         TeamResult blueTeam = TeamResult.fromMessage(msg);
-        List<PlayerResult> redPlayers = new ArrayList<>();
+        List<PlayerResult> players = new ArrayList<>();
 
-        for (int i = 0; i < roomSize; i++) {
-            redPlayers.add(PlayerResult.fromMessage(msg));
+        for (int i = 0; i < 10; i++) {
+            int playerId = msg.readInt();
+
+            if (playerId <= 0 || !roomPlayers.contains(playerId)) {
+                msg.ignoreBytes(36);
+                continue;
+            }
+
+            players.add(PlayerResult.fromMessage(msg, playerId));
         }
-
-        msg.ignoreBytes(40 * (10 - roomSize));
 
         short countdown = msg.readShort();
         boolean goldenTime = msg.readBoolean();
         boolean experience = msg.readBoolean();
 
         return new MatchResult(mom, countdown, goldenTime, experience, redTeam,
-                blueTeam, redPlayers);
+                blueTeam, players);
     }
 
     private MatchResult(int mom, short countdown, boolean goldenTime,
