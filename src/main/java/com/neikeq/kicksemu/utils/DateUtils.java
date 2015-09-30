@@ -27,6 +27,12 @@ public class DateUtils {
         return dateTimeFormat.format(Calendar.getInstance().getTime());
     }
 
+    public static String minuteToHourAndMinutes(int totalMinutes, String format) {
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        return String.format(format, hours, minutes);
+    }
+
     public static Date getDate() {
         return Calendar.getInstance().getTime();
     }
@@ -59,6 +65,14 @@ public class DateUtils {
         return System.nanoTime() / 1000000;
     }
 
+    public static Date buildTimeOfDay(int hour, int minute) {
+        return buildTimeOfDay(hour, minute, 0);
+    }
+
+    public static Date buildTimeOfDay(int hour, int minute, int seconds) {
+        return new Calendar.Builder().setTimeOfDay(hour, minute, seconds).build().getTime();
+    }
+
     public static int getDateMonth(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -69,5 +83,38 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static int getDateHourOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static int getDateMinute(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.MINUTE);
+    }
+
+    public static int stringToDayOfWeek(String str) {
+        switch (str.toUpperCase()) {
+            case "SUNDAY":
+                return Calendar.SUNDAY;
+            case "MONDAY":
+                return Calendar.MONDAY;
+            case "TUESDAY":
+                return Calendar.TUESDAY;
+            case "WEDNESDAY":
+                return Calendar.WEDNESDAY;
+            case "THURSDAY":
+                return Calendar.THURSDAY;
+            case "FRIDAY":
+                return Calendar.FRIDAY;
+            case "SATURDAY":
+                return Calendar.SATURDAY;
+            default:
+                return -1;
+        }
     }
 }

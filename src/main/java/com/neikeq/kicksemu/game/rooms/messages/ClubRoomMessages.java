@@ -1,7 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.messages;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
-import com.neikeq.kicksemu.game.chat.MessageType;
+import com.neikeq.kicksemu.game.chat.ChatUtils;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
@@ -25,7 +25,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.game.events.GameEvents;
 
 import java.util.Map;
 
@@ -43,8 +43,7 @@ public class ClubRoomMessages extends RoomMessages {
 
     public static void createRoom(Session session, ClientMessage msg) {
         if (!GameEvents.isClubTime()) {
-            session.send(MessageBuilder.chatMessage(0, "",
-                    MessageType.SERVER_MESSAGE, "Club time is not active."));
+            ChatUtils.sendServerMessage(session, "Club time is not active.");
             return;
         }
 
@@ -266,8 +265,7 @@ public class ClubRoomMessages extends RoomMessages {
 
     public static void registerTeam(Session session, ClientMessage msg) {
         if (!GameEvents.isClubTime()) {
-            session.send(MessageBuilder.chatMessage(0, "",
-                    MessageType.SERVER_MESSAGE, "Club time is not active."));
+            ChatUtils.sendServerMessage(session, "Club time is not active.");
             return;
         }
 
@@ -331,8 +329,7 @@ public class ClubRoomMessages extends RoomMessages {
 
     public static void challengeTeam(Session session, ClientMessage msg) {
         if (!GameEvents.isClubTime()) {
-            session.send(MessageBuilder.chatMessage(0, "",
-                    MessageType.SERVER_MESSAGE, "Club time is not active."));
+            ChatUtils.sendServerMessage(session, "Club time is not active.");
             return;
         }
 

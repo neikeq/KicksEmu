@@ -25,7 +25,7 @@ import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.utils.DateUtils;
-import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.game.events.GameEvents;
 
 public class RoomMessages {
 

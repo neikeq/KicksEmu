@@ -13,7 +13,7 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
-import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.ThreadUtils;
 import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;

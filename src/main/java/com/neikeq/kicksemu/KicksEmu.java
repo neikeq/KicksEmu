@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.game.chat.ChatCommands;
 import com.neikeq.kicksemu.game.events.EventsManager;
+import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.servers.ServerInfo;
@@ -76,6 +77,7 @@ public class KicksEmu {
 
             TableManager.initialize();
             EventsManager.initialize();
+            GameEvents.initialize();
 
             // --- Initialize Tcp Server
             Output.println(Localization.get("net.init"));

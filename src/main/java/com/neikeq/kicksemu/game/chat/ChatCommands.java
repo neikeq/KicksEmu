@@ -15,7 +15,8 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
-import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.game.events.GameEvents;
+import com.neikeq.kicksemu.utils.DateUtils;
 import org.quartz.SchedulerException;
 
 import java.sql.Connection;
@@ -126,10 +127,15 @@ public class ChatCommands {
         if (room != null && room.isInLobbyScreen()) {
             if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
-                Session target = room.getPlayer(targetId);
 
-                if (target != null && !target.leaveRoom(RoomLeaveReason.KICKED)) {
-                    ChatUtils.sendServerMessage(session, "Player not found.");
+                if (targetId != session.getPlayerId()) {
+                    Session target = room.getPlayer(targetId);
+
+                    if (target != null && !target.leaveRoom(RoomLeaveReason.KICKED)) {
+                        ChatUtils.sendServerMessage(session, "Player not found.");
+                    }
+                } else {
+                    ChatUtils.sendServerMessage(session, "You cannot kick yourself.");
                 }
             } else {
                 ChatUtils.sendServerMessage(session, "You are not the room's master.");
@@ -373,8 +379,6 @@ public class ChatCommands {
         ChatUtils.sendServerMessage(session, response);
     }
 
-
-
     private static void onChallenge(Session session, String... args) {
         if (args.length < 2) return;
 
@@ -384,6 +388,36 @@ public class ChatCommands {
                     ClubRoomMessages.cancelChallenge(session);
                     break;
                 default:
+            }
+        }
+    }
+
+    private static void onGt(Session session) {
+        if (GameEvents.isGoldenTime()) {
+            ChatUtils.sendServerMessage(session, "Golden time is active.");
+        } else {
+            int minutes = GameEvents.remainMinutesForNextGoldenTime();
+
+            if (minutes == -1) {
+                ChatUtils.sendServerMessage(session, "No Golden time scheduled today.");
+            } else {
+                ChatUtils.sendServerMessage(session, "Next Golden time is in " +
+                        DateUtils.minuteToHourAndMinutes(minutes, "%d:%02d"));
+            }
+        }
+    }
+
+    private static void onCt(Session session) {
+        if (GameEvents.isClubTime()) {
+            ChatUtils.sendServerMessage(session, "Club time is active.");
+        } else {
+            int minutes = GameEvents.remainMinutesForNextClubTime();
+
+            if (minutes == -1) {
+                ChatUtils.sendServerMessage(session, "No Club time scheduled today.");
+            } else {
+                ChatUtils.sendServerMessage(session, "Next Club time is in " +
+                        DateUtils.minuteToHourAndMinutes(minutes, "%d:%02d"));
             }
         }
     }
@@ -402,6 +436,8 @@ public class ChatCommands {
         commands.put("block", ChatCommands::onBlock);
         commands.put("unblock", ChatCommands::onUnblock);
         commands.put("challenge", ChatCommands::onChallenge);
+        commands.put("gt", (s, a) -> ChatCommands.onGt(s));
+        commands.put("ct", (s, a) -> ChatCommands.onCt(s));
     }
 
     @FunctionalInterface

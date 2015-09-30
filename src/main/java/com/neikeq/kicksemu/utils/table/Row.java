@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Row {
+
     private final List<String> columns;
     private int index = 0;
 
@@ -13,6 +14,10 @@ public class Row {
 
     public void ignoreColumns(int count) {
         index += count;
+    }
+
+    public boolean hasNext() {
+        return columns.size() > index;
     }
 
     public String nextColumn() throws IndexOutOfBoundsException {

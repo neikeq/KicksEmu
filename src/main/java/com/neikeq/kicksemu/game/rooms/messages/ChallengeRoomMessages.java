@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.rooms.messages;
 
-import com.neikeq.kicksemu.game.chat.MessageType;
+import com.neikeq.kicksemu.game.chat.ChatUtils;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
@@ -9,7 +9,6 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.rooms.match.ChallengeResultHandler;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
-import com.neikeq.kicksemu.game.rooms.match.MatchResultHandler;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
@@ -17,7 +16,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.utils.DateUtils;
-import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.game.events.GameEvents;
 
 public class ChallengeRoomMessages {
 
@@ -71,8 +70,7 @@ public class ChallengeRoomMessages {
 
     public static void startCountDown(Session session, ClientMessage msg) {
         if (!GameEvents.isClubTime()) {
-            session.send(MessageBuilder.chatMessage(0, "",
-                    MessageType.SERVER_MESSAGE, "Club time is not active."));
+            ChatUtils.sendServerMessage(session, "Club time is not active.");
             return;
         }
 

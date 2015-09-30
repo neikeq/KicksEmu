@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.game.events;
 
-import com.neikeq.kicksemu.utils.GameEvents;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

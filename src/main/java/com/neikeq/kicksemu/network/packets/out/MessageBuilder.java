@@ -31,7 +31,7 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 import com.neikeq.kicksemu.utils.DateUtils;
-import com.neikeq.kicksemu.utils.GameEvents;
+import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.Strings;
 
 import java.net.InetSocketAddress;
