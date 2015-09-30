@@ -134,7 +134,7 @@ public class ClubRoom extends Room {
     @Override
     protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
         synchronized (locker) {
-            if (challengeId >= 0) {
+            if (challengeId > 0) {
                 Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
                 if (challenge != null) {
                     challenge.cancel();
@@ -247,6 +247,10 @@ public class ClubRoom extends Room {
 
     @Override
     public boolean isWaiting() {
+        if (challengeId > 0) {
+            Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
+            return challenge.getRoom().isWaiting();
+        }
         // TODO this should be temporal, until I find a way to display the APPLYING icon
         return super.isWaiting() || isChallenging();
     }
@@ -257,7 +261,7 @@ public class ClubRoom extends Room {
 
     @Override
     public RoomLobby getRoomLobby() {
-        if (challengeId >= 0) {
+        if (challengeId > 0) {
             Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
             return challenge.getRoom().getRoomLobby();
         } else {
@@ -324,7 +328,7 @@ public class ClubRoom extends Room {
     public void setChallengeId(int challengeId) {
         this.challengeId = challengeId;
 
-        if (challengeId != -1) {
+        if (challengeId <= 0) {
             winStreakCache.setWins((byte) 0);
         }
     }
