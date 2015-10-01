@@ -40,7 +40,6 @@ public class Room {
     private byte maxLevel = 60;
 
     private short matchMission = 0;
-
     private long timeStart = 0;
     protected long timeLastJoin = 0;
 
@@ -64,12 +63,13 @@ public class Room {
     private final List<Integer> redTeam = new ArrayList<>();
     private final List<Integer> blueTeam = new ArrayList<>();
     private final List<Integer> observers = new ArrayList<>();
-
     private final List<Short> redTeamPositions = new ArrayList<>();
     private final List<Short> blueTeamPositions = new ArrayList<>();
 
     private ScheduledFuture<?> countdownTimeoutFuture;
     private ScheduledFuture<?> loadingTimeoutFuture;
+
+    private boolean forcedResultAllowed = false;
 
     final Object locker = new Object();
 
@@ -422,6 +422,7 @@ public class Room {
             case PLAYING:
                 broadcast(MessageBuilder.hostInfo(this));
                 broadcast(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED));
+                forcedResultAllowed = true;
                 break;
             case LOADING:
                 cancelLoading();
@@ -786,6 +787,9 @@ public class Room {
 
     void onStateChanged() {
         if (state == RoomState.RESULT) {
+            if (getDisconnectedPlayers().size() > 0) {
+                forcedResultAllowed = false;
+            }
             // Notify players to remove disconnected player definitely
             getDisconnectedPlayers().forEach(playerId -> broadcast(
                     MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
@@ -824,5 +828,9 @@ public class Room {
 
     public List<Integer> getDisconnectedPlayers() {
         return disconnectedPlayers;
+    }
+
+    public boolean isForcedResultAllowed() {
+        return forcedResultAllowed;
     }
 }

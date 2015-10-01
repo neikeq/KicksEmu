@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.rooms.messages;
 
+import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -520,6 +521,19 @@ public class RoomMessages {
         }
 
         room.getConfirmedPlayers().clear();
+    }
+
+    public static void matchForcedResult(Session session, ClientMessage msg) {
+        boolean handleResult = true;
+
+        if (!Configuration.getBoolean("game.match.result.force")) {
+            Room room = RoomManager.getRoomById(session.getPlayerId());
+            handleResult = room != null && room.isForcedResultAllowed();
+        }
+
+        if (handleResult) {
+            matchResult(session, msg);
+        }
     }
 
     public static void unknown1(Session session, ClientMessage msg) {

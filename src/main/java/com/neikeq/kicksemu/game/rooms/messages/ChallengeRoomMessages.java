@@ -18,7 +18,7 @@ import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
 
-public class ChallengeRoomMessages {
+public class ChallengeRoomMessages extends RoomMessages {
 
     public static void leaveRoom(Session session, ClientMessage msg) {
         int roomId = msg.readShort();

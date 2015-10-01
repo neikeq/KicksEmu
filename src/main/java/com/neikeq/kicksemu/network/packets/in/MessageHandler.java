@@ -96,11 +96,7 @@ public class MessageHandler {
                 events.put(MessageId.CANCEL_LOADING, RoomMessages::cancelLoading);
                 events.put(MessageId.START_MATCH, RoomMessages::startMatch);
                 events.put(MessageId.MATCH_RESULT, RoomMessages::matchResult);
-
-                if (Configuration.getBoolean("game.match.result.force")) {
-                    events.put(MessageId.MATCH_FORCED_RESULT, RoomMessages::matchResult);
-                }
-
+                events.put(MessageId.MATCH_FORCED_RESULT, RoomMessages::matchForcedResult);
                 events.put(MessageId.ROOM_UNKNOWN1, RoomMessages::unknown1);
                 events.put(MessageId.TO_ROOM_LOBBY, RoomMessages::toRoomLobby);
             } else {
@@ -116,11 +112,7 @@ public class MessageHandler {
                 events.put(MessageId.CANCEL_LOADING, ChallengeRoomMessages::cancelLoading);
                 events.put(MessageId.START_MATCH, ChallengeRoomMessages::startMatch);
                 events.put(MessageId.MATCH_RESULT, ChallengeRoomMessages::matchResult);
-
-                if (Configuration.getBoolean("game.match.result.force")) {
-                    events.put(MessageId.MATCH_FORCED_RESULT, ChallengeRoomMessages::matchResult);
-                }
-
+                events.put(MessageId.MATCH_FORCED_RESULT, ChallengeRoomMessages::matchForcedResult);
                 events.put(MessageId.ROOM_UNKNOWN1, ChallengeRoomMessages::unknown1);
                 events.put(MessageId.TO_ROOM_LOBBY, ChallengeRoomMessages::toRoomLobby);
 
