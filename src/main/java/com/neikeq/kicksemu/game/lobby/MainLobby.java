@@ -37,7 +37,9 @@ public class MainLobby implements Lobby {
     }
 
     public List<Integer> getVisiblePlayers(Connection ... con) {
-        return players.stream().filter(id -> PlayerInfo.isVisibleInLobby(id, con))
-                .collect(Collectors.toList());
+        synchronized (locker) {
+            return players.stream().filter(id -> PlayerInfo.isVisibleInLobby(id, con))
+                    .collect(Collectors.toList());
+        }
     }
 }

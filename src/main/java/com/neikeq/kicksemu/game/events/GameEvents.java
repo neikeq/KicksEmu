@@ -70,7 +70,7 @@ public class GameEvents {
             customGoldenTime = true;
         } else {
             EventsManager.cancelEvent(customGoldenTimeEvent.getJob().getKey());
-            customGoldenTime = false;
+            cancelCustomGoldenTime();
         }
     }
 
