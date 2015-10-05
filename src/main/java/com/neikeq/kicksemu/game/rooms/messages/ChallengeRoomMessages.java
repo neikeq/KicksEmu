@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.rooms.messages;
 
 import com.neikeq.kicksemu.game.chat.ChatUtils;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
+import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
@@ -20,11 +21,19 @@ import com.neikeq.kicksemu.game.events.GameEvents;
 
 public class ChallengeRoomMessages extends RoomMessages {
 
+    private static ChallengeRoom getRoomById(int roomId) {
+        Challenge challenge = ChallengeOrganizer.getChallengeById(roomId);
+        if (challenge != null) {
+            return challenge.getRoom();
+        }
+        return null;
+    }
+
     public static void leaveRoom(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.isPlayerIn(playerId) && room.isInLobbyScreen()) {
             session.sendAndFlush(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.LEAVED));
@@ -36,7 +45,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         short mapId = msg.readShort();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.isPlayerIn(session.getPlayerId())) {
             RoomMap map = RoomMap.fromInt(mapId);
@@ -54,7 +63,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         short ballId = msg.readShort();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.isPlayerIn(session.getPlayerId())) {
             RoomBall ball = RoomBall.fromInt(ballId);
@@ -77,7 +86,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.isPlayerIn(playerId)) {
             byte type = msg.readByte();
@@ -106,9 +115,9 @@ public class ChallengeRoomMessages extends RoomMessages {
     public static void hostInfo(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
-        if (room.getHost() == session.getPlayerId()) {
+        if (room != null && room.getHost() == session.getPlayerId()) {
             room.determineMatchMission();
             room.sendHostInfo();
         }
@@ -118,7 +127,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         short count = msg.readShort();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.getMaster() == session.getPlayerId()) {
             room.onCountdown(count);
@@ -128,7 +137,7 @@ public class ChallengeRoomMessages extends RoomMessages {
     public static void cancelCountDown(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.getMaster() == session.getPlayerId()) {
             room.cancelCountdown();
@@ -141,7 +150,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         short status = msg.readShort();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.isLoading() && room.isPlayerIn(playerId)) {
             room.broadcast(MessageBuilder.matchLoading(playerId, roomId, status));
@@ -152,7 +161,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.isLoading() && room.isPlayerIn(playerId)) {
             if (!room.getConfirmedPlayers().contains(playerId)) {
@@ -181,7 +190,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         short result = 0;
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
         if (room != null && room.isLoading() &&
                 room.getConfirmedPlayers().size() < room.getCurrentSize()) {
             result = -1;
@@ -194,7 +203,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         final int roomId = msg.readShort();
         msg.ignoreBytes(4);
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room == null || !room.isPlayerIn(session.getPlayerId()) ||
                 room.state() != RoomState.PLAYING) {
@@ -216,7 +225,7 @@ public class ChallengeRoomMessages extends RoomMessages {
 
     public static void unknown1(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.getMaster() == session.getPlayerId()) {
             room.setState(RoomState.WAITING);
@@ -226,7 +235,7 @@ public class ChallengeRoomMessages extends RoomMessages {
 
     public static void toRoomLobby(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.getMaster() == session.getPlayerId()) {
             room.broadcast(MessageBuilder.toRoomLobby());
@@ -241,7 +250,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
-        ChallengeRoom room = ChallengeOrganizer.getChallengeById(roomId).getRoom();
+        ChallengeRoom room = getRoomById(roomId);
 
         if (room != null && room.isLoading() &&
                 (room.getHost() == playerId || room.getMaster() == playerId)) {
