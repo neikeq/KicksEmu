@@ -1,6 +1,8 @@
 package com.neikeq.kicksemu.game.table;
 
+import com.neikeq.kicksemu.game.characters.types.Position;
 import com.neikeq.kicksemu.game.inventory.Price;
+import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.utils.table.Row;
 
@@ -11,6 +13,23 @@ public class SkillInfo {
     private final short level;
     private final Payment payment;
     private final Price price;
+
+    public boolean isCompatiblePosition(short position) {
+        return getPosition() == position || getPosition() == Position.basePosition(position);
+    }
+
+    public boolean isIncompatibleLevel(short level) {
+        return level < getLevel();
+    }
+
+    public boolean isInvalidPaymentMode(Payment payment) {
+        return getPayment().isIncompatibleWith(payment);
+    }
+
+    public boolean isInvalidPrice(int price, Expiration expiration) {
+        int skillPrice = getPrice().getPriceFor(expiration, payment);
+        return skillPrice == -1 || skillPrice != price;
+    }
 
     public SkillInfo(Row row) {
         row.ignoreColumn();

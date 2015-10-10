@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.inventory;
+package com.neikeq.kicksemu.game.inventory.products;
 
 public interface Product {
 

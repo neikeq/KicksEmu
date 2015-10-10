@@ -13,6 +13,25 @@ public class LearnInfo {
     private final int points;
     private final int cash;
 
+    public boolean isIncompatibleLevel(short level) {
+        return level < getLevel();
+    }
+
+    public boolean isInvalidPaymentMode(Payment payment) {
+        return getPayment().isIncompatibleWith(payment);
+    }
+
+    public boolean isInvalidPrice(int price) {
+        if (price >= 0) {
+            if (payment == Payment.POINTS) {
+                return points != price;
+            } else if (payment == Payment.CASH) {
+                return cash != price;
+            }
+        }
+        return true;
+    }
+
     public LearnInfo(Row row) {
         row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());

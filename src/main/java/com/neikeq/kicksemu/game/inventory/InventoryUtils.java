@@ -1,7 +1,11 @@
 package com.neikeq.kicksemu.game.inventory;
 
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.inventory.products.IndexedProduct;
+import com.neikeq.kicksemu.game.inventory.products.Product;
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.utils.DateUtils;
@@ -71,5 +75,14 @@ class InventoryUtils {
         Optional<? extends Product> product = products.values().stream()
                 .filter(p -> p.getId() == id).findFirst();
         return product.isPresent() ? product.get() : null;
+    }
+
+    public static long getSkillsInUse(Session session) {
+        return session.getCache().getSkills().values().stream()
+                .filter(s -> s.getSelectionIndex() > 0).count();
+    }
+
+    public static boolean skillSlotsAreFull(Session session) {
+        return getSkillsInUse(session) >= PlayerInfo.getSkillSlots(session.getCache().getItems());
     }
 }

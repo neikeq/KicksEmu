@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 
 class SpecialItem {
@@ -18,13 +19,15 @@ class SpecialItem {
         }
     }
 
-    public static void handle(int itemId, int itemType,
-                              Session session) {
+    public static boolean applyEffect(ItemInfo itemInfo,
+                                   Session session) {
         int playerId = session.getPlayerId();
 
-        ItemType type = ItemType.fromInt(itemType);
+        ItemType type = ItemType.fromInt(itemInfo.getType());
 
-        if (type == null) return;
+        if (type == null) {
+            return false;
+        }
 
         switch (type) {
             case STATS_RESET:
@@ -32,9 +35,11 @@ class SpecialItem {
                 session.send(MessageBuilder.playerStats(playerId));
                 break;
             case FACE:
-                PlayerInfo.setFace((short) (itemId / 10 - 100000), playerId);
+                PlayerInfo.setFace((short) (itemInfo.getId() / 10 - 100000), playerId);
                 break;
             default:
         }
+
+        return true;
     }
 }

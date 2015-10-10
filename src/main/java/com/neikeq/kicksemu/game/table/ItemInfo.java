@@ -14,6 +14,18 @@ public class ItemInfo {
     private final Payment payment;
     private final Price price;
 
+    public boolean isIncompatibleGender(Animation gender) {
+        return getGender() != gender && getGender() != Animation.ANY;
+    }
+
+    public boolean isIncompatibleLevel(short level) {
+        return level < getLevel();
+    }
+
+    public boolean isInvalidPaymentMode(Payment payment) {
+        return getPayment().isIncompatibleWith(payment);
+    }
+
     public ItemInfo(Row row) {
         row.ignoreColumn();
         id = Integer.valueOf(row.nextColumn());

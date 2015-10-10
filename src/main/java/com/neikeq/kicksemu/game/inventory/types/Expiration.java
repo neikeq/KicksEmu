@@ -9,6 +9,10 @@ public enum Expiration {
     USAGE_50,
     USAGE_100;
 
+    public boolean isInvalidForPurchaseRequest() {
+        return getType() != 1;
+    }
+
     public byte getType() {
         switch (this) {
             case DAYS_7:

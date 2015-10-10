@@ -114,7 +114,7 @@ public class ChatManager {
 
                 // If target player was found
                 if (targetSession != null) {
-                    // If the target player accepts whispers and is not ignoring this player
+                    // If the target player isIncompatibleWith whispers and is not ignoring this player
                     if (UserInfo.getSettings(targetSession.getUserId()).getWhispers() &&
                             !PlayerInfo.getIgnoredList(targetId).containsPlayer(playerId)) {
                         ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,

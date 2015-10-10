@@ -13,8 +13,8 @@ public class OptionInfo {
     private final short pointsLevel;
     private final Price price;
 
-    public boolean isValidLevel(short level, Payment payment) {
-        return payment == Payment.CASH ? level >= cashLevel : level >= pointsLevel;
+    public boolean isIncompatibleLevel(short level, Payment payment) {
+        return payment == Payment.CASH ? level < cashLevel : level < pointsLevel;
     }
 
     public OptionInfo(Row row) {

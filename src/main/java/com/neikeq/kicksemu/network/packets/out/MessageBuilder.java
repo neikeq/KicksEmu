@@ -4,15 +4,15 @@ import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.Uniform;
 import com.neikeq.kicksemu.game.clubs.UniformType;
-import com.neikeq.kicksemu.game.inventory.DefaultClothes;
+import com.neikeq.kicksemu.game.inventory.products.DefaultClothes;
 import com.neikeq.kicksemu.game.misc.quests.QuestState;
 import com.neikeq.kicksemu.game.chat.MessageType;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
-import com.neikeq.kicksemu.game.inventory.Celebration;
-import com.neikeq.kicksemu.game.inventory.Item;
-import com.neikeq.kicksemu.game.inventory.Skill;
-import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.inventory.products.Celebration;
+import com.neikeq.kicksemu.game.inventory.products.Item;
+import com.neikeq.kicksemu.game.inventory.products.Skill;
+import com.neikeq.kicksemu.game.inventory.products.Training;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -1393,7 +1393,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage purchaseLearn(Session session, Training learn,
-                                              short result, Connection con) {
+                                              short result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_LEARN);
 
         msg.writeShort(result);
@@ -1408,7 +1408,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage purchaseSkill(int playerId, Skill skill,
-                                              short result, Connection con) {
+                                              short result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_SKILL);
 
         msg.writeShort(result);
@@ -1447,7 +1447,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage purchaseCele(int playerId, Celebration cele,
-                                             short result, Connection con) {
+                                             short result, Connection ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_CELE);
 
         msg.writeShort(result);

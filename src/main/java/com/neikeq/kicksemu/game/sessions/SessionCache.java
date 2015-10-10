@@ -2,11 +2,11 @@ package com.neikeq.kicksemu.game.sessions;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Animation;
-import com.neikeq.kicksemu.game.inventory.Celebration;
-import com.neikeq.kicksemu.game.inventory.DefaultClothes;
-import com.neikeq.kicksemu.game.inventory.Item;
-import com.neikeq.kicksemu.game.inventory.Skill;
-import com.neikeq.kicksemu.game.inventory.Training;
+import com.neikeq.kicksemu.game.inventory.products.Celebration;
+import com.neikeq.kicksemu.game.inventory.products.DefaultClothes;
+import com.neikeq.kicksemu.game.inventory.products.Item;
+import com.neikeq.kicksemu.game.inventory.products.Skill;
+import com.neikeq.kicksemu.game.inventory.products.Training;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Connection;

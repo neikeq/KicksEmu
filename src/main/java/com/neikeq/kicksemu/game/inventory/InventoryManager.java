@@ -2,6 +2,9 @@ package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.inventory.products.Celebration;
+import com.neikeq.kicksemu.game.inventory.products.Item;
+import com.neikeq.kicksemu.game.inventory.products.Skill;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.sessions.Session;

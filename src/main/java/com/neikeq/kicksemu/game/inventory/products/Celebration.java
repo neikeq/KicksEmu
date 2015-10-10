@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.inventory;
+package com.neikeq.kicksemu.game.inventory.products;
 
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.utils.DateUtils;

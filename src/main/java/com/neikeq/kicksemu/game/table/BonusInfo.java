@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.table;
 
+import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.utils.table.Row;
 
 import java.util.ArrayList;
@@ -11,6 +12,18 @@ public class BonusInfo {
     private final List<Integer> bonusOne;
     private final List<Integer> bonusTwo;
     private final byte expirationType;
+
+    public boolean isIncompatibleWithExpiration(Expiration expiration) {
+        return expiration.getType() != getExpirationType();
+    }
+
+    public boolean isIncompatibleWithBonuses(OptionInfo one, OptionInfo two) {
+        int bonusOneType = one == null ? 0 : one.getType();
+        int bonusTwoType = two == null ? 0 : two.getType();
+
+        return !getBonusOne().contains(bonusOneType) ||
+                !getBonusTwo().contains(bonusTwoType);
+    }
 
     private List<Integer> listFromStringArray(String[] strings) {
         List<Integer> list = new ArrayList<>();

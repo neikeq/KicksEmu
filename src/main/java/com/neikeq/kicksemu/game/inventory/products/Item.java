@@ -1,4 +1,4 @@
-package com.neikeq.kicksemu.game.inventory;
+package com.neikeq.kicksemu.game.inventory.products;
 
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;

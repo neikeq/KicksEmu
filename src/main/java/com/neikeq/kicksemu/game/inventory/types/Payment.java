@@ -19,14 +19,14 @@ public enum Payment {
         }
     }
 
-    public boolean accepts(Payment payment) {
+    public boolean isIncompatibleWith(Payment payment) {
         if (payment == BOTH) return false;
 
         switch (this) {
             case BOTH:
-                return payment != null;
+                return payment == null;
             default:
-                return payment == this;
+                return payment != this;
         }
     }
 }

@@ -5,7 +5,7 @@ import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.LevelCache;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
-import com.neikeq.kicksemu.game.inventory.Item;
+import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;

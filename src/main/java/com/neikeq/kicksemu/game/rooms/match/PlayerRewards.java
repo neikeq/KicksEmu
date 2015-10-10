@@ -4,7 +4,7 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Position;
-import com.neikeq.kicksemu.game.inventory.Item;
+import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.inventory.types.Soda;
 import com.neikeq.kicksemu.game.misc.quests.MissionTarget;
 import com.neikeq.kicksemu.game.misc.quests.QuestManager;
