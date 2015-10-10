@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.table;
 
+import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.inventory.Price;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.utils.table.Row;
@@ -8,7 +9,7 @@ public class ItemInfo {
 
     private final int id;
     private final int type;
-    private final short gender;
+    private final Animation gender;
     private final short level;
     private final Payment payment;
     private final Price price;
@@ -18,7 +19,7 @@ public class ItemInfo {
         id = Integer.valueOf(row.nextColumn());
         type = Integer.valueOf(row.nextColumn());
         row.ignoreColumns(2);
-        gender = Short.valueOf(row.nextColumn());
+        gender = Animation.fromShort(Short.valueOf(row.nextColumn()));
         level = Short.valueOf(row.nextColumn());
         row.ignoreColumns(4);
         payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));
@@ -34,7 +35,7 @@ public class ItemInfo {
         return type;
     }
 
-    public short getGender() {
+    public Animation getGender() {
         return gender;
     }
 

@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.clubs;
 
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.storage.SqlUtils;
 
@@ -217,35 +219,55 @@ public class ClubInfo {
         SqlUtils.setBoolean("uniform_active", value, TABLE, id, con);
     }
 
-    public static void setUniformHomeShirts(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_home_shirts", value, TABLE, id, con);
+    public static void setHomeUniform(Uniform uniform, int id, Connection ... con) {
+        final String query = "UPDATE " + TABLE + " SET uniform_home_shirts = ?, " +
+                "uniform_home_pants = ?, uniform_home_socks = ?, " +
+                "uniform_home_wrist = ? WHERE id = ? LIMIT 1;";
+
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, uniform.getShirts());
+                stmt.setInt(2, uniform.getPants());
+                stmt.setInt(3, uniform.getSocks());
+                stmt.setInt(4, uniform.getWrist());
+                stmt.setInt(5, id);
+
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 
-    public static void setUniformHomePants(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_home_pants", value, TABLE, id, con);
-    }
+    public static void setAwayUniform(Uniform uniform, int id, Connection ... con) {
+        final String query = "UPDATE " + TABLE + " SET uniform_away_shirts = ?, " +
+                "uniform_away_pants = ?, uniform_away_socks = ?, " +
+                "uniform_away_wrist = ? WHERE id = ? LIMIT 1;";
 
-    public static void setUniformHomeSocks(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_home_socks", value, TABLE, id, con);
-    }
+        try {
+            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
 
-    public static void setUniformHomeWrist(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_home_wrist", value, TABLE, id, con);
-    }
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, uniform.getShirts());
+                stmt.setInt(2, uniform.getPants());
+                stmt.setInt(3, uniform.getSocks());
+                stmt.setInt(4, uniform.getWrist());
+                stmt.setInt(5, id);
 
-    public static void setUniformAwayShirts(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_away_shirts", value, TABLE, id, con);
-    }
-
-    public static void setUniformAwayPants(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_away_pants", value, TABLE, id, con);
-    }
-
-    public static void setUniformAwaySocks(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_away_socks", value, TABLE, id, con);
-    }
-
-    public static void setUniformAwayWrist(int value, int id, Connection ... con) {
-        SqlUtils.setInt("uniform_away_wrist", value, TABLE, id, con);
+                stmt.executeUpdate();
+            } finally {
+                if (con.length <= 0) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
     }
 }

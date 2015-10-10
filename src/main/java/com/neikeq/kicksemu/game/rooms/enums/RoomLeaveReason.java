@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
 public enum RoomLeaveReason {
+
     LEAVED,
     DISCONNECTED,
     KICKED;

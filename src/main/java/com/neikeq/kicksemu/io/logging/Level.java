@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.io.logging;
 
 /** Logging level enumeration to filter output. */
 public enum Level {
+
     DEBUG,
     INFO,
     WARNING,

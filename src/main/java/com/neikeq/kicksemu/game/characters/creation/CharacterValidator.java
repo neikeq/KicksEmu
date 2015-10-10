@@ -134,7 +134,10 @@ class CharacterValidator {
     }
 
     private static boolean isValidAnimation(CharacterBase character) {
-        return (character.getAnimation() == Animation.MALE && character.getFace() < 400) ||
-                (character.getAnimation() == Animation.FEMALE && character.getFace() > 400);
+        if (character.getAnimation() == Animation.MALE) {
+            return character.getFace() < 400;
+        } else {
+            return character.getAnimation() == Animation.FEMALE && character.getFace() > 400;
+        }
     }
 }

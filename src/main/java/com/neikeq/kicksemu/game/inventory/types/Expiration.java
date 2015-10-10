@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.inventory.types;
 
 public enum Expiration {
+
     DAYS_7,
     DAYS_30,
     DAYS_PERM,

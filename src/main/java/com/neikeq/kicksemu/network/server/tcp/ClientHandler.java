@@ -52,6 +52,6 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         SessionManager.removeSession(ctx.channel());
 
-        Output.println("Client handler caught an exception: " + cause.getMessage(), Level.DEBUG);
+        Output.println("Tcp client exception: " + cause.getMessage(), Level.DEBUG);
     }
 }

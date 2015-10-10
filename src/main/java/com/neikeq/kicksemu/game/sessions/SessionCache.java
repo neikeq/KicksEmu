@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.sessions;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.inventory.Celebration;
 import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.Item;
@@ -20,7 +21,7 @@ public class SessionCache {
     private DefaultClothes defaultClothes = null;
     private String name = null;
     private Integer owner = null;
-    private Short animation = null;
+    private Animation animation = null;
     private Short position = null;
 
     private Map<Integer, Item> items = null;
@@ -68,9 +69,9 @@ public class SessionCache {
         return owner;
     }
 
-    public Short getAnimation(Connection ... con) {
+    public Animation getAnimation(Connection ... con) {
         if (animation == null) {
-            animation = PlayerInfo.getAnimation(parent.getPlayerId(), con);
+            animation = Animation.fromShort(PlayerInfo.getAnimation(parent.getPlayerId(), con));
         }
 
         return animation;

@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
 public enum RoomAccessType {
+
     FREE,
     PASSWORD;
 

@@ -439,14 +439,14 @@ class MessageUtils {
     public static void appendClubUniform(int clubId, ServerMessage msg, Connection ... con) {
         ClubUniform clubUniform = ClubInfo.getUniform(clubId, con);
 
-        msg.writeInt(clubUniform.getHomeShirts());
-        msg.writeInt(clubUniform.getHomePants());
-        msg.writeInt(clubUniform.getHomeSocks());
-        msg.writeInt(clubUniform.getHomeWrist());
+        msg.writeInt(clubUniform.getHomeUniform().getShirts());
+        msg.writeInt(clubUniform.getHomeUniform().getPants());
+        msg.writeInt(clubUniform.getHomeUniform().getSocks());
+        msg.writeInt(clubUniform.getHomeUniform().getWrist());
 
-        msg.writeInt(clubUniform.getAwayShirts());
-        msg.writeInt(clubUniform.getAwayPants());
-        msg.writeInt(clubUniform.getAwaySocks());
-        msg.writeInt(clubUniform.getAwayWrist());
+        msg.writeInt(clubUniform.getAwayUniform().getShirts());
+        msg.writeInt(clubUniform.getAwayUniform().getPants());
+        msg.writeInt(clubUniform.getAwayUniform().getSocks());
+        msg.writeInt(clubUniform.getAwayUniform().getWrist());
     }
 }

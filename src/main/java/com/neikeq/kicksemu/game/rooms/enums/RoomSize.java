@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
 public enum RoomSize {
+
     SIZE_2V2,
     SIZE_3V3,
     SIZE_4V4,

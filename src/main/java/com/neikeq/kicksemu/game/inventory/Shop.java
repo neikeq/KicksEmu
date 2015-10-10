@@ -3,10 +3,16 @@ package com.neikeq.kicksemu.game.inventory;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.characters.types.Position;
+import com.neikeq.kicksemu.game.clubs.ClubInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
+import com.neikeq.kicksemu.game.clubs.Uniform;
+import com.neikeq.kicksemu.game.clubs.UniformType;
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
+import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.game.table.CeleInfo;
 import com.neikeq.kicksemu.game.table.BonusInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
@@ -302,7 +308,7 @@ public class Shop {
                 (optionInfoOne == null || optionInfoOne.isValidLevel(level, payment)) &&
                 (optionInfoTwo == null || optionInfoTwo.isValidLevel(level, payment));
 
-        boolean validGender = itemInfo != null && (itemInfo.getGender() == 0 ||
+        boolean validGender = itemInfo != null && (itemInfo.getGender() == Animation.ANY ||
                 itemInfo.getGender() == session.getCache().getAnimation());
 
         short result = 0;
@@ -399,6 +405,70 @@ public class Shop {
         } catch (SQLException e) {
             Output.println(e.getMessage(), Level.DEBUG);
         }
+    }
+
+    public static void setClubUniform(Session session, ClientMessage msg) {
+        try (Connection con = MySqlManager.getConnection()) {
+            int playerId = session.getPlayerId();
+            int clubId = MemberInfo.getClubId(playerId);
+
+            if (clubId <= 0) {
+                throw new MessageException("Player is not a club member.", -4);
+            }
+
+            if (ClubInfo.getManager(clubId, con) != playerId) {
+                throw new MessageException("Player is not the club manager.", -5);
+            }
+
+            if (!ClubInfo.isUniformActive(clubId, con)) {
+                throw new MessageException("Club Uniform item is required.", -3);
+            }
+
+            UniformType uniformType = UniformType.fromByte(msg.readByte());
+            if (uniformType == null) return;
+
+            Uniform uniform = new Uniform(msg.readInt(), msg.readInt(),
+                    msg.readInt(), msg.readInt());
+
+            validateUniform(uniform);
+
+            if (uniformType == UniformType.HOME) {
+                ClubInfo.setHomeUniform(uniform, clubId, con);
+            } else {
+                ClubInfo.setAwayUniform(uniform, clubId, con);
+            }
+
+            session.send(MessageBuilder.setClubUniform(uniformType, uniform, (short) 0));
+
+        } catch (MessageException e) {
+            session.send(MessageBuilder.setClubUniform(null, null, (short) e.getErrorCode()));
+        } catch (SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
+        }
+    }
+
+    private static void validateUniform(Uniform uniform) throws MessageException {
+        if (isInvalidUniformItem(uniform.getShirts(), ItemType.SHIRTS)) {
+            throw new MessageException("Invalid shirt.", -6);
+        }
+
+        if (isInvalidUniformItem(uniform.getPants(), ItemType.PANTS)) {
+            throw new MessageException("Invalid pants.", -7);
+        }
+
+        if (isInvalidUniformItem(uniform.getSocks(), ItemType.SOCKS)) {
+            throw new MessageException("Invalid socks.", -8);
+        }
+
+        if (isInvalidUniformItem(uniform.getWrist(), ItemType.WRIST)) {
+            throw new MessageException("Invalid wrist.", -9);
+        }
+    }
+
+    private static boolean isInvalidUniformItem(int itemId, ItemType requiredType) {
+        ItemInfo itemInfo = TableManager.getItemInfo(item -> item.getId() == itemId);
+        return itemInfo == null || itemInfo.getGender() != Animation.ANY ||
+                itemInfo.getType() != requiredType.toInt();
     }
 
     private static boolean notAlreadyPurchased(int id, Collection<? extends Product> product) {

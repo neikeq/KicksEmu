@@ -4,6 +4,8 @@ import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.MySqlManager;
@@ -45,6 +47,10 @@ public class CharacterCreator {
         int characterId = -1;
 
         try (Connection con = MySqlManager.getConnection()) {
+            if (character.getAnimation() == Animation.ANY) {
+                throw new IllegalArgumentException("Invalid character animation.");
+            }
+
             String creation_query = "INSERT INTO characters (owner, name, position, animation," +
                     " face, default_head, default_shirts, default_pants, default_shoes," +
                     " stats_points, stats_running, stats_endurance, stats_agility," +
@@ -97,8 +103,8 @@ public class CharacterCreator {
                     }
                 }
             }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
+        } catch (IllegalArgumentException | SQLException e) {
+            Output.println(e.getMessage(), Level.DEBUG);
             characterId = -1;
         }
 

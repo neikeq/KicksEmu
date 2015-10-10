@@ -2,6 +2,8 @@ package com.neikeq.kicksemu.network.packets.out;
 
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.clubs.Uniform;
+import com.neikeq.kicksemu.game.clubs.UniformType;
 import com.neikeq.kicksemu.game.inventory.DefaultClothes;
 import com.neikeq.kicksemu.game.misc.quests.QuestState;
 import com.neikeq.kicksemu.game.chat.MessageType;
@@ -290,7 +292,7 @@ public class MessageBuilder {
             msg.writeZeros(24);
             MessageUtils.appendCharacterInfo(playerId, msg, con);
             msg.writeZeros(2);
-            msg.writeShort(session.getCache().getAnimation(con));
+            msg.writeShort(session.getCache().getAnimation(con).toShort());
             msg.writeShort(PlayerInfo.getFace(playerId, con));
             DefaultClothes defaultClothes = session.getCache().getDefaultClothes(con);
             MessageUtils.appendDefaultClothes(defaultClothes, msg);
@@ -707,7 +709,7 @@ public class MessageBuilder {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
             msg.writeZeros(2);
-            msg.writeShort(session.getCache().getAnimation(con));
+            msg.writeShort(session.getCache().getAnimation(con).toShort());
             msg.writeShort(PlayerInfo.getFace(playerId, con));
 
             DefaultClothes defaultClothes = session.getCache().getDefaultClothes(con);
@@ -1150,7 +1152,7 @@ public class MessageBuilder {
             MessageUtils.appendCharacterInfo(playerId, msg, con);
 
             msg.writeZeros(2);
-            msg.writeShort(session.getCache().getAnimation(con));
+            msg.writeShort(session.getCache().getAnimation(con).toShort());
             msg.writeShort(PlayerInfo.getFace(playerId, con));
 
             DefaultClothes defaultClothes = session.getCache().getDefaultClothes(con);
@@ -1478,6 +1480,23 @@ public class MessageBuilder {
 
         if (result == 0) {
             msg.writeInt(inventoryId);
+        }
+
+        return msg;
+    }
+
+    public static ServerMessage setClubUniform(UniformType type, Uniform uniform, short result) {
+        ServerMessage msg = new ServerMessage(MessageId.SET_CLUB_UNIFORM);
+
+        msg.writeShort(result);
+
+        if (result == 0 && type != null && uniform != null) {
+            msg.writeInt(0); // TODO Not sure what this must be nor what it causes
+            msg.writeByte(type.toByte());
+            msg.writeInt(uniform.getShirts());
+            msg.writeInt(uniform.getPants());
+            msg.writeInt(uniform.getSocks());
+            msg.writeInt(uniform.getWrist());
         }
 
         return msg;

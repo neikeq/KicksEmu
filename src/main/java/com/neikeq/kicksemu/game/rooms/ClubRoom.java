@@ -36,7 +36,7 @@ public class ClubRoom extends Room {
     private int challengeId = -1;
     private int totalLevels = 0;
 
-    private WinStreakCache winStreakCache = new WinStreakCache((byte) 0, getPlayers().keySet());
+    private final WinStreakCache winStreakCache = new WinStreakCache((byte) 0, getPlayers().keySet());
     protected RoomSize maxSize = RoomSize.SIZE_2V2;
 
     @Override

@@ -32,7 +32,7 @@ class ClientIdleHandler extends ChannelDuplexHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        Output.println("Idle handler caught an exception: " + cause.getMessage(),
+        Output.println("Tcp Idle handler exception: " + cause.getMessage(),
                 Level.DEBUG);
     }
 }
