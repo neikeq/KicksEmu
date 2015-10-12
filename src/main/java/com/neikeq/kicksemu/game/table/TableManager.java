@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.game.table;
 
+import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Constants;
 import com.neikeq.kicksemu.utils.SeasonRange;
 import com.neikeq.kicksemu.utils.DateUtils;
@@ -20,6 +21,8 @@ public class TableManager {
 
     public static int EXPERIENCE_LIMIT;
 
+    private static final Map<String, String> tables = new HashMap<>();
+
     private static final Map<Integer, SkillInfo> skillsTable = new HashMap<>();
     private static final Map<Integer, CeleInfo> celesTable = new HashMap<>();
     private static final Map<Integer, LearnInfo> learnTable = new HashMap<>();
@@ -33,6 +36,21 @@ public class TableManager {
     private static final List<Short> missionsList = new ArrayList<>();
 
     public static void initialize() {
+        tables.put(Constants.PROPERTY_TABLE_SKILL, Constants.TABLE_SKILL_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_CELE, Constants.TABLE_CELE_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_LEARN, Constants.TABLE_LEARN_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_ITEM_FREE, Constants.TABLE_ITEM_FREE_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_ITEM, Constants.TABLE_ITEM_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_BONUS, Constants.TABLE_BONUS_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_OPTION, Constants.TABLE_OPTION_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_LEVEL, Constants.TABLE_LEVEL_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_MISSION, Constants.TABLE_MISSION_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_GOLDEN_TIME, Constants.TABLE_GOLDEN_TIME_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_CLUB_TIME, Constants.TABLE_CLUB_TIME_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_TIPS, Constants.TABLE_TIPS_DEFAULT);
+
+        updateOverriddenTables();
+
         initializeItemFreeTable();
         initializeSkillTable();
         initializeCeleTable();
@@ -106,7 +124,7 @@ public class TableManager {
     }
 
     private static void initializeSkillTable() {
-        TableReader reader = new TableReader(Constants.TABLE_SKILL_PATH);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_SKILL));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -116,7 +134,7 @@ public class TableManager {
     }
 
     private static void initializeCeleTable() {
-        TableReader reader = new TableReader(Constants.TABLE_CELE_PATH);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_CELE));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -126,7 +144,7 @@ public class TableManager {
     }
 
     private static void initializeLearnTable() {
-        TableReader reader = new TableReader(Constants.TABLE_LEARN_PATH);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_LEARN));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -136,7 +154,7 @@ public class TableManager {
     }
 
     private static void initializeItemFreeTable() {
-        TableReader reader = new TableReader(Constants.TABLE_ITEM_FREE_PATH);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_ITEM_FREE));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -146,7 +164,7 @@ public class TableManager {
     }
 
     private static void initializeItemTable() {
-        TableReader reader = new TableReader(Constants.TABLE_ITEM_PATH);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_ITEM));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -156,7 +174,7 @@ public class TableManager {
     }
 
     private static void initializeBonusTable() {
-        TableReader reader = new TableReader(Constants.TABLE_BONUS_PATH);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_BONUS));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -166,7 +184,7 @@ public class TableManager {
     }
 
     private static void initializeOptionTable() {
-        TableReader reader = new TableReader(Constants.TABLE_OPTION_PATH);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_OPTION));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -176,7 +194,7 @@ public class TableManager {
     }
 
     private static void initializeLevelTable() {
-        TableReader reader = new TableReader(Constants.TABLE_LEVEL_FILE);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_LEVEL));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -186,7 +204,7 @@ public class TableManager {
     }
 
     private static void initializeMissionTable() {
-        TableReader reader = new TableReader(Constants.TABLE_MISSION_FILE);
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_MISSION));
 
         Row line;
         while ((line = reader.nextRow()) != null) {
@@ -207,5 +225,19 @@ public class TableManager {
         return missionsList.stream()
                 .filter(m -> isMissionUsable(m, DateUtils.getDate()))
                 .collect(Collectors.toList());
+    }
+
+    private static void updateOverriddenTables() {
+        tables.keySet().forEach(property -> {
+            String overriddenPath = Configuration.get(property);
+
+            if (!overriddenPath.isEmpty()) {
+                tables.put(property, overriddenPath);
+            }
+        });
+    }
+
+    public static String getTablePath(String property) {
+        return tables.get(property);
     }
 }

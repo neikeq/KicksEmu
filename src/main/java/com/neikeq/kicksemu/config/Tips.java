@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.config;
 
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 
@@ -16,12 +17,14 @@ public class Tips {
     private static Tips instance;
 
     private final List<String> tipsList = new ArrayList<>();
-    private final String tipsPath = Constants.TABLE_DIR + "tips_" + Configuration.get("lang");
     private int index = 0;
 
     private void load() {
-        if (Files.exists(Paths.get(tipsPath))) {
-            try (Scanner s = new Scanner(new File(tipsPath))) {
+        final String path = TableManager.getTablePath(Constants.PROPERTY_TABLE_TIPS) +
+                Configuration.get("lang");
+
+        if (Files.exists(Paths.get(path))) {
+            try (Scanner s = new Scanner(new File(path))) {
                 while (s.hasNextLine()) {
                     String line = s.nextLine();
 
@@ -59,9 +62,17 @@ public class Tips {
 
     private int getIndex() {
         int curIndex = index;
-
         index = index < tipsList.size() - 1 ? ++index : 0;
-
         return curIndex;
+    }
+
+    private static String getTipsTablePath() {
+        String overriddenPath = Configuration.get(Constants.PROPERTY_TABLE_TIPS);
+
+        if (overriddenPath.isEmpty()) {
+            return Constants.TABLE_TIPS_DEFAULT;
+        } else {
+            return overriddenPath;
+        }
     }
 }

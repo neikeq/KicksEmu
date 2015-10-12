@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.events;
 
 import com.neikeq.kicksemu.config.Constants;
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.utils.DateUtils;
@@ -24,8 +25,10 @@ public class GameEvents {
     private static final Map<Integer, SortedSet<DayTimeRange>> clubTimeSchedule = new HashMap<>();
 
     public static void initialize() {
-        initializeSchedule(goldenTimeSchedule, Constants.TABLE_GOLDEN_TIME);
-        initializeSchedule(clubTimeSchedule, Constants.TABLE_CLUB_TIME);
+        initializeSchedule(goldenTimeSchedule,
+                TableManager.getTablePath(Constants.PROPERTY_TABLE_GOLDEN_TIME));
+        initializeSchedule(clubTimeSchedule,
+                TableManager.getTablePath(Constants.PROPERTY_TABLE_CLUB_TIME));
     }
 
     private static void initializeSchedule(Map<Integer, SortedSet<DayTimeRange>> schedule,
