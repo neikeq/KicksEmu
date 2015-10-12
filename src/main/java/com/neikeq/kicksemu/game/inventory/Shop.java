@@ -209,6 +209,10 @@ public class Shop {
                 return;
             }
 
+            if (request.isInvalidExpirationMode()) {
+                throw new MessageException("Invalid expiration mode.", -1);
+            }
+
             // TODO There should be a cleaner and more flexible way to do this.
             if (request.getPayment() == Payment.POINTS && request.getExpiration() == Expiration.DAYS_PERM) {
                 return;
@@ -224,10 +228,6 @@ public class Shop {
             // TODO Temporal, to avoid purchasing club items. Remove after all the club items are implemented.
             if (itemInfo.getType() <= 209 && itemInfo.getType() >= 205) {
                 return;
-            }
-
-            if (request.isInvalidExpirationMode()) {
-                throw new MessageException("Invalid expiration mode.", -1);
             }
 
             if (itemInfo.isIncompatibleGender(session.getCache().getAnimation())) {
