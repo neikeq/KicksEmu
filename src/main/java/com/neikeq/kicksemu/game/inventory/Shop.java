@@ -214,10 +214,6 @@ public class Shop {
                 return;
             }
 
-            if (request.isInvalidExpirationMode()) {
-                throw new MessageException("Invalid expiration mode.", -1);
-            }
-
             ItemInfo itemInfo = TableManager.getItemInfo(c ->
                     c.getId() == request.getProductId());
 
@@ -228,6 +224,12 @@ public class Shop {
             // TODO Temporal, to avoid purchasing club items. Remove after all the club items are implemented.
             if (itemInfo.getType() <= 209 && itemInfo.getType() >= 205) {
                 return;
+            }
+
+            boolean isSpecialItem = SpecialItem.isSpecialItem(itemInfo.getType());
+
+            if (!isSpecialItem && request.isInvalidExpirationMode()) {
+                throw new MessageException("Invalid expiration mode.", -1);
             }
 
             if (itemInfo.isIncompatibleGender(session.getCache().getAnimation())) {
@@ -256,7 +258,7 @@ public class Shop {
                 throw new MessageException("Inventory is full.", -10);
             }
 
-            if (SpecialItem.isSpecialItem(itemInfo.getType())) {
+            if (isSpecialItem) {
                 if (SpecialItem.applyEffect(itemInfo, session)) {
                     chargePlayer(session, request);
                 }
