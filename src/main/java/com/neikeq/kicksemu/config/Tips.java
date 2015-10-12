@@ -65,14 +65,4 @@ public class Tips {
         index = index < tipsList.size() - 1 ? ++index : 0;
         return curIndex;
     }
-
-    private static String getTipsTablePath() {
-        String overriddenPath = Configuration.get(Constants.PROPERTY_TABLE_TIPS);
-
-        if (overriddenPath.isEmpty()) {
-            return Constants.TABLE_TIPS_DEFAULT;
-        } else {
-            return overriddenPath;
-        }
-    }
 }

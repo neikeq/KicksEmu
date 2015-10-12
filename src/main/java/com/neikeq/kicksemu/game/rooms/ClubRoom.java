@@ -112,10 +112,10 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    public void startCountdown() { }
+    public void startCountdown() {}
 
     @Override
-    public void cancelCountdown() { }
+    public void cancelCountdown() {}
 
     @Override
     protected void onPlayerJoined(Session session) {
@@ -155,7 +155,7 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    void onHostLeaved(int playerId) { }
+    void onHostLeaved(int playerId) {}
 
     @Override
     protected ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
@@ -275,7 +275,7 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    protected void addObserver(int playerId) { }
+    protected void addObserver(int playerId) {}
 
     void onStateChanged() {
         if (state() == RoomState.WAITING && getDisconnectedPlayers().size() > 0) {

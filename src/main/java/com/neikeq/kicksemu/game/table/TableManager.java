@@ -238,6 +238,6 @@ public class TableManager {
     }
 
     public static String getTablePath(String property) {
-        return tables.get(property);
+        return Constants.TABLE_DIR + tables.get(property);
     }
 }

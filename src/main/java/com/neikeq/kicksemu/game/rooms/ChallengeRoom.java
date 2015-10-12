@@ -83,7 +83,7 @@ public class ChallengeRoom extends Room implements Observer {
     }
 
     @Override
-    protected void notifyAboutNewPlayer(Session session) { }
+    protected void notifyAboutNewPlayer(Session session) {}
 
     @Override
     protected ServerMessage roomInfoMessage() {
@@ -114,7 +114,7 @@ public class ChallengeRoom extends Room implements Observer {
     }
 
     @Override
-    protected void addObserver(int playerId) { }
+    protected void addObserver(int playerId) {}
 
     @Override
     public boolean isTraining() {

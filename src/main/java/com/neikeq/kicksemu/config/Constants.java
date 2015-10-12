@@ -22,18 +22,18 @@ public class Constants {
     public static final String TABLE_CLUB_TIME_DEFAULT = TABLE_DIR + "Table_Club_Time.csv";
     public static final String TABLE_TIPS_DEFAULT = TABLE_DIR + "table_tips_";
 
-    public static final String PROPERTY_TABLE_SKILL ="table.skill";
-    public static final String PROPERTY_TABLE_CELE ="table.cele";
-    public static final String PROPERTY_TABLE_LEARN ="table.learn";
-    public static final String PROPERTY_TABLE_ITEM_FREE ="table.item.free";
-    public static final String PROPERTY_TABLE_ITEM ="table.item";
-    public static final String PROPERTY_TABLE_BONUS ="table.bonus";
-    public static final String PROPERTY_TABLE_OPTION ="table.option";
-    public static final String PROPERTY_TABLE_LEVEL ="table.level";
-    public static final String PROPERTY_TABLE_MISSION ="table.mission";
-    public static final String PROPERTY_TABLE_GOLDEN_TIME ="table.golden.time";
-    public static final String PROPERTY_TABLE_CLUB_TIME ="table.club.time";
-    public static final String PROPERTY_TABLE_TIPS ="table.tips";
+    public static final String PROPERTY_TABLE_SKILL = "table.skill";
+    public static final String PROPERTY_TABLE_CELE = "table.cele";
+    public static final String PROPERTY_TABLE_LEARN = "table.learn";
+    public static final String PROPERTY_TABLE_ITEM_FREE = "table.item.free";
+    public static final String PROPERTY_TABLE_ITEM = "table.item";
+    public static final String PROPERTY_TABLE_BONUS = "table.bonus";
+    public static final String PROPERTY_TABLE_OPTION = "table.option";
+    public static final String PROPERTY_TABLE_LEVEL = "table.level";
+    public static final String PROPERTY_TABLE_MISSION = "table.mission";
+    public static final String PROPERTY_TABLE_GOLDEN_TIME = "table.golden.time";
+    public static final String PROPERTY_TABLE_CLUB_TIME = "table.club.time";
+    public static final String PROPERTY_TABLE_TIPS = "table.tips";
 
     public static final int SESSION_ID_INDEX = 2;
     public static final int TARGET_ID_INDEX = 6;
