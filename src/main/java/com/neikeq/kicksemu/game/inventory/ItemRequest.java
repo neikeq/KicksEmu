@@ -39,7 +39,8 @@ class ItemRequest implements PurchaseRequest {
         payment = Payment.fromInt(msg.readByte());
         price = msg.readInt();
         productId = msg.readInt();
-        expiration = Expiration.fromInt(msg.readInt());
+        Expiration specifiedExpiration = Expiration.fromInt(msg.readInt());
+        expiration = specifiedExpiration == null ? Expiration.DAYS_PERM : specifiedExpiration;
         bonusOne = msg.readInt();
         bonusTwo = msg.readInt();
     }

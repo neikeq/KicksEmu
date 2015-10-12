@@ -226,9 +226,7 @@ public class Shop {
                 return;
             }
 
-            boolean isSpecialItem = SpecialItem.isSpecialItem(itemInfo.getType());
-
-            if (!isSpecialItem && request.isInvalidExpirationMode()) {
+            if (request.isInvalidExpirationMode()) {
                 throw new MessageException("Invalid expiration mode.", -1);
             }
 
@@ -258,15 +256,17 @@ public class Shop {
                 throw new MessageException("Inventory is full.", -10);
             }
 
-            if (isSpecialItem) {
+            if (SpecialItem.isSpecialItem(itemInfo.getType())) {
                 if (SpecialItem.applyEffect(itemInfo, session)) {
                     chargePlayer(session, request);
+                } else {
+                    throw new MessageException("Cannot apply special item effect.", -1);
                 }
             } else {
                 doItemTransaction(session, request);
-                session.send(MessageBuilder.purchaseItem(session, (short) 0, con));
             }
 
+            session.send(MessageBuilder.purchaseItem(session, (short) 0, con));
             CharacterManager.sendItemList(session);
             CharacterManager.sendItemsInUse(session);
 
