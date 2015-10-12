@@ -229,15 +229,15 @@ public class TableManager {
 
     private static void updateOverriddenTables() {
         tables.keySet().forEach(property -> {
-            String overriddenPath = Configuration.get(property);
+            String overriddenTable = Configuration.get(property);
 
-            if (!overriddenPath.isEmpty()) {
-                tables.put(property, overriddenPath);
+            if (!overriddenTable.isEmpty()) {
+                tables.put(property, Constants.TABLE_DIR + overriddenTable);
             }
         });
     }
 
     public static String getTablePath(String property) {
-        return Constants.TABLE_DIR + tables.get(property);
+        return tables.get(property);
     }
 }
