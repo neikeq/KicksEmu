@@ -338,7 +338,7 @@ public class Shop {
                 InventoryUtils.expirationToTimestamp(request.getExpiration()), true);
 
         PlayerInfo.addInventorySkill(skill, session.getPlayerId());
-        skills.put(inventoryId, skill);
+        session.getCache().addSkill(inventoryId, skill);
 
         chargePlayer(session, request);
 
@@ -357,7 +357,7 @@ public class Shop {
                 InventoryUtils.expirationToTimestamp(request.getExpiration()), true);
 
         PlayerInfo.addInventoryCele(cele, session.getPlayerId());
-        celes.put(inventoryId, cele);
+        session.getCache().addCele(inventoryId, cele);
 
         chargePlayer(session, request);
 
@@ -372,7 +372,7 @@ public class Shop {
         Training learn = new Training(request.getProductId(), inventoryId, true);
 
         PlayerInfo.addInventoryTraining(learn, session.getPlayerId());
-        learns.put(inventoryId, learn);
+        session.getCache().addLearn(inventoryId, learn);
 
         chargePlayer(session, request);
 
@@ -390,7 +390,7 @@ public class Shop {
                 InventoryUtils.expirationToTimestamp(request.getExpiration()), false, true);
 
         PlayerInfo.addInventoryItem(item, session.getPlayerId());
-        items.put(inventoryId, item);
+        session.getCache().addItem(inventoryId, item);
         CharacterUtils.updateItemsInUse(item, session);
 
         chargePlayer(session, request);

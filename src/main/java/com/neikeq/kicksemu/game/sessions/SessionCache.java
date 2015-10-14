@@ -102,6 +102,12 @@ public class SessionCache {
         return items;
     }
 
+    public void addItem(int inventoryId, Item item) {
+        if (items != null) {
+            items.put(inventoryId, item);
+        }
+    }
+
     public Map<Integer, Skill> getSkills(Connection ... con) {
         if (skills == null) {
             skills = PlayerInfo.getInventorySkills(parent, con);
@@ -114,6 +120,12 @@ public class SessionCache {
                         (s1, s2) -> null, LinkedHashMap::new));
 
         return skills;
+    }
+
+    public void addSkill(int inventoryId, Skill skill) {
+        if (skills != null) {
+            skills.put(inventoryId, skill);
+        }
     }
 
     public Map<Integer, Celebration> getCeles(Connection ... con) {
@@ -130,12 +142,24 @@ public class SessionCache {
         return celes;
     }
 
+    public void addCele(int inventoryId, Celebration cele) {
+        if (celes != null) {
+            celes.put(inventoryId, cele);
+        }
+    }
+
     public Map<Integer, Training> getLearns(Connection ... con) {
         if (learns == null) {
             learns = PlayerInfo.getInventoryTraining(parent.getPlayerId(), con);
         }
 
         return learns;
+    }
+
+    public void addLearn(int inventoryId, Training learn) {
+        if (learns != null) {
+            learns.put(inventoryId, learn);
+        }
     }
 
     public DefaultClothes getDefaultClothes(Connection ... con) {
