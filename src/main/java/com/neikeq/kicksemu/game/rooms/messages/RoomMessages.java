@@ -410,7 +410,7 @@ public class RoomMessages {
 
             if (room.getHost() == session.getPlayerId()) {
                 room.determineMatchMission();
-                room.sendHostInfo();
+                room.broadcastHostInfo();
             }
         }
     }
@@ -496,7 +496,9 @@ public class RoomMessages {
                 result = -1;
             }
 
+            session.send(MessageBuilder.hostInfo(room));
             session.send(MessageBuilder.startMatch(result));
+            session.flush();
         }
     }
 

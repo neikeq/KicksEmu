@@ -486,14 +486,14 @@ public class Room {
         return MessageBuilder.roomInfo(this);
     }
 
-    public void sendHostInfo() {
+    public void broadcastHostInfo() {
         synchronized (locker) {
             if (state == RoomState.COUNT_DOWN) {
                 if (countdownTimeoutFuture.isCancellable()) {
                     countdownTimeoutFuture.cancel(true);
                 }
-                broadcast(MessageBuilder.hostInfo(this));
             }
+            broadcast(MessageBuilder.hostInfo(this));
         }
     }
 

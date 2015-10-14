@@ -119,7 +119,7 @@ public class ChallengeRoomMessages extends RoomMessages {
 
         if (room != null && room.getHost() == session.getPlayerId()) {
             room.determineMatchMission();
-            room.sendHostInfo();
+            room.broadcastHostInfo();
         }
     }
 
@@ -196,7 +196,9 @@ public class ChallengeRoomMessages extends RoomMessages {
             result = -1;
         }
 
+        session.send(MessageBuilder.hostInfo(room));
         session.send(MessageBuilder.startMatch(result));
+        session.flush();
     }
 
     public static void matchResult(Session session, ClientMessage msg) {
