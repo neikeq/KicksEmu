@@ -472,6 +472,7 @@ public class RoomMessages {
                 if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
                     room.setState(RoomState.PLAYING);
                     room.setTimeStart(DateUtils.currentTimeMillis());
+                    room.broadcast(MessageBuilder.hostInfo(room));
                     room.broadcast(MessageBuilder.playerReady((short) 0));
 
                     if (room.getLoadingTimeoutFuture().isCancellable()) {
@@ -496,9 +497,7 @@ public class RoomMessages {
                 result = -1;
             }
 
-            session.send(MessageBuilder.hostInfo(room));
             session.send(MessageBuilder.startMatch(result));
-            session.flush();
         }
     }
 
