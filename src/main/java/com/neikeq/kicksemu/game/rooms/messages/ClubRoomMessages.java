@@ -36,8 +36,7 @@ public class ClubRoomMessages extends RoomMessages {
 
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
-        session.send(MessageBuilder.clubRoomList(RoomManager.getRoomsFromPage(page),
-                page, (short) 0));
+        session.send(MessageBuilder.clubRoomList(RoomManager.getRoomsFromPage(page), page));
     }
 
     public static void createRoom(Session session, ClientMessage msg) {

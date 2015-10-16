@@ -1031,34 +1031,28 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage clubRoomList(Map<Integer, Room> rooms, short page, short result) {
+    public static ServerMessage clubRoomList(Map<Integer, Room> rooms, short page) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_LIST);
 
-        msg.writeShort(result);
+        msg.writeShort((short) 0);
+        msg.writeShort(page);
 
-        if (result == 0) {
-            msg.writeShort(page);
+        for (Room room : rooms.values()) {
+            msg.writeByte((byte) room.getAccessType().toInt());
+            msg.writeBool(!room.isWaiting());
+            msg.writeShort((short) room.getId());
+            msg.writeString(room.getName(), 15);
+            msg.writeByte((byte) room.getMaxSize().toInt());
+            msg.writeByte(room.getCurrentSize());
 
-            for (Room room : rooms.values()) {
-                msg.writeByte((byte) room.getAccessType().toInt());
-                msg.writeBool(!room.isWaiting());
-                msg.writeShort((short) room.getId());
-                msg.writeString(room.getName(), 15);
-                msg.writeByte((byte) room.getMaxSize().toInt());
-                msg.writeByte(room.getCurrentSize());
-
-                // Red team positions
-
-                int i = 0;
-
-                for (short position : room.getRedTeamPositions()) {
-                    msg.writeByte((byte) position);
-                    i++;
-                }
-
-                // Fill the remain spaces if red team is not full
-                msg.writeZeros(5 - i);
+            // Red team positions
+            int i = 0;
+            for (short position : room.getRedTeamPositions()) {
+                msg.writeByte((byte) position);
+                i++;
             }
+            // Fill the remain spaces if red team is not full
+            msg.writeZeros(5 - i);
         }
 
         return msg;
