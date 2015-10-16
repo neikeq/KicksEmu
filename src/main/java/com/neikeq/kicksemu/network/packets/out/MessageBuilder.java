@@ -1219,7 +1219,7 @@ public class MessageBuilder {
             msg.writeBool(!team.isWaiting());
             msg.writeShort((short) team.getId());
             msg.writeString(team.getName(), 15);
-            msg.writeByte(room.getLevelGapFactorTo(team));
+            msg.writeByte(room.getLevelGapDifferenceTo(team));
             msg.writeByte(team.getTotalWins());
         }
 

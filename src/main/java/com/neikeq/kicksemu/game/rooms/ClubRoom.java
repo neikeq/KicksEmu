@@ -235,9 +235,16 @@ public class ClubRoom extends Room {
         this.totalLevels = totalLevels.get();
     }
 
-    public byte getLevelGapFactorTo(ClubRoom room) {
-        int difference = getTotalLevels() - room.getTotalLevels();
-        return (byte) -(difference / 10);
+    public byte getLevelGapDifferenceTo(ClubRoom room) {
+        final byte maxDiff = 3;
+
+        byte difference = (byte) ((room.getTotalLevels() - getTotalLevels()) / 10);
+
+        if (Math.abs(difference) > maxDiff) {
+            difference = (byte) (Math.signum(difference) * maxDiff);
+        }
+
+        return difference;
     }
 
     @Override

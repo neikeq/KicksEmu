@@ -32,7 +32,7 @@ public class ClubPlayerRewards extends PlayerRewards {
     }
 
     private void applyLevelGapPoints() {
-        byte levelGap = clubRoom.getLevelGapFactorTo(rivalRoom);
+        byte levelGap = clubRoom.getLevelGapDifferenceTo(rivalRoom);
         int levelGapPoints = BASE_LEVEL_GAP_POINTS + levelGap;
 
         TeamResult teamResult = playerTeam == RoomTeam.RED ?
