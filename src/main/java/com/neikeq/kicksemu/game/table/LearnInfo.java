@@ -21,7 +21,7 @@ public class LearnInfo {
         return getPayment().isIncompatibleWith(payment);
     }
 
-    public boolean isInvalidPrice(int price) {
+    public boolean isInvalidPrice(int price, Payment payment) {
         if (price >= 0) {
             if (payment == Payment.POINTS) {
                 return points != price;

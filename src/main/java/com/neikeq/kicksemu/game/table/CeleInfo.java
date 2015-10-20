@@ -20,7 +20,7 @@ public class CeleInfo {
         return getPayment().isIncompatibleWith(payment);
     }
 
-    public boolean isInvalidPrice(int price, Expiration expiration) {
+    public boolean isInvalidPrice(int price, Expiration expiration, Payment payment) {
         int celePrice = getPrice().getPriceFor(expiration, payment);
         return celePrice == -1 || celePrice != price;
     }

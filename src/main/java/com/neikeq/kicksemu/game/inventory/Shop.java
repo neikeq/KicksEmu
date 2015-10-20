@@ -66,13 +66,14 @@ public class Shop {
                 throw new MessageException("Incompatible level.", -9);
             }
 
-            if (skillInfo.isInvalidPrice(request.getPrice(), request.getExpiration())) {
-                throw new MessageException("Invalid price.",
+            if (skillInfo.isInvalidPaymentMode(request.getPayment())) {
+                throw new MessageException("Incompatible payment mode.",
                         request.getPayment() == Payment.CASH ? -2 : -3);
             }
 
-            if (skillInfo.isInvalidPaymentMode(request.getPayment())) {
-                throw new MessageException("Incompatible payment mode.",
+            if (skillInfo.isInvalidPrice(request.getPrice(),
+                    request.getExpiration(), request.getPayment())) {
+                throw new MessageException("Invalid price.",
                         request.getPayment() == Payment.CASH ? -2 : -3);
             }
 
@@ -120,13 +121,14 @@ public class Shop {
                 throw new MessageException("Incompatible level.", -9);
             }
 
-            if (celeInfo.isInvalidPrice(request.getPrice(), request.getExpiration())) {
-                throw new MessageException("Invalid price.",
+            if (celeInfo.isInvalidPaymentMode(request.getPayment())) {
+                throw new MessageException("Incompatible payment mode.",
                         request.getPayment() == Payment.CASH ? -2 : -3);
             }
 
-            if (celeInfo.isInvalidPaymentMode(request.getPayment())) {
-                throw new MessageException("Incompatible payment mode.",
+            if (celeInfo.isInvalidPrice(request.getPrice(),
+                    request.getExpiration(), request.getPayment())) {
+                throw new MessageException("Invalid price.",
                         request.getPayment() == Payment.CASH ? -2 : -3);
             }
 
@@ -170,13 +172,13 @@ public class Shop {
                 throw new MessageException("Incompatible level.", -9);
             }
 
-            if (learnInfo.isInvalidPrice(request.getPrice())) {
-                throw new MessageException("Invalid price.",
+            if (learnInfo.isInvalidPaymentMode(request.getPayment())) {
+                throw new MessageException("Incompatible payment mode.",
                         request.getPayment() == Payment.CASH ? -2 : -3);
             }
 
-            if (learnInfo.isInvalidPaymentMode(request.getPayment())) {
-                throw new MessageException("Incompatible payment mode.",
+            if (learnInfo.isInvalidPrice(request.getPrice(), request.getPayment())) {
+                throw new MessageException("Invalid price.",
                         request.getPayment() == Payment.CASH ? -2 : -3);
             }
 

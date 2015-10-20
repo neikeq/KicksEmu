@@ -26,7 +26,7 @@ public class SkillInfo {
         return getPayment().isIncompatibleWith(payment);
     }
 
-    public boolean isInvalidPrice(int price, Expiration expiration) {
+    public boolean isInvalidPrice(int price, Expiration expiration, Payment payment) {
         int skillPrice = getPrice().getPriceFor(expiration, payment);
         return skillPrice == -1 || skillPrice != price;
     }
