@@ -219,6 +219,12 @@ public class ClubRoom extends Room {
         setChallengeId(-1);
         setState(RoomState.WAITING);
         broadcast(MessageBuilder.clubCancelChallenge());
+
+        if (TeamManager.isRegistered(getId())) {
+            final short page = 0;
+            broadcast(MessageBuilder.clubTeamList(
+                    TeamManager.getTeamsFromPage(page, getId()), this, page));
+        }
     }
 
     private void updateTotalLevels() {

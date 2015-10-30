@@ -415,9 +415,6 @@ public class ClubRoomMessages extends RoomMessages {
         if (!accepted || result != 0) {
             room.setChallengeTarget(0);
         } else {
-            TeamManager.unregister(room.getId());
-            TeamManager.unregister(requester.getId());
-
             ChallengeRoom challengeRoom = new ChallengeRoom();
             ChallengeOrganizer.add(challengeRoom, room, requester);
             challengeRoom.addChallengePlayers();
