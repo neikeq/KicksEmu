@@ -91,6 +91,22 @@ public class ClientMessage {
         return body.readableBytes();
     }
 
+    public void printBytes() {
+        body.markReaderIndex();
+
+        System.out.println("Client Message: " + getMessageId());
+        System.out.printf(" - Body Size: %s, Session Id: %s, Target Id: %s" +
+                        System.lineSeparator() + " - Data: ",
+                getBodySize(), getSessionId(), getTargetId());
+
+        for (boolean firstStep = true; getReadableBytes() > 0; firstStep = false) {
+            System.out.print((firstStep ? "" : " ") + readByte());
+        }
+        System.out.println();
+
+        body.resetReaderIndex();
+    }
+
     public ClientMessage(ByteBuf data) {
         body = data.order(ByteOrder.LITTLE_ENDIAN);
 

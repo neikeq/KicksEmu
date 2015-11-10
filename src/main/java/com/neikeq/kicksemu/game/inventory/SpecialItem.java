@@ -19,8 +19,7 @@ class SpecialItem {
         }
     }
 
-    public static boolean applyEffect(ItemInfo itemInfo,
-                                   Session session) {
+    public static boolean applyEffect(ItemInfo itemInfo, Session session) {
         int playerId = session.getPlayerId();
 
         ItemType type = ItemType.fromInt(itemInfo.getType());

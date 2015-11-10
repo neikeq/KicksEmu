@@ -10,7 +10,8 @@ public enum RoomBall {
     TEAM_ARENA,
     T_10Y,
     T_10W,
-    JOHNS_EYE;
+    JOHNS_EYE,
+    BEACH_BALL;
 
     public static RoomBall fromInt(int ball) {
         switch (ball) {
@@ -32,6 +33,8 @@ public enum RoomBall {
                 return T_10W;
             case 9:
                 return JOHNS_EYE;
+            case 10:
+                return BEACH_BALL;
             default:
                 return null;
         }
@@ -57,6 +60,8 @@ public enum RoomBall {
                 return 8;
             case JOHNS_EYE:
                 return 9;
+            case BEACH_BALL:
+                return 10;
             default:
                 return -1;
         }
