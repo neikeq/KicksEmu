@@ -1146,7 +1146,7 @@ public class MessageBuilder {
             msg.writeString(ClubInfo.getName(clubId, con), 15);
             msg.writeBool(room.isObserver(playerId));
             msg.writeBool(false); // pc room
-            msg.writeBool(false);
+            msg.writeByte(session.getEquippedUniform().toByte());
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
             msg.writeShort((short) session.getUdpPort());
