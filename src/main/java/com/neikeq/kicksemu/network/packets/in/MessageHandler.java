@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.characters.CharacterManager;
 import com.neikeq.kicksemu.game.characters.CharacterRemover;
 import com.neikeq.kicksemu.game.characters.StatusMessage;
+import com.neikeq.kicksemu.game.clubs.ClubShop;
 import com.neikeq.kicksemu.game.misc.tutorial.TutorialManager;
 import com.neikeq.kicksemu.game.characters.creation.CharacterCreator;
 import com.neikeq.kicksemu.game.chat.ChatManager;
@@ -144,6 +145,7 @@ public class MessageHandler {
             events.put(MessageId.PURCHASE_CELE, Shop::purchaseCele);
             events.put(MessageId.ACTIVATE_CELE, InventoryManager::activateCele);
             events.put(MessageId.DEACTIVATE_CELE, InventoryManager::deactivateCele);
+            events.put(MessageId.PURCHASE_CLUB_ITEM, ClubShop::purchaseClubItem);
             events.put(MessageId.SET_CLUB_UNIFORM, Shop::setClubUniform);
             events.put(MessageId.WEAR_UNIFORM, InventoryManager::wearUniform);
             events.put(MessageId.PLAYER_DETAILS, CharacterManager::playerDetails);

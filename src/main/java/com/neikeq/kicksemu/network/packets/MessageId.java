@@ -96,6 +96,7 @@ public class MessageId {
     public static final int PURCHASE_CELE = 2630;
     public static final int ACTIVATE_CELE = 2631;
     public static final int DEACTIVATE_CELE = 2632;
+    public static final int PURCHASE_CLUB_ITEM = 2640;
     public static final int SET_CLUB_UNIFORM = 2641;
     public static final int WEAR_UNIFORM = 2642;
     public static final int TCP_PING = 2900;

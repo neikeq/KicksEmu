@@ -37,4 +37,12 @@ public class Price {
                 return -1;
         }
     }
+
+    /**
+     * Club items store its unique price in the points permanent row.
+     * This method is used to leave that clear and avoid confusions.
+     * */
+    public int getClubItemPrice() {
+        return pointsPerm;
+    }
 }

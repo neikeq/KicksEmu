@@ -1,0 +1,13 @@
+// PurchaseClubItem
+// Tcp
+
+Id: 2640
+Size: 24
+
+Data:
+int packet_id
+int price
+int item_id
+int option_one
+int option_two
+int unknown

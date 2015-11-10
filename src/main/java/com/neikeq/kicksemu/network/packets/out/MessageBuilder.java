@@ -1487,6 +1487,19 @@ public class MessageBuilder {
         return msg;
     }
 
+    public static ServerMessage purchaseClubItem(Session session, short result, Connection ... con) {
+        ServerMessage msg = new ServerMessage(MessageId.PURCHASE_CLUB_ITEM);
+
+        msg.writeShort(result);
+
+        if (result == 0) {
+            MessageUtils.appendCharacterInfo(session.getPlayerId(), msg, con);
+            // TODO May need more data. Size 28?
+        }
+
+        return msg;
+    }
+
     public static ServerMessage setClubUniform(UniformType type, Uniform uniform, short result) {
         ServerMessage msg = new ServerMessage(MessageId.SET_CLUB_UNIFORM);
 
