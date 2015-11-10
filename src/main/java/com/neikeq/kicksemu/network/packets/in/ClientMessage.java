@@ -91,7 +91,7 @@ public class ClientMessage {
         return body.readableBytes();
     }
 
-    public void printBytes() {
+    public void printInformation() {
         body.markReaderIndex();
 
         System.out.println("Client Message: " + getMessageId());

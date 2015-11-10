@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.ItemInfo;
+import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 
 class SpecialItem {
@@ -19,13 +20,13 @@ class SpecialItem {
         }
     }
 
-    public static boolean applyEffect(ItemInfo itemInfo, Session session) {
+    public static void applyEffect(ItemInfo itemInfo, Session session) throws MessageException {
         int playerId = session.getPlayerId();
 
         ItemType type = ItemType.fromInt(itemInfo.getType());
 
         if (type == null) {
-            return false;
+            throw new MessageException("Invalid item type for special item.", -1);
         }
 
         switch (type) {
@@ -37,8 +38,7 @@ class SpecialItem {
                 PlayerInfo.setFace((short) (itemInfo.getId() / 10 - 100000), playerId);
                 break;
             default:
+                throw new MessageException("Special item has no effect.", -12);
         }
-
-        return true;
     }
 }

@@ -6,6 +6,7 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
+import com.neikeq.kicksemu.game.clubs.MemberRole;
 import com.neikeq.kicksemu.game.clubs.Uniform;
 import com.neikeq.kicksemu.game.clubs.UniformType;
 import com.neikeq.kicksemu.game.inventory.products.Celebration;
@@ -216,8 +217,7 @@ public class Shop {
                 throw new MessageException("Invalid expiration mode.", -1);
             }
 
-            ItemInfo itemInfo = TableManager.getItemInfo(c ->
-                    c.getId() == request.getProductId());
+            ItemInfo itemInfo = TableManager.getItemInfo(c -> c.getId() == request.getProductId());
 
             if (itemInfo == null) {
                 throw new MessageException("Item does not exist.", -1);
@@ -231,10 +231,12 @@ public class Shop {
                 return;
             }
 
-            /* TODO Temporal, to avoid purchasing club items.
-             Remove after all the club items are implemented. */
-            if (itemInfo.getType() <= 209 && itemInfo.getType() >= 205) {
-                return;
+            if (isClubSpecialItem(itemInfo)) {
+                throw new MessageException("Club special items are not yet implemented.", -11);
+            }
+
+            if (isClubItem(itemInfo)) {
+                throw new MessageException("Club items are not available in this shop.", -12);
             }
 
             if (itemInfo.isIncompatibleGender(session.getCache().getAnimation())) {
@@ -264,11 +266,8 @@ public class Shop {
             }
 
             if (isSpecialItem) {
-                if (SpecialItem.applyEffect(itemInfo, session)) {
-                    chargePlayer(session, request);
-                } else {
-                    throw new MessageException("Cannot apply special item effect.", -1);
-                }
+                SpecialItem.applyEffect(itemInfo, session);
+                chargePlayer(session, request);
             } else {
                 doItemTransaction(session, request);
             }
@@ -448,6 +447,15 @@ public class Shop {
         return session.getCache().getItems(con).size() >= InventoryManager.MAX_INVENTORY_ITEMS;
     }
 
+    /* TODO Should be removed after implementing tournament tickets and club sponsorship items */
+    private static boolean isClubSpecialItem(ItemInfo itemInfo) {
+        return itemInfo.getType() <= 209 && itemInfo.getType() >= 205;
+    }
+
+    private static boolean isClubItem(ItemInfo itemInfo) {
+        return itemInfo.getType() / 100 == 3;
+    }
+
     public static void setClubUniform(Session session, ClientMessage msg) {
         try (Connection con = MySqlManager.getConnection()) {
             int playerId = session.getPlayerId();
@@ -457,7 +465,7 @@ public class Shop {
                 throw new MessageException("Player is not a club member.", -4);
             }
 
-            if (ClubInfo.getManager(clubId, con) != playerId) {
+            if (MemberInfo.getRole(playerId, con) != MemberRole.MANAGER) {
                 throw new MessageException("Player is not the club manager.", -5);
             }
 

@@ -24,15 +24,12 @@ public class ServerManager {
     private static final MessageHandler messageHandler = new MessageHandler();
     private static final ServerBase serverBase = new ServerBase();
 
-    private void initializeMain() {
-        /*
-        Ensure the server id is set to 99.
-        This id is reserved for main servers only.
-        */
+    private static void initializeMainServer() {
+        // Id 99 is reserved for main server. Ensure the id is not different.
         serverBase.setId((short) 99);
     }
 
-    private void initializeGame() throws SQLException {
+    private static void initializeGameServer() throws SQLException {
         if (!ServerUtils.serverExist(Configuration.getShort("game.id"))) {
             ServerUtils.insertServer(serverBase);
         } else {
@@ -115,17 +112,19 @@ public class ServerManager {
         return messageHandler;
     }
 
-    public ServerManager() throws SQLException {
+    public static void initialize() throws SQLException {
         ServerType serverType = getServerType();
 
         if (serverType == null) {
             throw new IllegalArgumentException("Invalid server type.");
         } else if (serverType == ServerType.MAIN) {
-            // Initialize as main server
-            initializeMain();
+            initializeMainServer();
         } else {
-            // Initialize as game server
-            initializeGame();
+            initializeGameServer();
         }
+    }
+
+    private ServerManager() {
+        throw new AssertionError("Server manager must not be initialized.");
     }
 }

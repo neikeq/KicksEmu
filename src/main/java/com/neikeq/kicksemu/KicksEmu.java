@@ -25,8 +25,6 @@ public class KicksEmu {
 
     private static Output output;
 
-    private static ServerManager serverManager;
-
     private static NettyTcpServer nettyTcpServer;
     private static NettyUdpServer nettyUdpServer;
 
@@ -67,7 +65,7 @@ public class KicksEmu {
             // --- Initialize ServerManager
             Output.println(Localization.get("server.init"));
 
-            serverManager = new ServerManager();
+            ServerManager.initialize();
             ServerManager.getMessageHandler().defineEvents();
             ServerManager.getMessageHandler().defineCertifyEvents();
             ServerManager.cleanPossibleConnectedUsers();
@@ -191,10 +189,6 @@ public class KicksEmu {
 
     public static Output getOutput() {
         return output;
-    }
-
-    public static ServerManager getServerManager() {
-        return serverManager;
     }
 
     public static NettyUdpServer getNettyUdpServer() {
