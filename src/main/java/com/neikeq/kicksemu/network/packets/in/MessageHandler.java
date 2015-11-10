@@ -145,6 +145,7 @@ public class MessageHandler {
             events.put(MessageId.ACTIVATE_CELE, InventoryManager::activateCele);
             events.put(MessageId.DEACTIVATE_CELE, InventoryManager::deactivateCele);
             events.put(MessageId.SET_CLUB_UNIFORM, Shop::setClubUniform);
+            events.put(MessageId.WEAR_UNIFORM, InventoryManager::wearUniform);
             events.put(MessageId.PLAYER_DETAILS, CharacterManager::playerDetails);
             events.put(MessageId.ADD_STATS_POINTS, CharacterManager::addStatsPoints);
             events.put(MessageId.UDP_PING, (s, m) -> UdpPing.udpPing(s));

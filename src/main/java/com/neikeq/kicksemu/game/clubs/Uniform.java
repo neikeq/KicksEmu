@@ -7,6 +7,10 @@ public class Uniform {
     private int socks;
     private int wrist;
 
+    public boolean isNotEstablished() {
+        return shirts == 0 || pants == 0 || socks == 0 || wrist == 0;
+    }
+
     public Uniform() {
         this(0, 0, 0, 0);
     }

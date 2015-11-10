@@ -289,7 +289,9 @@ public class MessageBuilder {
             msg.writeString(PlayerInfo.getStatusMessage(playerId, con), 35);
             MessageUtils.appendQuestInfo(playerId, msg, con);
             MessageUtils.appendTutorialInfo(playerId, msg, con);
-            msg.writeZeros(24);
+            msg.writeZeros(3);
+            msg.writeByte(session.getEquippedUniform().toByte());
+            msg.writeZeros(20);
             MessageUtils.appendCharacterInfo(playerId, msg, con);
             msg.writeZeros(2);
             msg.writeShort(session.getCache().getAnimation(con).toShort());
@@ -297,7 +299,12 @@ public class MessageBuilder {
             DefaultClothes defaultClothes = session.getCache().getDefaultClothes(con);
             MessageUtils.appendDefaultClothes(defaultClothes, msg);
             msg.writeShort(session.getCache().getPosition(con));
-            msg.writeZeros(6);
+            msg.writeZeros(1);
+            msg.writeBool(clubId > 0); // is club member
+            msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
+            msg.writeBool(false);
+            msg.writeBool(true);
+            msg.writeBool(false);
 
             // Stats
             MessageUtils.appendStats(playerId, msg, con);
@@ -312,6 +319,7 @@ public class MessageBuilder {
             MessageUtils.appendRanking(playerId, msg, con);
             MessageUtils.appendRankingLastMonth(playerId, msg, con);
             MessageUtils.appendInventoryItemsInUse(session, msg, con);
+            msg.writeZeros(4);
             MessageUtils.appendClubUniform(clubId, msg, con);
         }
 
@@ -700,7 +708,7 @@ public class MessageBuilder {
             msg.writeShort(teamIndex);
             msg.writeBool(room.isObserver(playerId));
             msg.writeBool(false); // pc room
-            msg.writeBool(false);
+            msg.writeByte(session.getEquippedUniform().toByte());
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeInt(session.getPingRay());
             msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
@@ -1492,6 +1500,15 @@ public class MessageBuilder {
             msg.writeInt(uniform.getSocks());
             msg.writeInt(uniform.getWrist());
         }
+
+        return msg;
+    }
+
+    public static ServerMessage wearUniform(UniformType uniform, short result) {
+        ServerMessage msg = new ServerMessage(MessageId.WEAR_UNIFORM);
+
+        msg.writeShort(result);
+        msg.writeByte(uniform.toByte());
 
         return msg;
     }

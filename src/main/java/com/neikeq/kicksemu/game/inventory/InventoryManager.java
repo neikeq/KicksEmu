@@ -2,6 +2,10 @@ package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.game.clubs.ClubInfo;
+import com.neikeq.kicksemu.game.clubs.MemberInfo;
+import com.neikeq.kicksemu.game.clubs.Uniform;
+import com.neikeq.kicksemu.game.clubs.UniformType;
 import com.neikeq.kicksemu.game.inventory.products.Celebration;
 import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.inventory.products.Skill;
@@ -14,6 +18,7 @@ import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
+import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
@@ -309,5 +314,33 @@ public class InventoryManager {
                 session.send(MessageBuilder.activateItem(inventoryId, session, result));
             }
         }
+    }
+
+    public static void wearUniform(Session session, ClientMessage msg) {
+        UniformType uniformType = UniformType.fromByte(msg.readByte());
+
+        short result = 0;
+
+        try {
+            if (uniformType != UniformType.NONE) {
+                int clubId = MemberInfo.getClubId(session.getPlayerId());
+
+                if (clubId <= 0) {
+                    throw new MessageException("Not a club member.", -3);
+                }
+
+                Uniform uniform = ClubInfo.getUniform(clubId).getUniformByType(uniformType);
+
+                if (uniform.isNotEstablished()) {
+                    throw new MessageException("Uniform is not established.", -4);
+                }
+            }
+
+            session.setEquippedUniform(uniformType);
+        } catch (MessageException e) {
+            result = (short) e.getErrorCode();
+        }
+
+        session.send(MessageBuilder.wearUniform(uniformType, result));
     }
 }

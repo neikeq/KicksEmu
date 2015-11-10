@@ -32,7 +32,7 @@ public class CharacterManager {
         sendSkillList(session);
         sendCelebrationList(session);
         sendPlayerInfo(session);
-        sendItemsInUse(session);
+        sendItemsInUseForcedUpdate(session);
     }
 
     public static void playerDetails(Session session, ClientMessage msg) {
@@ -60,7 +60,7 @@ public class CharacterManager {
     }
 
     /** This is a trick to update client's inventory items in use. */
-    public static void sendItemsInUse(Session session) {
+    public static void sendItemsInUseForcedUpdate(Session session) {
         Map<Integer, Item> items = session.getCache().getItems();
 
         if (items.size() > 0) {

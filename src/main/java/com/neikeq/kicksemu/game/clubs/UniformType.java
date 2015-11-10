@@ -2,11 +2,14 @@ package com.neikeq.kicksemu.game.clubs;
 
 public enum UniformType {
 
+    NONE,
     HOME,
     AWAY;
 
     public byte toByte() {
         switch (this) {
+            case NONE:
+                return 0;
             case HOME:
                 return 1;
             case AWAY:
@@ -22,8 +25,9 @@ public enum UniformType {
                 return HOME;
             case 2:
                 return AWAY;
+            case 0:
             default:
-                return null;
+                return NONE;
         }
     }
 }

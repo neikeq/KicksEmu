@@ -93,7 +93,7 @@ public class Shop {
         } catch (MessageException e) {
             session.send(MessageBuilder.purchaseSkill(0, null, (short) e.getErrorCode()));
         } catch (SQLException e) {
-            Output.println(e.getMessage(), Level.DEBUG);
+            Output.println("Exception when purchasing Skill: " + e.getMessage(), Level.DEBUG);
         }
     }
 
@@ -148,7 +148,8 @@ public class Shop {
         } catch (MessageException e) {
             session.send(MessageBuilder.purchaseCele(0, null, (short) e.getErrorCode()));
         } catch (SQLException e) {
-            Output.println(e.getMessage(), Level.DEBUG);
+            Output.println("Exception when purchasing Celebration: " +
+                    e.getMessage(), Level.DEBUG);
         }
     }
 
@@ -198,7 +199,7 @@ public class Shop {
         } catch (MessageException e) {
             session.send(MessageBuilder.purchaseLearn(session, null, (short) e.getErrorCode()));
         } catch (SQLException e) {
-            Output.println(e.getMessage(), Level.DEBUG);
+            Output.println("Exception when purchasing Training: " + e.getMessage(), Level.DEBUG);
         }
     }
 
@@ -274,12 +275,12 @@ public class Shop {
 
             session.send(MessageBuilder.purchaseItem(session, (short) 0, con));
             CharacterManager.sendItemList(session);
-            CharacterManager.sendItemsInUse(session);
+            CharacterManager.sendItemsInUseForcedUpdate(session);
 
         } catch (MessageException e) {
             session.send(MessageBuilder.purchaseItem(session, (short) e.getErrorCode()));
         } catch (SQLException e) {
-            Output.println(e.getMessage(), Level.DEBUG);
+            Output.println("Exception when purchasing Item: " + e.getMessage(), Level.DEBUG);
         }
     }
 
@@ -465,7 +466,7 @@ public class Shop {
             }
 
             UniformType uniformType = UniformType.fromByte(msg.readByte());
-            if (uniformType == null) return;
+            if (uniformType == UniformType.NONE) return;
 
             Uniform uniform = new Uniform(msg.readInt(), msg.readInt(),
                     msg.readInt(), msg.readInt());
@@ -483,7 +484,8 @@ public class Shop {
         } catch (MessageException e) {
             session.send(MessageBuilder.setClubUniform(null, null, (short) e.getErrorCode()));
         } catch (SQLException e) {
-            Output.println(e.getMessage(), Level.DEBUG);
+            Output.println("Exception when updating Club Uniform: " +
+                    e.getMessage(), Level.DEBUG);
         }
     }
 

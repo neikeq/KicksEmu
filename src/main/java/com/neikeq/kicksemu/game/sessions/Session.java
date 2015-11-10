@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.sessions;
 
 import com.neikeq.kicksemu.game.clubs.ClubManager;
+import com.neikeq.kicksemu.game.clubs.UniformType;
 import com.neikeq.kicksemu.game.lobby.Lobby;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -37,8 +38,9 @@ public class Session {
     private int udpPort = -1;
 
     private byte pingState = 0;
-
     private long lastPingResponse = 0;
+
+    private UniformType equippedUniform = UniformType.NONE;
 
     private boolean authenticated = false;
     private boolean udpAuthenticated = false;
@@ -285,5 +287,13 @@ public class Session {
 
     public void setUdpPingFuture(ScheduledFuture<?> udpPingFuture) {
         this.udpPingFuture = udpPingFuture;
+    }
+
+    public UniformType getEquippedUniform() {
+        return equippedUniform;
+    }
+
+    public void setEquippedUniform(UniformType equippedUniform) {
+        this.equippedUniform = equippedUniform;
     }
 }
