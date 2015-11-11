@@ -14,8 +14,6 @@ import java.sql.SQLException;
 
 public class ClubShop {
 
-    private static ClubItemHelper clubItemHelper = new ClubItemHelper();
-
     public static void purchaseClubItem(Session session, ClientMessage msg) {
         try (Connection con = MySqlManager.getConnection()) {
             int playerId = session.getPlayerId();
@@ -45,7 +43,7 @@ public class ClubShop {
                 throw new MessageException("Not enough club points.", -5);
             }
 
-            clubItemHelper.applyEffect(itemInfo, request, clubId);
+            ClubItemManager.getInstance().applyEffect(itemInfo, request, clubId);
             chargeClub(clubId, request);
 
             session.send(MessageBuilder.purchaseClubItem(session, (short) 0));

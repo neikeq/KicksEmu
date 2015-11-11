@@ -6,7 +6,9 @@ import com.neikeq.kicksemu.network.packets.in.MessageException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClubItemHelper {
+public class ClubItemManager {
+
+    private static ClubItemManager instance;
 
     private Map<Integer, ClubItemEffect> clubItemEffects = new HashMap<>();
 
@@ -22,7 +24,7 @@ public class ClubItemHelper {
         effect.apply(request, clubId);
     }
 
-    public ClubItemHelper() {
+    public ClubItemManager() {
         clubItemEffects.put(301, (itemInfo, clubId) -> {
             if (ClubInfo.isUniformActive(clubId)) {
                 throw new MessageException("Club uniform is already purchased.", -8);
@@ -45,7 +47,17 @@ public class ClubItemHelper {
         clubItemEffects.put(306, (itemInfo, clubId) ->
         { throw new MessageException("Club item effect not yet implemented.", -11); });
         clubItemEffects.put(309, (itemInfo, clubId) ->
-        { throw new MessageException("Club item effect not yet implemented.", -11); });
+        {
+            throw new MessageException("Club item effect not yet implemented.", -11);
+        });
+    }
+
+    public static ClubItemManager getInstance() {
+        if (instance == null) {
+            instance = new ClubItemManager();
+        }
+
+        return instance;
     }
 
     @FunctionalInterface
