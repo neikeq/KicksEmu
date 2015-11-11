@@ -303,7 +303,7 @@ public class MessageBuilder {
             msg.writeBool(clubId > 0); // is club member
             msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
             msg.writeBool(false);
-            msg.writeBool(true);
+            msg.writeBool(false);
             msg.writeBool(false);
 
             // Stats
@@ -728,7 +728,7 @@ public class MessageBuilder {
             msg.writeBool(clubId > 0); // is club member
             msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
             msg.writeBool(false);
-            msg.writeBool(true);
+            msg.writeBool(false);
             msg.writeBool(false);
 
             // Stars - Diamonds
@@ -1494,7 +1494,7 @@ public class MessageBuilder {
 
         if (result == 0) {
             MessageUtils.appendCharacterInfo(session.getPlayerId(), msg, con);
-            // TODO May need more data. Size 28?
+            // TODO May need more data. Size 34 + 28?
         }
 
         return msg;
