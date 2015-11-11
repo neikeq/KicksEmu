@@ -1164,7 +1164,11 @@ public class MessageBuilder {
             msg.writeZeros(1);
             msg.writeBool(clubId > 0); // is club member
             msg.writeByte((byte) MemberInfo.getRole(playerId, con).toInt());
-            msg.writeZeros(3);
+            msg.writeBool(false);
+            msg.writeBool(false);
+            msg.writeBool(false);
+
+            // Stars - Diamonds
             msg.writeByte((byte) 0);
             msg.writeByte((byte) 0);
             msg.writeByte((byte) 0);
