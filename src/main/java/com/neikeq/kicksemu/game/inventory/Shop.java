@@ -473,8 +473,14 @@ public class Shop {
                 throw new MessageException("Club Uniform item is required.", -3);
             }
 
-            UniformType uniformType = UniformType.fromByte(msg.readByte());
-            if (uniformType == UniformType.NONE) return;
+            byte typeCode = msg.readByte();
+            UniformType uniformType = UniformType.fromByte(typeCode);
+
+            if (uniformType == UniformType.NONE) {
+                Output.println("Received SetClubUniform message with invalid UniformType: " +
+                        typeCode, Level.DEBUG);
+                return;
+            }
 
             Uniform uniform = new Uniform(msg.readInt(), msg.readInt(),
                     msg.readInt(), msg.readInt());
