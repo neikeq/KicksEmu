@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 
 public class Room {
 
+    private static final short SONGS_COUNT = 7;
+
     private int id = -1;
     private int host = -1;
     private int master = -1;
@@ -47,6 +49,8 @@ public class Room {
     private byte maxLevel = 60;
 
     private short matchMission = 0;
+    private short currentSong = (short) new Random().nextInt(SONGS_COUNT);
+
     private long timeStart = 0;
     protected long timeLastJoin = 0;
 
@@ -801,6 +805,8 @@ public class Room {
             getDisconnectedPlayers().forEach(playerId -> broadcast(
                     MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
             getDisconnectedPlayers().clear();
+
+            updateCurrentSong();
         }
     }
 
@@ -839,5 +845,16 @@ public class Room {
 
     public boolean isForcedResultAllowed() {
         return forcedResultAllowed;
+    }
+
+    public short getCurrentSong() {
+        return currentSong;
+    }
+
+    public void updateCurrentSong() {
+        currentSong++;
+        if (currentSong >= SONGS_COUNT) {
+            currentSong = 0;
+        }
     }
 }

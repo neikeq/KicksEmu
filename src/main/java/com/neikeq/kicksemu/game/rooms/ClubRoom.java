@@ -146,7 +146,7 @@ public class ClubRoom extends Room {
 
             updateTotalLevels();
 
-            if (getPlayers().size() == REQUIRED_TEAM_PLAYERS - 1) {
+            if (getPlayers().size() == REQUIRED_TEAM_PLAYERS - 1 && winStreak > 0) {
                 winStreakCache.setWins(winStreak);
                 winStreakCache.setPlayers(getPlayers().keySet());
                 setWinStreak((byte) 0);
