@@ -235,31 +235,28 @@ public class ChatCommands {
 
         if (PlayerInfo.isModerator(session.getPlayerId())) {
             try {
-                if (args[1].equals("0")) {
-                    GameEvents.setCustomGoldenTime(0);
-                    ChatUtils.broadcastNotice("Golden time disabled.");
+                String[] duration = args[1].split(":");
+                int minutes = (Integer.valueOf(duration[0]) * 60);
+                if (duration.length > 1) {
+                    minutes += Integer.valueOf(duration[1]);
+                }
+
+                GameEvents.setCustomGoldenTime(minutes <= 0 ? 0 : minutes);
+
+                if (minutes > 0) {
+                    int hours = minutes / 60;
+                    int mins = minutes % 60;
+
+                    ChatUtils.broadcastNotice("Golden time enabled for " +
+                            (hours > 0 ? hours + " hours" : "") +
+                            (hours > 0 && mins > 0 ? " and " : "") +
+                            (mins > 0 ? mins + " minutes" : "") + ".");
                 } else {
-                    String[] duration = args[1].split(":");
-                    int minutes = (Integer.valueOf(duration[0]) * 60) +
-                            Integer.valueOf(duration[1]);
+                    ChatUtils.broadcastNotice("Golden time disabled.");
+                }
 
-                    GameEvents.setCustomGoldenTime(minutes <= 0 ? 0 : minutes);
-
-                    if (minutes > 0) {
-                        int hours = minutes / 60;
-                        int mins = minutes % 60;
-
-                        ChatUtils.broadcastNotice("Golden time enabled for " +
-                                (hours > 0 ? hours + " hours" : "") +
-                                (hours > 0 && mins > 0 ? " and " : "") +
-                                (mins > 0 ? mins + " minutes" : "") + ".");
-                    } else {
-                        ChatUtils.broadcastNotice("Golden time disabled.");
-                    }
-
-                    if (minutes <= 0 && GameEvents.isGoldenTime()) {
-                        ChatUtils.broadcastNotice("Scheduled Golden time is still active.");
-                    }
+                if (minutes <= 0 && GameEvents.isGoldenTime()) {
+                    ChatUtils.broadcastNotice("Scheduled Golden time is still active.");
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
                 ChatUtils.sendServerMessage(session,
@@ -287,31 +284,28 @@ public class ChatCommands {
 
         if (PlayerInfo.isModerator(session.getPlayerId())) {
             try {
-                if (args[1].equals("0")) {
-                    GameEvents.setCustomClubTime(0);
-                    ChatUtils.broadcastNotice("Club time disabled.");
+                String[] duration = args[1].split(":");
+                int minutes = (Integer.valueOf(duration[0]) * 60);
+                if (duration.length > 1) {
+                    minutes += Integer.valueOf(duration[1]);
+                }
+
+                GameEvents.setCustomClubTime(minutes <= 0 ? 0 : minutes);
+
+                if (minutes > 0) {
+                    int hours = minutes / 60;
+                    int mins = minutes % 60;
+
+                    ChatUtils.broadcastNotice("Club time enabled for " +
+                            (hours > 0 ? hours + " hours" : "") +
+                            (hours > 0 && mins > 0 ? " and " : "") +
+                            (mins > 0 ? mins + " minutes" : "") + ".");
                 } else {
-                    String[] duration = args[1].split(":");
-                    int minutes = (Integer.valueOf(duration[0]) * 60) +
-                            Integer.valueOf(duration[1]);
+                    ChatUtils.broadcastNotice("Club time disabled.");
+                }
 
-                    GameEvents.setCustomClubTime(minutes <= 0 ? 0 : minutes);
-
-                    if (minutes > 0) {
-                        int hours = minutes / 60;
-                        int mins = minutes % 60;
-
-                        ChatUtils.broadcastNotice("Club time enabled for " +
-                                (hours > 0 ? hours + " hours" : "") +
-                                (hours > 0 && mins > 0 ? " and " : "") +
-                                (mins > 0 ? mins + " minutes" : "") + ".");
-                    } else {
-                        ChatUtils.broadcastNotice("Club time disabled.");
-                    }
-
-                    if (minutes <= 0 && GameEvents.isClubTime()) {
-                        ChatUtils.broadcastNotice("Scheduled Club time is still active.");
-                    }
+                if (minutes <= 0 && GameEvents.isClubTime()) {
+                    ChatUtils.broadcastNotice("Scheduled Club time is still active.");
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
                 ChatUtils.sendServerMessage(session,
