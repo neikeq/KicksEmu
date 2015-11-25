@@ -262,7 +262,9 @@ public class ClubRoom extends Room {
     public boolean isWaiting() {
         if (challengeId > 0) {
             Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
-            return challenge.getRoom().isWaiting();
+            if (challenge != null) {
+                return challenge.getRoom().isWaiting();
+            }
         }
         // TODO this should be temporal, until I find a way to display the APPLYING icon
         return super.isWaiting() || isChallenging();
@@ -276,10 +278,11 @@ public class ClubRoom extends Room {
     public RoomLobby getRoomLobby() {
         if (challengeId > 0) {
             Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
-            return challenge.getRoom().getRoomLobby();
-        } else {
-            return super.getRoomLobby();
+            if (challenge != null) {
+                return challenge.getRoom().getRoomLobby();
+            }
         }
+        return super.getRoomLobby();
     }
 
     @Override
@@ -294,9 +297,8 @@ public class ClubRoom extends Room {
         if (state() == RoomState.WAITING && getDisconnectedPlayers().size() > 0) {
             // Notify players to remove disconnected player definitely
             getDisconnectedPlayers().forEach(playerId -> broadcast(
-                    MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
+                    MessageBuilder.clubLeaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
             getDisconnectedPlayers().clear();
-            removeRoom();
         }
     }
 

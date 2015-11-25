@@ -4,6 +4,7 @@ import com.neikeq.kicksemu.game.clubs.ClubInfo;
 import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
+import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Output;
@@ -115,6 +116,16 @@ public class ChallengeRoom extends Room implements Observer {
 
     @Override
     protected void addObserver(int playerId) {}
+
+    void onStateChanged() {
+        if (state() == RoomState.WAITING && getDisconnectedPlayers().size() > 0) {
+            // Notify players to remove disconnected player definitely
+            getDisconnectedPlayers().forEach(playerId -> broadcast(
+                    MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
+            getDisconnectedPlayers().clear();
+            removeRoom();
+        }
+    }
 
     @Override
     public boolean isTraining() {
