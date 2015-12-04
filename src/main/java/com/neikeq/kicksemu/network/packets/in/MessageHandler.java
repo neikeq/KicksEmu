@@ -57,6 +57,8 @@ public class MessageHandler {
             events.put(MessageId.UPGRADE_CHARACTER, UserManager::upgradeCharacter);
             events.put(MessageId.UPDATE_TUTORIAL, TutorialManager::updateTutorial);
         } else {
+            boolean isClubServer = ServerManager.getServerType() == ServerType.CLUB;
+
             // Define game events
             events.put(MessageId.GAME_LOGIN, Authenticator::gameLogin);
             events.put(MessageId.GAME_EXIT, (s, m) -> UserManager.gameExit(s));
@@ -76,7 +78,7 @@ public class MessageHandler {
             events.put(MessageId.LOBBY_LIST, LobbyManager::lobbyList);
             events.put(MessageId.CHAT_MESSAGE, ChatManager::chatMessage);
 
-            if (ServerManager.getServerType() != ServerType.CLUB) {
+            if (!isClubServer) {
                 events.put(MessageId.ROOM_LIST, RoomMessages::roomList);
                 events.put(MessageId.CREATE_ROOM, RoomMessages::createRoom);
                 events.put(MessageId.JOIN_ROOM, RoomMessages::joinRoom);
@@ -154,11 +156,19 @@ public class MessageHandler {
             events.put(MessageId.UDP_AUTHENTICATE, (s, m) -> Authenticator.udpAuthentication(s));
 
             if (MatchBroadcaster.isBroadcastEnabled()) {
-                events.put(MessageId.UDP_GAME_1, MatchBroadcaster::udpGame);
-                events.put(MessageId.UDP_GAME_2, MatchBroadcaster::udpGame);
-                events.put(MessageId.UDP_GAME_3, MatchBroadcaster::udpGame);
-                events.put(MessageId.UDP_GAME_4, MatchBroadcaster::udpGame);
-                events.put(MessageId.UDP_GAME_5, MatchBroadcaster::udpGame);
+                if (isClubServer) {
+                    events.put(MessageId.UDP_GAME_1, MatchBroadcaster::udpChallengeGame);
+                    events.put(MessageId.UDP_GAME_2, MatchBroadcaster::udpChallengeGame);
+                    events.put(MessageId.UDP_GAME_3, MatchBroadcaster::udpChallengeGame);
+                    events.put(MessageId.UDP_GAME_4, MatchBroadcaster::udpChallengeGame);
+                    events.put(MessageId.UDP_GAME_5, MatchBroadcaster::udpChallengeGame);
+                } else {
+                    events.put(MessageId.UDP_GAME_1, MatchBroadcaster::udpGame);
+                    events.put(MessageId.UDP_GAME_2, MatchBroadcaster::udpGame);
+                    events.put(MessageId.UDP_GAME_3, MatchBroadcaster::udpGame);
+                    events.put(MessageId.UDP_GAME_4, MatchBroadcaster::udpGame);
+                    events.put(MessageId.UDP_GAME_5, MatchBroadcaster::udpGame);
+                }
             }
 
             if (Configuration.getBoolean("game.proxy.enabled")) {

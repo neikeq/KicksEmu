@@ -2,8 +2,11 @@ package com.neikeq.kicksemu.game.misc;
 
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
+import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
+import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
+import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import io.netty.channel.Channel;
@@ -33,6 +36,35 @@ public class MatchBroadcaster {
                             new InetSocketAddress(targetIp, targetSession.getUdpPort())));
                 } finally {
                     ch.closeFuture();
+                }
+            }
+        }
+    }
+
+    public static void udpChallengeGame(Session session, ClientMessage msg) {
+        int targetId = msg.getTargetId();
+
+        ClubRoom room = (ClubRoom) RoomManager.getRoomById(session.getRoomId());
+
+        // If the room exists
+        if (room != null) {
+            Challenge challenge = ChallengeOrganizer.getChallengeById(room.getChallengeId());
+
+            if (challenge != null) {
+                Session targetSession = challenge.getRoom().getPlayer(targetId);
+
+                // If the player is in the room
+                if (targetSession != null) {
+                    Channel ch = KicksEmu.getNettyUdpServer().getChannelFuture().channel();
+
+                    try {
+                        String targetIp = targetSession.getRemoteAddress().getAddress().getHostAddress();
+
+                        ch.writeAndFlush(new DatagramPacket(msg.getBody().readerIndex(0).retain(),
+                                new InetSocketAddress(targetIp, targetSession.getUdpPort())));
+                    } finally {
+                        ch.closeFuture();
+                    }
                 }
             }
         }
