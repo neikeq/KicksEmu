@@ -27,12 +27,11 @@ class Decoder extends ByteToMessageDecoder {
 
             short dataSize = in.order(ByteOrder.LITTLE_ENDIAN).readShort();
             short totalSize = (short) (dataSize + Constants.HEADER_SIZE);
-            
+
+            in.resetReaderIndex();
+
             if (length >= totalSize) {
-                in.resetReaderIndex();
                 out.add(Cryptography.decrypt(in.readBytes(totalSize), true));
-            } else {
-                in.resetReaderIndex();
             }
         }
     }
