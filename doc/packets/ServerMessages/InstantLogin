@@ -9,7 +9,7 @@ int packet_id
 byte reason
 /*
  * Success: 0
- * Term of validity expired, buy new KASH pack: -10
+ * Term of validity expired, buy new CASH pack: -10
  * Account blocked: -9
  * Wrong client version: -8
  * Server is full: -7

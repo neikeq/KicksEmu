@@ -12,7 +12,7 @@ public class PlayerResult extends StatisticsCarrier {
     private int points;
 
     public boolean hasReward() {
-        return experience > 0 || points > 0;
+        return (experience > 0) || (points > 0);
     }
 
     public void appendResult(ServerMessage msg) {
@@ -58,8 +58,8 @@ public class PlayerResult extends StatisticsCarrier {
         super(goals, assists, blocks, shots, steals, tackles, ballControl);
         this.playerId = playerId;
         this.votePoints = votePoints;
-        this.experience = 0;
-        this.points = 0;
+        experience = 0;
+        points = 0;
     }
 
     public int getPlayerId() {

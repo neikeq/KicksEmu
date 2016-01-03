@@ -26,13 +26,13 @@ public class Price {
         switch (expiration) {
             case USAGE_10:
             case DAYS_7:
-                return payment == Payment.CASH ? cash7 : points7;
+                return (payment == Payment.CASH) ? cash7 : points7;
             case USAGE_50:
             case DAYS_30:
-                return payment == Payment.CASH ? cash30 : points30;
+                return (payment == Payment.CASH) ? cash30 : points30;
             case USAGE_100:
             case DAYS_PERM:
-                return payment == Payment.CASH ? cashPerm : pointsPerm;
+                return (payment == Payment.CASH) ? cashPerm : pointsPerm;
             default:
                 return -1;
         }

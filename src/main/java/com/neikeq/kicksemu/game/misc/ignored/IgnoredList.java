@@ -61,7 +61,7 @@ public class IgnoredList {
         String strPlayers = "";
 
         for (int i = 0; i < ignoredPlayers.size(); i++) {
-            strPlayers += (i > 0 ? "," :  "");
+            strPlayers += (i > 0) ? "," : "";
             strPlayers += String.valueOf(ignoredPlayers.get(i));
         }
 

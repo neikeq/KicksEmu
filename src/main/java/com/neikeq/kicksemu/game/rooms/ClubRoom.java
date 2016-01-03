@@ -30,14 +30,13 @@ public class ClubRoom extends Room {
 
     { super.getRoomLobby().setTeamChatEnabled(false); }
 
-    private byte totalWins = 0;
-    private byte winStreak = 0;
-    private int challengeTarget = 0;
+    private byte totalWins;
+    private byte winStreak;
+    private int challengeTarget;
     private int challengeId = -1;
-    private int totalLevels = 0;
+    private int totalLevels;
 
     private final WinStreakCache winStreakCache = new WinStreakCache((byte) 0, getPlayers().keySet());
-    protected RoomSize maxSize = RoomSize.SIZE_2V2;
 
     @Override
     public void removeRoom() {
@@ -60,7 +59,7 @@ public class ClubRoom extends Room {
                 if (isWaiting() && !TeamManager.isRegistered(getId())) {
                     if (MemberInfo.getClubId(playerId) == getId()) {
                         // Check password (moderators can bypass this)
-                        if (getAccessType() != RoomAccessType.PASSWORD ||
+                        if ((getAccessType() != RoomAccessType.PASSWORD) ||
                                 password.equals(getPassword()) ||
                                 PlayerInfo.isModerator(playerId)) {
                             short level = PlayerInfo.getLevel(playerId);
@@ -123,7 +122,7 @@ public class ClubRoom extends Room {
             super.onPlayerJoined(session);
             updateTotalLevels();
 
-            if (getPlayers().size() == REQUIRED_TEAM_PLAYERS && winStreakCache.getWins() > 0) {
+            if ((getPlayers().size() == REQUIRED_TEAM_PLAYERS) && (winStreakCache.getWins() > 0)) {
                 if (winStreakCache.matchesTeam(getPlayers().keySet())) {
                     setWinStreak(winStreakCache.getWins());
                 }
@@ -146,7 +145,7 @@ public class ClubRoom extends Room {
 
             updateTotalLevels();
 
-            if (getPlayers().size() == REQUIRED_TEAM_PLAYERS - 1 && winStreak > 0) {
+            if ((getPlayers().size() == (REQUIRED_TEAM_PLAYERS - 1)) && (winStreak > 0)) {
                 winStreakCache.setWins(winStreak);
                 winStreakCache.setPlayers(getPlayers().keySet());
                 setWinStreak((byte) 0);
@@ -244,7 +243,7 @@ public class ClubRoom extends Room {
     public byte getLevelGapDifferenceTo(ClubRoom room) {
         final byte maxDiff = 3;
 
-        byte difference = (byte) ((room.getTotalLevels() - getTotalLevels()) / 10);
+        byte difference = (byte) ((room.totalLevels - totalLevels) / 10);
 
         if (Math.abs(difference) > maxDiff) {
             difference = (byte) (Math.signum(difference) * maxDiff);
@@ -294,7 +293,7 @@ public class ClubRoom extends Room {
     protected void addObserver(int playerId) {}
 
     void onStateChanged() {
-        if (state() == RoomState.WAITING && getDisconnectedPlayers().size() > 0) {
+        if ((state() == RoomState.WAITING) && !getDisconnectedPlayers().isEmpty()) {
             // Notify players to remove disconnected player definitely
             getDisconnectedPlayers().forEach(playerId -> broadcast(
                     MessageBuilder.clubLeaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
@@ -348,11 +347,7 @@ public class ClubRoom extends Room {
         }
     }
 
-    public void setMaxSize(RoomSize maxSize) {
-        this.maxSize = RoomSize.SIZE_2V2;
-    }
-
-    public int getTotalLevels() {
-        return totalLevels;
+    public ClubRoom() {
+        setMaxSize(RoomSize.SIZE_2V2);
     }
 }

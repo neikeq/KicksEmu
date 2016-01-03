@@ -50,8 +50,8 @@ public class QuestManager {
             (playerId, questState, matchResult, teamResult, con) -> {
                 short finishedQuest = -1;
 
-                if (teamResult.getResult() != VictoryResult.NO_GAME &&
-                        matchResult.getMom() == playerId) {
+                if ((teamResult.getResult() != VictoryResult.NO_GAME) &&
+                        (matchResult.getMom() == playerId)) {
                     questState.decreaseRemainMatches();
 
                     if (questState.getRemainMatches() <= 0) {
@@ -77,7 +77,7 @@ public class QuestManager {
             Quest currentQuest = quests[questState.getCurrentQuest() - 1];
 
             if (currentQuest != null) {
-                TeamResult teamResult = team == RoomTeam.RED ?
+                TeamResult teamResult = (team == RoomTeam.RED) ?
                         matchResult.getRedTeam() : matchResult.getBlueTeam();
                 return currentQuest.check(playerId, questState, matchResult, teamResult);
             }

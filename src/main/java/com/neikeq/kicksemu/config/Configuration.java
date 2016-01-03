@@ -79,12 +79,7 @@ public class Configuration {
     /** Return the property with the specified key. */
     public static String get(String key) {
         Configuration conf = getInstance();
-
-        if (conf.config != null && conf.config.containsKey(key)) {
-            return conf.config.getProperty(key);
-        } else {
-            return "";
-        }
+        return conf.config.containsKey(key) ? conf.config.getProperty(key) : "";
     }
 
     public static byte getByte(String key) {
@@ -103,8 +98,8 @@ public class Configuration {
         return Integer.parseInt(get(key));
     }
 
-    public static Level getLevel(String key) {
-        return Level.fromString(get(key));
+    public static Level getLoggingLevel() {
+        return Level.fromString(get("output.verbosity"));
     }
 
     public static Configuration getInstance() {

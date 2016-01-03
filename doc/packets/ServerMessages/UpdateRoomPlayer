@@ -13,10 +13,10 @@ bool unknown
 short level
 int experience
 short stats_points
-int kash
+int cash
 int points
 char[8] unknown
-short tickets_kash
+short tickets_cash
 short tickets_points
 // Stats
 short running

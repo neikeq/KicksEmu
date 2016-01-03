@@ -12,7 +12,7 @@ import java.util.List;
 public class TableReader {
 
     private final List<Row> rows;
-    private int index = 0;
+    private int index;
 
     public Row nextRow() throws IndexOutOfBoundsException {
         if (index < rows.size()) {

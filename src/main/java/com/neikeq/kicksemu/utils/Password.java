@@ -64,7 +64,7 @@ public class Password {
     private static boolean compare(byte[] a, byte[] b) {
         int result = a.length ^ b.length;
 
-        for (int i = 0; i < a.length && i < b.length; i++) {
+        for (int i = 0; (i < a.length) && (i < b.length); i++) {
             result |= a[i] ^ b[i];
         }
 

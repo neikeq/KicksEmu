@@ -52,12 +52,12 @@ public class ClubManager {
 
         boolean disconnected = !session.isAuthenticated();
 
-        List<Integer> members = clubId > 0 ?
+        List<Integer> members = (clubId > 0) ?
                 ClubInfo.getMembers(clubId, 0, 30) : new ArrayList<>();
 
         members.remove((Integer) playerId);
 
-        if (members.size() > 0) {
+        if (!members.isEmpty()) {
             String message = disconnected ? " has been disconnected" : " is online";
             ServerMessage notification = MessageBuilder.chatMessage(MessageType.SERVER_MESSAGE,
                     session.getCache().getName() + message);

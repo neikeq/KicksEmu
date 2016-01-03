@@ -30,21 +30,21 @@ public class Item implements Product {
     }
 
     public Item(int id, int inventoryId, int expiration, int bonusOne, int bonusTwo,
-                short usages, Timestamp expire, boolean selected, boolean visible) {
+                short usages, Timestamp timestampExpire, boolean selected, boolean visible) {
         this.id = id;
         this.inventoryId = inventoryId;
         this.expiration = Expiration.fromInt(expiration);
         this.bonusOne = bonusOne;
         this.bonusTwo = bonusTwo;
         this.usages = usages;
-        this.timestampExpire = expire;
+        this.timestampExpire = timestampExpire;
         this.selected = selected;
         this.visible = visible;
     }
 
     public void deactivateGracefully(ItemType type, Session session) {
         if (isSelected()) {
-            this.selected = false;
+            selected = false;
             PlayerInfo.setInventoryItem(this, session.getPlayerId());
 
             ActivationCallback callback = activationCallbacks.get(type);
@@ -57,7 +57,7 @@ public class Item implements Product {
 
     public void activateGracefully(ItemType type, Session session) {
         if (!isSelected()) {
-            this.selected = true;
+            selected = true;
             PlayerInfo.setInventoryItem(this, session.getPlayerId());
 
             ActivationCallback callback = activationCallbacks.get(type);

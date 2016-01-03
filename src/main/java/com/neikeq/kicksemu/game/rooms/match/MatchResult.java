@@ -25,7 +25,7 @@ public class MatchResult {
         for (int i = 0; i < 10; i++) {
             int playerId = msg.readInt();
 
-            if (playerId <= 0 || !roomPlayers.contains(playerId)) {
+            if ((playerId <= 0) || !roomPlayers.contains(playerId)) {
                 msg.ignoreBytes(36);
                 continue;
             }

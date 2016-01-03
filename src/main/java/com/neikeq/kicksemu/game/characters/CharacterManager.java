@@ -63,7 +63,7 @@ public class CharacterManager {
     public static void sendItemsInUseForcedUpdate(Session session) {
         Map<Integer, Item> items = session.getCache().getItems();
 
-        if (items.size() > 0) {
+        if (!items.isEmpty()) {
             Item item = items.values().iterator().next();
 
             session.send(item.isSelected() ?
@@ -84,7 +84,7 @@ public class CharacterManager {
     }
 
     private static void sendCelebrationList(Session session) {
-        Map<Integer, Celebration> items = session.getCache().getCeles();
+        Map<Integer, Celebration> items = session.getCache().getCelebrations();
         session.send(MessageBuilder.celebrationList(items, (short) 0));
     }
 
@@ -105,7 +105,7 @@ public class CharacterManager {
             onPlayerLevelUp(level, level - 1, branchPosition, newStats, statsPoints);
         }
 
-        if (level >= 18 && Position.isAdvancedPosition(position)) {
+        if ((level >= 18) && Position.isAdvancedPosition(position)) {
             // Apply upgrade stats
             PlayerStats.sumStats(StatsInfo.getInstance().getUpgradeStats().get(position),
                     1, newStats, statsPoints);
@@ -127,7 +127,7 @@ public class CharacterManager {
         short levels = 0;
 
         LevelInfo newLevelInfo = TableManager.getLevelInfo(li ->
-                li.getLevel() > level && li.getExperience() <= experience);
+                (li.getLevel() > level) && (li.getExperience() <= experience));
 
         if (newLevelInfo != null) {
             short newLevel = newLevelInfo.getLevel();

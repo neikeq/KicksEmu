@@ -9,11 +9,11 @@ int packet_id
 byte reason
 /*
  * Success: 0
- * Term of validity expired, buy new KASH pack: -5
+ * Term of validity expired, buy new CASH pack: -5
  * Level settings does not match your current level: -4
  * Wrong level settings: -3
  * Match rooms limit: -2
  * System problem: -1
  */
 byte response
-short room_id // Readed but never used
+short room_id // Being read but never used

@@ -17,6 +17,6 @@ public class SwapLocker {
     public boolean isPlayerLocked(int playerId) {
         Long expireTime = lockedPlayers.get(playerId);
 
-        return expireTime != null && expireTime > DateUtils.currentTimeMillis();
+        return (expireTime != null) && (expireTime > DateUtils.currentTimeMillis());
     }
 }

@@ -33,7 +33,7 @@ class Flood {
             chatTimes.remove(0);
         }
 
-        if (chatTimes.size() >= CHAT_LIMIT && (currentTime - chatTimes.get(0)) < TIME_LIMIT) {
+        if ((chatTimes.size() >= CHAT_LIMIT) && ((currentTime - chatTimes.get(0)) < TIME_LIMIT)) {
             lockPlayer(playerId);
         } else {
             chatTimes.add(currentTime);
@@ -45,6 +45,6 @@ class Flood {
     public static boolean isPlayerLocked(int playerId) {
         Long expireTime = lockedPlayers.get(playerId);
 
-        return expireTime != null && expireTime > DateUtils.currentTimeMillis();
+        return (expireTime != null) && (expireTime > DateUtils.currentTimeMillis());
     }
 }

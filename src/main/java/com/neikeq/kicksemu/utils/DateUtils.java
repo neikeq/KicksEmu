@@ -3,6 +3,7 @@ package com.neikeq.kicksemu.utils;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Calendar.Builder;
 import java.util.Date;
 
 public class DateUtils {
@@ -70,7 +71,7 @@ public class DateUtils {
     }
 
     public static Date buildTimeOfDay(int hour, int minute, int seconds) {
-        return new Calendar.Builder().setTimeOfDay(hour, minute, seconds).build().getTime();
+        return new Builder().setTimeOfDay(hour, minute, seconds).build().getTime();
     }
 
     public static int getDateMonth(Date date) {

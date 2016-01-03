@@ -14,15 +14,11 @@ public class SeasonRange {
         int day = DateUtils.getDateDayOfMonth(date);
 
         if (month == startMonth) {
-            if (startMonth == endMonth) {
-                    return day >= startDay && day <= endDay;
-            } else {
-                return day >= startDay;
-            }
+            return (startMonth == endMonth) ? ((day >= startDay) && (day <= endDay)) : (day >= startDay);
         } else if (month == endMonth) {
             return day <= endDay;
         } else {
-            return month > startMonth && month < endMonth;
+            return (month > startMonth) && (month < endMonth);
         }
     }
 

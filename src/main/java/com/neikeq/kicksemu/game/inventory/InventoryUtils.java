@@ -11,7 +11,11 @@ import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 class InventoryUtils {
@@ -22,11 +26,11 @@ class InventoryUtils {
         int price = itemInfo.getPrice().getPriceFor(expiration, payment);
 
         // Add the price for the first bonus
-        price += bonusOne == null ? 0 :
+        price += (bonusOne == null) ? 0 :
                 bonusOne.getPrice().getPriceFor(expiration, payment);
 
         // Add the price for the second bonus
-        price += bonusTwo == null ? 0 :
+        price += (bonusTwo == null) ? 0 :
                 bonusTwo.getPrice().getPriceFor(expiration, payment);
 
         return price;
@@ -48,7 +52,7 @@ class InventoryUtils {
         indexes.addAll(products.stream().map(IndexedProduct::getSelectionIndex)
                 .collect(Collectors.toList()));
 
-        for (byte i = 1; i <= products.size() + 1; i++) {
+        for (byte i = 1; i <= (products.size() + 1); i++) {
             if (!indexes.contains(i)) {
                 return i;
             }
@@ -62,7 +66,7 @@ class InventoryUtils {
 
         ids.addAll(products.stream().map(Product::getInventoryId).collect(Collectors.toList()));
 
-        for (int i = 0; i < products.size() + 1; i++) {
+        for (int i = 0; i < (products.size() + 1); i++) {
             if (!ids.contains(i)) {
                 return i;
             }
@@ -77,12 +81,12 @@ class InventoryUtils {
         return product.isPresent() ? product.get() : null;
     }
 
-    public static long getSkillsInUse(Session session) {
-        return session.getCache().getSkills().values().stream()
-                .filter(s -> s.getSelectionIndex() > 0).count();
-    }
-
     public static boolean skillSlotsAreFull(Session session) {
         return getSkillsInUse(session) >= PlayerInfo.getSkillSlots(session.getCache().getItems());
+    }
+
+    private static long getSkillsInUse(Session session) {
+        return session.getCache().getSkills().values().stream()
+                .filter(s -> s.getSelectionIndex() > 0).count();
     }
 }

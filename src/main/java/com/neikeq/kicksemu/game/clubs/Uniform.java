@@ -8,7 +8,7 @@ public class Uniform {
     private int wrist;
 
     public boolean isNotEstablished() {
-        return shirts == 0 || pants == 0 || socks == 0 || wrist == 0;
+        return (shirts == 0) || (pants == 0) || (socks == 0) || (wrist == 0);
     }
 
     public Uniform() {
@@ -16,10 +16,10 @@ public class Uniform {
     }
 
     public Uniform(int shirts, int pants, int socks, int wrist) {
-        this.setShirts(shirts);
-        this.setPants(pants);
-        this.setSocks(socks);
-        this.setWrist(wrist);
+        setShirts(shirts);
+        setPants(pants);
+        setSocks(socks);
+        setWrist(wrist);
     }
 
     public int getShirts() {

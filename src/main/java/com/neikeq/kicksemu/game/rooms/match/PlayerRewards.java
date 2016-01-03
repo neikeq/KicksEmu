@@ -24,20 +24,20 @@ class PlayerRewards {
     private static final int VOTE_POINTS_LIMIT = 100;
 
     private final MatchResultHandler resultHandler;
-    final PlayerResult playerResult;
+    private final PlayerResult playerResult;
     final RoomTeam playerTeam;
 
     private final Session session;
     private final int playerId;
     private final int currentExperience;
-    private int baseReward = 0;
-    private int rewardWithBonus = 0;
-    private short levelsEarned = 0;
+    private int baseReward;
+    private int rewardWithBonus;
+    private short levelsEarned;
     private short lastQuest = -1;
 
-    protected final MutableInteger experience = new MutableInteger();
-    protected final MutableInteger points = new MutableInteger();
-    protected int onePercentOfBaseReward = 0;
+    final MutableInteger experience = new MutableInteger();
+    final MutableInteger points = new MutableInteger();
+    int onePercentOfBaseReward;
 
     public void applyMatchRewards() {
         calculateBaseReward();
@@ -57,13 +57,13 @@ class PlayerRewards {
 
     private void calculateBaseReward() {
         int rewardFactor = 0;
-        short votePoints = playerResult.getVotePoints() > VOTE_POINTS_LIMIT ?
+        short votePoints = (playerResult.getVotePoints() > VOTE_POINTS_LIMIT) ?
                 VOTE_POINTS_LIMIT : playerResult.getVotePoints();
 
         switch (room().getTrainingFactor()) {
             case -1:
                 if (Configuration.getBoolean("game.rewards.practice") &&
-                        matchResult().getCountdown() <= 0 && playerResult.getGoals() >= 3) {
+                        (matchResult().getCountdown() <= 0) && (playerResult.getGoals() >= 3)) {
                     rewardFactor = 12;
                 }
                 break;
@@ -82,7 +82,7 @@ class PlayerRewards {
         setBaseReward((int) (rewardFactor * (float) (votePoints / 10)));
     }
 
-    protected void applyRewardExtras() {
+    void applyRewardExtras() {
         calculateBonuses();
         applyMissionReward();
         applyRewardRates();
@@ -101,7 +101,7 @@ class PlayerRewards {
             short concededGoals = resultHandler.getRivalTeamResult(playerId).getGoals();
 
             // If player's team did not lose and conceded 1 or less goals
-            applyBonusPercentageIf(concededGoals <= 1 && scoredGoals >= concededGoals, 30);
+            applyBonusPercentageIf((concededGoals <= 1) && (scoredGoals >= concededGoals), 30);
         }
 
         if (resultHandler.isLowersBonusEnabled()) {
@@ -132,7 +132,7 @@ class PlayerRewards {
     private void applyMissionReward() {
         MissionInfo mission = room().getMatchMissionInfo();
 
-        if (mission != null && isMissionCompleted(mission)) {
+        if ((mission != null) && isMissionCompleted(mission)) {
             experience.sum(mission.getReward());
             points.sum(mission.getReward());
         }
@@ -166,18 +166,15 @@ class PlayerRewards {
                 return targetResult.getTackles() <= missionValue;
             case INTERCEPTIONS_LIMIT:
                 return targetResult.getBlocks() <= missionValue;
-            case WIN: {
+            case WIN:
                 boolean win = getMissionTargetTeam(mission).getResult() == VictoryResult.WIN;
-                return missionValue == 1 ? win : !win;
-            }
-            case DRAW: {
+                return (missionValue == 1) == win;
+            case DRAW:
                 boolean draw = getMissionTargetTeam(mission).getResult() == VictoryResult.DRAW;
-                return missionValue == 1 ? draw : !draw;
-            }
-            case LOSE: {
+                return (missionValue == 1) == draw;
+            case LOSE:
                 boolean lose = getMissionTargetTeam(mission).getResult() == VictoryResult.LOSE;
-                return missionValue == 1 ? lose : !lose;
-            }
+                return (missionValue == 1) == lose;
             default:
                 return true;
         }
@@ -199,13 +196,13 @@ class PlayerRewards {
     }
 
     private TeamResult getMissionTargetTeam(MissionInfo mission) {
-        return mission.getTarget() == MissionTarget.TEAM ?
+        return (mission.getTarget() == MissionTarget.TEAM) ?
                 resultHandler.getPlayerTeamResult(playerId) :
                 resultHandler.getRivalTeamResult(playerId);
     }
 
     private void limitMaximumExperience() {
-        if (currentExperience + experience.get() > TableManager.EXPERIENCE_LIMIT) {
+        if ((currentExperience + experience.get()) > TableManager.EXPERIENCE_LIMIT) {
             experience.set(TableManager.EXPERIENCE_LIMIT - currentExperience);
         }
     }
@@ -275,7 +272,7 @@ class PlayerRewards {
         return resultHandler.getLevelCache().getPlayerLevel(playerId, connection());
     }
 
-    protected Room room() {
+    Room room() {
         return resultHandler.getRoom();
     }
 
@@ -283,22 +280,22 @@ class PlayerRewards {
         return resultHandler.getConnection();
     }
 
-    protected MatchResult matchResult() {
+    MatchResult matchResult() {
         return resultHandler.getResult();
     }
 
     private void setBaseReward(int baseReward) {
         this.baseReward = baseReward;
-        this.rewardWithBonus = baseReward;
-        this.onePercentOfBaseReward = baseReward / 100;
+        rewardWithBonus = baseReward;
+        onePercentOfBaseReward = baseReward / 100;
     }
 
     public PlayerRewards(MatchResultHandler resultHandler, PlayerResult playerResult) {
         this.resultHandler = resultHandler;
         this.playerResult = playerResult;
-        this.playerId = playerResult.getPlayerId();
-        this.session = room().getPlayer(playerId);
-        this.playerTeam = room().getPlayerTeam(playerId);
-        this.currentExperience = PlayerInfo.getExperience(playerId, connection());
+        playerId = playerResult.getPlayerId();
+        session = room().getPlayer(playerId);
+        playerTeam = room().getPlayerTeam(playerId);
+        currentExperience = PlayerInfo.getExperience(playerId, connection());
     }
 }

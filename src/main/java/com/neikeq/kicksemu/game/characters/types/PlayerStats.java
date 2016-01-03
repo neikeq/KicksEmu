@@ -5,23 +5,23 @@ import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 public class PlayerStats {
 
-    private short running = 0;
-    private short endurance = 0;
-    private short agility = 0;
-    private short ballControl = 0;
-    private short dribbling = 0;
-    private short stealing = 0;
-    private short tackling = 0;
-    private short heading = 0;
-    private short shortShots = 0;
-    private short longShots = 0;
-    private short crossing = 0;
-    private short shortPasses = 0;
-    private short longPasses = 0;
-    private short marking = 0;
-    private short goalkeeping = 0;
-    private short punching = 0;
-    private short defense = 0;
+    private short running;
+    private short endurance;
+    private short agility;
+    private short ballControl;
+    private short dribbling;
+    private short stealing;
+    private short tackling;
+    private short heading;
+    private short shortShots;
+    private short longShots;
+    private short crossing;
+    private short shortPasses;
+    private short longPasses;
+    private short marking;
+    private short goalkeeping;
+    private short punching;
+    private short defense;
 
     private static short sumStatsUpToHundred(int value, short current, MutableInteger statsPoints) {
         short add = CharacterUtils.statsUpToHundred(current, value);
@@ -105,23 +105,23 @@ public class PlayerStats {
     }
 
     public PlayerStats(PlayerStats stats) {
-        this.running = stats.getRunning();
-        this.endurance = stats.getEndurance();
-        this.agility = stats.getAgility();
-        this.ballControl = stats.getBallControl();
-        this.dribbling = stats.getDribbling();
-        this.stealing = stats.getStealing();
-        this.tackling = stats.getTackling();
-        this.heading = stats.getHeading();
-        this.shortShots = stats.getShortShots();
-        this.longShots = stats.getLongShots();
-        this.crossing = stats.getCrossing();
-        this.shortPasses = stats.getShortPasses();
-        this.longPasses = stats.getLongPasses();
-        this.marking = stats.getMarking();
-        this.goalkeeping = stats.getGoalkeeping();
-        this.punching = stats.getPunching();
-        this.defense = stats.getDefense();
+        running = stats.getRunning();
+        endurance = stats.getEndurance();
+        agility = stats.getAgility();
+        ballControl = stats.getBallControl();
+        dribbling = stats.getDribbling();
+        stealing = stats.getStealing();
+        tackling = stats.getTackling();
+        heading = stats.getHeading();
+        shortShots = stats.getShortShots();
+        longShots = stats.getLongShots();
+        crossing = stats.getCrossing();
+        shortPasses = stats.getShortPasses();
+        longPasses = stats.getLongPasses();
+        marking = stats.getMarking();
+        goalkeeping = stats.getGoalkeeping();
+        punching = stats.getPunching();
+        defense = stats.getDefense();
     }
 
     public short getRunning() {

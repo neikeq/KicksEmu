@@ -34,16 +34,12 @@ public class SqlUtils {
         final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getShort(column);
-                    } else {
-                        return -1;
-                    }
+                    return rs.next() ? rs.getShort(column) : -1;
                 }
             } finally {
                 if (con.length <= 0) {
@@ -59,16 +55,12 @@ public class SqlUtils {
         final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt(column);
-                    } else {
-                        return -1;
-                    }
+                    return rs.next() ? rs.getInt(column) : -1;
                 }
             } finally {
                 if (con.length <= 0) {
@@ -84,7 +76,7 @@ public class SqlUtils {
         final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -105,16 +97,12 @@ public class SqlUtils {
         final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getString(column);
-                    } else {
-                        return "";
-                    }
+                    return rs.next() ? rs.getString(column) : "";
                 }
             } finally {
                 if (con.length <= 0) {
@@ -131,16 +119,12 @@ public class SqlUtils {
         final String query = "SELECT " + column + " FROM " + table + " WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getTimestamp(column);
-                    } else {
-                        return null;
-                    }
+                    return rs.next() ? rs.getTimestamp(column) : null;
                 }
             } finally {
                 if (con.length <= 0) {
@@ -157,7 +141,7 @@ public class SqlUtils {
         final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setShort(1, value);
@@ -179,7 +163,7 @@ public class SqlUtils {
         final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, value);
@@ -201,7 +185,7 @@ public class SqlUtils {
         final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setBoolean(1, value);
@@ -223,7 +207,7 @@ public class SqlUtils {
         final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setString(1, value);
@@ -245,7 +229,7 @@ public class SqlUtils {
         final String query = "UPDATE " + table + " SET " + column + " = ? WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setTimestamp(1, value);
@@ -269,7 +253,7 @@ public class SqlUtils {
         final String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setShort(1, value);
@@ -293,7 +277,7 @@ public class SqlUtils {
         final String query = "UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE id = ? LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, value);

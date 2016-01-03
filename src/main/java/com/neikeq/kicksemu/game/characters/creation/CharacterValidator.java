@@ -55,7 +55,7 @@ class CharacterValidator {
     }
 
     private static boolean isValidName(String name) {
-        return (name.length() <= NAME_MAX_LENGTH && name.length() >= NAME_MIN_LENGTH) &&
+        return (name.length() <= NAME_MAX_LENGTH) && (name.length() >= NAME_MIN_LENGTH) &&
                 !nameContainsInvalidChar(name);
     }
 
@@ -78,7 +78,7 @@ class CharacterValidator {
             stmt.setString(1, name);
 
             try (ResultSet result = stmt.executeQuery()) {
-                return result.next() && result.getInt(1) > 0;
+                return result.next() && (result.getInt(1) > 0);
             }
 
         } catch (SQLException e) {
@@ -90,54 +90,52 @@ class CharacterValidator {
         PlayerStats stats = StatsInfo.getInstance().getCreationStats()
                 .get(character.getPosition());
 
-        return character.getTotalStats() == STATS_GLOBAL &&
-                character.getStatsPoints() <= MAX_STATS_POINTS &&
-                character.getStatsPoints() >= MIN_STATS_POINTS &&
-                character.getStats().getRunning() >= stats.getRunning() &&
-                character.getStats().getEndurance() >= stats.getEndurance() &&
-                character.getStats().getAgility() >= stats.getAgility() &&
-                character.getStats().getBallControl() >= stats.getBallControl() &&
-                character.getStats().getDribbling() >= stats.getDribbling() &&
-                character.getStats().getStealing() >= stats.getStealing() &&
-                character.getStats().getTackling() >= stats.getTackling() &&
-                character.getStats().getHeading() >= stats.getHeading() &&
-                character.getStats().getShortShots() >= stats.getShortShots() &&
-                character.getStats().getLongShots() >= stats.getLongShots() &&
-                character.getStats().getCrossing() >= stats.getCrossing() &&
-                character.getStats().getShortPasses() >= stats.getShortPasses() &&
-                character.getStats().getLongPasses() >= stats.getLongPasses() &&
-                character.getStats().getMarking() >= stats.getMarking() &&
-                character.getStats().getGoalkeeping() >= stats.getGoalkeeping() &&
-                character.getStats().getPunching() >= stats.getPunching() &&
-                character.getStats().getDefense() >= stats.getDefense();
+        return (character.getTotalStats() == STATS_GLOBAL) &&
+                (character.getStatsPoints() <= MAX_STATS_POINTS) &&
+                (character.getStatsPoints() >= MIN_STATS_POINTS) &&
+                (character.getStats().getRunning() >= stats.getRunning()) &&
+                (character.getStats().getEndurance() >= stats.getEndurance()) &&
+                (character.getStats().getAgility() >= stats.getAgility()) &&
+                (character.getStats().getBallControl() >= stats.getBallControl()) &&
+                (character.getStats().getDribbling() >= stats.getDribbling()) &&
+                (character.getStats().getStealing() >= stats.getStealing()) &&
+                (character.getStats().getTackling() >= stats.getTackling()) &&
+                (character.getStats().getHeading() >= stats.getHeading()) &&
+                (character.getStats().getShortShots() >= stats.getShortShots()) &&
+                (character.getStats().getLongShots() >= stats.getLongShots()) &&
+                (character.getStats().getCrossing() >= stats.getCrossing()) &&
+                (character.getStats().getShortPasses() >= stats.getShortPasses()) &&
+                (character.getStats().getLongPasses() >= stats.getLongPasses()) &&
+                (character.getStats().getMarking() >= stats.getMarking()) &&
+                (character.getStats().getGoalkeeping() >= stats.getGoalkeeping()) &&
+                (character.getStats().getPunching() >= stats.getPunching()) &&
+                (character.getStats().getDefense() >= stats.getDefense());
     }
 
     private static boolean containsValidItems(CharacterBase character) {
         ItemFree head = TableManager.getItemFree(itemFree ->
-                itemFree.getId() == character.getDefaultHead() &&
-                        itemFree.getType() == ItemType.HEAD.toInt());
+                (itemFree.getId() == character.getDefaultHead()) &&
+                        (itemFree.getType() == ItemType.HEAD.toInt()));
         ItemFree shirt = TableManager.getItemFree(itemFree ->
-                itemFree.getId() == character.getDefaultShirts() &&
-                        itemFree.getType() == ItemType.SHIRTS.toInt());
+                (itemFree.getId() == character.getDefaultShirts()) &&
+                        (itemFree.getType() == ItemType.SHIRTS.toInt()));
         ItemFree pant = TableManager.getItemFree(itemFree ->
-                itemFree.getId() == character.getDefaultPants() &&
-                        itemFree.getType() == ItemType.PANTS.toInt());
+                (itemFree.getId() == character.getDefaultPants()) &&
+                        (itemFree.getType() == ItemType.PANTS.toInt()));
         ItemFree shoes = TableManager.getItemFree(itemFree ->
-                itemFree.getId() == character.getDefaultShoes() &&
-                        itemFree.getType() == ItemType.SHOES.toInt());
+                (itemFree.getId() == character.getDefaultShoes()) &&
+                        (itemFree.getType() == ItemType.SHOES.toInt()));
 
-        return head != null && shirt != null && pant != null && shoes != null;
+        return (head != null) && (shirt != null) && (pant != null) && (shoes != null);
     }
 
     private static boolean isValidFace(CharacterBase character) {
-        return VALID_FACES.contains(Integer.valueOf(character.getFace()));
+        return VALID_FACES.contains((int) character.getFace());
     }
 
     private static boolean isValidAnimation(CharacterBase character) {
-        if (character.getAnimation() == Animation.MALE) {
-            return character.getFace() < 400;
-        } else {
-            return character.getAnimation() == Animation.FEMALE && character.getFace() > 400;
-        }
+        return (character.getAnimation() == Animation.MALE) ?
+                (character.getFace() < 400) :
+                ((character.getAnimation() == Animation.FEMALE) && (character.getFace() > 400));
     }
 }

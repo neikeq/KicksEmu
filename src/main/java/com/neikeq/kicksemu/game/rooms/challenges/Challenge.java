@@ -11,7 +11,7 @@ public class Challenge extends Observable {
     private final ClubRoom redTeam;
     private final ClubRoom blueTeam;
     private final ChallengeRoom room;
-    private boolean canceled = false;
+    private boolean canceled;
 
     public void cancel() {
         canceled = true;

@@ -37,14 +37,14 @@ public class Session {
     private int ping = -1;
     private int udpPort = -1;
 
-    private byte pingState = 0;
-    private long lastPingResponse = 0;
+    private byte pingState;
+    private long lastPingResponse;
 
     private UniformType equippedUniform = UniformType.NONE;
 
-    private boolean authenticated = false;
-    private boolean udpAuthenticated = false;
-    private boolean observer = false;
+    private boolean authenticated;
+    private boolean udpAuthenticated;
+    private boolean observer;
 
     /**
      * Write a message to the channel without flushing.<br>
@@ -100,7 +100,7 @@ public class Session {
     public boolean leaveRoom(RoomLeaveReason reason) {
         Room room = RoomManager.getRoomById(roomId);
 
-        boolean insideRoom = room != null && room.isPlayerIn(playerId);
+        boolean insideRoom = (room != null) && room.isPlayerIn(playerId);
 
         // If room exist and player is inside the room
         if (insideRoom) {
@@ -117,11 +117,7 @@ public class Session {
 
     /** Returns the room lobby if player is inside a room, otherwise return main lobby */
     public Lobby getCurrentLobby() {
-        if (getRoomId() > 0) {
-            return RoomManager.getRoomById(getRoomId()).getRoomLobby();
-        } else {
-            return LobbyManager.getMainLobby();
-        }
+        return (getRoomId() > 0) ? RoomManager.getRoomById(getRoomId()).getRoomLobby() : LobbyManager.getMainLobby();
     }
 
     public void close() {
@@ -133,7 +129,7 @@ public class Session {
         }
 
         // Close Udp Ping schedule
-        if (getUdpPingFuture() != null && getUdpPingFuture().isCancellable()) {
+        if ((getUdpPingFuture() != null) && getUdpPingFuture().isCancellable()) {
             getUdpPingFuture().cancel(true);
         }
 

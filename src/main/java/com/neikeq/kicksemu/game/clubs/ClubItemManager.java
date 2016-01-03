@@ -10,7 +10,7 @@ public class ClubItemManager {
 
     private static ClubItemManager instance;
 
-    private Map<Integer, ClubItemEffect> clubItemEffects = new HashMap<>();
+    private final Map<Integer, ClubItemEffect> clubItemEffects = new HashMap<>();
 
     public void applyEffect(ItemInfo itemInfo, ClubItemRequest request, int clubId)
             throws MessageException {
@@ -24,7 +24,7 @@ public class ClubItemManager {
         effect.apply(request, clubId);
     }
 
-    public ClubItemManager() {
+    private ClubItemManager() {
         clubItemEffects.put(301, (itemInfo, clubId) -> {
             if (ClubInfo.isUniformActive(clubId)) {
                 throw new MessageException("Club uniform is already purchased.", -8);

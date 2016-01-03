@@ -14,15 +14,15 @@ public class BonusInfo {
     private final byte expirationType;
 
     public boolean isIncompatibleWithExpiration(Expiration expiration) {
-        return expiration.getType() != getExpirationType();
+        return expiration.getType() != expirationType;
     }
 
     public boolean isIncompatibleWithBonuses(OptionInfo one, OptionInfo two) {
-        int bonusOneType = one == null ? 0 : one.getType();
-        int bonusTwoType = two == null ? 0 : two.getType();
+        int bonusOneType = (one == null) ? 0 : one.getType();
+        int bonusTwoType = (two == null) ? 0 : two.getType();
 
-        return !getBonusOne().contains(bonusOneType) ||
-                !getBonusTwo().contains(bonusTwoType);
+        return !bonusOne.contains(bonusOneType) ||
+                !bonusTwo.contains(bonusTwoType);
     }
 
     private List<Integer> listFromStringArray(String[] strings) {
@@ -44,17 +44,5 @@ public class BonusInfo {
 
     public int getType() {
         return type;
-    }
-
-    public List<Integer> getBonusOne() {
-        return bonusOne;
-    }
-
-    public List<Integer> getBonusTwo() {
-        return bonusTwo;
-    }
-
-    public byte getExpirationType() {
-        return expirationType;
     }
 }

@@ -43,16 +43,16 @@ public class Room {
     private int id = -1;
     private int host = -1;
     private int master = -1;
-    private int trainingFactor = 0;
+    private int trainingFactor;
 
     private byte minLevel = 1;
     private byte maxLevel = 60;
 
-    private short matchMission = 0;
+    private short matchMission;
     private short currentSong = (short) new Random().nextInt(SONGS_COUNT);
 
-    private long timeStart = 0;
-    protected long timeLastJoin = 0;
+    private long timeStart;
+    long timeLastJoin;
 
     private String name = "";
     private String password = "";
@@ -60,7 +60,7 @@ public class Room {
     private RoomBall ball = RoomBall.STAR;
     private RoomMap map = RoomMap.A_BACK_STREET;
     private RoomMode roomMode = RoomMode.AI_GOALKEEPER;
-    protected RoomSize maxSize = RoomSize.SIZE_4V4;
+    private RoomSize maxSize = RoomSize.SIZE_4V4;
     private RoomState state = RoomState.WAITING;
     private RoomAccessType accessType = RoomAccessType.FREE;
 
@@ -80,7 +80,7 @@ public class Room {
     private ScheduledFuture<?> countdownTimeoutFuture;
     private ScheduledFuture<?> loadingTimeoutFuture;
 
-    private boolean forcedResultAllowed = false;
+    private boolean forcedResultAllowed;
 
     final Object locker = new Object();
 
@@ -99,7 +99,7 @@ public class Room {
             if (isNotFull()) {
                 if (isWaiting()) {
                     // Check password (moderators can bypass this)
-                    if (getAccessType() != RoomAccessType.PASSWORD ||
+                    if ((getAccessType() != RoomAccessType.PASSWORD) ||
                             password.equals(getPassword()) ||
                             PlayerInfo.isModerator(playerId)) {
                         short level = PlayerInfo.getLevel(playerId);
@@ -199,7 +199,7 @@ public class Room {
     }
 
     public RoomTeam swapPlayerTeam(int playerId, RoomTeam currentTeam) {
-        RoomTeam targetTeam = currentTeam == RoomTeam.RED ? RoomTeam.BLUE :  RoomTeam.RED;
+        RoomTeam targetTeam = (currentTeam == RoomTeam.RED) ? RoomTeam.BLUE : RoomTeam.RED;
 
         synchronized (locker) {
             if (!isTeamFull(targetTeam)) {
@@ -310,7 +310,7 @@ public class Room {
             countdownTimeoutFuture = getPlayer(host).getChannel().eventLoop()
                     .schedule(() -> {
                         synchronized (locker) {
-                            if (this.state() == RoomState.COUNT_DOWN) {
+                            if (state() == RoomState.COUNT_DOWN) {
                                 List<Integer> failedPlayers = new ArrayList<>(players.keySet());
                                 confirmedPlayers.forEach(failedPlayers::remove);
 
@@ -388,7 +388,7 @@ public class Room {
         if (hasMission && !isTraining()) {
             List<Short> missionsList = TableManager.getUsableMissionsList();
             int randomIndex = random.nextInt(missionsList.size());
-            matchMission = randomIndex > 0 ? missionsList.get(randomIndex) : 0;
+            matchMission = (randomIndex > 0) ? missionsList.get(randomIndex) : 0;
         } else {
             matchMission = 0;
         }
@@ -540,7 +540,7 @@ public class Room {
     public void broadcastToTeam(ServerMessage msg, RoomTeam team, int broadcaster) {
         try {
             if (team != null) {
-                List<Integer> teamPlayers = team == RoomTeam.RED ? getRedTeam() : getBlueTeam();
+                List<Integer> teamPlayers = (team == RoomTeam.RED) ? getRedTeam() : getBlueTeam();
 
                 teamPlayers.stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(broadcaster))
@@ -581,7 +581,7 @@ public class Room {
     }
 
     public boolean isLevelAllowed(short level) {
-        return level >= getMinLevel() && level <= getMaxLevel();
+        return (level >= getMinLevel()) && (level <= getMaxLevel());
     }
 
     public boolean isValidMinLevel(byte level) {
@@ -606,8 +606,8 @@ public class Room {
 
     /** Returns true if there are not enough players to play a real match */
     public boolean isTraining() {
-        return getPlayers().values().stream().filter(s -> !observers.contains(s.getPlayerId()))
-                .count() < 6 || redTeamSize() != blueTeamSize();
+        return (getPlayers().values().stream().filter(s -> !observers.contains(s.getPlayerId())).count() < 6) ||
+                (redTeamSize() != blueTeamSize());
     }
 
     public boolean isWaiting() {
@@ -619,7 +619,7 @@ public class Room {
     }
 
     public boolean isInLobbyScreen() {
-        return state() == RoomState.WAITING || state() == RoomState.COUNT_DOWN;
+        return (state() == RoomState.WAITING) || (state() == RoomState.COUNT_DOWN);
     }
 
     public void resetTrainingFactor() {
@@ -798,7 +798,7 @@ public class Room {
 
     void onStateChanged() {
         if (state == RoomState.RESULT) {
-            if (getDisconnectedPlayers().size() > 0) {
+            if (!getDisconnectedPlayers().isEmpty()) {
                 forcedResultAllowed = false;
             }
             // Notify players to remove disconnected player definitely
@@ -835,7 +835,7 @@ public class Room {
     }
 
     public MissionInfo getMatchMissionInfo() {
-        return matchMission == 0 ?
+        return (matchMission == 0) ?
                 null : TableManager.getMissionInfo(m -> m.getId() == getMatchMission());
     }
 

@@ -15,7 +15,7 @@ public class SkillInfo {
     private final Price price;
 
     public boolean isCompatiblePosition(short position) {
-        return getPosition() == position || getPosition() == Position.basePosition(position);
+        return (getPosition() == position) || (getPosition() == Position.basePosition(position));
     }
 
     public boolean isIncompatibleLevel(short level) {
@@ -28,7 +28,7 @@ public class SkillInfo {
 
     public boolean isInvalidPrice(int price, Expiration expiration, Payment payment) {
         int skillPrice = getPrice().getPriceFor(expiration, payment);
-        return skillPrice == -1 || skillPrice != price;
+        return (skillPrice == -1) || (skillPrice != price);
     }
 
     public SkillInfo(Row row) {

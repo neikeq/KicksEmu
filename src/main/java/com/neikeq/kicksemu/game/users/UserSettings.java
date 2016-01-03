@@ -5,13 +5,13 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 public class UserSettings {
 
     private byte camera = CameraValues.front2;
-    private boolean shadows = false;
+    private boolean shadows;
     private byte names = 2;
     private byte volEffects = 7;
     private byte volMusic = 7;
     private boolean invites = true;
     private boolean whispers = true;
-    private int country = 0;
+    private int country;
 
     // TODO List<Integer> validCountries;
 
@@ -42,17 +42,17 @@ public class UserSettings {
     }
 
     private boolean isValidCamera() {
-        return camera == CameraValues.side1 || camera == CameraValues.front1 ||
-                camera == CameraValues.front2 || camera == CameraValues.front3;
+        return (camera == CameraValues.side1) || (camera == CameraValues.front1) ||
+                (camera == CameraValues.front2) || (camera == CameraValues.front3);
     }
 
     private boolean isValidNameDisplay() {
         // Hide: 0, PositionOnly: 1, Display: 2
-        return names >= 0 && names <= 2;
+        return (names >= 0) && (names <= 2);
     }
 
     private boolean isValidSound() {
-        return volEffects >= 0 && volEffects <= 10 && volMusic >= 0 && volMusic <= 10;
+        return (volEffects >= 0) && (volEffects <= 10) && (volMusic >= 0) && (volMusic <= 10);
     }
 
     private boolean isValidCountry() {

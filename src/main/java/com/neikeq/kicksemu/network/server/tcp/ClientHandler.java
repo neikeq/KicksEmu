@@ -27,7 +27,7 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
 
         } catch (UndefinedMessageException ume) {
             Output.println(ume.getMessage() + " from: " +
-                    ctx.channel().remoteAddress().toString(), Level.DEBUG);
+                    ctx.channel().remoteAddress(), Level.DEBUG);
         } finally {
             buf.release();
         }

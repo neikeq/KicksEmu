@@ -93,7 +93,7 @@ public class ChallengeRoom extends Room implements Observer {
 
     @Override
     void sendRoomPlayersInfo(Session session) {
-        List<Integer> team = getPlayerTeam(session.getPlayerId()) == RoomTeam.RED ?
+        List<Integer> team = (getPlayerTeam(session.getPlayerId()) == RoomTeam.RED) ?
                 getBlueTeam() : getRedTeam();
         try (Connection con = MySqlManager.getConnection()) {
             team.forEach(player ->
@@ -118,7 +118,7 @@ public class ChallengeRoom extends Room implements Observer {
     protected void addObserver(int playerId) {}
 
     void onStateChanged() {
-        if (state() == RoomState.WAITING && getDisconnectedPlayers().size() > 0) {
+        if ((state() == RoomState.WAITING) && !getDisconnectedPlayers().isEmpty()) {
             // Notify players to remove disconnected player definitely
             getDisconnectedPlayers().forEach(playerId -> broadcast(
                     MessageBuilder.leaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
@@ -130,10 +130,6 @@ public class ChallengeRoom extends Room implements Observer {
     @Override
     public boolean isTraining() {
         return false;
-    }
-
-    public ChallengeRoom() {
-        super();
     }
 
     public Challenge getChallenge() {

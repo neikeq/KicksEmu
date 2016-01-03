@@ -19,12 +19,12 @@ public class Celebration implements Product, IndexedProduct {
     }
 
     public Celebration(int id, int inventoryId, int expiration, byte selectionIndex,
-                       Timestamp timestamp, boolean visible) {
+                       Timestamp timestampExpire, boolean visible) {
         this.id = id;
         this.inventoryId = inventoryId;
         this.expiration = Expiration.fromInt(expiration);
-        this.setSelectionIndex(selectionIndex);
-        this.timestampExpire = timestamp;
+        setSelectionIndex(selectionIndex);
+        this.timestampExpire = timestampExpire;
         this.visible = visible;
     }
 

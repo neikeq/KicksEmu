@@ -12,17 +12,17 @@ public class CeleInfo {
     private final Payment payment;
     private final Price price;
 
-    public boolean isIncompatibleLevel(short level) {
-        return level < getLevel();
+    public boolean isIncompatibleLevel(short suspiciousLevel) {
+        return suspiciousLevel < level;
     }
 
-    public boolean isInvalidPaymentMode(Payment payment) {
-        return getPayment().isIncompatibleWith(payment);
+    public boolean isInvalidPaymentMode(Payment suspiciousPayment) {
+        return payment.isIncompatibleWith(suspiciousPayment);
     }
 
-    public boolean isInvalidPrice(int price, Expiration expiration, Payment payment) {
-        int celePrice = getPrice().getPriceFor(expiration, payment);
-        return celePrice == -1 || celePrice != price;
+    public boolean isInvalidPrice(int suspiciousPrice, Expiration expiration, Payment payment) {
+        int celePrice = price.getPriceFor(expiration, payment);
+        return (celePrice == -1) || (celePrice != suspiciousPrice);
     }
 
     public CeleInfo(Row row) {
@@ -35,17 +35,5 @@ public class CeleInfo {
 
     public int getId() {
         return id;
-    }
-
-    public short getLevel() {
-        return level;
-    }
-
-    public Price getPrice() {
-        return price;
-    }
-
-    public Payment getPayment() {
-        return payment;
     }
 }

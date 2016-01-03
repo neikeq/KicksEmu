@@ -6,7 +6,7 @@ import java.util.List;
 public class Row {
 
     private final List<String> columns;
-    private int index = 0;
+    private int index;
 
     public void ignoreColumn() {
         index++;

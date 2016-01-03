@@ -25,8 +25,11 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
+import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
+
+import java.sql.Connection;
 
 public class RoomMessages {
 
@@ -62,16 +65,16 @@ public class RoomMessages {
 
             ServerType serverType = ServerManager.getServerType();
 
-            if (minLevel < MIN_ROOM_LEVEL || maxLevel > MAX_ROOM_LEVEL) {
+            if ((minLevel < MIN_ROOM_LEVEL) || (maxLevel > MAX_ROOM_LEVEL)) {
                 result = -3; // Wrong level settings
-            } else if (maxSize == null || type == null || map == null || ball == null ||
-                    roomMode == null || maxSize == RoomSize.SIZE_2V2 ||
+            } else if ((maxSize == null) || (type == null) || (map == null) || (ball == null) ||
+                    (roomMode == null) || (maxSize == RoomSize.SIZE_2V2) ||
                     roomMode.notValidForServer(serverType)) {
                 result = -1; // System problem
             } else {
                 short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
-                if (playerLevel < minLevel || playerLevel > maxLevel) {
+                if ((playerLevel < minLevel) || (playerLevel > maxLevel)) {
                     result = -4; // Invalid level
                 }
             }
@@ -93,7 +96,7 @@ public class RoomMessages {
                 }
 
                 // If password is blank, disable password usage
-                if (type == RoomAccessType.PASSWORD && password.isEmpty()) {
+                if ((type == RoomAccessType.PASSWORD) && password.isEmpty()) {
                     type = RoomAccessType.FREE;
                 }
 
@@ -162,7 +165,7 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(playerId) && room.isInLobbyScreen()) {
+        if ((room != null) && room.isPlayerIn(playerId) && room.isInLobbyScreen()) {
             session.leaveRoom(RoomLeaveReason.LEAVED);
         }
     }
@@ -173,7 +176,7 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(session.getPlayerId())) {
+        if ((room != null) && room.isPlayerIn(session.getPlayerId())) {
             RoomMap map = RoomMap.fromInt(mapId);
 
             if (map != null) {
@@ -191,7 +194,7 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.isPlayerIn(session.getPlayerId())) {
+        if ((room != null) && room.isPlayerIn(session.getPlayerId())) {
             RoomBall ball = RoomBall.fromInt(ballId);
 
             if (ball != null) {
@@ -229,8 +232,8 @@ public class RoomMessages {
 
         ServerType serverType = ServerManager.getServerType();
 
-        if (maxSize == null || type == null || roomMode == null ||
-                maxSize == RoomSize.SIZE_2V2 || roomMode.notValidForServer(serverType)) {
+        if ((maxSize == null) || (type == null) || (roomMode == null) ||
+                (maxSize == RoomSize.SIZE_2V2) || roomMode.notValidForServer(serverType)) {
             result = -1; // System problem
         } else if (room == null) {
             result = -2; // Room does not exist
@@ -247,7 +250,7 @@ public class RoomMessages {
         } else {
             short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
 
-            if (playerLevel < minLevel || playerLevel > maxLevel) {
+            if ((playerLevel < minLevel) || (playerLevel > maxLevel)) {
                 result = -6; // Invalid level
             } else {
                 // Limit the length of the name and the password
@@ -284,7 +287,7 @@ public class RoomMessages {
         Room room = RoomManager.getRoomById(roomId);
 
         // If the room is valid, the player is inside it and it is in waiting state
-        if (room != null && room.isPlayerIn(playerId) && room.state() == RoomState.WAITING) {
+        if ((room != null) && room.isPlayerIn(playerId) && (room.state() == RoomState.WAITING)) {
             if (!room.getSwapLocker().isPlayerLocked(playerId)) {
                 RoomTeam currentTeam = room.getPlayerTeam(playerId);
                 RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
@@ -307,9 +310,9 @@ public class RoomMessages {
             Room room = RoomManager.getRoomById(session.getRoomId());
 
             // If the room exist and the player is inside it
-            if (room != null && room.getId() == roomId) {
+            if ((room != null) && (room.getId() == roomId)) {
                 // If the player is the room master
-                if (room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
+                if ((room.getMaster() == session.getPlayerId()) && room.isInLobbyScreen()) {
                     // If the player is in the room
                     if (room.isPlayerIn(playerToKick)) {
                         room.getPlayer(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
@@ -348,7 +351,7 @@ public class RoomMessages {
                         byte level = (byte) PlayerInfo.getLevel(sessionToInvite.getPlayerId());
 
                         // If player level meets the level requirement of the room
-                        if (room.getMinLevel() <= level && room.getMaxLevel() >= level) {
+                        if ((room.getMinLevel() <= level) && (room.getMaxLevel() >= level)) {
                             ServerMessage invitation = MessageBuilder.invitePlayer(result,
                                     room, session.getCache().getName());
                             sessionToInvite.sendAndFlush(invitation);
@@ -392,7 +395,7 @@ public class RoomMessages {
                         }
                         break;
                     case -1:
-                        if (room.isWaiting() && room.getMaster() == playerId) {
+                        if (room.isWaiting() && (room.getMaster() == playerId)) {
                             room.startCountdown();
                         }
                         break;
@@ -421,7 +424,7 @@ public class RoomMessages {
 
         Room room = RoomManager.getRoomById(roomId);
 
-        if (room != null && room.getMaster() == session.getPlayerId()) {
+        if ((room != null) && (room.getMaster() == session.getPlayerId())) {
             room.onCountdown(count);
         }
     }
@@ -432,7 +435,7 @@ public class RoomMessages {
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
 
-            if (room != null && room.getMaster() == session.getPlayerId()) {
+            if ((room != null) && (room.getMaster() == session.getPlayerId())) {
                 room.cancelCountdown();
             }
         }
@@ -492,7 +495,7 @@ public class RoomMessages {
 
             short result = 0;
 
-            if (room.isLoading() && room.getConfirmedPlayers().size() < room.getCurrentSize()) {
+            if (room.isLoading() && (room.getConfirmedPlayers().size() < room.getCurrentSize())) {
                 result = -1;
             }
 
@@ -514,7 +517,8 @@ public class RoomMessages {
 
         MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().keySet());
 
-        try (MatchResultHandler resultHandler = new MatchResultHandler(room, result)) {
+        try (Connection con = MySqlManager.getConnection()) {
+            MatchResultHandler resultHandler = new MatchResultHandler(room, result, con);
             resultHandler.handleResult();
         } catch (Exception e) {
             Output.println("Match result exception: " + e.getMessage(), Level.DEBUG);
@@ -528,7 +532,7 @@ public class RoomMessages {
 
         if (!Configuration.getBoolean("game.match.result.force")) {
             Room room = RoomManager.getRoomById(session.getPlayerId());
-            handleResult = room != null && room.isForcedResultAllowed();
+            handleResult = (room != null) && room.isForcedResultAllowed();
         }
 
         if (handleResult) {
@@ -541,7 +545,7 @@ public class RoomMessages {
 
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
-            if (room != null && room.getMaster() == session.getPlayerId()) {
+            if ((room != null) && (room.getMaster() == session.getPlayerId())) {
                 room.setState(RoomState.WAITING);
                 room.broadcast(MessageBuilder.unknown1());
             }
@@ -553,7 +557,7 @@ public class RoomMessages {
 
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
-            if (room != null && room.getMaster() == session.getPlayerId()) {
+            if ((room != null) && (room.getMaster() == session.getPlayerId())) {
                 room.broadcast(MessageBuilder.toRoomLobby());
 
                 if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
@@ -569,8 +573,8 @@ public class RoomMessages {
 
         if (session.getRoomId() == roomId) {
             Room room = RoomManager.getRoomById(roomId);
-            if (room != null && room.isLoading() &&
-                    (room.getHost() == playerId || room.getMaster() == playerId)) {
+            if ((room != null) && room.isLoading() &&
+                    ((room.getHost() == playerId) || (room.getMaster() == playerId))) {
                 room.setState(RoomState.WAITING);
                 room.broadcast(MessageBuilder.cancelLoading());
             }

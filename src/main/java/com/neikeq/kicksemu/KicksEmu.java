@@ -28,16 +28,17 @@ public class KicksEmu {
     private static NettyTcpServer nettyTcpServer;
     private static NettyUdpServer nettyUdpServer;
 
-    private static boolean initialized = false;
+    private static boolean initialized;
+    private static boolean alive = true;
 
     /** @param args command line arguments */
     public static void main(String[] args) {
-        String configFile = args.length > 0 && !args[0].isEmpty() ?
+        String configFile = ((args.length > 0) && !args[0].isEmpty()) ?
                 args[0] : "config.properties";
 
         configFile += !configFile.endsWith(".properties") ? ".properties" : "";
 
-        KicksEmu.start(configFile);
+        start(configFile);
     }
 
     private static void start(String configFile) {
@@ -48,7 +49,7 @@ public class KicksEmu {
 
         // --- Initialize Output Stream
         output = new Output(Configuration.getBoolean("output.logging"),
-                Configuration.getLevel("output.verbosity"));
+                Configuration.getLoggingLevel());
 
         output.printHeader();
 
@@ -123,12 +124,15 @@ public class KicksEmu {
         Output.println(Localization.get("init.success", Long.toString(endTime)), Level.INFO);
 
         // Print some information about the initialized server
-        Output.println("Information | Type: " + ServerManager.getServerType().toString() +
+        Output.println("Information | Type: " + ServerManager.getServerType() +
                 " - ID: " + ServerManager.getServerId());
 
         // Start listening for user inputs
         Input input = new Input();
         input.listen();
+
+        // Dispose everything and exit
+        dispose();
     }
 
     /**
@@ -176,15 +180,18 @@ public class KicksEmu {
     private static void cleanDatabase() {
         short serverId = ServerManager.getServerId();
 
-        if (serverId > 0 && initialized) {
+        if ((serverId > 0) && initialized) {
             ServerInfo.toggleOffline(serverId);
             ServerInfo.setConnectedUsers((short) 0, serverId);
         }
     }
 
+    public static boolean isAlive() {
+        return alive;
+    }
+
     public static void stop() {
-        dispose();
-        System.exit(0);
+        alive = false;
     }
 
     public static Output getOutput() {

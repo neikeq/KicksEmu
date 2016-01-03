@@ -35,7 +35,7 @@ class SpecialItem {
                 session.send(MessageBuilder.playerStats(playerId));
                 break;
             case FACE:
-                PlayerInfo.setFace((short) (itemInfo.getId() / 10 - 100000), playerId);
+                PlayerInfo.setFace((short) ((itemInfo.getId() / 10) - 100000), playerId);
                 break;
             default:
                 throw new MessageException("Special item has no effect.", -12);

@@ -7,14 +7,15 @@ import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ChallengeResultHandler extends MatchResultHandler {
 
     private final Challenge challenge;
 
-    public ChallengeResultHandler(Room room, MatchResult result) throws SQLException {
-        super(room, result);
+    public ChallengeResultHandler(Room room, MatchResult result, Connection connection) throws SQLException {
+        super(room, result, connection);
         challenge = ((ChallengeRoom) room).getChallenge();
     }
 

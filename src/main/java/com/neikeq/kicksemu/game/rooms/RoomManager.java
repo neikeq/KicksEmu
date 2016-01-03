@@ -88,13 +88,13 @@ public class RoomManager {
      */
     public static Room getQuickRoom(short level) {
         List<Room> freeRooms = ROOMS.values().stream()
-                .filter(r -> r.isWaiting() && r.getAccessType() != RoomAccessType.PASSWORD &&
+                .filter(r -> r.isWaiting() && (r.getAccessType() != RoomAccessType.PASSWORD) &&
                         r.isNotFull() && r.isLevelAllowed(level))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         Collections.sort(freeRooms, (r1, r2) ->
                 Byte.compare(r2.getCurrentSize(), r1.getCurrentSize()));
 
-        return freeRooms.size() > 0 ? freeRooms.get(0) : null;
+        return !freeRooms.isEmpty() ? freeRooms.get(0) : null;
     }
 }

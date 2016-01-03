@@ -29,7 +29,7 @@ public class MemberInfo {
                 " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -37,11 +37,7 @@ public class MemberInfo {
                 stmt.setString(3, "REJECTED");
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt(column);
-                    } else {
-                        return -1;
-                    }
+                    return rs.next() ? rs.getInt(column) : -1;
                 }
             } finally {
                 if (con.length <= 0) {
@@ -58,7 +54,7 @@ public class MemberInfo {
                 " WHERE id = ? AND role NOT IN(?, ?) LIMIT 1;";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -66,11 +62,7 @@ public class MemberInfo {
                 stmt.setString(3, "REJECTED");
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getString(column);
-                    } else {
-                        return "";
-                    }
+                    return rs.next() ? rs.getString(column) : "";
                 }
             } finally {
                 if (con.length <= 0) {

@@ -17,7 +17,7 @@ public class UserUtils {
             stmt.setInt(1, userId);
 
             try (ResultSet result = stmt.executeQuery()) {
-                return result.next() && result.getShort("online") >= 0;
+                return result.next() && (result.getShort("online") >= 0);
             }
         } catch (SQLException e) {
             return true;
@@ -32,11 +32,7 @@ public class UserUtils {
             stmt.setString(1, username);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                } else {
-                    return -1;
-                }
+                return rs.next() ? rs.getInt("id") : -1;
             }
 
         } catch (SQLException e) {

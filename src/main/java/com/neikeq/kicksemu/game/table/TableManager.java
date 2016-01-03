@@ -24,7 +24,7 @@ public class TableManager {
     private static final Map<String, String> tables = new HashMap<>();
 
     private static final Map<Integer, SkillInfo> skillsTable = new HashMap<>();
-    private static final Map<Integer, CeleInfo> celesTable = new HashMap<>();
+    private static final Map<Integer, CeleInfo> celebrationsTable = new HashMap<>();
     private static final Map<Integer, LearnInfo> learnTable = new HashMap<>();
     private static final Map<Integer, ItemFree> itemFreeTable = new HashMap<>();
     private static final Map<Integer, ItemInfo> itemTable = new HashMap<>();
@@ -82,7 +82,7 @@ public class TableManager {
     }
 
     public static CeleInfo getCeleInfo(Predicate<CeleInfo> filter) {
-        Optional<CeleInfo> result = celesTable.values().stream().filter(filter).findFirst();
+        Optional<CeleInfo> result = celebrationsTable.values().stream().filter(filter).findFirst();
 
         return result.isPresent() ? result.get() : null;
     }
@@ -139,7 +139,7 @@ public class TableManager {
         Row line;
         while ((line = reader.nextRow()) != null) {
             CeleInfo row = new CeleInfo(line);
-            celesTable.put(row.getId(), row);
+            celebrationsTable.put(row.getId(), row);
         }
     }
 
@@ -218,7 +218,7 @@ public class TableManager {
 
     private static boolean isMissionUsable(short mission, Date date) {
         SeasonRange eventDate = missionTable.get(mission).getSeason();
-        return eventDate == null || eventDate.isWithinRange(date);
+        return (eventDate == null) || eventDate.isWithinRange(date);
     }
 
     public static List<Short> getUsableMissionsList() {

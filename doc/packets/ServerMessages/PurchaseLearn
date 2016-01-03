@@ -9,10 +9,10 @@ int packet_id
 byte reason
 /*
  * System problem: -1
- * Problem with kash: -2
+ * Problem with cash: -2
  * Problem with points: -3
  * Not enough points: -5
- * Not enough kash: -8
+ * Not enough cash: -8
  * Invalid level: -9
  * Already purchased: -10
  */
@@ -20,10 +20,10 @@ byte response
 short level
 int experience
 short stats_points
-int kash
+int cash
 int points
 char[8] unknown
-short tickets_kash
+short tickets_cash
 short tickets_points
 short training_running
 short training_endurance

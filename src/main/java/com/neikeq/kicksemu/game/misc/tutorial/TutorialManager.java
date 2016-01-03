@@ -21,42 +21,44 @@ public class TutorialManager {
         int characterId = session.getPlayerId();
         msg.ignoreBytes(4);
 
-        byte dribbling = msg.readByte();
-        byte passing = msg.readByte();
-        byte shooting = msg.readByte();
-        byte defense = msg.readByte();
+        TutorialState suspiciousState = new TutorialState(msg.readByte(), msg.readByte(),
+                msg.readByte(), msg.readByte());
 
         short result = 0;
         int reward = 0;
 
         if (UserInfo.hasCharacter(characterId, session.getUserId())) {
-            if (areValid(dribbling, passing, shooting, defense)) {
+            if (suspiciousState.isValid()) {
                 try (Connection con = MySqlManager.getConnection()) {
                     TutorialState tutorialState = PlayerInfo.getTutorialState(characterId, con);
 
                     boolean updated;
 
-                    if (updated = areDifferent(dribbling, tutorialState.getDribbling())) {
-                        tutorialState.setDribbling(dribbling);
+                    // TODO move to method. from here...
+
+                    if (updated = areDifferent(suspiciousState.getDribbling(), tutorialState.getDribbling())) {
+                        tutorialState.setDribbling(suspiciousState.getDribbling());
                     }
 
-                    if (updated |= areDifferent(passing, tutorialState.getPassing())) {
-                        tutorialState.setPassing(passing);
+                    if (updated |= areDifferent(suspiciousState.getPassing(), tutorialState.getPassing())) {
+                        tutorialState.setPassing(suspiciousState.getPassing());
                     }
 
-                    if (updated |= areDifferent(shooting, tutorialState.getShooting())) {
-                        tutorialState.setShooting(shooting);
+                    if (updated |= areDifferent(suspiciousState.getShooting(), tutorialState.getShooting())) {
+                        tutorialState.setShooting(suspiciousState.getShooting());
                     }
 
-                    if (updated |= areDifferent(defense, tutorialState.getDefense())) {
-                        tutorialState.setDefense(defense);
+                    if (updated |= areDifferent(suspiciousState.getDefense(), tutorialState.getDefense())) {
+                        tutorialState.setDefense(suspiciousState.getDefense());
                     }
+
+                    // TODO ... to here
 
                     if (updated) {
                         PlayerInfo.setTutorialState(tutorialState, characterId, con);
                     }
 
-                    if (checkForReward(characterId, dribbling, passing, shooting, defense)) {
+                    if (checkForReward(characterId, tutorialState)) {
                         reward = REWARD_POINTS;
                     }
                 } catch (SQLException e) {
@@ -68,13 +70,7 @@ public class TutorialManager {
             result = -1; // System problem
         }
 
-        session.send(MessageBuilder.updateTutorial(dribbling, passing,
-                shooting, defense, reward, result));
-    }
-
-    private static boolean areValid(byte dribbling, byte passing, byte shooting, byte defense) {
-        return dribbling <= 15 && passing <= 15 && shooting <= 15 && defense <= 15;
-
+        session.send(MessageBuilder.updateTutorial(suspiciousState, reward, result));
     }
 
     private static boolean areDifferent(byte tutorial, byte storedTutorial) {
@@ -90,10 +86,8 @@ public class TutorialManager {
         return false;
     }
 
-    private static boolean checkForReward(int characterId, byte dribbling,
-                                          byte passing, byte shooting, byte defense) {
-        if (dribbling == 15 && passing == 15 &&
-                shooting == 15 && defense == 15) {
+    private static boolean checkForReward(int characterId, TutorialState state) {
+        if (state.isTutorialFinished()) {
             if (!PlayerInfo.getReceivedReward(characterId)) {
                 if (giveReward(characterId)) {
                     PlayerInfo.setReceivedReward(true, characterId);

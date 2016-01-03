@@ -32,7 +32,7 @@ import java.util.Map;
 public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
-    static final byte MIN_ROOM_LEVEL = 3;
+    private static final byte MIN_ROOM_LEVEL = 3;
 
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
@@ -59,7 +59,7 @@ public class ClubRoomMessages extends RoomMessages {
 
         ServerType serverType = ServerManager.getServerType();
 
-        if (type == null || roomMode == null || roomMode.notValidForServer(serverType)) {
+        if ((type == null) || (roomMode == null) || roomMode.notValidForServer(serverType)) {
             result = -1; // System problem
         } else if (PlayerInfo.getLevel(playerId) < MIN_ROOM_LEVEL) {
             result = -3; // Does not meet the level requirements
@@ -88,7 +88,7 @@ public class ClubRoomMessages extends RoomMessages {
             }
 
             // If password is blank, disable password usage
-            if (type == RoomAccessType.PASSWORD && password.isEmpty()) {
+            if ((type == RoomAccessType.PASSWORD) && password.isEmpty()) {
                 type = RoomAccessType.FREE;
             }
 
@@ -101,7 +101,7 @@ public class ClubRoomMessages extends RoomMessages {
             room.setMaxLevel(MAX_ROOM_LEVEL);
             room.setMap(RoomMap.RESERVOIR);
             room.setBall(RoomBall.TEAM_ARENA);
-            room.setMaxSize(RoomSize.SIZE_4V4);
+            room.setMaxSize(RoomSize.SIZE_2V2);
 
             synchronized (RoomManager.ROOMS_LOCKER) {
                 // Get the room id
@@ -156,9 +156,9 @@ public class ClubRoomMessages extends RoomMessages {
         Room room = RoomManager.getRoomById(session.getRoomId());
 
         // If the room exist and the player is inside it
-        if (room != null && room.getId() == roomId) {
+        if ((room != null) && (room.getId() == roomId)) {
             // If the player is the room master
-            if (room.getMaster() == session.getPlayerId() && room.isInLobbyScreen()) {
+            if ((room.getMaster() == session.getPlayerId()) && room.isInLobbyScreen()) {
                 // If the player is in the room
                 if (room.isPlayerIn(playerToKick)) {
                     room.getPlayer(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
@@ -271,7 +271,7 @@ public class ClubRoomMessages extends RoomMessages {
 
         short result = 0;
 
-        if (roomId == session.getRoomId() && !TeamManager.isRegistered(roomId)) {
+        if ((roomId == session.getRoomId()) && !TeamManager.isRegistered(roomId)) {
             ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
 
             if (room != null) {
@@ -298,7 +298,7 @@ public class ClubRoomMessages extends RoomMessages {
 
         short result = 0;
 
-        if (roomId == session.getRoomId() && TeamManager.isRegistered(roomId)) {
+        if ((roomId == session.getRoomId()) && TeamManager.isRegistered(roomId)) {
             Room room = RoomManager.getRoomById(roomId);
 
             if (room != null) {
@@ -319,7 +319,7 @@ public class ClubRoomMessages extends RoomMessages {
 
         int roomId = session.getRoomId();
 
-        if (roomId > 0 && TeamManager.isRegistered(roomId)) {
+        if ((roomId > 0) && TeamManager.isRegistered(roomId)) {
             ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
             Map<Integer, ClubRoom> teams = TeamManager.getTeamsFromPage(page, roomId);
             session.send(MessageBuilder.clubTeamList(teams, room, page));
@@ -337,7 +337,7 @@ public class ClubRoomMessages extends RoomMessages {
 
         ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
 
-        if (room == null || room.getMaster() != session.getPlayerId()) return;
+        if ((room == null) || (room.getMaster() != session.getPlayerId())) return;
 
         short result;
 
@@ -380,15 +380,19 @@ public class ClubRoomMessages extends RoomMessages {
         boolean accepted = msg.readBoolean();
 
         // Ignore the message if the room or the requester room is invalid
-        if (roomId == requesterId || roomId != session.getRoomId()) return;
+        if ((roomId == requesterId) || (roomId != session.getRoomId())) {
+            return;
+        }
 
         ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
-        ClubRoom requester = null;
 
         // Ignore the message if the room does not exist or the player is not the master
-        if (room == null || room.getMaster() != session.getPlayerId()) return;
+        if ((room == null) || (room.getMaster() != session.getPlayerId())) {
+            return;
+        }
 
         short result;
+        ClubRoom requester = null;
 
         // Not enough result messages, so we will need to reuse some...
 
@@ -412,7 +416,7 @@ public class ClubRoomMessages extends RoomMessages {
             }
         }
 
-        if (!accepted || result != 0) {
+        if (!accepted || (result != 0)) {
             room.setChallengeTarget(0);
         } else {
             ChallengeRoom challengeRoom = new ChallengeRoom();
@@ -432,9 +436,9 @@ public class ClubRoomMessages extends RoomMessages {
     public static void cancelChallenge(Session session) {
         ClubRoom room = (ClubRoom) RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null && room.getMaster() == session.getPlayerId()) {
+        if ((room != null) && (room.getMaster() == session.getPlayerId())) {
             Challenge challenge = ChallengeOrganizer.getChallengeById(room.getChallengeId());
-            if (challenge != null && challenge.getRoom().isInLobbyScreen()) {
+            if ((challenge != null) && challenge.getRoom().isInLobbyScreen()) {
                 challenge.cancel();
             }
         }

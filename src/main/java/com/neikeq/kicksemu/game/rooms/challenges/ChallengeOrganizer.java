@@ -38,7 +38,7 @@ public class ChallengeOrganizer {
      * Returns the smallest missing key in rooms map.<br>
      * Required to get an id for new rooms.
      */
-    public static int getSmallestMissingIndex() {
+    private static int getSmallestMissingIndex() {
         synchronized (LOCKER) {
             int i;
 

@@ -10,6 +10,10 @@ public class StatisticsCarrier {
     protected final short tackles;
     protected final short ballControl;
 
+    public StatisticsCarrier() {
+        this((short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0);
+    }
+
     public StatisticsCarrier(short goals, short assists, short blocks, short shots,
                              short steals, short tackles, short ballControl) {
         this.goals = goals;

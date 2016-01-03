@@ -35,7 +35,7 @@ public class FriendsList {
 
         int index = page * 10;
 
-        for (int i = index; i < index + 10 && i < friends.size(); i++) {
+        for (int i = index; (i < (index + 10)) && (i < friends.size()); i++) {
             players.add(friends.get(i));
         }
 
@@ -73,7 +73,7 @@ public class FriendsList {
         String strFriends = "";
 
         for (int i = 0; i < friends.size(); i++) {
-            strFriends += (i > 0 ? "," :  "");
+            strFriends += (i > 0) ? "," : "";
             strFriends += String.valueOf(friends.get(i));
         }
 

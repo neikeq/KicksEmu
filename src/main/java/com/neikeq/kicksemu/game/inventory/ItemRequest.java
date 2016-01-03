@@ -28,11 +28,11 @@ class ItemRequest implements PurchaseRequest {
     }
 
     private boolean isInvalidBonus(OptionInfo optionInfo, int bonusId) {
-        return optionInfo == null && bonusId != 0;
+        return (optionInfo == null) && (bonusId != 0);
     }
 
     private boolean isIncompatibleBonusLevel(OptionInfo info, int bonusId, short level) {
-        return bonusId != 0 && info.isIncompatibleLevel(level, getPayment());
+        return (bonusId != 0) && info.isIncompatibleLevel(level, getPayment());
     }
 
     public ItemRequest(ClientMessage msg) {
@@ -40,7 +40,7 @@ class ItemRequest implements PurchaseRequest {
         price = msg.readInt();
         productId = msg.readInt();
         Expiration specifiedExpiration = Expiration.fromInt(msg.readInt());
-        expiration = specifiedExpiration == null ? Expiration.DAYS_PERM : specifiedExpiration;
+        expiration = (specifiedExpiration == null) ? Expiration.DAYS_PERM : specifiedExpiration;
         bonusOne = msg.readInt();
         bonusTwo = msg.readInt();
     }

@@ -48,7 +48,7 @@ public class InventoryManager {
                 .filter(s -> s.getSelectionIndex() > 0).count();
 
         // If skill exists and skill is not yet activated
-        if (skill != null && skill.getSelectionIndex() <= 0) {
+        if ((skill != null) && (skill.getSelectionIndex() <= 0)) {
             if (slots > skillsInUse) {
                 // Activate skill
                 newIndex = InventoryUtils.getSmallestMissingIndex(skills.values());
@@ -81,7 +81,7 @@ public class InventoryManager {
         Skill skill = (Skill) InventoryUtils.getByIdFromMap(skills, skillId);
 
         // If skill exists and skill is activated
-        if (skill != null && skill.getSelectionIndex() > 0) {
+        if ((skill != null) && (skill.getSelectionIndex() > 0)) {
             // Deactivate skill
             skill.setSelectionIndex((byte) 0);
             s.send(MessageBuilder.deactivateSkill(skillId, result));
@@ -101,13 +101,13 @@ public class InventoryManager {
         short result = 0;
         byte newIndex = 0;
 
-        Map<Integer, Celebration> celes = session.getCache().getCeles();
-        Celebration cele = (Celebration) InventoryUtils.getByIdFromMap(celes, celeId);
+        Map<Integer, Celebration> celebrations = session.getCache().getCelebrations();
+        Celebration cele = (Celebration) InventoryUtils.getByIdFromMap(celebrations, celeId);
 
         // If cele exists and cele is not yet activated
-        if (cele != null && cele.getSelectionIndex() <= 0) {
+        if ((cele != null) && (cele.getSelectionIndex() <= 0)) {
             // Activate skill
-            newIndex = InventoryUtils.getSmallestMissingIndex(celes.values());
+            newIndex = InventoryUtils.getSmallestMissingIndex(celebrations.values());
 
             // If there is at least a free slot for the celebration
             // The maximum celebration that can be used are 5
@@ -128,21 +128,21 @@ public class InventoryManager {
     public static void deactivateCele(Session session, ClientMessage msg) {
         int celeId = msg.readInt();
 
-        short result = deactivateCele(session, celeId, session.getCache().getCeles());
+        short result = deactivateCele(session, celeId, session.getCache().getCelebrations());
 
         if (result != 0) {
             session.send(MessageBuilder.deactivateCele(celeId, result));
         }
     }
 
-    private static short deactivateCele(Session s, int celeId, Map<Integer, Celebration> celes) {
+    private static short deactivateCele(Session s, int celeId, Map<Integer, Celebration> celebrations) {
         short result = 0;
 
         int playerId = s.getPlayerId();
-        Celebration cele = (Celebration) InventoryUtils.getByIdFromMap(celes, celeId);
+        Celebration cele = (Celebration) InventoryUtils.getByIdFromMap(celebrations, celeId);
 
         // If cele exists and cele is activated
-        if (cele != null && cele.getSelectionIndex() > 0) {
+        if ((cele != null) && (cele.getSelectionIndex() > 0)) {
             // Deactivate cele
             cele.setSelectionIndex((byte) 0);
             s.send(MessageBuilder.deactivateCele(celeId, result));
@@ -164,7 +164,7 @@ public class InventoryManager {
         Item item = session.getCache().getItems().get(inventoryId);
 
         // If item exists
-        if (item != null && !item.isSelected()) {
+        if ((item != null) && !item.isSelected()) {
             CharacterUtils.updateItemsInUse(item, session);
             PlayerInfo.setInventoryItem(item, playerId);
         } else {
@@ -231,7 +231,7 @@ public class InventoryManager {
                         Payment.POINTS, bonusOne, bonusTwo);
 
                 // If the specified refund is valid
-                if (refund == itemPrice / 10) {
+                if (refund == (itemPrice / 10)) {
                     PlayerInfo.removeInventoryItem(item, playerId);
                     items.remove(item.getInventoryId());
 
@@ -272,10 +272,10 @@ public class InventoryManager {
                     if (item.getExpiration().isUsage()) {
                         // Loop over all usage items with the same id and bonuses
                         items.values().stream().filter(i ->
-                                i.getInventoryId() != item.getInventoryId() &&
-                                        i.getExpiration().isUsage() && i.getId() == item.getId() &&
-                                        i.getBonusOne() == item.getBonusOne() &&
-                                        i.getBonusTwo() == item.getBonusTwo()).forEach(i -> {
+                                (i.getInventoryId() != item.getInventoryId()) &&
+                                        i.getExpiration().isUsage() && (i.getId() == item.getId()) &&
+                                        (i.getBonusOne() == item.getBonusOne()) &&
+                                        (i.getBonusTwo() == item.getBonusTwo())).forEach(i -> {
                             // Add the item's usages to the stacked amount
                             usagesToAdd.sum(i.getUsages());
 
@@ -310,7 +310,7 @@ public class InventoryManager {
 
             session.send(MessageBuilder.mergeItem(session, inventoryId, usages, result));
 
-            if (result == 0 && selected) {
+            if ((result == 0) && selected) {
                 session.send(MessageBuilder.activateItem(inventoryId, session, result));
             }
         }

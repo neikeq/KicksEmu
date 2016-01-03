@@ -47,11 +47,11 @@ public class ChatCommands {
         if (ServerManager.getServerType() != ServerType.CLUB) {
             Room room = RoomManager.getRoomById(session.getRoomId());
 
-            if (room != null && room.state() == RoomState.WAITING) {
-                if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
+            if ((room != null) && (room.state() == RoomState.WAITING)) {
+                if ((room.getMaster() == playerId) || PlayerInfo.isModerator(playerId)) {
                     int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
-                    if (targetId > 0 && targetId != room.getMaster() &&
+                    if ((targetId > 0) && (targetId != room.getMaster()) &&
                             room.isPlayerIn(targetId)) {
                         room.setMaster(targetId);
                         room.setHost(targetId);
@@ -71,10 +71,10 @@ public class ChatCommands {
 
         try (Connection con = MySqlManager.getConnection()) {
             short playerLevel = PlayerInfo.getLevel(playerId, con);
-            short requestedLevel = args.length < 2 ?
+            short requestedLevel = (args.length < 2) ?
                     (short) (playerLevel + 1) : Short.valueOf(args[1]);
 
-            if (playerLevel >= requestedLevel || requestedLevel > 60) {
+            if ((playerLevel >= requestedLevel) || (requestedLevel > 60)) {
                 return;
             }
 
@@ -124,14 +124,14 @@ public class ChatCommands {
         int playerId = session.getPlayerId();
         Room room = RoomManager.getRoomById(session.getRoomId());
 
-        if (room != null && room.isInLobbyScreen()) {
-            if (room.getMaster() == playerId || PlayerInfo.isModerator(playerId)) {
+        if ((room != null) && room.isInLobbyScreen()) {
+            if ((room.getMaster() == playerId) || PlayerInfo.isModerator(playerId)) {
                 int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
                 if (targetId != session.getPlayerId()) {
                     Session target = room.getPlayer(targetId);
 
-                    if (target != null && !target.leaveRoom(RoomLeaveReason.KICKED)) {
+                    if ((target != null) && !target.leaveRoom(RoomLeaveReason.KICKED)) {
                         ChatUtils.sendServerMessage(session, "Player not found.");
                     }
                 } else {
@@ -183,7 +183,7 @@ public class ChatCommands {
             if (session.getRoomId() > 0) {
                 room = RoomManager.getRoomById(session.getRoomId());
 
-                if (room != null && !room.isWaiting()) {
+                if ((room != null) && !room.isWaiting()) {
                     return;
                 }
             }
@@ -236,26 +236,26 @@ public class ChatCommands {
         if (PlayerInfo.isModerator(session.getPlayerId())) {
             try {
                 String[] duration = args[1].split(":");
-                int minutes = (Integer.valueOf(duration[0]) * 60);
+                int minutes = Integer.valueOf(duration[0]) * 60;
                 if (duration.length > 1) {
                     minutes += Integer.valueOf(duration[1]);
                 }
 
-                GameEvents.setCustomGoldenTime(minutes <= 0 ? 0 : minutes);
+                GameEvents.setCustomGoldenTime((minutes <= 0) ? 0 : minutes);
 
                 if (minutes > 0) {
                     int hours = minutes / 60;
-                    int mins = minutes % 60;
+                    int hourMinutes = minutes % 60;
 
                     ChatUtils.broadcastNotice("Golden time enabled for " +
                             (hours > 0 ? hours + " hours" : "") +
-                            (hours > 0 && mins > 0 ? " and " : "") +
-                            (mins > 0 ? mins + " minutes" : "") + ".");
+                            (hours > 0 && hourMinutes > 0 ? " and " : "") +
+                            (hourMinutes > 0 ? hourMinutes + " minutes" : "") + ".");
                 } else {
                     ChatUtils.broadcastNotice("Golden time disabled.");
                 }
 
-                if (minutes <= 0 && GameEvents.isGoldenTime()) {
+                if ((minutes <= 0) && GameEvents.isGoldenTime()) {
                     ChatUtils.broadcastNotice("Scheduled Golden time is still active.");
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
@@ -285,26 +285,26 @@ public class ChatCommands {
         if (PlayerInfo.isModerator(session.getPlayerId())) {
             try {
                 String[] duration = args[1].split(":");
-                int minutes = (Integer.valueOf(duration[0]) * 60);
+                int minutes = Integer.valueOf(duration[0]) * 60;
                 if (duration.length > 1) {
                     minutes += Integer.valueOf(duration[1]);
                 }
 
-                GameEvents.setCustomClubTime(minutes <= 0 ? 0 : minutes);
+                GameEvents.setCustomClubTime((minutes <= 0) ? 0 : minutes);
 
                 if (minutes > 0) {
                     int hours = minutes / 60;
-                    int mins = minutes % 60;
+                    int hourMinutes = minutes % 60;
 
                     ChatUtils.broadcastNotice("Club time enabled for " +
                             (hours > 0 ? hours + " hours" : "") +
-                            (hours > 0 && mins > 0 ? " and " : "") +
-                            (mins > 0 ? mins + " minutes" : "") + ".");
+                            (hours > 0 && hourMinutes > 0 ? " and " : "") +
+                            (hourMinutes > 0 ? hourMinutes + " minutes" : "") + ".");
                 } else {
                     ChatUtils.broadcastNotice("Club time disabled.");
                 }
 
-                if (minutes <= 0 && GameEvents.isClubTime()) {
+                if ((minutes <= 0) && GameEvents.isClubTime()) {
                     ChatUtils.broadcastNotice("Scheduled Club time is still active.");
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
@@ -423,15 +423,15 @@ public class ChatCommands {
         commands.put("kick", ChatCommands::onKick);
         commands.put("punish", ChatCommands::onPunish);
         commands.put("notice", ChatCommands::onNotice);
-        commands.put("observer", (s, a) -> ChatCommands.onObserver(s));
-        commands.put("visible", (s, a) -> ChatCommands.onVisible(s));
+        commands.put("observer", (s, a) -> onObserver(s));
+        commands.put("visible", (s, a) -> onVisible(s));
         commands.put("goldentime", ChatCommands::onGoldenTime);
         commands.put("clubtime", ChatCommands::onClubTime);
         commands.put("block", ChatCommands::onBlock);
         commands.put("unblock", ChatCommands::onUnblock);
         commands.put("challenge", ChatCommands::onChallenge);
-        commands.put("gt", (s, a) -> ChatCommands.onGt(s));
-        commands.put("ct", (s, a) -> ChatCommands.onCt(s));
+        commands.put("gt", (s, a) -> onGt(s));
+        commands.put("ct", (s, a) -> onCt(s));
     }
 
     @FunctionalInterface

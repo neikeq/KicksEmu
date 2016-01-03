@@ -62,9 +62,8 @@ public class ClientMessage {
         return new String(bytes, Charset.forName("windows-1252"));
     }
 
-    public ClientMessage ignoreBytes(int length) {
+    public void ignoreBytes(int length) {
         body.readerIndex(body.readerIndex() + length);
-        return this;
     }
 
     public ByteBuf getBody() {
@@ -99,9 +98,16 @@ public class ClientMessage {
                         System.lineSeparator() + " - Data: ",
                 getBodySize(), getSessionId(), getTargetId());
 
-        for (boolean firstStep = true; getReadableBytes() > 0; firstStep = false) {
-            System.out.print((firstStep ? "" : " ") + readByte());
+        boolean firstStep = true;
+        while (getReadableBytes() > 0) {
+            if (firstStep) {
+                System.out.print(readByte());
+                firstStep = false;
+            } else {
+                System.out.print(" " + readByte());
+            }
         }
+
         System.out.println();
 
         body.resetReaderIndex();

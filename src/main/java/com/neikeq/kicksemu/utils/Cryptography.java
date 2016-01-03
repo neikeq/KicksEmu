@@ -1,22 +1,22 @@
 package com.neikeq.kicksemu.utils;
 
+import com.neikeq.kicksemu.config.Constants;
 import io.netty.buffer.ByteBuf;
 
 public class Cryptography {
-    private static final byte ENCRYPTION_KEY = -27; // unsigned 229
+
+    private static final byte ENCRYPTION_KEY = -27;
     
     /**
      * Simple XOR encryption.
      *
      * @param buffer the byte array to be decrypted.
-     * @param header specifies if the buffer includes the header
      *
-     * @return the resulted byte array.
+     * @return the decrypted byte array.
      */
-    public static ByteBuf decrypt(ByteBuf buffer, boolean header) {
+    public static ByteBuf decrypt(ByteBuf buffer) {
         for (int i = 0; i < buffer.readableBytes(); i++) {
-            // if there is a header we ignore the first 12 bytes (header size)
-            if (!header || i >= 12) {
+            if (i >= Constants.HEADER_SIZE) {
                 buffer.setByte(i, buffer.getByte(i) ^ ENCRYPTION_KEY);
             }
         }

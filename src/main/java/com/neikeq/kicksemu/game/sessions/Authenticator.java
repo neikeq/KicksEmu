@@ -152,7 +152,7 @@ public class Authenticator {
                 boolean connected = UserUtils.isAlreadyConnected(accountId);
 
                 // Give a bit of time and try again (3 attempts)
-                for (int i = 0; i < 4 && connected; i++) {
+                for (int i = 0; (i < 4) && connected; i++) {
                     ThreadUtils.sleep(500);
                     connected = UserUtils.isAlreadyConnected(accountId);
                 }
@@ -235,7 +235,7 @@ public class Authenticator {
         boolean connected = UserUtils.isAlreadyConnected(accountId);
 
         // Give a bit of time and try again (3 attempts)
-        for (int i = 0; i < 4 && connected; i++) {
+        for (int i = 0; (i < 4) && connected; i++) {
             ThreadUtils.sleep(500);
             connected = UserUtils.isAlreadyConnected(accountId);
         }

@@ -23,17 +23,17 @@ public class Position {
     public static boolean isValidNewPosition(short currentPos, short newPos) {
         switch (currentPos) {
             case FW:
-                return newPos == ST || newPos == CF || newPos == WF;
+                return (newPos == ST) || (newPos == CF) || (newPos == WF);
             case MF:
-                return newPos == AMF || newPos == SMF || newPos == CMF || newPos == DMF;
+                return (newPos == AMF) || (newPos == SMF) || (newPos == CMF) || (newPos == DMF);
             case DF:
-                return newPos == SB || newPos == CB || newPos == SW;
+                return (newPos == SB) || (newPos == CB) || (newPos == SW);
             default:
                 return false;
         }
     }
 
     public static boolean isAdvancedPosition(short position) {
-        return position != FW && position != MF && position != DF;
+        return (position != FW) && (position != MF) && (position != DF);
     }
 }

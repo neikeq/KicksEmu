@@ -35,7 +35,7 @@ public class LobbyManager {
         try (Connection con = MySqlManager.getConnection()) {
             List<Integer> visiblePlayers = getMainLobby().getVisiblePlayers(con);
 
-            for (int i = index; i < index + 10; i++) {
+            for (int i = index; i < (index + 10); i++) {
                 if (i < visiblePlayers.size()) {
                     players.add(visiblePlayers.get(i));
                 } else {
@@ -43,7 +43,7 @@ public class LobbyManager {
                 }
             }
 
-            if (players.size() > 0) {
+            if (!players.isEmpty()) {
                 Integer[] playersArray = new Integer[players.size()];
 
                 session.send(MessageBuilder.lobbyList(players.toArray(playersArray),

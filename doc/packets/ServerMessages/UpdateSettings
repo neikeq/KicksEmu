@@ -7,4 +7,4 @@ Size: 6
 Data:
 int packet_id
 byte reason // System found a problem: -1
-byte reponse // Success: 0, Rejected: -1
+byte response // Success: 0, Rejected: -1

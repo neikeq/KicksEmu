@@ -83,11 +83,7 @@ public class SessionInfo {
         try (Connection con = MySqlManager.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("random_session_id");
-                } else {
-                    return RandomGenerator.randomInt();
-                }
+                return rs.next() ? rs.getInt("random_session_id") : RandomGenerator.randomInt();
             }
         } catch (SQLException | NoSuchAlgorithmException e) {
             return -1;
@@ -117,17 +113,13 @@ public class SessionInfo {
                 " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt(column);
-                    } else {
-                        return -1;
-                    }
+                    return rs.next() ? rs.getInt(column) : -1;
                 }
             } finally {
                 if (con.length <= 0) {
@@ -140,23 +132,18 @@ public class SessionInfo {
     }
 
     private static String getString(int id, Connection... con) {
-        final String column = "hash";
-
-        final String query = "SELECT " + column + " FROM " + TABLE +
-                " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String column = "hash";
+            final String query = "SELECT " + column + " FROM " + TABLE +
+                    " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getString(column);
-                    } else {
-                        return null;
-                    }
+                    return rs.next() ? rs.getString(column) : null;
                 }
             } finally {
                 if (con.length <= 0) {

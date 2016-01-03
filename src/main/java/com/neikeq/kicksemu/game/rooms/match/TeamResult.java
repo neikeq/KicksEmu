@@ -40,6 +40,11 @@ public class TeamResult extends StatisticsCarrier {
                 tackles, votePoints, ballControl);
     }
 
+    public TeamResult() {
+        result = VictoryResult.NO_GAME;
+        votePoints = 0;
+    }
+
     public TeamResult(short result, short goals, short assists, short blocks, short shots,
                       short steals, short tackles, short votePoints, short ballControl) {
         super(goals, assists, blocks, shots, steals, tackles, ballControl);

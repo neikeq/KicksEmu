@@ -13,6 +13,7 @@ import com.neikeq.kicksemu.game.inventory.products.Celebration;
 import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.inventory.products.Skill;
 import com.neikeq.kicksemu.game.inventory.products.Training;
+import com.neikeq.kicksemu.game.misc.tutorial.TutorialState;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
 import com.neikeq.kicksemu.game.rooms.Room;
@@ -234,17 +235,16 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.UPGRADE_CHARACTER).writeShort(result);
     }
 
-    public static ServerMessage updateTutorial(byte dribbling, byte passing, byte shooting,
-                                               byte defense, int reward, short result) {
+    public static ServerMessage updateTutorial(TutorialState state, int reward, short result) {
         ServerMessage msg = new ServerMessage(MessageId.UPDATE_TUTORIAL);
 
         msg.writeShort(result);
 
         if (result == 0) {
-            msg.writeByte(dribbling);
-            msg.writeByte(passing);
-            msg.writeByte(shooting);
-            msg.writeByte(defense);
+            msg.writeByte(state.getDribbling());
+            msg.writeByte(state.getPassing());
+            msg.writeByte(state.getShooting());
+            msg.writeByte(state.getDefense());
             msg.writeInt(reward);
         }
 
@@ -405,16 +405,17 @@ public class MessageBuilder {
 
             byte status;
             short server = 0;
-            short location = 0;
             int userId = PlayerInfo.getOwner(friendId);
 
             if (!ServerManager.isPlayerConnected(friendId)) {
                 server = UserInfo.getServer(userId);
 
-                status = (byte) (server > 0 && UserInfo.getOnline(userId) == friendId ? 1 : 0);
+                status = (byte) (((server > 0) && (UserInfo.getOnline(userId) == friendId)) ? 1 : 0);
             } else {
                 status = 2;
             }
+
+            short location = 0;
 
             switch (status) {
                 case 1:
@@ -476,7 +477,7 @@ public class MessageBuilder {
             }
         }
 
-        msg.writeInt(clubId > 0 ? ClubInfo.getClubPoints(clubId) : 0);
+        msg.writeInt((clubId > 0) ? ClubInfo.getClubPoints(clubId) : 0);
 
         return msg;
     }
@@ -498,16 +499,17 @@ public class MessageBuilder {
 
             byte status;
             short server = 0;
-            short location = 0;
             int userId = PlayerInfo.getOwner(memberId);
 
             if (!ServerManager.isPlayerConnected(memberId)) {
                 server = UserInfo.getServer(userId);
 
-                status = (byte) (server > 0 && UserInfo.getOnline(userId) == memberId ? 1 : 0);
+                status = (byte) (((server > 0) && (UserInfo.getOnline(userId) == memberId)) ? 1 : 0);
             } else {
                 status = 2;
             }
+
+            short location = 0;
 
             switch (status) {
                 case 1:
@@ -637,11 +639,11 @@ public class MessageBuilder {
 
         msg.writeShort(result);
 
-        if (result == 0 && room != null) {
+        if ((result == 0) && (room != null)) {
             msg.writeShort((short) room.getId());
 
             RoomTeam team = room.getPlayerTeam(playerId);
-            short teamIndex = team != null ? (short) team.toInt() : -1;
+            short teamIndex = (team != null) ? (short) team.toInt() : -1;
             msg.writeShort(teamIndex);
             msg.writeShort(teamIndex);
         }
@@ -662,7 +664,7 @@ public class MessageBuilder {
             msg.writeBool(GameEvents.isGoldenTime());
             msg.writeBool(GameEvents.isClubTime());
 
-            msg.writeString(tip, tip.length() > 120 ? 120 : tip.length());
+            msg.writeString(tip, (tip.length() > 120) ? 120 : tip.length());
         }
 
         return msg;
@@ -699,7 +701,7 @@ public class MessageBuilder {
             int clubId = MemberInfo.getClubId(playerId, con);
 
             RoomTeam team = room.getPlayerTeam(playerId);
-            short teamIndex = team != null ? (short) team.toInt() : -1;
+            short teamIndex = (team != null) ? (short) team.toInt() : -1;
 
             msg.writeBool(true, 2);
             msg.writeInt(playerId);
@@ -830,7 +832,7 @@ public class MessageBuilder {
             msg.writeByte(page);
 
             try {
-                Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+                Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
                 String array = Strings.repeatAndSplit("?", ", ", players.length);
 
@@ -843,13 +845,15 @@ public class MessageBuilder {
                     SqlUtils.repeatSetInt(stmt, players.length + 1, players);
 
                     try (ResultSet rs = stmt.executeQuery()) {
-                        for (int i = 0; rs.next(); i++) {
+                        int i = 0;
+                        while (rs.next()) {
                             msg.writeBool(true);
                             msg.writeInt(players[i]);
                             msg.writeString(rs.getString("name"), 15);
                             msg.writeShort(rs.getShort("level"));
                             msg.writeByte((byte) rs.getShort("position"));
                             msg.writeString(rs.getString("status_message"), 35);
+                            i++;
                         }
                     }
                 } finally {
@@ -871,7 +875,7 @@ public class MessageBuilder {
 
         msg.writeShort(result);
 
-        if (result == 0 && room != null) {
+        if ((result == 0) && (room != null)) {
             msg.writeString(name, 15);
             msg.writeShort((short) room.getId());
             msg.writeString(room.getPassword(), 5);
@@ -929,7 +933,7 @@ public class MessageBuilder {
         msg.writeShort(room.getCurrentSong());
         msg.writeShort(room.getMatchMission());
 
-        byte hostIndex = (byte) (room.getPlayerTeam(room.getHost()) == RoomTeam.RED ?
+        byte hostIndex = (byte) ((room.getPlayerTeam(room.getHost()) == RoomTeam.RED) ?
                 room.getRedTeam() : room.getBlueTeam()).indexOf(room.getHost());
 
         msg.writeInt(room.getHost());
@@ -938,7 +942,7 @@ public class MessageBuilder {
         room.getPlayers().keySet().stream()
                 .filter(playerId -> playerId != room.getHost())
                 .forEach(playerId -> {
-                    byte playerIndex = (byte) (room.getPlayerTeam(playerId) == RoomTeam.RED ?
+                    byte playerIndex = (byte) ((room.getPlayerTeam(playerId) == RoomTeam.RED) ?
                             room.getRedTeam() : room.getBlueTeam()).indexOf(playerId);
 
                     msg.writeInt(playerId);
@@ -984,7 +988,7 @@ public class MessageBuilder {
 
         msg.writeShort((short) 0);
 
-        if (result != null && playerResult != null && room != null) {
+        if ((result != null) && (playerResult != null) && (room != null)) {
             msg.writeInt(result.getMom());
 
             result.getRedTeam().appendResult(msg);
@@ -1083,7 +1087,7 @@ public class MessageBuilder {
 
         msg.writeShort(result);
 
-        if (result == 0 && room != null) {
+        if ((result == 0) && (room != null)) {
             msg.writeShort((short) room.getId());
         }
 
@@ -1310,7 +1314,7 @@ public class MessageBuilder {
 
         msg.writeShort(result);
 
-        if (result == 0 && room != null) {
+        if ((result == 0) && (room != null)) {
             msg.writeString(name, 15);
             msg.writeShort((short) room.getId());
             msg.writeString(room.getPassword(), 5);
@@ -1509,7 +1513,7 @@ public class MessageBuilder {
 
         msg.writeShort(result);
 
-        if (result == 0 && type != null && uniform != null) {
+        if ((result == 0) && (type != null) && (uniform != null)) {
             msg.writeInt(0); // TODO Not sure what this must be nor what it causes
             msg.writeByte(type.toByte());
             msg.writeInt(uniform.getShirts());

@@ -12,7 +12,7 @@ class SkillRequest implements PurchaseRequest {
     private final Expiration expiration;
 
     public boolean isInvalidExpirationMode() {
-        return getExpiration() == null || getExpiration().isInvalidForPurchaseRequest();
+        return (getExpiration() == null) || getExpiration().isInvalidForPurchaseRequest();
     }
 
     public SkillRequest(ClientMessage msg) {

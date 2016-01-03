@@ -17,7 +17,7 @@ public class Tips {
     private static Tips instance;
 
     private final List<String> tipsList = new ArrayList<>();
-    private int index = 0;
+    private int index;
 
     private void load() {
         final String path = TableManager.getTablePath(Constants.PROPERTY_TABLE_TIPS) +
@@ -41,7 +41,7 @@ public class Tips {
     public static String getNext() {
         Tips tips = getInstance();
 
-        if (tips.tipsList.size() > 0) {
+        if (!tips.tipsList.isEmpty()) {
             return tips.tipsList.get(tips.getIndex());
         }
 
@@ -62,7 +62,7 @@ public class Tips {
 
     private int getIndex() {
         int curIndex = index;
-        index = index < tipsList.size() - 1 ? ++index : 0;
+        index = (index < (tipsList.size() - 1)) ? ++index : 0;
         return curIndex;
     }
 }

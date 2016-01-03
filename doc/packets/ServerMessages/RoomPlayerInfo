@@ -20,10 +20,10 @@ short player_port
 short level
 int experience
 short stats_points
-int kash
+int cash
 int points
 char[8] unknown
-short tickets_kash
+short tickets_cash
 short tickets_points
 short unknown
 short animation // Boy: 1, Girl: 2
@@ -119,7 +119,7 @@ bool selected
 int expiration
 /*
  * Stat index:
- * running: 1, endurance: 2, agility: 3, ball_controll: 4, dribbling: 5, stealing: 6,
+ * running: 1, endurance: 2, agility: 3, ball_control: 4, dribbling: 5, stealing: 6,
  * tackling: 7, heading: 8, short_shoots: 9, long_shoots: 10, crossing: 11,
  * short_passes: 12, long_passes: 13, marking: 14, goalkeeping: 15, punching: 16, defense: 17
  * 
@@ -131,11 +131,11 @@ int expiration
  * 
  * Making:
  * decimal: 2 digits (bonus tye), 2 digits (01), 3 digits (bonus value)
- * example: 2301008 -> +8 long shooting, 3301003 -> +3 skill slots, 3101200 -> +200% exp bonux
+ * example: 2301008 -> +8 long shooting, 3301003 -> +3 skill slots, 3101200 -> +200% exp bonus
  */
 int stats_bonus_one
 int stats_bonus_two
-short usages_remain // Only readed for usage items
+short usages_remain // Ignored for non-usage items
 int timestamp_expire
 bool visible // Still usable even if not visible
 // Club uniform

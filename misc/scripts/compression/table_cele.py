@@ -12,8 +12,8 @@ def to_table(data, path):
                                 quoting=csv.QUOTE_MINIMAL)
 
         csv_writer.writerow(
-            'Index,Id,Level,Payment,Kash 7,Kash 30,'
-            'Kash Perm,Points 7,Points 30,Points Perm,Unknown,Name,'
+            'Index,Id,Level,Payment,Cash 7,Cash 30,'
+            'Cash Perm,Points 7,Points 30,Points Perm,Unknown,Name,'
             'CaUnknown,Camera File,Icon Path,Winner0,Winner1,Winner2,'
             'Winner3,Winner4,Loser0,Loser1,Loser2,Loser3,Loser4,'
             'Description'.split(',')

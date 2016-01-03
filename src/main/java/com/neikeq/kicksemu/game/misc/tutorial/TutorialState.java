@@ -2,18 +2,28 @@ package com.neikeq.kicksemu.game.misc.tutorial;
 
 public class TutorialState {
 
-    private byte dribbling = 0;
-    private byte passing = 0;
-    private byte shooting = 0;
-    private byte defense = 0;
+    private byte dribbling;
+    private byte passing;
+    private byte shooting;
+    private byte defense;
+
+    public boolean isTutorialFinished() {
+        return (getDribbling() == 15) && (getPassing() == 15) &&
+                (getShooting() == 15) && (getDefense() == 15);
+    }
+
+    public boolean isValid() {
+        return (getDribbling() <= 15) && (getPassing() <= 15) &&
+                (getShooting() <= 15) && (getDefense() <= 15);
+    }
 
     public TutorialState() {}
 
     public TutorialState(byte dribbling, byte passing, byte shooting, byte defense) {
-        this.setDribbling(dribbling);
-        this.setPassing(passing);
-        this.setShooting(shooting);
-        this.setDefense(defense);
+        setDribbling(dribbling);
+        setPassing(passing);
+        setShooting(shooting);
+        setDefense(defense);
     }
 
     public byte getDribbling() {

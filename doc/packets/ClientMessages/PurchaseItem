@@ -6,7 +6,7 @@ Size: 25
 
 Data:
 int packet_id
-byte payment // Kash: 1, Points: 2
+byte payment // Cash: 1, Points: 2
 int price
 int item_id
 int expiration

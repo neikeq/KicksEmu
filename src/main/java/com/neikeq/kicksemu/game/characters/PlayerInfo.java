@@ -64,10 +64,10 @@ public class PlayerInfo {
     }
 
     public static boolean isVisibleInLobby(int id, Connection ... con) {
-        final String query = "SELECT moderator, visible FROM " + TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT moderator, visible FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -103,22 +103,18 @@ public class PlayerInfo {
     }
 
     public static QuestState getQuestState(int id, Connection ... con) {
-        final String query = "SELECT quest_current, quest_matches_left FROM " +
-                TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT quest_current, quest_matches_left FROM " +
+                    TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return new QuestState(rs.getShort("quest_current"),
-                                rs.getShort("quest_matches_left"));
-                    } else {
-                        return new QuestState();
-                    }
+                    return rs.next() ? new QuestState(rs.getShort("quest_current"),
+                            rs.getShort("quest_matches_left")) : new QuestState();
                 }
             } finally {
                 if (con.length <= 0) {
@@ -131,23 +127,19 @@ public class PlayerInfo {
     }
 
     public static TutorialState getTutorialState(int id, Connection ... con) {
-        final String query = "SELECT tutorial_dribbling, tutorial_passing, tutorial_shooting, " +
-                "tutorial_defense FROM " + TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT tutorial_dribbling, tutorial_passing, tutorial_shooting, " +
+                    "tutorial_defense FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return new TutorialState(
-                                rs.getByte("tutorial_dribbling"), rs.getByte("tutorial_passing"),
-                                rs.getByte("tutorial_shooting"), rs.getByte("tutorial_defense"));
-                    } else {
-                        return new TutorialState();
-                    }
+                    return rs.next() ? new TutorialState(
+                            rs.getByte("tutorial_dribbling"), rs.getByte("tutorial_passing"),
+                            rs.getByte("tutorial_shooting"), rs.getByte("tutorial_defense")) : new TutorialState();
                 }
             } finally {
                 if (con.length <= 0) {
@@ -190,23 +182,20 @@ public class PlayerInfo {
     public static DefaultClothes getDefaultClothes(int id, Connection ... con) {
         DefaultClothes defaultClothes;
 
-        final String query = "SELECT default_head, default_shirts, default_pants, " +
-                "default_shoes FROM " + TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT default_head, default_shirts, default_pants, " +
+                    "default_shoes FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        defaultClothes = new DefaultClothes(
-                                rs.getInt("default_head"), rs.getInt("default_shirts"),
-                                rs.getInt("default_pants"), rs.getInt("default_shoes"));
-                    } else {
-                        defaultClothes = new DefaultClothes(-1, -1, -1, -1);
-                    }
+                    defaultClothes = rs.next() ? new DefaultClothes(
+                            rs.getInt("default_head"), rs.getInt("default_shirts"),
+                            rs.getInt("default_pants"), rs.getInt("default_shoes")) :
+                            new DefaultClothes(-1, -1, -1, -1);
                 }
             } finally {
                 if (con.length <= 0) {
@@ -222,7 +211,7 @@ public class PlayerInfo {
 
     public static byte getSkillSlots(Map<Integer, Item> itemList) {
         Iterator<Item> items = itemList.values().stream()
-                .filter(i -> i.getId() == 2021010 && i.isSelected()).iterator();
+                .filter(i -> (i.getId() == 2021010) && i.isSelected()).iterator();
 
         // Default and minimum skill slots is 6
         byte slots = 6;
@@ -241,7 +230,7 @@ public class PlayerInfo {
     public static Item getItemInUseByType(ItemType type, Session session, Connection ... con) {
         Optional<Item> result = session.getCache().getItems(con).values().stream().filter(item -> {
             ItemInfo itemInfo = TableManager.getItemInfo(i -> i.getId() == item.getId());
-            return itemInfo != null && itemInfo.getType() == type.toInt() && item.isSelected();
+            return (itemInfo != null) && (itemInfo.getType() == type.toInt()) && item.isSelected();
         }).findFirst();
 
         return result.isPresent() ? result.get() : null;
@@ -312,33 +301,29 @@ public class PlayerInfo {
     }
 
     public static PlayerStats getStats(int id, Connection ... con) {
-        final String query = "SELECT stats_running, stats_endurance, stats_agility, " +
-                "stats_ball_control, stats_dribbling, stats_stealing, stats_tackling, " +
-                "stats_heading, stats_short_shots, stats_long_shots, stats_crossing, " +
-                "stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping, " +
-                "stats_punching, stats_defense FROM " + TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT stats_running, stats_endurance, stats_agility, " +
+                    "stats_ball_control, stats_dribbling, stats_stealing, stats_tackling, " +
+                    "stats_heading, stats_short_shots, stats_long_shots, stats_crossing, " +
+                    "stats_short_passes, stats_long_passes, stats_marking, stats_goalkeeping, " +
+                    "stats_punching, stats_defense FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return new PlayerStats(
-                                rs.getShort("stats_running"), rs.getShort("stats_endurance"),
-                                rs.getShort("stats_agility"), rs.getShort("stats_ball_control"),
-                                rs.getShort("stats_dribbling"), rs.getShort("stats_stealing"),
-                                rs.getShort("stats_tackling"), rs.getShort("stats_heading"),
-                                rs.getShort("stats_short_shots"), rs.getShort("stats_long_shots"),
-                                rs.getShort("stats_crossing"), rs.getShort("stats_short_passes"),
-                                rs.getShort("stats_long_passes"), rs.getShort("stats_marking"),
-                                rs.getShort("stats_goalkeeping"), rs.getShort("stats_punching"),
-                                rs.getShort("stats_defense"));
-                    } else {
-                        return new PlayerStats();
-                    }
+                    return rs.next() ? new PlayerStats(
+                            rs.getShort("stats_running"), rs.getShort("stats_endurance"),
+                            rs.getShort("stats_agility"), rs.getShort("stats_ball_control"),
+                            rs.getShort("stats_dribbling"), rs.getShort("stats_stealing"),
+                            rs.getShort("stats_tackling"), rs.getShort("stats_heading"),
+                            rs.getShort("stats_short_shots"), rs.getShort("stats_long_shots"),
+                            rs.getShort("stats_crossing"), rs.getShort("stats_short_passes"),
+                            rs.getShort("stats_long_passes"), rs.getShort("stats_marking"),
+                            rs.getShort("stats_goalkeeping"), rs.getShort("stats_punching"),
+                            rs.getShort("stats_defense")) : new PlayerStats();
                 }
             } finally {
                 if (con.length <= 0) {
@@ -389,38 +374,34 @@ public class PlayerInfo {
     }
 
     public static PlayerHistory getHistory(int id, Connection ... con) {
-        final String query = "SELECT history_matches, history_wins, history_draws, history_MOM, " +
-                "history_valid_goals, history_valid_assists, history_valid_interception, " +
-                "history_valid_shooting, history_valid_stealing, history_valid_tackling, " +
-                "history_shooting, history_stealing, history_tackling, history_total_points " +
-                "FROM " + TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT history_matches, history_wins, history_draws, history_MOM, " +
+                    "history_valid_goals, history_valid_assists, history_valid_interception, " +
+                    "history_valid_shooting, history_valid_stealing, history_valid_tackling, " +
+                    "history_shooting, history_stealing, history_tackling, history_total_points " +
+                    "FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return new PlayerHistory(
-                                rs.getInt("history_matches"),
-                                rs.getInt("history_wins"),
-                                rs.getInt("history_draws"),
-                                rs.getInt("history_MOM"),
-                                rs.getInt("history_valid_goals"),
-                                rs.getInt("history_valid_assists"),
-                                rs.getInt("history_valid_interception"),
-                                rs.getInt("history_valid_shooting"),
-                                rs.getInt("history_valid_stealing"),
-                                rs.getInt("history_valid_tackling"),
-                                rs.getInt("history_shooting"),
-                                rs.getInt("history_stealing"),
-                                rs.getInt("history_tackling"),
-                                rs.getInt("history_total_points"));
-                    } else {
-                        return new PlayerHistory();
-                    }
+                    return rs.next() ? new PlayerHistory(
+                            rs.getInt("history_matches"),
+                            rs.getInt("history_wins"),
+                            rs.getInt("history_draws"),
+                            rs.getInt("history_MOM"),
+                            rs.getInt("history_valid_goals"),
+                            rs.getInt("history_valid_assists"),
+                            rs.getInt("history_valid_interception"),
+                            rs.getInt("history_valid_shooting"),
+                            rs.getInt("history_valid_stealing"),
+                            rs.getInt("history_valid_tackling"),
+                            rs.getInt("history_shooting"),
+                            rs.getInt("history_stealing"),
+                            rs.getInt("history_tackling"),
+                            rs.getInt("history_total_points")) : new PlayerHistory();
                 }
             } finally {
                 if (con.length <= 0) {
@@ -433,40 +414,36 @@ public class PlayerInfo {
     }
 
     public static PlayerHistory getMonthHistory(int id, Connection ... con) {
-        final String query = "SELECT history_month_matches, history_month_wins, " +
-                "history_month_draws, history_month_MOM, history_month_valid_goals, " +
-                "history_month_valid_assists, history_month_valid_interception, " +
-                "history_month_valid_shooting, history_month_valid_stealing, " +
-                "history_month_valid_tackling, history_month_shooting, " +
-                "history_month_stealing, history_month_tackling, history_month_total_points " +
-                "FROM " + TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT history_month_matches, history_month_wins, " +
+                    "history_month_draws, history_month_MOM, history_month_valid_goals, " +
+                    "history_month_valid_assists, history_month_valid_interception, " +
+                    "history_month_valid_shooting, history_month_valid_stealing, " +
+                    "history_month_valid_tackling, history_month_shooting, " +
+                    "history_month_stealing, history_month_tackling, history_month_total_points " +
+                    "FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return new PlayerHistory(
-                                rs.getInt("history_month_matches"),
-                                rs.getInt("history_month_wins"),
-                                rs.getInt("history_month_draws"),
-                                rs.getInt("history_month_MOM"),
-                                rs.getInt("history_month_valid_goals"),
-                                rs.getInt("history_month_valid_assists"),
-                                rs.getInt("history_month_valid_interception"),
-                                rs.getInt("history_month_valid_shooting"),
-                                rs.getInt("history_month_valid_stealing"),
-                                rs.getInt("history_month_valid_tackling"),
-                                rs.getInt("history_month_shooting"),
-                                rs.getInt("history_month_stealing"),
-                                rs.getInt("history_month_tackling"),
-                                rs.getInt("history_month_total_points"));
-                    } else {
-                        return new PlayerHistory();
-                    }
+                    return rs.next() ? new PlayerHistory(
+                            rs.getInt("history_month_matches"),
+                            rs.getInt("history_month_wins"),
+                            rs.getInt("history_month_draws"),
+                            rs.getInt("history_month_MOM"),
+                            rs.getInt("history_month_valid_goals"),
+                            rs.getInt("history_month_valid_assists"),
+                            rs.getInt("history_month_valid_interception"),
+                            rs.getInt("history_month_valid_shooting"),
+                            rs.getInt("history_month_valid_stealing"),
+                            rs.getInt("history_month_valid_tackling"),
+                            rs.getInt("history_month_shooting"),
+                            rs.getInt("history_month_stealing"),
+                            rs.getInt("history_month_tackling"),
+                            rs.getInt("history_month_total_points")) : new PlayerHistory();
                 }
             } finally {
                 if (con.length <= 0) {
@@ -489,7 +466,7 @@ public class PlayerInfo {
                 " LIMIT " + InventoryManager.MAX_INVENTORY_ITEMS;
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -520,10 +497,10 @@ public class PlayerInfo {
     public static Map<Integer, Training> getInventoryTraining(int id, Connection ... con) {
         Map<Integer, Training> learns = new LinkedHashMap<>();
 
-        final String query = "SELECT * FROM learns WHERE player_id = ?";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT * FROM learns WHERE player_id = ?";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -551,18 +528,19 @@ public class PlayerInfo {
     public static Map<Integer, Skill> getInventorySkills(Session session, Connection ... con) {
         Map<Integer, Skill> skills = new LinkedHashMap<>();
 
-        final String query = "SELECT * FROM skills WHERE player_id = ? AND " + PRODUCT_ACTIVE;
-
-        byte slots = PlayerInfo.getSkillSlots(session.getCache().getItems(con));
-        byte slotsUsed = 0;
+        byte slots = getSkillSlots(session.getCache().getItems(con));
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT * FROM skills WHERE player_id = ? AND " + PRODUCT_ACTIVE;
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, session.getPlayerId());
 
                 try (ResultSet rs = stmt.executeQuery()) {
+                    byte slotsUsed = 0;
+
                     while (rs.next()) {
                         byte selectionIndex = rs.getByte("selection_index");
 
@@ -595,12 +573,12 @@ public class PlayerInfo {
     }
 
     public static Map<Integer, Celebration> getInventoryCelebration(int id, Connection ... con) {
-        Map<Integer, Celebration> celes = new LinkedHashMap<>();
-
-        final String query = "SELECT * FROM ceres WHERE player_id = ? AND " + PRODUCT_ACTIVE;
+        Map<Integer, Celebration> celebrations = new LinkedHashMap<>();
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT * FROM ceres WHERE player_id = ? AND " + PRODUCT_ACTIVE;
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -612,7 +590,7 @@ public class PlayerInfo {
                                 rs.getInt("expiration"), rs.getByte("selection_index"),
                                 rs.getTimestamp("timestamp_expire"), rs.getBoolean("visible"));
 
-                        celes.put(cele.getInventoryId(), cele);
+                        celebrations.put(cele.getInventoryId(), cele);
                     }
                 }
             } finally {
@@ -624,7 +602,7 @@ public class PlayerInfo {
             Output.println(e.getMessage(), Level.DEBUG);
         }
 
-        return celes;
+        return celebrations;
     }
 
     public static FriendsList getFriendsList(int id, Connection ... con) {
@@ -650,11 +628,11 @@ public class PlayerInfo {
     }
 
     public static void setQuestState(QuestState questState, int id, Connection ... con) {
-        final String query = "UPDATE " + TABLE + " SET quest_current=?, quest_matches_left=? " +
-                "WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE " + TABLE + " SET quest_current=?, quest_matches_left=? " +
+                    "WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setShort(1, questState.getCurrentQuest());
@@ -673,11 +651,11 @@ public class PlayerInfo {
     }
 
     public static void setTutorialState(TutorialState tutorial, int id, Connection ... con) {
-        final String query = "UPDATE " + TABLE + " SET tutorial_dribbling=?, tutorial_passing=?, " +
-                "tutorial_shooting=?, tutorial_defense=? WHERE id=? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE " + TABLE + " SET tutorial_dribbling=?, tutorial_passing=?, " +
+                    "tutorial_shooting=?, tutorial_defense=? WHERE id=? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setByte(1, tutorial.getDribbling());
@@ -702,15 +680,15 @@ public class PlayerInfo {
     }
 
     public static void sumRewards(int experience, int points, int id, Connection... con) {
-        final String query = "UPDATE " + TABLE + " SET experience = experience + ?, " +
-                "points = points + ? WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE " + TABLE + " SET experience = experience + ?, " +
+                    "points = points + ? WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, experience >= 0 ? experience : 0);
-                stmt.setInt(2, points >= 0 ? points : 0);
+                stmt.setInt(1, (experience >= 0) ? experience : 0);
+                stmt.setInt(2, (points >= 0) ? points : 0);
                 stmt.setInt(3, id);
 
                 stmt.executeUpdate();
@@ -745,16 +723,16 @@ public class PlayerInfo {
     }
 
     public static void setStats(PlayerStats stats, int id, Connection ... con) {
-        final String query = "UPDATE " + TABLE + " SET stats_running = ?, stats_endurance = ?, " +
-                "stats_agility = ?, stats_ball_control = ?, stats_dribbling = ?," +
-                "stats_stealing = ?, stats_tackling = ?, stats_heading = ?, " +
-                "stats_short_shots = ?, stats_long_shots = ?, stats_crossing = ?, " +
-                "stats_short_passes = ?, stats_long_passes = ?, stats_marking = ?," +
-                "stats_goalkeeping = ?, stats_punching = ?, stats_defense = ? " +
-                "WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE " + TABLE + " SET stats_running = ?, stats_endurance = ?, " +
+                    "stats_agility = ?, stats_ball_control = ?, stats_dribbling = ?," +
+                    "stats_stealing = ?, stats_tackling = ?, stats_heading = ?, " +
+                    "stats_short_shots = ?, stats_long_shots = ?, stats_crossing = ?, " +
+                    "stats_short_passes = ?, stats_long_passes = ?, stats_marking = ?," +
+                    "stats_goalkeeping = ?, stats_punching = ?, stats_defense = ? " +
+                    "WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setShort(1, stats.getRunning());
@@ -788,36 +766,36 @@ public class PlayerInfo {
     }
 
     public static void sumHistory(PlayerHistory history, int id, Connection ... con) {
-        final String query = "UPDATE " + TABLE + " SET history_matches = history_matches + ?, " +
-                "history_wins = history_wins + ?, history_draws = history_draws + ?, " +
-                "history_MOM = history_MOM + ?, history_valid_goals = history_valid_goals + ?, " +
-                "history_valid_assists = history_valid_assists + ?, " +
-                "history_valid_interception = history_valid_interception + ?, " +
-                "history_valid_shooting = history_valid_shooting + ?, " +
-                "history_valid_stealing = history_valid_stealing + ?, " +
-                "history_valid_tackling = history_valid_tackling + ?, " +
-                "history_shooting = history_shooting + ?, " +
-                "history_stealing = history_stealing + ?, " +
-                "history_tackling = history_tackling + ?, " +
-                "history_total_points = history_total_points + ?, " +
-                "history_month_matches = history_month_matches + ?, " +
-                "history_month_wins = history_month_wins + ?, " +
-                "history_month_draws = history_month_draws + ?, " +
-                "history_month_MOM = history_month_MOM + ?, " +
-                "history_month_valid_goals = history_month_valid_goals + ?, " +
-                "history_month_valid_assists = history_month_valid_assists + ?, " +
-                "history_month_valid_interception = history_month_valid_interception + ?, " +
-                "history_month_valid_shooting = history_month_valid_shooting + ?, " +
-                "history_month_valid_stealing = history_month_valid_stealing + ?, " +
-                "history_month_valid_tackling = history_month_valid_tackling + ?, " +
-                "history_month_shooting = history_month_shooting + ?, " +
-                "history_month_stealing = history_month_stealing + ?, " +
-                "history_month_tackling = history_month_tackling + ?, " +
-                "history_month_total_points = history_month_total_points + ?" +
-                " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE " + TABLE + " SET history_matches = history_matches + ?, " +
+                    "history_wins = history_wins + ?, history_draws = history_draws + ?, " +
+                    "history_MOM = history_MOM + ?, history_valid_goals = history_valid_goals + ?, " +
+                    "history_valid_assists = history_valid_assists + ?, " +
+                    "history_valid_interception = history_valid_interception + ?, " +
+                    "history_valid_shooting = history_valid_shooting + ?, " +
+                    "history_valid_stealing = history_valid_stealing + ?, " +
+                    "history_valid_tackling = history_valid_tackling + ?, " +
+                    "history_shooting = history_shooting + ?, " +
+                    "history_stealing = history_stealing + ?, " +
+                    "history_tackling = history_tackling + ?, " +
+                    "history_total_points = history_total_points + ?, " +
+                    "history_month_matches = history_month_matches + ?, " +
+                    "history_month_wins = history_month_wins + ?, " +
+                    "history_month_draws = history_month_draws + ?, " +
+                    "history_month_MOM = history_month_MOM + ?, " +
+                    "history_month_valid_goals = history_month_valid_goals + ?, " +
+                    "history_month_valid_assists = history_month_valid_assists + ?, " +
+                    "history_month_valid_interception = history_month_valid_interception + ?, " +
+                    "history_month_valid_shooting = history_month_valid_shooting + ?, " +
+                    "history_month_valid_stealing = history_month_valid_stealing + ?, " +
+                    "history_month_valid_tackling = history_month_valid_tackling + ?, " +
+                    "history_month_shooting = history_month_shooting + ?, " +
+                    "history_month_stealing = history_month_stealing + ?, " +
+                    "history_month_tackling = history_month_tackling + ?, " +
+                    "history_month_total_points = history_month_total_points + ?" +
+                    " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, history.getMatches());
@@ -872,10 +850,10 @@ public class PlayerInfo {
     }
 
     public static void addInventoryItem(Item item, int id, Connection ... con) {
-        final String query = "INSERT INTO items VALUES(?,?,?,?,?,?,?,?,?,?)";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "INSERT INTO items VALUES(?,?,?,?,?,?,?,?,?,?)";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -901,12 +879,12 @@ public class PlayerInfo {
     }
 
     public static void setInventoryItem(Item item, int id, Connection ... con) {
-        final String query = "UPDATE items SET " +
-                "bonus_one=?, bonus_two=?, usages=?, timestamp_expire=?, selected=? " +
-                "WHERE player_id=? AND inventory_id=? AND " + ITEM_ACTIVE + " LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE items SET " +
+                    "bonus_one=?, bonus_two=?, usages=?, timestamp_expire=?, selected=? " +
+                    "WHERE player_id=? AND inventory_id=? AND " + ITEM_ACTIVE + " LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, item.getBonusOne());
@@ -929,9 +907,10 @@ public class PlayerInfo {
     }
 
     public static void removeInventoryItem(Item item, int id, Connection ... con) {
-        final String query = "DELETE FROM items WHERE player_id = ? AND inventory_id = ?;";
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "DELETE FROM items WHERE player_id = ? AND inventory_id = ?;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -949,10 +928,10 @@ public class PlayerInfo {
     }
 
     public static void addInventoryTraining(Training training, int id, Connection ... con) {
-        final String query = "INSERT INTO learns VALUES(?,?,?,?)";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "INSERT INTO learns VALUES(?,?,?,?)";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -972,10 +951,10 @@ public class PlayerInfo {
     }
 
     public static void addInventorySkill(Skill skill, int id, Connection ... con) {
-        final String query = "INSERT INTO skills VALUES(?,?,?,?,?,?,?)";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "INSERT INTO skills VALUES(?,?,?,?,?,?,?)";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -998,11 +977,11 @@ public class PlayerInfo {
     }
 
     public static void setInventorySkill(Skill skill, int id, Connection ... con) {
-        final String query = "UPDATE skills SET selection_index=?, timestamp_expire=? " +
-                "WHERE player_id=? AND inventory_id=? AND " + PRODUCT_ACTIVE + " LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE skills SET selection_index=?, timestamp_expire=? " +
+                    "WHERE player_id=? AND inventory_id=? AND " + PRODUCT_ACTIVE + " LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setByte(1, skill.getSelectionIndex());
@@ -1022,10 +1001,10 @@ public class PlayerInfo {
     }
 
     public static void addInventoryCele(Celebration cele, int id, Connection ... con) {
-        final String query = "INSERT INTO ceres VALUES(?,?,?,?,?,?,?)";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "INSERT INTO ceres VALUES(?,?,?,?,?,?,?)";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -1048,11 +1027,11 @@ public class PlayerInfo {
     }
 
     public static void setInventoryCele(Celebration cele, int id, Connection ... con) {
-        final String query = "UPDATE ceres SET selection_index=?, timestamp_expire=? " +
-                "WHERE player_id=? AND inventory_id=? AND " + PRODUCT_ACTIVE + " LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE ceres SET selection_index=?, timestamp_expire=? " +
+                    "WHERE player_id=? AND inventory_id=? AND " + PRODUCT_ACTIVE + " LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setByte(1, cele.getSelectionIndex());

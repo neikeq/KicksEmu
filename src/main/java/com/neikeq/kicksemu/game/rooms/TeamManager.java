@@ -28,7 +28,7 @@ public class TeamManager {
                 if (challengeTarget > 0) {
                     ClubRoom targetRoom = TEAMS.get(challengeTarget);
 
-                    if (targetRoom != null && targetRoom.getChallengeTarget() == id) {
+                    if ((targetRoom != null) && (targetRoom.getChallengeTarget() == id)) {
                         targetRoom.setChallengeTarget(0);
                     }
                 }
@@ -57,7 +57,7 @@ public class TeamManager {
 
         int startIndex = page * TEAMS_PER_PAGE;
 
-        indexes.stream().filter(id -> id != excludedId && id >= startIndex)
+        indexes.stream().filter(id -> (id != excludedId) && (id >= startIndex))
                 .limit(TEAMS_PER_PAGE).forEach(id -> pageRooms.put(id, TEAMS.get(id)));
 
         return pageRooms;

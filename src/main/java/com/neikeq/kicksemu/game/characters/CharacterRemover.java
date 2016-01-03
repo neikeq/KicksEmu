@@ -30,7 +30,7 @@ public class CharacterRemover {
         short result = RemoverResult.SUCCESS;
 
         try {
-            if (slot >= 0 && Password.validate(password, UserInfo.getPassword(userId))) {
+            if ((slot >= 0) && Password.validate(password, UserInfo.getPassword(userId))) {
                 // Overwrite password for security
                 Arrays.fill(password, '\0');
 
@@ -55,7 +55,7 @@ public class CharacterRemover {
     private static boolean limitTimeExpired(int userId) {
         java.sql.Timestamp lastDeletionDate = UserInfo.getLastCharDeletion(userId);
 
-        return lastDeletionDate == null || DateUtils.getTimestamp().after(lastDeletionDate);
+        return (lastDeletionDate == null) || DateUtils.getTimestamp().after(lastDeletionDate);
     }
 
     private static void updateExpireTime(int userId) {

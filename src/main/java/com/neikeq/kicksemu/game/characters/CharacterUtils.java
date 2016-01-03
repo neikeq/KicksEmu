@@ -192,7 +192,7 @@ public class CharacterUtils {
     }
 
     public static boolean shouldUpdatePosition(int characterId) {
-        return PlayerInfo.getLevel(characterId) >= 18 &&
+        return (PlayerInfo.getLevel(characterId) >= 18) &&
                 !Position.isAdvancedPosition(PlayerInfo.getPosition(characterId));
     }
 
@@ -220,11 +220,7 @@ public class CharacterUtils {
             stmt.setString(1, name);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                } else {
-                    return -1;
-                }
+                return rs.next() ? rs.getInt("id") : -1;
             }
 
         } catch (SQLException e) {

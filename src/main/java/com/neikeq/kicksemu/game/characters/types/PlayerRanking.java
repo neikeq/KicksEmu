@@ -13,16 +13,12 @@ public class PlayerRanking {
         final String query = "SELECT `index` FROM ranking WHERE " + rankCol + " = ?";
 
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getShort("index");
-                    } else {
-                        return -1;
-                    }
+                    return rs.next() ? rs.getShort("index") : -1;
                 }
             } finally {
                 if (con.length <= 0) {

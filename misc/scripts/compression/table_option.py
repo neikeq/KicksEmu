@@ -12,8 +12,8 @@ def to_table(data, path):
                                 quoting=csv.QUOTE_MINIMAL)
 
         csv_writer.writerow(
-            'Index,Id,Type,Order,Value,Kash Level,Points Level,Kash 7,Kash 30,'
-            'Kash Perm,Points 7,Points 30,Points Perm,Name'.split(',')
+            'Index,Id,Type,Order,Value,Cash Level,Points Level,Cash 7,Cash 30,'
+            'Cash Perm,Points 7,Points 30,Points Perm,Name'.split(',')
         )
 
         reader = BinaryReader(data, 'little')

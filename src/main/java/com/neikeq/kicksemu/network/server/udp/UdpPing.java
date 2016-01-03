@@ -22,7 +22,7 @@ public class UdpPing implements Runnable {
     public void run() {
         long delay = DateUtils.currentTimeMillis() - session.getLastPingResponse();
 
-        if (delay / 1000 < SECONDS_LIMIT) {
+        if ((delay / 1000) < SECONDS_LIMIT) {
             sendUdpPing(session);
         } else {
             session.close();

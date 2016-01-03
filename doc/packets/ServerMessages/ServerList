@@ -17,4 +17,4 @@ short max_users
 short connected_users
 char[16] server_ip
 short port
-char[20] unknwon
+char[20] unknown

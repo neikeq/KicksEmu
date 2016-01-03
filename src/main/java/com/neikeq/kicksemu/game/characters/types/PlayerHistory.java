@@ -2,20 +2,20 @@ package com.neikeq.kicksemu.game.characters.types;
 
 public class PlayerHistory {
 
-    private int matches = 0;
-    private int wins = 0;
-    private int draws = 0;
-    private int mom = 0;
-    private int validGoals = 0;
-    private int validAssists = 0;
-    private int validInterception = 0;
-    private int validShooting = 0;
-    private int validStealing = 0;
-    private int validTackling = 0;
-    private int shooting = 0;
-    private int stealing = 0;
-    private int tackling = 0;
-    private int totalPoints = 0;
+    private int matches;
+    private int wins;
+    private int draws;
+    private int mom;
+    private int validGoals;
+    private int validAssists;
+    private int validInterception;
+    private int validShooting;
+    private int validStealing;
+    private int validTackling;
+    private int shooting;
+    private int stealing;
+    private int tackling;
+    private int totalPoints;
 
     public PlayerHistory() {}
 

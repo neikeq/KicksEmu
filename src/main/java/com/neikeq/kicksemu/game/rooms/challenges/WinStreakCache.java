@@ -8,13 +8,13 @@ public class WinStreakCache {
     private Set<Integer> players;
 
     public boolean matchesTeam(Set<Integer> team) {
-        return team.size() == players.size() &&
+        return (team.size() == players.size()) &&
                 players.stream().noneMatch(player -> !team.contains(player));
     }
 
     public WinStreakCache(byte wins, Set<Integer> players) {
-        this.setWins(wins);
-        this.setPlayers(players);
+        setWins(wins);
+        setPlayers(players);
     }
 
     private WinStreakCache() {

@@ -6,7 +6,7 @@ public class ClubUniform {
     private final Uniform awayUniform;
 
     public Uniform getUniformByType(UniformType uniformType) {
-        return uniformType == UniformType.HOME ? homeUniform : awayUniform;
+        return (uniformType == UniformType.HOME) ? homeUniform : awayUniform;
     }
 
     public ClubUniform() {

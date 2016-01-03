@@ -25,8 +25,8 @@ public class GameEvents {
 
     private static final int MAX_SCHEDULES_PER_DAY = 2;
 
-    private static boolean customGoldenTime = false;
-    private static boolean customClubTime = false;
+    private static boolean customGoldenTime;
+    private static boolean customClubTime;
 
     private static final Map<Integer, SortedSet<DayTimeRange>> goldenTimeSchedule = new HashMap<>();
     private static final Map<Integer, SortedSet<DayTimeRange>> clubTimeSchedule = new HashMap<>();
@@ -55,7 +55,7 @@ public class GameEvents {
             SortedSet<DayTimeRange> schedules = schedule.get(dayOfWeek);
 
             try {
-                for (int i = 0; i < MAX_SCHEDULES_PER_DAY && line.hasNext(); i++) {
+                for (int i = 0; (i < MAX_SCHEDULES_PER_DAY) && line.hasNext(); i++) {
                     // Format: HH:mm/HH:mm
                     String strSchedule = line.nextColumn();
                     if (!strSchedule.isEmpty()) {
@@ -150,7 +150,7 @@ public class GameEvents {
         return remainMinutesForNextSchedule(clubTimeSchedule.get(day), c);
     }
 
-    public static int remainMinutesForNextSchedule(SortedSet<DayTimeRange> schedule, Calendar c) {
+    private static int remainMinutesForNextSchedule(SortedSet<DayTimeRange> schedule, Calendar c) {
         if (schedule != null) {
             Date currentTime = c.getTime();
             Optional<DayTimeRange> optional = schedule.stream()

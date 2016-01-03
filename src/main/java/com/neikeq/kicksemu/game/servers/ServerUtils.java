@@ -21,7 +21,7 @@ public class ServerUtils {
     public static void serverList(Session session, ClientMessage msg) {
         List<Short> servers = getServerList(msg.readShort());
 
-        short result = (short) (servers == null ? -1 : 0);
+        short result = (short) (servers.isEmpty() ? -1 : 0);
         session.send(MessageBuilder.serverList(servers, result));
     }
 
@@ -36,12 +36,12 @@ public class ServerUtils {
         // TODO Check if character can access private server... Reject code is 251
         int clubId = MemberInfo.getClubId(playerId);
 
-        if (ServerInfo.getType(serverId) == ServerType.CLUB &&
-                (clubId <= 0 || !ClubManager.clubExist(clubId))) {
+        if ((ServerInfo.getType(serverId) == ServerType.CLUB) &&
+                ((clubId <= 0) || !ClubManager.clubExist(clubId))) {
             // Cannot join a club server without being a club member
             result = -4;
-        } else if (level < ServerInfo.getMinLevel(serverId) ||
-                level > ServerInfo.getMaxLevel(serverId)) {
+        } else if ((level < ServerInfo.getMinLevel(serverId)) ||
+                (level > ServerInfo.getMaxLevel(serverId))) {
             // Player does not meet the level requirements
             result = -3;
         } else if (ServerInfo.getMaxUsers(serverId) <=
@@ -54,7 +54,6 @@ public class ServerUtils {
     }
 
     private static List<Short> getServerList(short filter) {
-        List<Short> servers = new ArrayList<>();
         final String query = "SELECT id FROM servers WHERE filter = ?";
 
         try (Connection con = MySqlManager.getConnection();
@@ -62,6 +61,8 @@ public class ServerUtils {
             stmt.setShort(1, filter);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                List<Short> servers = new ArrayList<>();
+
                 while (rs.next()) {
                     servers.add(rs.getShort("id"));
                 }
@@ -69,7 +70,7 @@ public class ServerUtils {
                 return servers;
             }
         } catch (SQLException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 

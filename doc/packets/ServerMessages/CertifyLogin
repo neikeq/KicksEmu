@@ -9,7 +9,7 @@ int packet_id
 byte reason
 /*
  * Success: 0
- * Term of validity expired, buy new KASH pack: -10
+ * Term of validity expired, buy new CASH pack: -10
  * Account blocked: -9
  * Wrong client version: -8
  * Server is full: -7
@@ -28,7 +28,7 @@ bool shadows
 byte names // Hide: 0, Position: 1, All: 2
 byte sound_effects // 0 to 10
 byte music // 0 to 10
-bool invits
+bool invites
 bool whispers
 /*
  * Country codes:

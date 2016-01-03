@@ -31,7 +31,7 @@ class Decoder extends ByteToMessageDecoder {
             in.resetReaderIndex();
 
             if (length >= totalSize) {
-                out.add(Cryptography.decrypt(in.readBytes(totalSize), true));
+                out.add(Cryptography.decrypt(in.readBytes(totalSize)));
             }
         }
     }

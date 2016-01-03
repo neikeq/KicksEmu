@@ -29,7 +29,7 @@ public class ChatManager {
         MessageType type = MessageType.fromInt(msg.readByte());
         String message = msg.readString(67);
 
-        if (type != null && !Flood.isPlayerLocked(playerId) &&
+        if ((type != null) && !Flood.isPlayerLocked(playerId) &&
                 !Flood.onPlayerChat(playerId)) {
             switch (type) {
                 case NORMAL:
@@ -80,13 +80,11 @@ public class ChatManager {
 
         if (session.getCache().getName().equals(name)) {
             if (!message.isEmpty()) {
-                MessageType type = MessageType.TEAM;
-
                 Room room = RoomManager.getRoomById(session.getRoomId());
 
-                if (room != null && room.isPlayerIn(playerId) &&
+                if ((room != null) && room.isPlayerIn(playerId) &&
                         room.getRoomLobby().isTeamChatEnabled()) {
-                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
+                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, MessageType.TEAM, message);
                     room.broadcastToTeam(msg, room.getPlayerTeam(playerId), playerId);
                 }
             }
@@ -136,16 +134,14 @@ public class ChatManager {
         int playerId = session.getPlayerId();
         int clubId = MemberInfo.getClubId(playerId);
 
-        if (clubId > 0 && session.getCache().getName().equals(name)) {
+        if ((clubId > 0) && session.getCache().getName().equals(name)) {
             if (!message.isEmpty()) {
-                MessageType type = MessageType.CLUB;
-
                 List<Session> clubSessions = ServerManager.getPlayers().values().stream()
                         .filter(s -> MemberInfo.getClubId(s.getPlayerId()) == clubId)
                         .collect(Collectors.toList());
 
                 if (clubSessions.size() > 1) {
-                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, type, message);
+                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, MessageType.CLUB, message);
 
                     try {
                         clubSessions.forEach(s -> s.sendAndFlush(msg.retain()));
@@ -221,20 +217,12 @@ public class ChatManager {
         Pattern pattern = Pattern.compile("/(.*?) ");
         Matcher matcher = pattern.matcher(message);
 
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else {
-            return message.substring(1);
-        }
+        return matcher.find() ? matcher.group(1) : message.substring(1);
     }
 
     private static String retrieveMessageFromWhisper(String message) {
         int index = message.indexOf(" ");
 
-        if (index >= 0) {
-            return message.substring(++index);
-        } else {
-            return "";
-        }
+        return (index >= 0) ? message.substring(++index) : "";
     }
 }

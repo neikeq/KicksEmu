@@ -49,11 +49,11 @@ class MessageUtils {
     }
 
     public static void appendCharacterInfo(int playerId, ServerMessage msg, Connection ... con) {
-        final String query = "SELECT level, experience, stats_points, owner, points, " +
-                "tickets_kash, tickets_points FROM characters WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT level, experience, stats_points, owner, points, " +
+                    "tickets_kash, tickets_points FROM characters WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, playerId);
@@ -98,12 +98,12 @@ class MessageUtils {
         msg.writeInt(item.getInventoryId());
         msg.writeInt(item.getId());
         msg.writeBool(item.isSelected());
-        msg.writeInt(item.getExpiration() != null ? item.getExpiration().toInt() : 0);
+        msg.writeInt((item.getExpiration() != null) ? item.getExpiration().toInt() : 0);
         msg.writeInt(item.getBonusOne());
         msg.writeInt(item.getBonusTwo());
         msg.writeShort(item.getUsages());
 
-        if (item.getExpiration() != null &&
+        if ((item.getExpiration() != null) &&
                 (item.getExpiration().isPermanent() || item.getExpiration().isUsage())) {
             msg.writeInt(0);
         } else {
@@ -134,9 +134,9 @@ class MessageUtils {
         msg.writeInt(skill.getInventoryId());
         msg.writeInt(skill.getId());
         msg.writeByte(skill.getSelectionIndex());
-        msg.writeInt(skill.getExpiration() != null ? skill.getExpiration().toInt() : 0);
+        msg.writeInt((skill.getExpiration() != null) ? skill.getExpiration().toInt() : 0);
         msg.writeZeros(8);
-        msg.writeInt(skill.getExpiration() != null && skill.getExpiration().isPermanent() ?
+        msg.writeInt(((skill.getExpiration() != null) && skill.getExpiration().isPermanent()) ?
                 0 : (int) (skill.getTimestampExpire().getTime() / 1000));
         msg.writeBool(skill.isVisible());
     }
@@ -150,9 +150,9 @@ class MessageUtils {
         msg.writeInt(cele.getInventoryId());
         msg.writeShort((short) cele.getId());
         msg.writeByte(cele.getSelectionIndex());
-        msg.writeInt(cele.getExpiration() != null ? cele.getExpiration().toInt() : 0);
+        msg.writeInt((cele.getExpiration() != null) ? cele.getExpiration().toInt() : 0);
         msg.writeZeros(8);
-        msg.writeInt(cele.getExpiration() != null && cele.getExpiration().isPermanent() ?
+        msg.writeInt(((cele.getExpiration() != null) && cele.getExpiration().isPermanent()) ?
                 0 : (int) (cele.getTimestampExpire().getTime() / 1000));
         msg.writeBool(cele.isVisible());
     }
@@ -270,11 +270,13 @@ class MessageUtils {
         int id = playerResult.getPlayerId();
         boolean training = !room.trainingFactorAllowsRewards();
 
-        TeamResult tr = !training ?
-                (room.getPlayerTeam(id) == RoomTeam.RED ?
-                        result.getRedTeam() : result.getBlueTeam()) :
-                new TeamResult((short) -1, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0,
-                        (short) 0, (short) 0, (short) 0);
+        TeamResult tr;
+
+        if (training) {
+            tr = new TeamResult();
+        } else {
+            tr = (room.getPlayerTeam(id) == RoomTeam.RED) ? result.getRedTeam() : result.getBlueTeam();
+        }
 
         PlayerResult pr = !training ? playerResult : new PlayerResult(-1, (short) 0,
                 (short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0);
@@ -282,9 +284,9 @@ class MessageUtils {
         PlayerHistory history = PlayerInfo.getHistory(id, con);
 
         msg.writeInt(history.getMatches() + (training ? 0 : 1));
-        msg.writeInt(history.getWins() + (tr.getResult() == VictoryResult.WIN ? 1 : 0));
-        msg.writeInt(history.getDraws() + (tr.getResult() == VictoryResult.DRAW ? 1 : 0));
-        msg.writeInt(history.getMom() + (result.getMom() == id ? 1 : 0));
+        msg.writeInt(history.getWins() + ((tr.getResult() == VictoryResult.WIN) ? 1 : 0));
+        msg.writeInt(history.getDraws() + ((tr.getResult() == VictoryResult.DRAW) ? 1 : 0));
+        msg.writeInt(history.getMom() + ((result.getMom() == id) ? 1 : 0));
         msg.writeInt(history.getValidGoals() + pr.getGoals());
         msg.writeInt(history.getValidAssists() + pr.getAssists());
         msg.writeInt(history.getValidInterception() + pr.getBlocks());
@@ -301,9 +303,9 @@ class MessageUtils {
         PlayerHistory monthHistory = PlayerInfo.getMonthHistory(id, con);
 
         msg.writeInt(monthHistory.getMatches() + (training ? 0 : 1));
-        msg.writeInt(monthHistory.getWins() + (tr.getResult() == VictoryResult.WIN ? 1 : 0));
-        msg.writeInt(monthHistory.getDraws() + (tr.getResult() == VictoryResult.DRAW ? 1 : 0));
-        msg.writeInt(monthHistory.getMom() + (result.getMom() == id ? 1 : 0));
+        msg.writeInt(monthHistory.getWins() + ((tr.getResult() == VictoryResult.WIN) ? 1 : 0));
+        msg.writeInt(monthHistory.getDraws() + ((tr.getResult() == VictoryResult.DRAW) ? 1 : 0));
+        msg.writeInt(monthHistory.getMom() + ((result.getMom() == id) ? 1 : 0));
         msg.writeInt(monthHistory.getValidGoals() + pr.getGoals());
         msg.writeInt(monthHistory.getValidAssists() + pr.getAssists());
         msg.writeInt(monthHistory.getValidInterception() + pr.getBlocks());
@@ -374,7 +376,7 @@ class MessageUtils {
     }
 
     private static void appendItemInUse(Item item, ServerMessage msg) {
-        msg.writeInt(item != null ? item.getId() : 0);
+        msg.writeInt((item != null) ? item.getId() : 0);
         msg.writeBool(item != null, 4);
         msg.writeZeros(20);
     }
@@ -422,17 +424,17 @@ class MessageUtils {
                 .filter(s -> s.getSelectionIndex() > 0).toArray(Skill[]::new);
 
         for (int i = 0; i < 30; i++) {
-            appendInventorySkill(i < skills.length ? skills[i] : null, msg);
+            appendInventorySkill((i < skills.length) ? skills[i] : null, msg);
         }
     }
 
     public static void appendInventoryCelebrationsInUse(Session session, ServerMessage msg,
                                                         Connection ... con) {
-        Celebration[] celebrations = session.getCache().getCeles(con).values()
+        Celebration[] celebrations = session.getCache().getCelebrations(con).values()
                 .stream().filter(c -> c.getSelectionIndex() > 0).toArray(Celebration[]::new);
 
         for (int i = 0; i < 5; i++) {
-            appendInventoryCelebration(i < celebrations.length ? celebrations[i] : null, msg);
+            appendInventoryCelebration((i < celebrations.length) ? celebrations[i] : null, msg);
         }
     }
 

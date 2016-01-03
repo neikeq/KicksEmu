@@ -13,7 +13,7 @@ def to_table(data, path):
 
         csv_writer.writerow(
             'Index,Id,StatIndex,Level,StatPoints,Payment,'
-            'Kash,Points,Name,Stat,IconPath'.split(',')
+            'Cash,Points,Name,Stat,IconPath'.split(',')
         )
 
         reader = BinaryReader(data, 'little')

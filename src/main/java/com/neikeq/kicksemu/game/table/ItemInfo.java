@@ -15,15 +15,15 @@ public class ItemInfo {
     private final Price price;
 
     public boolean isIncompatibleGender(Animation gender) {
-        return getGender() != gender && getGender() != Animation.ANY;
+        return (getGender() != gender) && (getGender() != Animation.ANY);
     }
 
-    public boolean isIncompatibleLevel(short level) {
-        return level < getLevel();
+    public boolean isIncompatibleLevel(short suspiciousLevel) {
+        return suspiciousLevel < level;
     }
 
-    public boolean isInvalidPaymentMode(Payment payment) {
-        return getPayment().isIncompatibleWith(payment);
+    public boolean isInvalidPaymentMode(Payment suspiciousPayment) {
+        return payment.isIncompatibleWith(suspiciousPayment);
     }
 
     public ItemInfo(Row row) {
@@ -51,15 +51,7 @@ public class ItemInfo {
         return gender;
     }
 
-    public short getLevel() {
-        return level;
-    }
-
     public Price getPrice() {
         return price;
-    }
-
-    public Payment getPayment() {
-        return payment;
     }
 }

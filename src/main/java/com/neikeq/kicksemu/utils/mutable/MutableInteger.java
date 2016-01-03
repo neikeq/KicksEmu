@@ -33,10 +33,10 @@ public class MutableInteger {
     }
 
     public void multiply(int add) {
-        this.value *= add;
+        value *= add;
     }
 
     public void multiply(MutableInteger add) {
-        this.value *= add.get();
+        value *= add.get();
     }
 }

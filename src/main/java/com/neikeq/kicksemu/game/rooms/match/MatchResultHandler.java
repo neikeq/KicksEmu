@@ -11,7 +11,6 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
-import com.neikeq.kicksemu.storage.MySqlManager;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.ThreadUtils;
@@ -21,7 +20,7 @@ import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MatchResultHandler implements AutoCloseable {
+public class MatchResultHandler {
 
     private static final int COUNTDOWN_DIFF_LIMIT = 20;
     static final int LEVEL_GAP_LIMIT = 10;
@@ -47,7 +46,7 @@ public class MatchResultHandler implements AutoCloseable {
         doAfterResultUpdates();
     }
 
-    protected void applyRewards() {
+    void applyRewards() {
         getResult().getPlayers().forEach(playerResult -> {
             PlayerRewards playerRewards = new PlayerRewards(this, playerResult);
             playerRewards.applyMatchRewards();
@@ -79,7 +78,7 @@ public class MatchResultHandler implements AutoCloseable {
     }
 
     private void broadcastResultToObserverPlayers() {
-        if (getRoom().getObservers().size() > 0) {
+        if (!getRoom().getObservers().isEmpty()) {
             // Observer players do not count in stats, so we pass an empty PlayerResult instance
             ServerMessage observerMessage = MessageBuilder.matchResult(getResult(),
                     new PlayerResult(), getRoom(), getConnection());
@@ -161,14 +160,14 @@ public class MatchResultHandler implements AutoCloseable {
         final long estimatedRealCountdown = 300 - elapsedSeconds;
 
         // Disable rewards and history updating if the countdown received is not valid
-        if (getResult().getCountdown() < estimatedRealCountdown &&
-                getResult().getCountdown() - estimatedRealCountdown > COUNTDOWN_DIFF_LIMIT) {
+        if ((getResult().getCountdown() < estimatedRealCountdown) &&
+                ((getResult().getCountdown() - estimatedRealCountdown) > COUNTDOWN_DIFF_LIMIT)) {
             getRoom().resetTrainingFactor();
         }
     }
 
     private void calculateAverageLevel() {
-        if (isLowersBonusEnabled() && getResult().getPlayers().size() > 0) {
+        if (isLowersBonusEnabled() && !getResult().getPlayers().isEmpty()) {
             MutableInteger averageLevel = new MutableInteger(0);
 
             getResult().getPlayers().forEach(playerResult -> {
@@ -180,11 +179,11 @@ public class MatchResultHandler implements AutoCloseable {
         }
     }
 
-    public MatchResultHandler(Room room, MatchResult result) throws SQLException {
+    public MatchResultHandler(Room room, MatchResult result, Connection connection) throws SQLException {
         this.room = room;
         this.result = result;
-        this.connection = MySqlManager.getConnection();
-        this.roomLevelGap = room.getMaxLevel() - room.getMinLevel();
+        this.connection = connection;
+        roomLevelGap = room.getMaxLevel() - room.getMinLevel();
     }
 
     public boolean isLowersBonusEnabled() {
@@ -192,12 +191,12 @@ public class MatchResultHandler implements AutoCloseable {
     }
 
     public TeamResult getPlayerTeamResult(int playerId) {
-        return getRoom().getPlayerTeam(playerId) == RoomTeam.RED ?
+        return (getRoom().getPlayerTeam(playerId) == RoomTeam.RED) ?
                 result.getRedTeam() : result.getBlueTeam();
     }
 
     public TeamResult getRivalTeamResult(int playerId) {
-        return getRoom().getPlayerTeam(playerId) == RoomTeam.RED ?
+        return (getRoom().getPlayerTeam(playerId) == RoomTeam.RED) ?
                 result.getBlueTeam() : result.getRedTeam();
     }
 
@@ -227,10 +226,5 @@ public class MatchResultHandler implements AutoCloseable {
 
     public boolean isGoldenTime() {
         return goldenTime;
-    }
-
-    @Override
-    public void close() throws Exception {
-        getConnection().close();
     }
 }

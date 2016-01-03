@@ -26,7 +26,7 @@ public class Input {
 
     public void listen() {
         try (Scanner scanner = new Scanner(System.in)) {
-        	while (Thread.currentThread().isAlive()) {
+        	while (KicksEmu.isAlive()) {
 	            if (scanner.hasNextLine()) {
 	                String input = scanner.nextLine();
 
@@ -103,7 +103,7 @@ public class Input {
         ServerType serverType = ServerManager.getServerType();
 
         System.out.println("- Server: " + ServerManager.getServerId());
-        System.out.println("- Type: " + serverType.toString());
+        System.out.println("- Type: " + serverType);
         System.out.println("- Connected users: " + ServerManager.connectedPlayers());
 
         // If this is a game server
@@ -130,26 +130,26 @@ public class Input {
 
         try {
             String[] duration = arg[1].split(":");
-            int minutes = (Integer.valueOf(duration[0]) * 60);
+            int minutes = Integer.valueOf(duration[0]) * 60;
             if (duration.length > 1) {
                 minutes += Integer.valueOf(duration[1]);
             }
 
-            GameEvents.setCustomGoldenTime(minutes <= 0 ? 0 : minutes);
+            GameEvents.setCustomGoldenTime((minutes <= 0) ? 0 : minutes);
 
             if (minutes > 0) {
                 int hours = minutes / 60;
-                int mins = minutes % 60;
+                int hourMinutes = minutes % 60;
 
                 ChatUtils.broadcastNotice("Golden time enabled for " +
                         (hours > 0 ? hours + " hours" : "") +
-                        (hours > 0 && mins > 0 ? " and " : "") +
-                        (mins > 0 ? mins + " minutes" : "") + ".");
+                        (hours > 0 && hourMinutes > 0 ? " and " : "") +
+                        (hourMinutes > 0 ? hourMinutes + " minutes" : "") + ".");
             } else {
                 ChatUtils.broadcastNotice("Golden time disabled.");
             }
 
-            if (minutes <= 0 && GameEvents.isGoldenTime()) {
+            if ((minutes <= 0) && GameEvents.isGoldenTime()) {
                 ChatUtils.broadcastNotice("Scheduled Golden time is still active.");
             }
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
@@ -175,26 +175,26 @@ public class Input {
 
         try {
             String[] duration = arg[1].split(":");
-            int minutes = (Integer.valueOf(duration[0]) * 60);
+            int minutes = Integer.valueOf(duration[0]) * 60;
             if (duration.length > 1) {
                 minutes += Integer.valueOf(duration[1]);
             }
 
-            GameEvents.setCustomClubTime(minutes <= 0 ? 0 : minutes);
+            GameEvents.setCustomClubTime((minutes <= 0) ? 0 : minutes);
 
             if (minutes > 0) {
                 int hours = minutes / 60;
-                int mins = minutes % 60;
+                int hourMinutes = minutes % 60;
 
                 ChatUtils.broadcastNotice("Club time enabled for " +
                         (hours > 0 ? hours + " hours" : "") +
-                        (hours > 0 && mins > 0 ? " and " : "") +
-                        (mins > 0 ? mins + " minutes" : "") + ".");
+                        (hours > 0 && hourMinutes > 0 ? " and " : "") +
+                        (hourMinutes > 0 ? hourMinutes + " minutes" : "") + ".");
             } else {
                 ChatUtils.broadcastNotice("Club time disabled.");
             }
 
-            if (minutes <= 0 && GameEvents.isClubTime()) {
+            if ((minutes <= 0) && GameEvents.isClubTime()) {
                 ChatUtils.broadcastNotice("Scheduled Club time is still active.");
             }
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {
@@ -209,9 +209,9 @@ public class Input {
         commands.put("save", this::handleSave);
         commands.put("logs", this::handleLogs);
         commands.put("verb", this::handleVerbosity);
-        commands.put("stop", (arg) -> KicksEmu.stop());
+        commands.put("stop", arg -> KicksEmu.stop());
         commands.put("notice", this::handleNotice);
-        commands.put("stats", (arg) -> handleStats());
+        commands.put("stats", arg -> handleStats());
         commands.put("goldentime", this::handleGoldenTime);
         commands.put("clubtime", this::handleClubTime);
     }

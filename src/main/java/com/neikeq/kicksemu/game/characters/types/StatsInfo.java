@@ -86,7 +86,7 @@ public class StatsInfo {
     public short statsPointsForLevel(int level) {
         Integer result = getLevelStats().get(level);
 
-        return result == null ? 1 : result.shortValue();
+        return (result == null) ? 1 : result.shortValue();
     }
 
     private StatsInfo() {

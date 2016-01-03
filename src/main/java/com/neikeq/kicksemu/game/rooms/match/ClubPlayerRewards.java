@@ -18,9 +18,9 @@ public class ClubPlayerRewards extends PlayerRewards {
         int playerId = playerResult.getPlayerId();
 
         Challenge challenge = ((ChallengeRoom) room()).getChallenge();
-        clubRoom = room().getPlayerTeam(playerId) == RoomTeam.RED ?
+        clubRoom = (room().getPlayerTeam(playerId) == RoomTeam.RED) ?
                 challenge.getRedTeam() : challenge.getBlueTeam();
-        rivalRoom = room().getPlayerTeam(playerId) == RoomTeam.BLUE ?
+        rivalRoom = (room().getPlayerTeam(playerId) == RoomTeam.BLUE) ?
                 challenge.getRedTeam() : challenge.getBlueTeam();
     }
 
@@ -35,7 +35,7 @@ public class ClubPlayerRewards extends PlayerRewards {
         byte levelGap = clubRoom.getLevelGapDifferenceTo(rivalRoom);
         int levelGapPoints = BASE_LEVEL_GAP_POINTS + levelGap;
 
-        TeamResult teamResult = playerTeam == RoomTeam.RED ?
+        TeamResult teamResult = (playerTeam == RoomTeam.RED) ?
                 matchResult().getRedTeam() : matchResult().getBlueTeam();
         switch (teamResult.getResult()) {
             case WIN:
@@ -70,7 +70,7 @@ public class ClubPlayerRewards extends PlayerRewards {
         }
 
         if (percentage > 0) {
-            experience.sum(experience.get() + onePercentOfBaseReward * percentage);
+            experience.sum(experience.get() + (onePercentOfBaseReward * percentage));
         }
     }
 }

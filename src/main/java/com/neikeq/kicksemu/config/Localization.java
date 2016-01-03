@@ -45,22 +45,15 @@ public class Localization {
     public static String get(String key) {
         Properties lang = getInstance().lang;
 
-        if (lang != null && lang.containsKey(key)) {
-            return lang.getProperty(key);
-        } else {
-            return key;
-        }
+        return lang.containsKey(key) ? lang.getProperty(key) : key;
     }
     
     /** Returns the {@code String} with the specified key, formatted with arguments. */
     public static String get(String key, String arg) {
         Properties lang = getInstance().lang;
 
-        if (lang != null && lang.containsKey(key)) {
-            return String.format(lang.getProperty(key), arg);
-        } else {
-            return key + " w/ arg: " + arg;
-        }
+        return lang.containsKey(key) ?
+                String.format(lang.getProperty(key), arg) : (key + " with arg: " + arg);
     }
 
     public synchronized static Localization getInstance() {

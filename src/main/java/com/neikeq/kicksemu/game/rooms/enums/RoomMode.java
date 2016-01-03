@@ -52,8 +52,8 @@ public enum RoomMode {
             case NORMAL:
                 return this != AI_GOALKEEPER;
             case PRACTICE:
-                return this != TRAINING_ONE && this != TRAINING_TWO &&
-                        this != TRAINING_THREE;
+                return (this != TRAINING_ONE) && (this != TRAINING_TWO) &&
+                        (this != TRAINING_THREE);
             default:
                 return true;
         }

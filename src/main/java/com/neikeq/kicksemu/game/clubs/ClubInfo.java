@@ -31,11 +31,11 @@ public class ClubInfo {
     }
 
     public static int getManager(int id, Connection ... con) {
-        final String query = "SELECT id FROM club_members " +
-                "WHERE club_id = ? AND role = ? LIMIT 1";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT id FROM club_members " +
+                    "WHERE club_id = ? AND role = ? LIMIT 1";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -55,11 +55,11 @@ public class ClubInfo {
     }
 
     public static List<Integer> getCaptains(int id, Connection ... con) {
-        final String query = "SELECT id FROM club_members " +
-                "WHERE club_id = ? AND role = ? LIMIT 2";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT id FROM club_members " +
+                    "WHERE club_id = ? AND role = ? LIMIT 2";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -85,11 +85,11 @@ public class ClubInfo {
     }
 
     public static List<Integer> getMembers(int id, int offset, int limit, Connection ... con) {
-        final String query = "SELECT id FROM club_members " +
-                "WHERE club_id = ? AND role NOT IN(?, ?) LIMIT ? OFFSET ?";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT id FROM club_members " +
+                    "WHERE club_id = ? AND role NOT IN(?, ?) LIMIT ? OFFSET ?";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -118,11 +118,11 @@ public class ClubInfo {
     }
 
     public static short getMembersCount(int id, Connection ... con) {
-        final String query = "SELECT count(1) FROM club_members " +
-                "WHERE club_id = ? AND role NOT IN(?, ?)";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT count(1) FROM club_members " +
+                    "WHERE club_id = ? AND role NOT IN(?, ?)";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -143,10 +143,10 @@ public class ClubInfo {
     }
 
     public static short getMembersLimit(int id, Connection ... con) {
-        final String query = "SELECT extra_membership FROM clubs WHERE id = ? LIMIT 1";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT extra_membership FROM clubs WHERE id = ? LIMIT 1";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
@@ -175,27 +175,23 @@ public class ClubInfo {
     }
 
     public static ClubUniform getUniform(int id, Connection ... con) {
-        final String query = "SELECT uniform_home_shirts, uniform_home_pants, " +
-                "uniform_home_socks, uniform_home_wrist, uniform_away_shirts, " +
-                "uniform_away_pants, uniform_away_socks, uniform_away_wrist " +
-                "FROM " + TABLE + " WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "SELECT uniform_home_shirts, uniform_home_pants, " +
+                    "uniform_home_socks, uniform_home_wrist, uniform_away_shirts, " +
+                    "uniform_away_pants, uniform_away_socks, uniform_away_wrist " +
+                    "FROM " + TABLE + " WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return new ClubUniform(
-                                rs.getInt("uniform_home_shirts"), rs.getInt("uniform_home_pants"),
-                                rs.getInt("uniform_home_socks"), rs.getInt("uniform_home_wrist"),
-                                rs.getInt("uniform_away_shirts"), rs.getInt("uniform_away_pants"),
-                                rs.getInt("uniform_away_socks"), rs.getInt("uniform_away_wrist"));
-                    } else {
-                        return new ClubUniform();
-                    }
+                    return rs.next() ? new ClubUniform(
+                            rs.getInt("uniform_home_shirts"), rs.getInt("uniform_home_pants"),
+                            rs.getInt("uniform_home_socks"), rs.getInt("uniform_home_wrist"),
+                            rs.getInt("uniform_away_shirts"), rs.getInt("uniform_away_pants"),
+                            rs.getInt("uniform_away_socks"), rs.getInt("uniform_away_wrist")) : new ClubUniform();
                 }
             } finally {
                 if (con.length <= 0) {
@@ -220,12 +216,12 @@ public class ClubInfo {
     }
 
     public static void setHomeUniform(Uniform uniform, int id, Connection ... con) {
-        final String query = "UPDATE " + TABLE + " SET uniform_home_shirts = ?, " +
-                "uniform_home_pants = ?, uniform_home_socks = ?, " +
-                "uniform_home_wrist = ? WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE " + TABLE + " SET uniform_home_shirts = ?, " +
+                    "uniform_home_pants = ?, uniform_home_socks = ?, " +
+                    "uniform_home_wrist = ? WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, uniform.getShirts());
@@ -246,12 +242,12 @@ public class ClubInfo {
     }
 
     public static void setAwayUniform(Uniform uniform, int id, Connection ... con) {
-        final String query = "UPDATE " + TABLE + " SET uniform_away_shirts = ?, " +
-                "uniform_away_pants = ?, uniform_away_socks = ?, " +
-                "uniform_away_wrist = ? WHERE id = ? LIMIT 1;";
-
         try {
-            Connection connection = con.length > 0 ? con[0] : MySqlManager.getConnection();
+            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+
+            final String query = "UPDATE " + TABLE + " SET uniform_away_shirts = ?, " +
+                    "uniform_away_pants = ?, uniform_away_socks = ?, " +
+                    "uniform_away_wrist = ? WHERE id = ? LIMIT 1;";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, uniform.getShirts());

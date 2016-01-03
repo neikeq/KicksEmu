@@ -57,7 +57,7 @@ public class Shop {
 
             short position = session.getCache().getPosition();
             SkillInfo skillInfo = TableManager.getSkillInfo(s ->
-                    s.getId() == request.getProductId() && s.isCompatiblePosition(position));
+                    (s.getId() == request.getProductId()) && s.isCompatiblePosition(position));
 
             if (skillInfo == null) {
                 throw new MessageException("Skill does not exist or incompatible position.", -1);
@@ -69,18 +69,18 @@ public class Shop {
 
             if (skillInfo.isInvalidPaymentMode(request.getPayment())) {
                 throw new MessageException("Incompatible payment mode.",
-                        request.getPayment() == Payment.CASH ? -2 : -3);
+                        (request.getPayment() == Payment.CASH) ? -2 : -3);
             }
 
             if (skillInfo.isInvalidPrice(request.getPrice(),
                     request.getExpiration(), request.getPayment())) {
                 throw new MessageException("Invalid price.",
-                        request.getPayment() == Payment.CASH ? -2 : -3);
+                        (request.getPayment() == Payment.CASH) ? -2 : -3);
             }
 
             if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
                 throw new MessageException("Not enough money.",
-                        request.getPayment() == Payment.CASH ? -8 : -5);
+                        (request.getPayment() == Payment.CASH) ? -8 : -5);
             }
 
             Map<Integer, Skill> skills = session.getCache().getSkills(con);
@@ -124,22 +124,22 @@ public class Shop {
 
             if (celeInfo.isInvalidPaymentMode(request.getPayment())) {
                 throw new MessageException("Incompatible payment mode.",
-                        request.getPayment() == Payment.CASH ? -2 : -3);
+                        (request.getPayment() == Payment.CASH) ? -2 : -3);
             }
 
             if (celeInfo.isInvalidPrice(request.getPrice(),
                     request.getExpiration(), request.getPayment())) {
                 throw new MessageException("Invalid price.",
-                        request.getPayment() == Payment.CASH ? -2 : -3);
+                        (request.getPayment() == Payment.CASH) ? -2 : -3);
             }
 
             if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
                 throw new MessageException("Not enough money.",
-                        request.getPayment() == Payment.CASH ? -8 : -5);
+                        (request.getPayment() == Payment.CASH) ? -8 : -5);
             }
 
-            Map<Integer, Celebration> celes = session.getCache().getCeles(con);
-            if (alreadyPurchased(request.getProductId(), celes.values())) {
+            Map<Integer, Celebration> celebrations = session.getCache().getCelebrations(con);
+            if (alreadyPurchased(request.getProductId(), celebrations.values())) {
                 throw new MessageException("Celebration already purchased.", -10);
             }
 
@@ -176,17 +176,17 @@ public class Shop {
 
             if (learnInfo.isInvalidPaymentMode(request.getPayment())) {
                 throw new MessageException("Incompatible payment mode.",
-                        request.getPayment() == Payment.CASH ? -2 : -3);
+                        (request.getPayment() == Payment.CASH) ? -2 : -3);
             }
 
             if (learnInfo.isInvalidPrice(request.getPrice(), request.getPayment())) {
                 throw new MessageException("Invalid price.",
-                        request.getPayment() == Payment.CASH ? -2 : -3);
+                        (request.getPayment() == Payment.CASH) ? -2 : -3);
             }
 
             if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
                 throw new MessageException("Not enough money.",
-                        request.getPayment() == Payment.CASH ? -8 : -5);
+                        (request.getPayment() == Payment.CASH) ? -8 : -5);
             }
 
             Map<Integer, Training> learns = session.getCache().getLearns();
@@ -226,8 +226,8 @@ public class Shop {
             boolean isSpecialItem = SpecialItem.isSpecialItem(itemInfo.getType());
 
             // TODO There should be a cleaner and more flexible way to do this.
-            if (!isSpecialItem && request.getPayment() == Payment.POINTS &&
-                    request.getExpiration() == Expiration.DAYS_PERM) {
+            if (!isSpecialItem && (request.getPayment() == Payment.POINTS) &&
+                    (request.getExpiration() == Expiration.DAYS_PERM)) {
                 return;
             }
 
@@ -253,12 +253,12 @@ public class Shop {
 
             if (itemInfo.isInvalidPaymentMode(request.getPayment())) {
                 throw new MessageException("Incompatible payment mode.",
-                        request.getPayment() == Payment.CASH ? -2 : -3);
+                        (request.getPayment() == Payment.CASH) ? -2 : -3);
             }
 
             if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
                 throw new MessageException("Not enough money.",
-                        request.getPayment() == Payment.CASH ? -8 : -5);
+                        (request.getPayment() == Payment.CASH) ? -8 : -5);
             }
 
             if (isInventoryFull(session, con)) {
@@ -304,13 +304,13 @@ public class Shop {
 
         if (isInvalidItemPrice(request, itemInfo, optionInfoOne, optionInfoTwo)) {
             throw new MessageException("Invalid price.",
-                    request.getPayment() == Payment.CASH ? -2 : -3);
+                    (request.getPayment() == Payment.CASH) ? -2 : -3);
         }
 
         if (itemInfo.getType() == ItemType.SKILL_SLOT.toInt()) {
             byte skillSlots = PlayerInfo.getSkillSlots(session.getCache().getItems());
             int purchasableSkillSlots = SKILL_SLOTS_LIMIT - skillSlots;
-            if (optionInfoOne == null || optionInfoOne.getValue() > purchasableSkillSlots) {
+            if ((optionInfoOne == null) || (optionInfoOne.getValue() > purchasableSkillSlots)) {
                 throw new MessageException("Cannot purchase more skill slots.", -12);
             }
         }
@@ -352,11 +352,11 @@ public class Shop {
     }
 
     private static Celebration doCelebrationTransaction(Session session, CelebrationRequest request) {
-        Map<Integer, Celebration> celes = session.getCache().getCeles();
+        Map<Integer, Celebration> celebrations = session.getCache().getCelebrations();
 
-        int inventoryId = InventoryUtils.getSmallestMissingId(celes.values());
-        byte index = InventoryUtils.getSmallestMissingIndex(celes.values());
-        index = index > 5 ? 0 : index;
+        int inventoryId = InventoryUtils.getSmallestMissingId(celebrations.values());
+        byte index = InventoryUtils.getSmallestMissingIndex(celebrations.values());
+        index = (index > 5) ? 0 : index;
 
         Celebration cele = new Celebration(request.getProductId(), inventoryId,
                 request.getExpiration().toInt(), index,
@@ -436,11 +436,11 @@ public class Shop {
         int itemPrice = InventoryUtils.getItemPrice(itemInfo, request.getExpiration(),
                 request.getPayment(), one, two);
 
-        return itemPrice < 0 || itemPrice != request.getPrice();
+        return (itemPrice < 0) || (itemPrice != request.getPrice());
     }
 
     private static boolean isInvalidPaymentMode(PurchaseRequest request) {
-        return request.getPayment() == null || request.getPayment() == Payment.BOTH;
+        return (request.getPayment() == null) || (request.getPayment() == Payment.BOTH);
     }
 
     private static boolean isInventoryFull(Session session, Connection ... con) {
@@ -449,11 +449,11 @@ public class Shop {
 
     /* TODO Should be removed after implementing tournament tickets and club sponsorship items */
     private static boolean isClubSpecialItem(ItemInfo itemInfo) {
-        return itemInfo.getType() <= 209 && itemInfo.getType() >= 205;
+        return (itemInfo.getType() <= 209) && (itemInfo.getType() >= 205);
     }
 
     private static boolean isClubItem(ItemInfo itemInfo) {
-        return itemInfo.getType() / 100 == 3;
+        return (itemInfo.getType() / 100) == 3;
     }
 
     public static void setClubUniform(Session session, ClientMessage msg) {
@@ -523,7 +523,7 @@ public class Shop {
 
     private static boolean isInvalidUniformItem(int itemId, ItemType requiredType) {
         ItemInfo itemInfo = TableManager.getItemInfo(item -> item.getId() == itemId);
-        return itemInfo == null || itemInfo.getGender() != Animation.ANY ||
-                itemInfo.getType() != requiredType.toInt();
+        return (itemInfo == null) || (itemInfo.getGender() != Animation.ANY) ||
+                (itemInfo.getType() != requiredType.toInt());
     }
 }

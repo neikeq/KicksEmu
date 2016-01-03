@@ -18,16 +18,16 @@ public class SessionCache {
 
     private final Session parent;
 
-    private DefaultClothes defaultClothes = null;
-    private String name = null;
-    private Integer owner = null;
-    private Animation animation = null;
-    private Short position = null;
+    private DefaultClothes defaultClothes;
+    private String name;
+    private Integer owner;
+    private Animation animation;
+    private Short position;
 
-    private Map<Integer, Item> items = null;
-    private Map<Integer, Skill> skills = null;
-    private Map<Integer, Celebration> celes = null;
-    private Map<Integer, Training> learns = null;
+    private Map<Integer, Item> items;
+    private Map<Integer, Skill> skills;
+    private Map<Integer, Celebration> celebrations;
+    private Map<Integer, Training> learns;
 
     public void clear() {
         owner = null;
@@ -46,9 +46,9 @@ public class SessionCache {
             skills = null;
         }
 
-        if (celes != null) {
-            celes.clear();
-            celes = null;
+        if (celebrations != null) {
+            celebrations.clear();
+            celebrations = null;
         }
 
         if (learns != null) {
@@ -92,7 +92,7 @@ public class SessionCache {
 
         items = items.values().stream()
                 .filter(i ->
-                        (i.getExpiration().isUsage() && i.getUsages() > 0) ||
+                        (i.getExpiration().isUsage() && (i.getUsages() > 0)) ||
                                 (i.getExpiration().isDays() &&
                                         i.getTimestampExpire().after(DateUtils.getTimestamp())) ||
                                 i.getExpiration().isPermanent())
@@ -128,23 +128,23 @@ public class SessionCache {
         }
     }
 
-    public Map<Integer, Celebration> getCeles(Connection ... con) {
-        if (celes == null) {
-            celes = PlayerInfo.getInventoryCelebration(parent.getPlayerId(), con);
+    public Map<Integer, Celebration> getCelebrations(Connection ... con) {
+        if (celebrations == null) {
+            celebrations = PlayerInfo.getInventoryCelebration(parent.getPlayerId(), con);
         }
 
-        celes = celes.values().stream()
+        celebrations = celebrations.values().stream()
                 .filter(c -> c.getTimestampExpire().after(DateUtils.getTimestamp()) ||
                         c.getExpiration().isPermanent())
                 .collect(Collectors.toMap(Celebration::getInventoryId, c -> c,
                         (c1, c2) -> null, LinkedHashMap::new));
 
-        return celes;
+        return celebrations;
     }
 
     public void addCele(int inventoryId, Celebration cele) {
-        if (celes != null) {
-            celes.put(inventoryId, cele);
+        if (celebrations != null) {
+            celebrations.put(inventoryId, cele);
         }
     }
 

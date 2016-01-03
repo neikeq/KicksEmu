@@ -142,7 +142,7 @@ public class UserInfo {
     // Method utils
 
     public static boolean hasEmptySlot(int id) {
-        return getSlotOne(id) <= 0 || getSlotTwo(id) <= 0 || getSlotThree(id) <= 0;
+        return (getSlotOne(id) <= 0) || (getSlotTwo(id) <= 0) || (getSlotThree(id) <= 0);
     }
 
     public static int getFirstEmptySlot(int id) {

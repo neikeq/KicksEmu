@@ -50,7 +50,7 @@ public class ServerMessage {
     }
 
     private ServerMessage writeBytes(byte[] value, int length) {
-        int lengthFlag = length > value.length ? value.length : length;
+        int lengthFlag = (length > value.length) ? value.length : length;
 
         for (int i = 0; i < lengthFlag; i++) {
             writeByte(value[i]);

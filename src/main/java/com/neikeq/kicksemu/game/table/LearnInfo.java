@@ -13,12 +13,12 @@ public class LearnInfo {
     private final int points;
     private final int cash;
 
-    public boolean isIncompatibleLevel(short level) {
-        return level < getLevel();
+    public boolean isIncompatibleLevel(short suspiciousLevel) {
+        return suspiciousLevel < level;
     }
 
-    public boolean isInvalidPaymentMode(Payment payment) {
-        return getPayment().isIncompatibleWith(payment);
+    public boolean isInvalidPaymentMode(Payment suspiciousPayment) {
+        return payment.isIncompatibleWith(suspiciousPayment);
     }
 
     public boolean isInvalidPrice(int price, Payment payment) {
@@ -51,16 +51,8 @@ public class LearnInfo {
         return statIndex;
     }
 
-    public short getLevel() {
-        return level;
-    }
-
     public short getStatPoints() {
         return statPoints;
-    }
-
-    public Payment getPayment() {
-        return payment;
     }
 
     public int getPoints() {

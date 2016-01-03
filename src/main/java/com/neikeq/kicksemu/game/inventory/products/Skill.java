@@ -23,7 +23,7 @@ public class Skill implements Product, IndexedProduct {
         this.id = id;
         this.inventoryId = inventoryId;
         this.expiration = Expiration.fromInt(expiration);
-        this.setSelectionIndex(selectionIndex);
+        setSelectionIndex(selectionIndex);
         this.timestampExpire = timestampExpire;
         this.visible = visible;
     }

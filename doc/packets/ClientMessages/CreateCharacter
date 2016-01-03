@@ -6,7 +6,7 @@ Size: 89
 
 Data:
 int packet_id
-int accound_id
+int account_id
 // Client allows typing just 14 characters
 char[15] character_name
 short stats_points
