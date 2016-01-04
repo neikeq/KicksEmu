@@ -5,9 +5,8 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class LobbyManager {
         byte page = msg.readByte();
         int index = page * PLAYERS_PER_PAGE;
 
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             List<Integer> visiblePlayers = getMainLobby().getVisiblePlayers(con);
 
             for (int i = index; i < (index + 10); i++) {

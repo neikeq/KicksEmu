@@ -16,11 +16,9 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
-
-import java.sql.Connection;
 
 public class ChallengeRoomMessages extends RoomMessages {
 
@@ -217,7 +215,7 @@ public class ChallengeRoomMessages extends RoomMessages {
 
         MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().keySet());
 
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             ChallengeResultHandler resultHandler = new ChallengeResultHandler(room, result, con);
             resultHandler.handleResult();
         } catch (Exception e) {

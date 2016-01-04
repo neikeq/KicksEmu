@@ -20,12 +20,11 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.ThreadUtils;
 import io.netty.util.concurrent.ScheduledFuture;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -450,7 +449,7 @@ public class Room {
     }
 
     void notifyAboutNewPlayer(Session session) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             broadcast(roomPlayerInfoMessage(session, con),
                     s -> s.getPlayerId() != session.getPlayerId());
         } catch (SQLException e) {
@@ -477,7 +476,7 @@ public class Room {
         return null;
     }
 
-    ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
+    ServerMessage roomPlayerInfoMessage(Session session, ConnectionRef... con) {
         return MessageBuilder.roomPlayerInfo(session, this, con);
     }
 
@@ -509,9 +508,8 @@ public class Room {
     }
 
     void sendRoomPlayersInfo(Session session) {
-        try (Connection con = MySqlManager.getConnection()) {
-            getPlayers().values().forEach(s ->
-                    session.send(roomPlayerInfoMessage(s, con)));
+        try (ConnectionRef con = ConnectionRef.ref()) {
+            getPlayers().values().forEach(s -> session.send(roomPlayerInfoMessage(s, con)));
             session.flush();
         } catch (SQLException e) {
             Output.println("Exception when sending room players info to a player: " +

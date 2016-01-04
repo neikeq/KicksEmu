@@ -31,9 +31,8 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class Shop {
     private static final byte SKILL_SLOTS_LIMIT = 12;
 
     public static void purchaseSkill(Session session, ClientMessage msg) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
             SkillRequest request = new SkillRequest(msg);
 
@@ -99,7 +98,7 @@ public class Shop {
     }
 
     public static void purchaseCele(Session session, ClientMessage msg) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
             CelebrationRequest request = new CelebrationRequest(msg);
 
@@ -155,7 +154,7 @@ public class Shop {
     }
 
     public static void purchaseLearn(Session session, ClientMessage msg) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
             LearnRequest request = new LearnRequest(msg);
 
@@ -205,7 +204,7 @@ public class Shop {
     }
 
     public static void purchaseItem(Session session, ClientMessage msg) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
             ItemRequest request = new ItemRequest(msg);
 
@@ -443,7 +442,7 @@ public class Shop {
         return (request.getPayment() == null) || (request.getPayment() == Payment.BOTH);
     }
 
-    private static boolean isInventoryFull(Session session, Connection ... con) {
+    private static boolean isInventoryFull(Session session, ConnectionRef... con) {
         return session.getCache().getItems(con).size() >= InventoryManager.MAX_INVENTORY_ITEMS;
     }
 
@@ -457,7 +456,7 @@ public class Shop {
     }
 
     public static void setClubUniform(Session session, ClientMessage msg) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
             int clubId = MemberInfo.getClubId(playerId);
 

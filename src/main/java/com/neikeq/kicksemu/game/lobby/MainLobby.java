@@ -1,8 +1,8 @@
 package com.neikeq.kicksemu.game.lobby;
 
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +36,7 @@ public class MainLobby implements Lobby {
         return players;
     }
 
-    public List<Integer> getVisiblePlayers(Connection ... con) {
+    public List<Integer> getVisiblePlayers(ConnectionRef... con) {
         synchronized (locker) {
             return players.stream().filter(id -> PlayerInfo.isVisibleInLobby(id, con))
                     .collect(Collectors.toList());

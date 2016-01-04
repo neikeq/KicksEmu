@@ -45,7 +45,11 @@ public class MySqlManager {
         setupDataSource(url, Configuration.get("mysql.user"), Configuration.get("mysql.pass"));
         
         // Check if the connection with the database is working, otherwise SQLException is thrown
-        getConnection().close();
+        try (Connection con = getConnection()) {
+            if (con == null) {
+                throw new RuntimeException("Retrieved dataSource connection is null.");
+            }
+        }
     }
     
     private static void setupDataSource(String url, String user, String password) {
@@ -64,7 +68,7 @@ public class MySqlManager {
         dataSource = new PoolingDataSource<>(connectionPool);
     }
 
-    public static Connection getConnection() throws SQLException {
+    static Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
     

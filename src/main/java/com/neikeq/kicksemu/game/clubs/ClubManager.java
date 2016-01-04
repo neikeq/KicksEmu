@@ -8,9 +8,8 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +32,7 @@ public class ClubManager {
     public static boolean clubExist(int clubId) {
         final String query = "SELECT id FROM clubs WHERE id = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, clubId);
 

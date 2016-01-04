@@ -2,12 +2,11 @@ package com.neikeq.kicksemu.game.sessions;
 
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.storage.SqlUtils;
 import com.neikeq.kicksemu.utils.RandomGenerator;
 
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,19 +15,19 @@ public class SessionInfo {
 
     private static final String TABLE = "sessions";
 
-    public static int getPlayerId(int sessionId, Connection ... con) {
+    public static int getPlayerId(int sessionId, ConnectionRef... con) {
         return getInt("player_id", sessionId, con);
     }
 
-    public static void setPlayerId(int playerId, int sessionId, Connection ... con) {
+    public static void setPlayerId(int playerId, int sessionId, ConnectionRef ... con) {
         SqlUtils.setInt("player_id", playerId, TABLE, sessionId, con);
     }
 
-    public static int getUserId(int sessionId, Connection ... con) {
+    public static int getUserId(int sessionId, ConnectionRef ... con) {
         return getInt("user_id", sessionId, con);
     }
 
-    public static String getHash(int sessionId, Connection ... con) {
+    public static String getHash(int sessionId, ConnectionRef ... con) {
         return getString(sessionId, con);
     }
 
@@ -36,7 +35,7 @@ public class SessionInfo {
         final String query = "UPDATE " + TABLE + " SET expiration = CURRENT_TIMESTAMP + " +
                 "INTERVAL 30 SECOND WHERE id = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
 
@@ -50,7 +49,7 @@ public class SessionInfo {
     public static void remove(int sessionId) {
         final String query = "DELETE FROM " + TABLE + " WHERE id = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
 
@@ -64,7 +63,7 @@ public class SessionInfo {
         final String query = "UPDATE " + TABLE + " SET expiration = CURRENT_TIMESTAMP + " +
                 "INTERVAL 1 DAY WHERE id = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
 
@@ -80,7 +79,7 @@ public class SessionInfo {
                 "AS random_session_id FROM " + TABLE + " WHERE \"random_session_id\" " +
                 "NOT IN (SELECT id FROM " + TABLE + ") LIMIT 1";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? rs.getInt("random_session_id") : RandomGenerator.randomInt();
@@ -94,7 +93,7 @@ public class SessionInfo {
         final String query = "INSERT INTO " + TABLE + " (id, user_id, player_id, hash, expiration) " +
                 "VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP + INTERVAL 1 DAY)";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, sessionId);
             stmt.setInt(2, userId);
@@ -108,22 +107,16 @@ public class SessionInfo {
         }
     }
 
-    private static int getInt(String column, int id, Connection... con) {
+    private static int getInt(String column, int id, ConnectionRef ... con) {
         final String query = "SELECT " + column + " FROM " + TABLE +
                 " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
 
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setInt(1, id);
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     return rs.next() ? rs.getInt(column) : -1;
-                }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
                 }
             }
         } catch (SQLException e) {
@@ -131,10 +124,8 @@ public class SessionInfo {
         }
     }
 
-    private static String getString(int id, Connection... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    private static String getString(int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String column = "hash";
             final String query = "SELECT " + column + " FROM " + TABLE +
                     " WHERE id = ? AND expiration > CURRENT_TIMESTAMP";
@@ -144,10 +135,6 @@ public class SessionInfo {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     return rs.next() ? rs.getString(column) : null;
-                }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
                 }
             }
         } catch (SQLException e) {

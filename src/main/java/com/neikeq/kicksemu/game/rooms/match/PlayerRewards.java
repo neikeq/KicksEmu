@@ -15,9 +15,9 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.MissionInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
-import java.sql.Connection;
 
 class PlayerRewards {
 
@@ -276,7 +276,7 @@ class PlayerRewards {
         return resultHandler.getRoom();
     }
 
-    private Connection connection() {
+    private ConnectionRef connection() {
         return resultHandler.getConnection();
     }
 

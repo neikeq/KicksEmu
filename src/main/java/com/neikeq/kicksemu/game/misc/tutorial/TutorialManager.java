@@ -7,9 +7,8 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -29,7 +28,7 @@ public class TutorialManager {
 
         if (UserInfo.hasCharacter(characterId, session.getUserId())) {
             if (suspiciousState.isValid()) {
-                try (Connection con = MySqlManager.getConnection()) {
+                try (ConnectionRef con = ConnectionRef.ref()) {
                     TutorialState tutorialState = PlayerInfo.getTutorialState(characterId, con);
 
                     boolean updated;
@@ -102,7 +101,7 @@ public class TutorialManager {
     private static boolean giveReward(int characterId) {
         final String query = "UPDATE characters SET points = points + ? WHERE id = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, REWARD_POINTS);
             stmt.setInt(2, characterId);

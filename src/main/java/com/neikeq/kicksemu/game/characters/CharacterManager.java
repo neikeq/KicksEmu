@@ -17,10 +17,9 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class CharacterManager {
     }
 
     private static void sendPlayerInfo(Session session) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             session.send(MessageBuilder.playerInfo(session, (short) 0, con));
         } catch (SQLException e) {
             Output.println("Exception when writing player info: " + e.getMessage(), Level.DEBUG);
@@ -111,7 +110,7 @@ public class CharacterManager {
                     1, newStats, statsPoints);
         }
 
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             // Set new stats
             PlayerInfo.setStats(newStats, playerId, con);
 
@@ -123,7 +122,7 @@ public class CharacterManager {
     }
 
     public static short checkIfLevelUp(Session session, short level,
-                                       int experience, Connection... con) {
+                                       int experience, ConnectionRef ... con) {
         short levels = 0;
 
         LevelInfo newLevelInfo = TableManager.getLevelInfo(li ->
@@ -148,7 +147,7 @@ public class CharacterManager {
     }
 
     private static void onPlayerLevelUp(int id, short level, short levels,
-                                       short position, Connection ... con) {
+                                       short position, ConnectionRef ... con) {
         int from = level - levels;
 
         // Calculate stats points to add
@@ -207,7 +206,7 @@ public class CharacterManager {
             }
         }
 
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
 
             // If all values are valid

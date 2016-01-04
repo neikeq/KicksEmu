@@ -7,15 +7,14 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ClubShop {
 
     public static void purchaseClubItem(Session session, ClientMessage msg) {
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
             int clubId = MemberInfo.getClubId(playerId, con);
 

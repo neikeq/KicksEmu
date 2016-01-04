@@ -31,14 +31,13 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.MessageId;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.storage.SqlUtils;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.Strings;
 
 import java.net.InetSocketAddress;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -106,7 +105,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage characterInfo(Session session, int ownerId,
-                                              short slot, Connection ... con) {
+                                              short slot, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.CHARACTER_INFO);
 
         int playerId = session.getPlayerId();
@@ -174,7 +173,7 @@ public class MessageBuilder {
             final String query = "SELECT name, online, max_users, connected_users, " +
                     "address, port FROM servers WHERE id = ? LIMIT 1";
 
-            try (Connection con = MySqlManager.getConnection();
+            try (ConnectionRef con = ConnectionRef.ref();
                  PreparedStatement stmt = con.prepareStatement(query)) {
                 stmt.setInt(1, serverId);
 
@@ -208,7 +207,7 @@ public class MessageBuilder {
             final String query = "SELECT type, min_level, max_level, address, port " +
                     "FROM servers WHERE id = ? LIMIT 1";
 
-            try (Connection con = MySqlManager.getConnection();
+            try (ConnectionRef con = ConnectionRef.ref();
                  PreparedStatement stmt = con.prepareStatement(query)) {
                 stmt.setInt(1, serverId);
 
@@ -273,7 +272,7 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.UDP_CONFIRM).writeShort((short) (result ? 0 : -3));
     }
 
-    public static ServerMessage playerInfo(Session session, short result, Connection ... con) {
+    public static ServerMessage playerInfo(Session session, short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_INFO);
 
         msg.writeShort(result);
@@ -692,7 +691,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage roomPlayerInfo(Session session, Room room, Connection ... con) {
+    public static ServerMessage roomPlayerInfo(Session session, Room room, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_PLAYER_INFO);
 
         if (session != null) {
@@ -823,7 +822,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage lobbyList(Integer[] players, byte page,
-                                          short result, Connection ... con) {
+                                          short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.LOBBY_LIST);
 
         msg.writeShort(result);
@@ -831,9 +830,7 @@ public class MessageBuilder {
         if (result == 0) {
             msg.writeByte(page);
 
-            try {
-                Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+            try (ConnectionRef connection = ConnectionRef.ref(con)) {
                 String array = Strings.repeatAndSplit("?", ", ", players.length);
 
                 final String query = "SELECT name, level, position, status_message" +
@@ -855,10 +852,6 @@ public class MessageBuilder {
                             msg.writeString(rs.getString("status_message"), 35);
                             i++;
                         }
-                    }
-                } finally {
-                    if (con.length <= 0) {
-                        connection.close();
                     }
                 }
             } catch (SQLException e) {
@@ -983,7 +976,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult,
-                                            Room room, Connection con) {
+                                            Room room, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.MATCH_RESULT);
 
         msg.writeShort((short) 0);
@@ -1019,7 +1012,7 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.TO_ROOM_LOBBY).writeShort((short) 0);
     }
 
-    public static ServerMessage updateRoomPlayer(int playerId, Connection ... con) {
+    public static ServerMessage updateRoomPlayer(int playerId, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.UPDATE_ROOM_PLAYER);
 
         msg.writeShort((short) 0);
@@ -1032,7 +1025,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerBonusStats(Session session, Connection ... con) {
+    public static ServerMessage playerBonusStats(Session session, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_BONUS_STATS);
 
         msg.writeShort((short) 0);
@@ -1135,7 +1128,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage clubRoomPlayerInfo(Session session, Room room, Connection ... con) {
+    public static ServerMessage clubRoomPlayerInfo(Session session, Room room, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_PLAYER_INFO);
 
         if (session != null) {
@@ -1323,7 +1316,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseItem(Session session, short result, Connection ... con) {
+    public static ServerMessage purchaseItem(Session session, short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_ITEM);
 
         msg.writeShort(result);
@@ -1340,7 +1333,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage resellItem(Session session, int inventoryId, int refund,
-                                           short result, Connection ... con) {
+                                           short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.RESELL_ITEM);
 
         msg.writeShort(result);
@@ -1403,7 +1396,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage purchaseLearn(Session session, Training learn,
-                                              short result, Connection ... con) {
+                                              short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_LEARN);
 
         msg.writeShort(result);
@@ -1418,7 +1411,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage purchaseSkill(int playerId, Skill skill,
-                                              short result, Connection ... con) {
+                                              short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_SKILL);
 
         msg.writeShort(result);
@@ -1457,7 +1450,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage purchaseCele(int playerId, Celebration cele,
-                                             short result, Connection ... con) {
+                                             short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_CELE);
 
         msg.writeShort(result);
@@ -1495,7 +1488,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage purchaseClubItem(Session session, short result, Connection ... con) {
+    public static ServerMessage purchaseClubItem(Session session, short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PURCHASE_CLUB_ITEM);
 
         msg.writeShort(result);
@@ -1615,7 +1608,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage addStatsPoints(int playerId, short result, Connection ... con) {
+    public static ServerMessage addStatsPoints(int playerId, short result, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.ADD_STATS_POINTS);
 
         msg.writeShort(result);
@@ -1628,7 +1621,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage playerProgress(int playerId,
-                                               short finishedQuest, Connection ... con) {
+                                               short finishedQuest, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_PROGRESS);
 
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
@@ -1655,7 +1648,7 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage playerStats(int playerId, Connection ... con) {
+    public static ServerMessage playerStats(int playerId, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_STATS);
 
         msg.writeShort((short) 0);

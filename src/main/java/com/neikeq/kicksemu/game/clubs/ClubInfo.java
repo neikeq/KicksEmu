@@ -2,10 +2,9 @@ package com.neikeq.kicksemu.game.clubs;
 
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.storage.SqlUtils;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,22 +17,20 @@ public class ClubInfo {
 
     private static final int MEMBERSHIP_LIMIT = 30;
 
-    public static String getName(int id, Connection ... con) {
+    public static String getName(int id, ConnectionRef ... con) {
         return SqlUtils.getString("name", TABLE, id, con);
     }
 
-    public static int getClubPoints(int id, Connection ... con) {
+    public static int getClubPoints(int id, ConnectionRef ... con) {
         return SqlUtils.getInt("club_points", TABLE, id, con);
     }
 
-    public static boolean isUniformActive(int id, Connection ... con) {
+    public static boolean isUniformActive(int id, ConnectionRef ... con) {
         return SqlUtils.getBoolean("uniform_active", TABLE, id, con);
     }
 
-    public static int getManager(int id, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static int getManager(int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
             final String query = "SELECT id FROM club_members " +
                     "WHERE club_id = ? AND role = ? LIMIT 1";
 
@@ -44,20 +41,14 @@ public class ClubInfo {
                 try (ResultSet rs = stmt.executeQuery()) {
                     return rs.next() ? rs.getInt("id") : -1;
                 }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             return -1;
         }
     }
 
-    public static List<Integer> getCaptains(int id, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static List<Integer> getCaptains(int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
             final String query = "SELECT id FROM club_members " +
                     "WHERE club_id = ? AND role = ? LIMIT 2";
 
@@ -74,20 +65,14 @@ public class ClubInfo {
 
                     return captains;
                 }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             return new ArrayList<>();
         }
     }
 
-    public static List<Integer> getMembers(int id, int offset, int limit, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static List<Integer> getMembers(int id, int offset, int limit, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
             final String query = "SELECT id FROM club_members " +
                     "WHERE club_id = ? AND role NOT IN(?, ?) LIMIT ? OFFSET ?";
 
@@ -107,19 +92,14 @@ public class ClubInfo {
 
                     return members;
                 }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             return new ArrayList<>();
         }
     }
 
-    public static short getMembersCount(int id, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
+    public static short getMembersCount(int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
 
             final String query = "SELECT count(1) FROM club_members " +
                     "WHERE club_id = ? AND role NOT IN(?, ?)";
@@ -132,20 +112,14 @@ public class ClubInfo {
                 try (ResultSet rs = stmt.executeQuery()) {
                     return rs.next() ? rs.getShort(1) : -1;
                 }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             return -1;
         }
     }
 
-    public static short getMembersLimit(int id, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static short getMembersLimit(int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
             final String query = "SELECT extra_membership FROM clubs WHERE id = ? LIMIT 1";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -164,20 +138,14 @@ public class ClubInfo {
                         return MEMBERSHIP_LIMIT;
                     }
                 }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             return -1;
         }
     }
 
-    public static ClubUniform getUniform(int id, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static ClubUniform getUniform(int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
             final String query = "SELECT uniform_home_shirts, uniform_home_pants, " +
                     "uniform_home_socks, uniform_home_wrist, uniform_away_shirts, " +
                     "uniform_away_pants, uniform_away_socks, uniform_away_wrist " +
@@ -193,32 +161,26 @@ public class ClubInfo {
                             rs.getInt("uniform_away_shirts"), rs.getInt("uniform_away_pants"),
                             rs.getInt("uniform_away_socks"), rs.getInt("uniform_away_wrist")) : new ClubUniform();
                 }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             return new ClubUniform();
         }
     }
 
-    public static void setName(String value, int id, Connection ... con) {
+    public static void setName(String value, int id, ConnectionRef ... con) {
         SqlUtils.setString("name", value, TABLE, id, con);
     }
 
-    public static void sumClubPoints(int value, int id, Connection ... con) {
+    public static void sumClubPoints(int value, int id, ConnectionRef ... con) {
         SqlUtils.sumInt("club_points", value, TABLE, id, con);
     }
 
-    public static void setUniformActive(boolean value, int id, Connection ... con) {
+    public static void setUniformActive(boolean value, int id, ConnectionRef ... con) {
         SqlUtils.setBoolean("uniform_active", value, TABLE, id, con);
     }
 
-    public static void setHomeUniform(Uniform uniform, int id, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static void setHomeUniform(Uniform uniform, int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
             final String query = "UPDATE " + TABLE + " SET uniform_home_shirts = ?, " +
                     "uniform_home_pants = ?, uniform_home_socks = ?, " +
                     "uniform_home_wrist = ? WHERE id = ? LIMIT 1;";
@@ -231,20 +193,14 @@ public class ClubInfo {
                 stmt.setInt(5, id);
 
                 stmt.executeUpdate();
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             Output.println(e.getMessage(), Level.DEBUG);
         }
     }
 
-    public static void setAwayUniform(Uniform uniform, int id, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static void setAwayUniform(Uniform uniform, int id, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref()) {
             final String query = "UPDATE " + TABLE + " SET uniform_away_shirts = ?, " +
                     "uniform_away_pants = ?, uniform_away_socks = ?, " +
                     "uniform_away_wrist = ? WHERE id = ? LIMIT 1;";
@@ -257,10 +213,6 @@ public class ClubInfo {
                 stmt.setInt(5, id);
 
                 stmt.executeUpdate();
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
-                }
             }
         } catch (SQLException e) {
             Output.println(e.getMessage(), Level.DEBUG);

@@ -20,10 +20,9 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -259,7 +258,7 @@ public class InventoryManager {
             short usages = 0;
             boolean selected = false;
 
-            try (Connection con = MySqlManager.getConnection()) {
+            try (ConnectionRef con = ConnectionRef.ref()) {
                 Map<Integer, Item> items = session.getCache().getItems(con);
                 Item item = items.get(inventoryId);
 

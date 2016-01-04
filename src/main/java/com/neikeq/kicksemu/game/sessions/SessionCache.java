@@ -7,9 +7,9 @@ import com.neikeq.kicksemu.game.inventory.products.DefaultClothes;
 import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.inventory.products.Skill;
 import com.neikeq.kicksemu.game.inventory.products.Training;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 
-import java.sql.Connection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,7 +61,7 @@ public class SessionCache {
         this.parent = parent;
     }
 
-    public Integer getOwner(Connection ... con) {
+    public Integer getOwner(ConnectionRef ... con) {
         if (owner == null) {
             owner = PlayerInfo.getOwner(parent.getPlayerId(), con);
         }
@@ -69,7 +69,7 @@ public class SessionCache {
         return owner;
     }
 
-    public Animation getAnimation(Connection ... con) {
+    public Animation getAnimation(ConnectionRef ... con) {
         if (animation == null) {
             animation = Animation.fromShort(PlayerInfo.getAnimation(parent.getPlayerId(), con));
         }
@@ -77,7 +77,7 @@ public class SessionCache {
         return animation;
     }
 
-    public String getName(Connection ... con) {
+    public String getName(ConnectionRef ... con) {
         if (name == null) {
             name = PlayerInfo.getName(parent.getPlayerId(), con);
         }
@@ -85,7 +85,7 @@ public class SessionCache {
         return name;
     }
 
-    public Map<Integer, Item> getItems(Connection ... con) {
+    public Map<Integer, Item> getItems(ConnectionRef ... con) {
         if (items == null) {
             items = PlayerInfo.getInventoryItems(parent.getPlayerId(), con);
         }
@@ -108,7 +108,7 @@ public class SessionCache {
         }
     }
 
-    public Map<Integer, Skill> getSkills(Connection ... con) {
+    public Map<Integer, Skill> getSkills(ConnectionRef ... con) {
         if (skills == null) {
             skills = PlayerInfo.getInventorySkills(parent, con);
         }
@@ -128,7 +128,7 @@ public class SessionCache {
         }
     }
 
-    public Map<Integer, Celebration> getCelebrations(Connection ... con) {
+    public Map<Integer, Celebration> getCelebrations(ConnectionRef ... con) {
         if (celebrations == null) {
             celebrations = PlayerInfo.getInventoryCelebration(parent.getPlayerId(), con);
         }
@@ -148,7 +148,7 @@ public class SessionCache {
         }
     }
 
-    public Map<Integer, Training> getLearns(Connection ... con) {
+    public Map<Integer, Training> getLearns(ConnectionRef ... con) {
         if (learns == null) {
             learns = PlayerInfo.getInventoryTraining(parent.getPlayerId(), con);
         }
@@ -162,7 +162,7 @@ public class SessionCache {
         }
     }
 
-    public DefaultClothes getDefaultClothes(Connection ... con) {
+    public DefaultClothes getDefaultClothes(ConnectionRef ... con) {
         if (defaultClothes == null) {
             defaultClothes = PlayerInfo.getDefaultClothes(parent.getPlayerId(), con);
         }
@@ -170,7 +170,7 @@ public class SessionCache {
         return defaultClothes;
     }
 
-    public Short getPosition(Connection ... con) {
+    public Short getPosition(ConnectionRef ... con) {
         if (position == null) {
             position = PlayerInfo.getPosition(parent.getPlayerId(), con);
         }

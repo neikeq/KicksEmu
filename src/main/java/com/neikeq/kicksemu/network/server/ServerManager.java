@@ -9,9 +9,8 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.MessageHandler;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class ServerManager {
     public static void cleanPossibleConnectedUsers() {
         final String query = "UPDATE users SET online = -1, server = -1 WHERE server = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setShort(1, getServerId());
 

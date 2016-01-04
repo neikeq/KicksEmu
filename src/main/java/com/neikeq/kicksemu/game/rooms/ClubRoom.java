@@ -16,10 +16,9 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +156,7 @@ public class ClubRoom extends Room {
     void onHostLeaved(int playerId) {}
 
     @Override
-    protected ServerMessage roomPlayerInfoMessage(Session session, Connection... con) {
+    protected ServerMessage roomPlayerInfoMessage(Session session, ConnectionRef... con) {
         return MessageBuilder.clubRoomPlayerInfo(session, this, con);
     }
 
@@ -229,7 +228,7 @@ public class ClubRoom extends Room {
     private void updateTotalLevels() {
         final MutableInteger totalLevels = new MutableInteger();
 
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             getPlayers().keySet().forEach(playerId ->
                     totalLevels.sum(PlayerInfo.getLevel(playerId, con)));
         } catch (SQLException e) {

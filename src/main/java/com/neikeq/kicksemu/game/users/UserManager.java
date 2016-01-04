@@ -11,10 +11,9 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class UserManager {
@@ -51,7 +50,7 @@ public class UserManager {
     public static void characterInfo(Session session) {
         int userId = session.getUserId();
 
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             int[] slots = new int[]{
                     UserInfo.getSlotOne(userId, con),
                     UserInfo.getSlotTwo(userId, con),
@@ -120,7 +119,7 @@ public class UserManager {
         if (UserInfo.hasCharacter(playerId, userId)) {
             short result = 0;
 
-            try (Connection con = MySqlManager.getConnection()) {
+            try (ConnectionRef con = ConnectionRef.ref()) {
                 short currentPosition = PlayerInfo.getPosition(playerId, con);
 
                 if (Position.isValidNewPosition(currentPosition, position)) {

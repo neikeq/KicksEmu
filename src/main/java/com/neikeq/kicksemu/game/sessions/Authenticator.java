@@ -14,7 +14,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.network.server.udp.UdpPing;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.Password;
 import com.neikeq.kicksemu.utils.ThreadUtils;
@@ -24,7 +24,6 @@ import io.netty.util.concurrent.ScheduledFuture;
 import java.net.InetSocketAddress;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,7 +66,7 @@ public class Authenticator {
 
         final String query = "SELECT id, password FROM users WHERE username = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setString(1, username);
 
@@ -135,7 +134,7 @@ public class Authenticator {
                                             String sessionHash) throws AuthenticationException {
         final String query = "SELECT 1 FROM users WHERE id = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, accountId);
 

@@ -7,9 +7,8 @@ import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemInfo;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -199,7 +198,7 @@ public class CharacterUtils {
     public static boolean characterExist(int characterId) {
         final String query = "SELECT id FROM characters WHERE id = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setInt(1, characterId);
 
@@ -215,7 +214,7 @@ public class CharacterUtils {
     public static int getCharacterIdByName(String name) {
         final String query = "SELECT id FROM characters WHERE name = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setString(1, name);
 

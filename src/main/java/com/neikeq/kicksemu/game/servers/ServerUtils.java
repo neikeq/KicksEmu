@@ -7,9 +7,8 @@ import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,7 +55,7 @@ public class ServerUtils {
     private static List<Short> getServerList(short filter) {
         final String query = "SELECT id FROM servers WHERE filter = ?";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setShort(1, filter);
 
@@ -77,7 +76,7 @@ public class ServerUtils {
     public static boolean serverExist(short id) {
         final String query = "SELECT 1 FROM servers WHERE id = ? LIMIT 1";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setShort(1, id);
 
@@ -95,7 +94,7 @@ public class ServerUtils {
                 " exp_factor, point_factor, kash_factor, practice_rewards)" +
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setShort(1, base.getId());
             stmt.setShort(2, base.getFilter());
@@ -121,7 +120,7 @@ public class ServerUtils {
                 " point_factor=?, kash_factor=?, practice_rewards=? WHERE id=?";
 
 
-        try (Connection con = MySqlManager.getConnection();
+        try (ConnectionRef con = ConnectionRef.ref();
              PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setShort(1, base.getFilter());
             stmt.setString(2, base.getName());

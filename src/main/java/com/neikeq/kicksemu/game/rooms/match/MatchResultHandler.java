@@ -11,13 +11,13 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.ThreadUtils;
 import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MatchResultHandler {
@@ -27,7 +27,7 @@ public class MatchResultHandler {
 
     private final Room room;
     private final MatchResult result;
-    private final Connection connection;
+    private final ConnectionRef connection;
     private final LevelCache levelCache = new LevelCache();
     private final MutableInteger roomAverageLevel = new MutableInteger();
 
@@ -179,7 +179,7 @@ public class MatchResultHandler {
         }
     }
 
-    public MatchResultHandler(Room room, MatchResult result, Connection connection) throws SQLException {
+    public MatchResultHandler(Room room, MatchResult result, ConnectionRef connection) throws SQLException {
         this.room = room;
         this.result = result;
         this.connection = connection;
@@ -208,7 +208,7 @@ public class MatchResultHandler {
         return result;
     }
 
-    public Connection getConnection() {
+    public ConnectionRef getConnection() {
         return connection;
     }
 

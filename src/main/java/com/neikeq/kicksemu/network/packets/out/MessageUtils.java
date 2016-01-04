@@ -23,23 +23,22 @@ import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class MessageUtils {
 
-    public static void appendQuestInfo(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendQuestInfo(int playerId, ServerMessage msg, ConnectionRef ... con) {
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
         msg.writeShort(questState.getCurrentQuest());
         msg.writeShort(questState.getRemainMatches());
     }
 
-    public static void appendTutorialInfo(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendTutorialInfo(int playerId, ServerMessage msg, ConnectionRef ... con) {
         TutorialState tutorialState = PlayerInfo.getTutorialState(playerId, con);
 
         msg.writeByte(tutorialState.getDribbling());
@@ -48,10 +47,8 @@ class MessageUtils {
         msg.writeByte(tutorialState.getDefense());
     }
 
-    public static void appendCharacterInfo(int playerId, ServerMessage msg, Connection ... con) {
-        try {
-            Connection connection = (con.length > 0) ? con[0] : MySqlManager.getConnection();
-
+    public static void appendCharacterInfo(int playerId, ServerMessage msg, ConnectionRef ... con) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "SELECT level, experience, stats_points, owner, points, " +
                     "tickets_kash, tickets_points FROM characters WHERE id = ? LIMIT 1;";
 
@@ -69,10 +66,6 @@ class MessageUtils {
                         msg.writeShort(rs.getShort("tickets_kash"));
                         msg.writeShort(rs.getShort("tickets_points"));
                     }
-                }
-            } finally {
-                if (con.length <= 0) {
-                    connection.close();
                 }
             }
         } catch (SQLException e) {
@@ -157,7 +150,7 @@ class MessageUtils {
         msg.writeBool(cele.isVisible());
     }
 
-    public static void appendStats(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendStats(int playerId, ServerMessage msg, ConnectionRef ... con) {
         PlayerStats stats = PlayerInfo.getStats(playerId, con);
 
         msg.writeShort(stats.getRunning());
@@ -179,7 +172,7 @@ class MessageUtils {
         msg.writeShort(stats.getDefense());
     }
 
-    public static void appendStatsTraining(Session session, ServerMessage msg, Connection ... con) {
+    public static void appendStatsTraining(Session session, ServerMessage msg, ConnectionRef ... con) {
         PlayerStats learnStats = PlayerInfo.getTrainingStats(session, con);
 
         msg.writeShort(learnStats.getRunning());
@@ -201,7 +194,7 @@ class MessageUtils {
         msg.writeShort(learnStats.getDefense());
     }
 
-    public static void appendStatsBonus(Session session, ServerMessage msg, Connection ... con) {
+    public static void appendStatsBonus(Session session, ServerMessage msg, ConnectionRef ... con) {
         PlayerStats bonusStats = PlayerInfo.getBonusStats(session, con);
 
         msg.writeShort(bonusStats.getRunning());
@@ -223,7 +216,7 @@ class MessageUtils {
         msg.writeShort(bonusStats.getDefense());
     }
 
-    public static void appendHistory(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendHistory(int playerId, ServerMessage msg, ConnectionRef ... con) {
         PlayerHistory history = PlayerInfo.getHistory(playerId, con);
 
         msg.writeInt(history.getMatches());
@@ -244,7 +237,7 @@ class MessageUtils {
         msg.writeInt(history.getTotalPoints());
     }
 
-    public static void appendHistoryMonth(int playerId, ServerMessage msg, Connection... con) {
+    public static void appendHistoryMonth(int playerId, ServerMessage msg, ConnectionRef ... con) {
         PlayerHistory monthHistory = PlayerInfo.getMonthHistory(playerId, con);
 
         msg.writeInt(monthHistory.getMatches());
@@ -266,7 +259,7 @@ class MessageUtils {
     }
 
     public static void appendMatchHistory(PlayerResult playerResult, Room room, MatchResult result,
-                                          ServerMessage msg, Connection ... con) {
+                                          ServerMessage msg, ConnectionRef ... con) {
         int id = playerResult.getPlayerId();
         boolean training = !room.trainingFactorAllowsRewards();
 
@@ -320,7 +313,7 @@ class MessageUtils {
         msg.writeInt(monthHistory.getTotalPoints() + pr.getVotePoints());
     }
 
-    public static void appendRanking(int playerId, ServerMessage msg, Connection ... con) {
+    public static void appendRanking(int playerId, ServerMessage msg, ConnectionRef ... con) {
         msg.writeShort(PlayerRanking.getRankingMatches(playerId, con));
         msg.writeShort(PlayerRanking.getRankingWins(playerId, con));
         msg.writeShort(PlayerRanking.getRankingPoints(playerId, con));
@@ -348,7 +341,7 @@ class MessageUtils {
     }
 
     public static void appendRankingLastMonth(int playerId,
-                                              ServerMessage msg, Connection ... con) {
+                                              ServerMessage msg, ConnectionRef ... con) {
         msg.writeShort(PlayerRanking.getRankingMonthMatches(playerId, con));
         msg.writeShort(PlayerRanking.getRankingMonthWins(playerId, con));
         msg.writeShort(PlayerRanking.getRankingMonthPoints(playerId, con));
@@ -381,7 +374,7 @@ class MessageUtils {
         msg.writeZeros(20);
     }
 
-    public static void appendItemsInUse(Session session, ServerMessage msg, Connection ... con) {
+    public static void appendItemsInUse(Session session, ServerMessage msg, ConnectionRef ... con) {
         appendItemInUse(PlayerInfo.getItemHead(session, con), msg);
         appendItemInUse(PlayerInfo.getItemGlasses(session, con), msg);
         appendItemInUse(PlayerInfo.getItemShirts(session, con), msg);
@@ -400,7 +393,7 @@ class MessageUtils {
     }
 
     public static void appendInventoryItemsInUse(Session session,
-                                                 ServerMessage msg, Connection ... con) {
+                                                 ServerMessage msg, ConnectionRef ... con) {
         appendInventoryItem(PlayerInfo.getItemHead(session, con), msg);
         appendInventoryItem(PlayerInfo.getItemGlasses(session, con), msg);
         appendInventoryItem(PlayerInfo.getItemShirts(session, con), msg);
@@ -419,7 +412,7 @@ class MessageUtils {
     }
 
     public static void appendInventorySkillsInUse(Session session, ServerMessage msg,
-                                                  Connection ... con) {
+                                                  ConnectionRef ... con) {
         Skill[] skills = session.getCache().getSkills(con).values().stream()
                 .filter(s -> s.getSelectionIndex() > 0).toArray(Skill[]::new);
 
@@ -429,7 +422,7 @@ class MessageUtils {
     }
 
     public static void appendInventoryCelebrationsInUse(Session session, ServerMessage msg,
-                                                        Connection ... con) {
+                                                        ConnectionRef ... con) {
         Celebration[] celebrations = session.getCache().getCelebrations(con).values()
                 .stream().filter(c -> c.getSelectionIndex() > 0).toArray(Celebration[]::new);
 
@@ -438,7 +431,7 @@ class MessageUtils {
         }
     }
 
-    public static void appendClubUniform(int clubId, ServerMessage msg, Connection ... con) {
+    public static void appendClubUniform(int clubId, ServerMessage msg, ConnectionRef ... con) {
         ClubUniform clubUniform = ClubInfo.getUniform(clubId, con);
 
         msg.writeInt(clubUniform.getHomeUniform().getShirts());

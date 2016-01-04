@@ -5,8 +5,7 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.game.rooms.enums.VictoryResult;
 import com.neikeq.kicksemu.game.rooms.match.MatchResult;
 import com.neikeq.kicksemu.game.rooms.match.TeamResult;
-
-import java.sql.Connection;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
 public class QuestManager {
 
@@ -69,7 +68,7 @@ public class QuestManager {
     };
 
     public static short checkQuests(int playerId, MatchResult matchResult,
-                                   RoomTeam team, Connection ... con) {
+                                   RoomTeam team, ConnectionRef... con) {
         QuestState questState = PlayerInfo.getQuestState(playerId, con);
 
         // If the player still has quests to complete

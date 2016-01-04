@@ -11,10 +11,9 @@ import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +94,7 @@ public class ChallengeRoom extends Room implements Observer {
     void sendRoomPlayersInfo(Session session) {
         List<Integer> team = (getPlayerTeam(session.getPlayerId()) == RoomTeam.RED) ?
                 getBlueTeam() : getRedTeam();
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             team.forEach(player ->
                     session.send(roomPlayerInfoMessage(getPlayer(player), con)));
         } catch (SQLException e) {

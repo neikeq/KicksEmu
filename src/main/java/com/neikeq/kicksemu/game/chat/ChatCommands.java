@@ -14,12 +14,11 @@ import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.DateUtils;
 import org.quartz.SchedulerException;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
@@ -69,7 +68,7 @@ public class ChatCommands {
         int playerId = session.getPlayerId();
         DecimalFormat df = new DecimalFormat("#,###,###");
 
-        try (Connection con = MySqlManager.getConnection()) {
+        try (ConnectionRef con = ConnectionRef.ref()) {
             short playerLevel = PlayerInfo.getLevel(playerId, con);
             short requestedLevel = (args.length < 2) ?
                     (short) (playerLevel + 1) : Short.valueOf(args[1]);

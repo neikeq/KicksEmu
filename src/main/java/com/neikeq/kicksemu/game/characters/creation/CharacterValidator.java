@@ -7,9 +7,8 @@ import com.neikeq.kicksemu.game.characters.types.StatsInfo;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemFree;
-import com.neikeq.kicksemu.storage.MySqlManager;
+import com.neikeq.kicksemu.storage.ConnectionRef;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,7 +72,7 @@ class CharacterValidator {
     private static boolean nameAlreadyInUse(String name) {
         final String query = "SELECT count(1) FROM characters WHERE name = ?";
 
-        try (Connection connection = MySqlManager.getConnection();
+        try (ConnectionRef connection = ConnectionRef.ref();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, name);
 
