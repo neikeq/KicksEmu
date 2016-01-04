@@ -18,11 +18,11 @@ public class ConnectionRef extends PoolableConnection {
             connectionRef.refCount++;
             return connectionRef;
         } else {
-            return ref();
+            return newRef();
         }
     }
 
-    private static ConnectionRef ref() throws SQLException {
+    private static ConnectionRef newRef() throws SQLException {
         return (ConnectionRef) MySqlManager.getConnection();
     }
 

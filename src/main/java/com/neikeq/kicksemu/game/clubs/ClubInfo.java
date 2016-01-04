@@ -30,7 +30,7 @@ public class ClubInfo {
     }
 
     public static int getManager(int id, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "SELECT id FROM club_members " +
                     "WHERE club_id = ? AND role = ? LIMIT 1";
 
@@ -48,7 +48,7 @@ public class ClubInfo {
     }
 
     public static List<Integer> getCaptains(int id, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "SELECT id FROM club_members " +
                     "WHERE club_id = ? AND role = ? LIMIT 2";
 
@@ -72,7 +72,7 @@ public class ClubInfo {
     }
 
     public static List<Integer> getMembers(int id, int offset, int limit, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "SELECT id FROM club_members " +
                     "WHERE club_id = ? AND role NOT IN(?, ?) LIMIT ? OFFSET ?";
 
@@ -99,7 +99,7 @@ public class ClubInfo {
     }
 
     public static short getMembersCount(int id, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
 
             final String query = "SELECT count(1) FROM club_members " +
                     "WHERE club_id = ? AND role NOT IN(?, ?)";
@@ -119,7 +119,7 @@ public class ClubInfo {
     }
 
     public static short getMembersLimit(int id, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "SELECT extra_membership FROM clubs WHERE id = ? LIMIT 1";
 
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -145,7 +145,7 @@ public class ClubInfo {
     }
 
     public static ClubUniform getUniform(int id, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "SELECT uniform_home_shirts, uniform_home_pants, " +
                     "uniform_home_socks, uniform_home_wrist, uniform_away_shirts, " +
                     "uniform_away_pants, uniform_away_socks, uniform_away_wrist " +
@@ -180,7 +180,7 @@ public class ClubInfo {
     }
 
     public static void setHomeUniform(Uniform uniform, int id, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "UPDATE " + TABLE + " SET uniform_home_shirts = ?, " +
                     "uniform_home_pants = ?, uniform_home_socks = ?, " +
                     "uniform_home_wrist = ? WHERE id = ? LIMIT 1;";
@@ -200,7 +200,7 @@ public class ClubInfo {
     }
 
     public static void setAwayUniform(Uniform uniform, int id, ConnectionRef ... con) {
-        try (ConnectionRef connection = ConnectionRef.ref()) {
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
             final String query = "UPDATE " + TABLE + " SET uniform_away_shirts = ?, " +
                     "uniform_away_pants = ?, uniform_away_socks = ?, " +
                     "uniform_away_wrist = ? WHERE id = ? LIMIT 1;";
