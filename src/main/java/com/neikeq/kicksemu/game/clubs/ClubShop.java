@@ -10,6 +10,7 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.ConnectionRef;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class ClubShop {
 
@@ -28,25 +29,33 @@ public class ClubShop {
 
             ClubItemRequest request = new ClubItemRequest(msg);
 
-            ItemInfo itemInfo = TableManager.getItemInfo(c -> c.getId() == request.getProductId());
+            Optional<ItemInfo> maybeItemInfo = TableManager.getItemInfo(c ->
+                    c.getId() == request.getProductId());
 
-            if (itemInfo == null) {
-                throw new MessageException("Item does not exist.", -1);
+            Optional<MessageException> exception = maybeItemInfo.map(itemInfo -> {
+                MessageException ex = null;
+                try {
+                    if (request.getPrice() != itemInfo.getPrice().getClubItemPrice()) {
+                        throw new MessageException("Invalid price.", -4);
+                    }
+
+                    if (request.getPrice() > ClubInfo.getClubPoints(clubId, con)) {
+                        throw new MessageException("Not enough club points.", -5);
+                    }
+
+                    ClubItemManager.getInstance().applyEffect(itemInfo, request, clubId);
+                    chargeClub(clubId, request);
+
+                    session.send(MessageBuilder.purchaseClubItem(session, (short) 0));
+                } catch (MessageException e) {
+                    ex = e;
+                }
+                return Optional.ofNullable(ex);
+            }).orElseThrow(() -> new MessageException("Item does not exist.", -1));
+
+            if (exception.isPresent()) {
+                throw exception.get();
             }
-
-            if (request.getPrice() != itemInfo.getPrice().getClubItemPrice()) {
-                throw new MessageException("Invalid price.", -4);
-            }
-
-            if (request.getPrice() > ClubInfo.getClubPoints(clubId, con)) {
-                throw new MessageException("Not enough club points.", -5);
-            }
-
-            ClubItemManager.getInstance().applyEffect(itemInfo, request, clubId);
-            chargeClub(clubId, request);
-
-            session.send(MessageBuilder.purchaseClubItem(session, (short) 0));
-
         } catch (MessageException e) {
             session.send(MessageBuilder.purchaseClubItem(session, (short) e.getErrorCode()));
         } catch (SQLException e) {

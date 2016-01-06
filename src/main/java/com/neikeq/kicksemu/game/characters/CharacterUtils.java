@@ -6,7 +6,6 @@ import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.TableManager;
-import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.storage.ConnectionRef;
 
 import java.sql.PreparedStatement;
@@ -172,22 +171,21 @@ public class CharacterUtils {
     }
 
     public static void updateItemsInUse(Item itemIn, Session session) {
-        ItemInfo itemInfo = TableManager.getItemInfo(o ->
-                o.getId() == itemIn.getId());
+        TableManager.getItemInfo(o -> o.getId() == itemIn.getId()).ifPresent(itemInfo ->
+            ItemType.fromInt(itemInfo.getType()).ifPresent(itemType -> {
+                if (!DEACTIVATION_EXCEPTIONS.contains(itemType)) {
+                    Item itemOut = getItemInUseByType(itemType, session);
 
-        ItemType itemType = ItemType.fromInt(itemInfo.getType());
+                    if (itemOut != null) {
+                        itemOut.deactivateGracefully(itemType, session);
+                    }
+                }
 
-        if (!DEACTIVATION_EXCEPTIONS.contains(itemType)) {
-            Item itemOut = getItemInUseByType(itemType, session);
-
-            if (itemOut != null) {
-                itemOut.deactivateGracefully(itemType, session);
-            }
-        }
-
-        if (itemIn != null) {
-            itemIn.activateGracefully(itemType, session);
-        }
+                if (itemIn != null) {
+                    itemIn.activateGracefully(itemType, session);
+                }
+            })
+        );
     }
 
     public static boolean shouldUpdatePosition(int characterId) {

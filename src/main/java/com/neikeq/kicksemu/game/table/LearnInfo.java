@@ -32,15 +32,16 @@ public class LearnInfo {
         return true;
     }
 
-    public LearnInfo(Row row) {
+    public LearnInfo(Row row) throws ParseRowException {
         row.ignoreColumn();
-        id = Integer.valueOf(row.nextColumn());
-        statIndex = Integer.valueOf(row.nextColumn());
-        level = Short.valueOf(row.nextColumn());
-        statPoints = Short.valueOf(row.nextColumn());
-        payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));
-        cash = Integer.valueOf(row.nextColumn());
-        points = Integer.valueOf(row.nextColumn());
+        id = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        statIndex = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        level = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        statPoints = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        payment = Payment.fromInt(Integer.valueOf(row.nextColumn()
+                .orElseThrow(ParseRowException::new)));
+        cash = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        points = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
     }
 
     public int getId() {

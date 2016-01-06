@@ -22,6 +22,7 @@ import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ClubRoom extends Room {
 
@@ -239,16 +240,22 @@ public class ClubRoom extends Room {
         this.totalLevels = totalLevels.get();
     }
 
-    public byte getLevelGapDifferenceTo(ClubRoom room) {
-        final byte maxDiff = 3;
+    public byte getLevelGapDifferenceTo(Optional<ClubRoom> maybeRoom) {
+        if (maybeRoom.isPresent()) {
+            ClubRoom room = maybeRoom.get();
 
-        byte difference = (byte) ((room.totalLevels - totalLevels) / 10);
+            final byte maxDiff = 3;
 
-        if (Math.abs(difference) > maxDiff) {
-            difference = (byte) (Math.signum(difference) * maxDiff);
+            byte difference = (byte) ((room.totalLevels - totalLevels) / 10);
+
+            if (Math.abs(difference) > maxDiff) {
+                difference = (byte) (Math.signum(difference) * maxDiff);
+            }
+
+            return difference;
         }
 
-        return difference;
+        return 0;
     }
 
     @Override

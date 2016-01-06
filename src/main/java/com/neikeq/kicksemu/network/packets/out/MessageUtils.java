@@ -263,13 +263,10 @@ class MessageUtils {
         int id = playerResult.getPlayerId();
         boolean training = !room.trainingFactorAllowsRewards();
 
-        TeamResult tr;
-
-        if (training) {
-            tr = new TeamResult();
-        } else {
-            tr = (room.getPlayerTeam(id) == RoomTeam.RED) ? result.getRedTeam() : result.getBlueTeam();
-        }
+        TeamResult tr = room.getPlayerTeam(id)
+                .filter(t -> training)
+                .map(t -> (t == RoomTeam.RED) ? result.getRedTeam() : result.getBlueTeam())
+                .orElse(new TeamResult());
 
         PlayerResult pr = !training ? playerResult : new PlayerResult(-1, (short) 0,
                 (short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0, (short) 0);

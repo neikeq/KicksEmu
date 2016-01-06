@@ -30,6 +30,10 @@ public class Output {
             write(DateUtils.getTimeString() + " " + line + System.lineSeparator());
         }
     }
+
+    public static void prints(Level level, String ... line) {
+        println(String.join(" ", line), level);
+    }
     
     public void printHeader() {
         System.out.println("# KicksEmu Server");

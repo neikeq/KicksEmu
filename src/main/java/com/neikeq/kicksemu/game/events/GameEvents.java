@@ -42,33 +42,39 @@ public class GameEvents {
                                            String path) {
         TableReader reader = new TableReader(path);
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            String strDay = line.nextColumn();
-            int dayOfWeek = DateUtils.stringToDayOfWeek(strDay);
-            if (dayOfWeek == -1) continue;
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            Row row = maybeRow.get();
 
-            if (!schedule.containsKey(dayOfWeek)) {
-                schedule.put(dayOfWeek, new TreeSet<>());
-            }
+            row.nextColumn().ifPresent(strDay -> {
+                try {
+                    int dayOfWeek = DateUtils.stringToDayOfWeek(strDay);
 
-            SortedSet<DayTimeRange> schedules = schedule.get(dayOfWeek);
-
-            try {
-                for (int i = 0; (i < MAX_SCHEDULES_PER_DAY) && line.hasNext(); i++) {
-                    // Format: HH:mm/HH:mm
-                    String strSchedule = line.nextColumn();
-                    if (!strSchedule.isEmpty()) {
-                        String[] range = strSchedule.split("/");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-                        Date start = timeFormat.parse(range[0]);
-                        Date end = timeFormat.parse(range[1]);
-                        schedules.add(new DayTimeRange(start, end));
+                    if (!schedule.containsKey(dayOfWeek)) {
+                        schedule.put(dayOfWeek, new TreeSet<>());
                     }
+
+                    SortedSet<DayTimeRange> schedules = schedule.get(dayOfWeek);
+
+                    for (int i = 0; (i < MAX_SCHEDULES_PER_DAY) && row.hasNext(); i++) {
+                        // Format: HH:mm/HH:mm
+                        row.nextColumn().filter(s -> !s.isEmpty()).ifPresent(strSchedule -> {
+                            try {
+                                String[] range = strSchedule.split("/");
+                                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+                                Date start = timeFormat.parse(range[0]);
+                                Date end = timeFormat.parse(range[1]);
+                                schedules.add(new DayTimeRange(start, end));
+                            } catch (IndexOutOfBoundsException | ParseException e) {
+                                Output.println("Invalid schedule format at " + path + ": " +
+                                        row, Level.WARNING);
+                            }
+                        });
+                    }
+                } catch (IllegalArgumentException e) {
+                    Output.println("Skipping schedule row: " + e.getMessage(), Level.WARNING);
                 }
-            } catch (IndexOutOfBoundsException | ParseException e) {
-                Output.println("Invalid format in " + path + ": " + line, Level.WARNING);
-            }
+            });
         }
     }
 

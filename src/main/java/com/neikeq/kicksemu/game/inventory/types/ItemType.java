@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.inventory.types;
 
+import java.util.Optional;
+
 public enum ItemType {
 
     FACE,
@@ -142,7 +144,11 @@ public enum ItemType {
         }
     }
 
-    public static ItemType fromInt(int code) {
+    public static Optional<ItemType> fromInt(int code) {
+        return Optional.ofNullable(nullableFromInt(code));
+    }
+
+    private static ItemType nullableFromInt(int code) {
         switch (code) {
             case 100:
                 return FACE;

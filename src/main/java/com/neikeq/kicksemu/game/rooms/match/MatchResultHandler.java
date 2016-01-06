@@ -7,7 +7,7 @@ import com.neikeq.kicksemu.game.characters.LevelCache;
 import com.neikeq.kicksemu.game.characters.types.PlayerHistory;
 import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.rooms.Room;
-import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
+import com.neikeq.kicksemu.game.rooms.enums.VictoryResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
@@ -19,6 +19,7 @@ import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class MatchResultHandler {
 
@@ -125,20 +126,19 @@ public class MatchResultHandler {
 
     private void updatePlayerHistory(PlayerResult playerResult) {
         int playerId = playerResult.getPlayerId();
-        TeamResult teamResult = getPlayerTeamResult(playerId);
 
         PlayerHistory matchHistory = new PlayerHistory();
         matchHistory.sumMatches(1);
 
-        switch (teamResult.getResult()) {
-            case DRAW:
+        getPlayerTeamResult(playerId).ifPresent(teamResult -> {
+            VictoryResult victoryResult = teamResult.getResult();
+
+            if (victoryResult == VictoryResult.DRAW) {
                 matchHistory.sumDraws(1);
-                break;
-            case WIN:
+            } else if (victoryResult == VictoryResult.WIN) {
                 matchHistory.sumWins(1);
-                break;
-            default:
-        }
+            }
+        });
 
         if (playerId == getResult().getMom()) {
             matchHistory.sumMom(1);
@@ -190,14 +190,12 @@ public class MatchResultHandler {
         return Configuration.getBoolean("game.match.bonus.lowers");
     }
 
-    public TeamResult getPlayerTeamResult(int playerId) {
-        return (getRoom().getPlayerTeam(playerId) == RoomTeam.RED) ?
-                result.getRedTeam() : result.getBlueTeam();
+    public Optional<TeamResult> getPlayerTeamResult(int playerId) {
+        return result.getTeamResult(getRoom().getPlayerTeam(playerId));
     }
 
-    public TeamResult getRivalTeamResult(int playerId) {
-        return (getRoom().getPlayerTeam(playerId) == RoomTeam.RED) ?
-                result.getBlueTeam() : result.getRedTeam();
+    public Optional<TeamResult> getRivalTeamResult(int playerId) {
+        return result.getTeamResult(getRoom().getPlayerRivalTeam(playerId));
     }
 
     public Room getRoom() {

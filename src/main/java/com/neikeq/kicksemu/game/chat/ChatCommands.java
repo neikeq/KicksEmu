@@ -6,7 +6,6 @@ import com.neikeq.kicksemu.game.misc.ignored.IgnoredManager;
 import com.neikeq.kicksemu.game.rooms.messages.ClubRoomMessages;
 import com.neikeq.kicksemu.game.servers.ServerType;
 import com.neikeq.kicksemu.game.table.TableManager;
-import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
@@ -77,12 +76,13 @@ public class ChatCommands {
                 return;
             }
 
-            LevelInfo lvlInfo = TableManager.getLevelInfo(c -> c.getLevel() == requestedLevel);
-            int expForAskedLvl = lvlInfo.getExperience();
-            final int exp = PlayerInfo.getExperience(playerId, con);
+            TableManager.getLevelInfo(c -> c.getLevel() == requestedLevel).ifPresent(lvlInfo -> {
+                int expForAskedLvl = lvlInfo.getExperience();
+                final int exp = PlayerInfo.getExperience(playerId, con);
 
-            ChatUtils.sendServerMessage(session, df.format(expForAskedLvl - exp) +
-                    " to reach Lv " + requestedLevel);
+                ChatUtils.sendServerMessage(session, df.format(expForAskedLvl - exp) +
+                        " to reach Lv " + requestedLevel);
+            });
         } catch (SQLException | NumberFormatException ignored) {}
     }
 

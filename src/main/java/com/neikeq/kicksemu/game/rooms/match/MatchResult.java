@@ -1,9 +1,11 @@
 package com.neikeq.kicksemu.game.rooms.match;
 
+import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class MatchResult {
@@ -15,6 +17,10 @@ public class MatchResult {
     private final TeamResult redTeam;
     private final TeamResult blueTeam;
     private final List<PlayerResult> players;
+
+    public Optional<TeamResult> getTeamResult(Optional<RoomTeam> maybeTeam) {
+        return maybeTeam.map(team -> (team == RoomTeam.RED) ? redTeam : blueTeam);
+    }
 
     public static MatchResult fromMessage(ClientMessage msg, Set<Integer> roomPlayers) {
         int mom = msg.readInt();

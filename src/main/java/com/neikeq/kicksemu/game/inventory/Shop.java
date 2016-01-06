@@ -17,14 +17,13 @@ import com.neikeq.kicksemu.game.inventory.products.Training;
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
-import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.game.table.CeleInfo;
-import com.neikeq.kicksemu.game.table.BonusInfo;
+import com.neikeq.kicksemu.game.table.SkillInfo;
+import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.game.table.LearnInfo;
 import com.neikeq.kicksemu.game.table.OptionInfo;
-import com.neikeq.kicksemu.game.table.SkillInfo;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.io.Output;
@@ -36,6 +35,7 @@ import com.neikeq.kicksemu.storage.ConnectionRef;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 public class Shop {
 
@@ -55,26 +55,16 @@ public class Shop {
             }
 
             short position = session.getCache().getPosition();
-            SkillInfo skillInfo = TableManager.getSkillInfo(s ->
-                    (s.getId() == request.getProductId()) && s.isCompatiblePosition(position));
 
-            if (skillInfo == null) {
-                throw new MessageException("Skill does not exist or incompatible position.", -1);
-            }
+            Optional<MessageException> e = TableManager
+                    .getSkillInfo(s -> (s.getId() == request.getProductId()) &&
+                            s.isCompatiblePosition(position))
+                    .map(skillInfo -> checkSkillInfo(skillInfo, request, playerId))
+                    .orElse(Optional
+                            .of(new MessageException("Skill not found or invalid pos.", -1)));
 
-            if (skillInfo.isIncompatibleLevel(PlayerInfo.getLevel(playerId))) {
-                throw new MessageException("Incompatible level.", -9);
-            }
-
-            if (skillInfo.isInvalidPaymentMode(request.getPayment())) {
-                throw new MessageException("Incompatible payment mode.",
-                        (request.getPayment() == Payment.CASH) ? -2 : -3);
-            }
-
-            if (skillInfo.isInvalidPrice(request.getPrice(),
-                    request.getExpiration(), request.getPayment())) {
-                throw new MessageException("Invalid price.",
-                        (request.getPayment() == Payment.CASH) ? -2 : -3);
+            if (e.isPresent()) {
+                throw e.get();
             }
 
             if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
@@ -97,6 +87,22 @@ public class Shop {
         }
     }
 
+    public static Optional<MessageException> checkSkillInfo(SkillInfo skill, SkillRequest req, int player) {
+        MessageException me = null;
+
+        if (skill.isIncompatibleLevel(PlayerInfo.getLevel(player))) {
+            me = new MessageException("Incompatible level.", -9);
+        } else if (skill.isInvalidPaymentMode(req.getPayment())) {
+            me = new MessageException("Incompatible payment mode.",
+                    (req.getPayment() == Payment.CASH) ? -2 : -3);
+        } else if (skill.isInvalidPrice(req.getPrice(), req.getExpiration(), req.getPayment())) {
+            me = new MessageException("Invalid price.",
+                    (req.getPayment() == Payment.CASH) ? -2 : -3);
+        }
+
+        return Optional.ofNullable(me);
+    }
+
     public static void purchaseCele(Session session, ClientMessage msg) {
         try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
@@ -110,26 +116,13 @@ public class Shop {
                 throw new MessageException("Invalid expiration mode.", -1);
             }
 
-            CeleInfo celeInfo = TableManager.getCeleInfo(c ->
-                    c.getId() == request.getProductId());
+            Optional<MessageException> e = TableManager
+                    .getCeleInfo(c -> c.getId() == request.getProductId())
+                    .map(celeInfo -> checkCeleInfo(celeInfo, request, playerId))
+                    .orElse(Optional.of(new MessageException("Celebration does not exist.", -1)));
 
-            if (celeInfo == null) {
-                throw new MessageException("Celebration does not exist.", -1);
-            }
-
-            if (celeInfo.isIncompatibleLevel(PlayerInfo.getLevel(playerId))) {
-                throw new MessageException("Incompatible level.", -9);
-            }
-
-            if (celeInfo.isInvalidPaymentMode(request.getPayment())) {
-                throw new MessageException("Incompatible payment mode.",
-                        (request.getPayment() == Payment.CASH) ? -2 : -3);
-            }
-
-            if (celeInfo.isInvalidPrice(request.getPrice(),
-                    request.getExpiration(), request.getPayment())) {
-                throw new MessageException("Invalid price.",
-                        (request.getPayment() == Payment.CASH) ? -2 : -3);
+            if (e.isPresent()) {
+                throw e.get();
             }
 
             if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
@@ -153,6 +146,27 @@ public class Shop {
         }
     }
 
+    public static Optional<MessageException> checkCeleInfo(CeleInfo cele,
+                                                           CelebrationRequest req, int player) {
+        MessageException me = null;
+
+        if (cele.isIncompatibleLevel(PlayerInfo.getLevel(player))) {
+            me = new MessageException("Incompatible level.", -9);
+        }
+
+        if (cele.isInvalidPaymentMode(req.getPayment())) {
+            me = new MessageException("Incompatible payment mode.",
+                    (req.getPayment() == Payment.CASH) ? -2 : -3);
+        }
+
+        if (cele.isInvalidPrice(req.getPrice(), req.getExpiration(), req.getPayment())) {
+            me = new MessageException("Invalid price.",
+                    (req.getPayment() == Payment.CASH) ? -2 : -3);
+        }
+
+        return Optional.ofNullable(me);
+    }
+
     public static void purchaseLearn(Session session, ClientMessage msg) {
         try (ConnectionRef con = ConnectionRef.ref()) {
             int playerId = session.getPlayerId();
@@ -162,25 +176,13 @@ public class Shop {
                 return;
             }
 
-            LearnInfo learnInfo = TableManager.getLearnInfo(c ->
-                    c.getId() == request.getProductId());
+            Optional<MessageException> e = TableManager
+                    .getLearnInfo(c -> c.getId() == request.getProductId())
+                    .map(learnInfo -> checkLearnInfo(learnInfo, request, playerId))
+                    .orElse(Optional.of(new MessageException("Training does not exist.", -1)));
 
-            if (learnInfo == null) {
-                throw new MessageException("Training does not exist.", -1);
-            }
-
-            if (learnInfo.isIncompatibleLevel(PlayerInfo.getLevel(playerId))) {
-                throw new MessageException("Incompatible level.", -9);
-            }
-
-            if (learnInfo.isInvalidPaymentMode(request.getPayment())) {
-                throw new MessageException("Incompatible payment mode.",
-                        (request.getPayment() == Payment.CASH) ? -2 : -3);
-            }
-
-            if (learnInfo.isInvalidPrice(request.getPrice(), request.getPayment())) {
-                throw new MessageException("Invalid price.",
-                        (request.getPayment() == Payment.CASH) ? -2 : -3);
+            if (e.isPresent()) {
+                throw e.get();
             }
 
             if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
@@ -203,9 +205,29 @@ public class Shop {
         }
     }
 
+    public static Optional<MessageException> checkLearnInfo(LearnInfo learn,
+                                                            LearnRequest req, int player) {
+        MessageException me = null;
+
+        if (learn.isIncompatibleLevel(PlayerInfo.getLevel(player))) {
+            me = new MessageException("Incompatible level.", -9);
+        }
+
+        if (learn.isInvalidPaymentMode(req.getPayment())) {
+            me = new MessageException("Incompatible payment mode.",
+                    (req.getPayment() == Payment.CASH) ? -2 : -3);
+        }
+
+        if (learn.isInvalidPrice(req.getPrice(), req.getPayment())) {
+            me = new MessageException("Invalid price.",
+                    (req.getPayment() == Payment.CASH) ? -2 : -3);
+        }
+
+        return Optional.ofNullable(me);
+    }
+
     public static void purchaseItem(Session session, ClientMessage msg) {
-        try (ConnectionRef con = ConnectionRef.ref()) {
-            int playerId = session.getPlayerId();
+        try {
             ItemRequest request = new ItemRequest(msg);
 
             if (isInvalidPaymentMode(request)) {
@@ -216,49 +238,43 @@ public class Shop {
                 throw new MessageException("Invalid expiration mode.", -1);
             }
 
-            ItemInfo itemInfo = TableManager.getItemInfo(c -> c.getId() == request.getProductId());
+            Optional<MessageException> e = TableManager
+                    .getItemInfo(c -> c.getId() == request.getProductId())
+                    .map(itemInfo -> {
+                        MessageException maybeException = null;
 
-            if (itemInfo == null) {
-                throw new MessageException("Item does not exist.", -1);
+                        try {
+                            tryPurchaseItem(itemInfo, request, session);
+                        } catch (MessageException me) {
+                            maybeException = me;
+                        } catch (SQLException se) {
+                            Output.println("Exception when purchasing Item: " +
+                                    se.getMessage(), Level.DEBUG);
+                        }
+
+                        return Optional.ofNullable(maybeException);
+                    }).orElse(Optional.of(new MessageException("Item does not exist.", -1)));
+
+            if (e.isPresent()) {
+                throw e.get();
+            }
+        } catch (MessageException e) {
+            session.send(MessageBuilder.purchaseItem(session, (short) e.getErrorCode()));
+        }
+    }
+
+    private static void tryPurchaseItem(ItemInfo itemInfo, ItemRequest req, Session session)
+            throws MessageException, SQLException {
+        try (ConnectionRef con = ConnectionRef.ref()) {
+            boolean isSpecialItem = SpecialItem.isSpecial(itemInfo.getType());
+
+            // TODO There should be a cleaner and more flexible approach.
+            if (!isSpecialItem && (req.getPayment() == Payment.POINTS) &&
+                    (req.getExpiration() == Expiration.DAYS_PERM)) {
+                throw new MessageException("Ignoring request.", -1);
             }
 
-            boolean isSpecialItem = SpecialItem.isSpecialItem(itemInfo.getType());
-
-            // TODO There should be a cleaner and more flexible way to do this.
-            if (!isSpecialItem && (request.getPayment() == Payment.POINTS) &&
-                    (request.getExpiration() == Expiration.DAYS_PERM)) {
-                return;
-            }
-
-            if (isClubSpecialItem(itemInfo)) {
-                throw new MessageException("Club special items are not yet implemented.", -11);
-            }
-
-            if (isClubItem(itemInfo)) {
-                throw new MessageException("Club items are not available in this shop.", -12);
-            }
-
-            if (itemInfo.isIncompatibleGender(session.getCache().getAnimation())) {
-                throw new MessageException("Incompatible gender.", -1);
-            }
-
-            short level = PlayerInfo.getLevel(playerId);
-
-            validateItemOptions(session, request, itemInfo, level);
-
-            if (itemInfo.isIncompatibleLevel(level)) {
-                throw new MessageException("Incompatible level.", -9);
-            }
-
-            if (itemInfo.isInvalidPaymentMode(request.getPayment())) {
-                throw new MessageException("Incompatible payment mode.",
-                        (request.getPayment() == Payment.CASH) ? -2 : -3);
-            }
-
-            if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
-                throw new MessageException("Not enough money.",
-                        (request.getPayment() == Payment.CASH) ? -8 : -5);
-            }
+            validateItem(itemInfo, req, session);
 
             if (isInventoryFull(session, con)) {
                 throw new MessageException("Inventory is full.", -10);
@@ -266,19 +282,47 @@ public class Shop {
 
             if (isSpecialItem) {
                 SpecialItem.applyEffect(itemInfo, session);
-                chargePlayer(session, request);
+                chargePlayer(session, req);
             } else {
-                doItemTransaction(session, request);
+                doItemTransaction(session, req);
             }
 
             session.send(MessageBuilder.purchaseItem(session, (short) 0, con));
             CharacterManager.sendItemList(session);
             CharacterManager.sendItemsInUseForcedUpdate(session);
+        }
+    }
 
-        } catch (MessageException e) {
-            session.send(MessageBuilder.purchaseItem(session, (short) e.getErrorCode()));
-        } catch (SQLException e) {
-            Output.println("Exception when purchasing Item: " + e.getMessage(), Level.DEBUG);
+    private static void validateItem(ItemInfo itemInfo, ItemRequest request, Session session)
+            throws MessageException {
+        if (isClubSpecialItem(itemInfo)) {
+            throw new MessageException("Club special items are not yet implemented.", -11);
+        }
+
+        if (isClubItem(itemInfo)) {
+            throw new MessageException("Club items are not available in this shop.", -12);
+        }
+
+        if (itemInfo.isIncompatibleGender(session.getCache().getAnimation())) {
+            throw new MessageException("Incompatible gender.", -1);
+        }
+
+        short level = PlayerInfo.getLevel(session.getPlayerId());
+
+        validateItemOptions(session, request, itemInfo, level);
+
+        if (itemInfo.isIncompatibleLevel(level)) {
+            throw new MessageException("Incompatible level.", -9);
+        }
+
+        if (itemInfo.isInvalidPaymentMode(request.getPayment())) {
+            throw new MessageException("Incompatible payment mode.",
+                    (request.getPayment() == Payment.CASH) ? -2 : -3);
+        }
+
+        if (request.getPrice() > getMoneyForPaymentMode(request.getPayment(), session)) {
+            throw new MessageException("Not enough money.",
+                    (request.getPayment() == Payment.CASH) ? -8 : -5);
         }
     }
 
@@ -286,10 +330,10 @@ public class Shop {
                                             ItemInfo itemInfo, short level)
             throws MessageException {
 
-        OptionInfo optionInfoOne = TableManager.getOptionInfo(c ->
-                c.getId() == request.getBonusOne());
-        OptionInfo optionInfoTwo = TableManager.getOptionInfo(c ->
-                c.getId() == request.getBonusTwo());
+        Optional<OptionInfo> optionInfoOne = TableManager
+                .getOptionInfo(c -> c.getId() == request.getBonusOne());
+        Optional<OptionInfo> optionInfoTwo = TableManager
+                .getOptionInfo(c -> c.getId() == request.getBonusTwo());
 
         if (request.hasInvalidBonus(optionInfoOne, optionInfoTwo)) {
             throw new MessageException("Invalid bonus.", -1);
@@ -309,25 +353,44 @@ public class Shop {
         if (itemInfo.getType() == ItemType.SKILL_SLOT.toInt()) {
             byte skillSlots = PlayerInfo.getSkillSlots(session.getCache().getItems());
             int purchasableSkillSlots = SKILL_SLOTS_LIMIT - skillSlots;
-            if ((optionInfoOne == null) || (optionInfoOne.getValue() > purchasableSkillSlots)) {
-                throw new MessageException("Cannot purchase more skill slots.", -12);
+
+            Optional<MessageException> e = optionInfoOne.map(optionOne -> {
+                MessageException me = null;
+
+                if (optionOne.getValue() > purchasableSkillSlots) {
+                    me = new MessageException("Cannot purchase more skill slots.", -12);
+                }
+
+                return Optional.ofNullable(me);
+            }).orElse(Optional.of(new MessageException("Item does not have skill slots.", -1)));
+
+            if (e.isPresent()) {
+                throw e.get();
             }
         }
     }
 
-    private static void validateItemBonuses(ItemRequest request, ItemInfo itemInfo,
-                                            OptionInfo one, OptionInfo two)
+    private static void validateItemBonuses(ItemRequest request, ItemInfo item,
+                                            Optional<OptionInfo> maybeOne,
+                                            Optional<OptionInfo> maybeTwo)
             throws MessageException {
 
-        BonusInfo itemBonusInfo = TableManager.getBonusInfo(bi ->
-                bi.getType() == itemInfo.getType());
+        Optional<MessageException> e = TableManager.getBonusInfo(b -> b.getType() == item.getType())
+                .map(itemBonusInfo -> {
+                    MessageException me = null;
 
-        if (itemBonusInfo.isIncompatibleWithExpiration(request.getExpiration())) {
-            throw new MessageException("Item type is incompatible with expiration mode.", -1);
-        }
+                    if (itemBonusInfo.isIncompatibleWithExpiration(request.getExpiration())) {
+                        me = new MessageException("Item is incompatible with expiration.", -1);
+                    } else if (itemBonusInfo.isIncompatibleWithBonuses(maybeOne, maybeTwo)) {
+                        me = new MessageException("Item is incompatible with bonus.", -1);
+                    }
 
-        if (itemBonusInfo.isIncompatibleWithBonuses(one, two)) {
-            throw new MessageException("Item is incompatible with the specified bonus.", -1);
+                    return Optional.ofNullable(me);
+                })
+                .orElse(Optional.of(new MessageException("Item bonus info not found.", -1)));
+
+        if (e.isPresent()) {
+            throw e.get();
         }
     }
 
@@ -384,7 +447,7 @@ public class Shop {
         return learn;
     }
 
-    private static Item doItemTransaction(Session session, ItemRequest request) {
+    private static void doItemTransaction(Session session, ItemRequest request) {
         Map<Integer, Item> items = session.getCache().getItems();
 
         int inventoryId = InventoryUtils.getSmallestMissingId(items.values());
@@ -399,8 +462,6 @@ public class Shop {
         CharacterUtils.updateItemsInUse(item, session);
 
         chargePlayer(session, request);
-
-        return item;
     }
 
     private static void chargePlayer(Session session, PurchaseRequest request) {
@@ -431,9 +492,10 @@ public class Shop {
     }
 
     private static boolean isInvalidItemPrice(ItemRequest request, ItemInfo itemInfo,
-                                              OptionInfo one, OptionInfo two) {
+                                              Optional<OptionInfo> maybeOne,
+                                              Optional<OptionInfo> maybeTwo) {
         int itemPrice = InventoryUtils.getItemPrice(itemInfo, request.getExpiration(),
-                request.getPayment(), one, two);
+                request.getPayment(), maybeOne, maybeTwo);
 
         return (itemPrice < 0) || (itemPrice != request.getPrice());
     }
@@ -521,8 +583,10 @@ public class Shop {
     }
 
     private static boolean isInvalidUniformItem(int itemId, ItemType requiredType) {
-        ItemInfo itemInfo = TableManager.getItemInfo(item -> item.getId() == itemId);
-        return (itemInfo == null) || (itemInfo.getGender() != Animation.ANY) ||
-                (itemInfo.getType() != requiredType.toInt());
+        return TableManager.getItemInfo(item -> item.getId() == itemId)
+                .map(itemInfo ->
+                        (itemInfo.getGender() != Animation.ANY) ||
+                        (itemInfo.getType() != requiredType.toInt())
+                ).orElse(true);
     }
 }

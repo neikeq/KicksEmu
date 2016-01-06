@@ -8,22 +8,33 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TableReader {
 
     private final List<Row> rows;
     private int index;
+    private final String tablePath;
 
-    public Row nextRow() throws IndexOutOfBoundsException {
+    public int getIndex() {
+        return index;
+    }
+
+    public Optional<Row> nextRow() throws IndexOutOfBoundsException {
         if (index < rows.size()) {
-            return rows.get(index++);
+            return Optional.of(rows.get(index++));
         }
 
-        return null;
+        return Optional.empty();
+    }
+
+    public String getTablePath() {
+        return tablePath;
     }
 
     public TableReader(String path) {
         rows = new ArrayList<>();
+        tablePath = path;
 
         try (FileReader fr = new FileReader(path);
              CSVReader reader = new CSVReader(fr, ',', '\"', 1)) {

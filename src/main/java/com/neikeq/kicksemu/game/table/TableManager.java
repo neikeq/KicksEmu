@@ -2,6 +2,8 @@ package com.neikeq.kicksemu.game.table;
 
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Constants;
+import com.neikeq.kicksemu.io.Output;
+import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.utils.SeasonRange;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.utils.table.Row;
@@ -68,152 +70,178 @@ public class TableManager {
         EXPERIENCE_LIMIT = lastLevel.getExperience() + lastLevel.getExperienceGap();
     }
 
-    public static SkillInfo getSkillInfo(Predicate<SkillInfo> filter) {
-        Optional<SkillInfo> result = skillsTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<SkillInfo> getSkillInfo(Predicate<SkillInfo> filter) {
+        return skillsTable.values().stream().filter(filter).findFirst();
     }
 
-    public static LevelInfo getLevelInfo(Predicate<LevelInfo> filter) {
-        Optional<LevelInfo> result = levelTable.values().stream().filter(filter)
-                .reduce((previous, current) -> current);
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<LevelInfo> getLevelInfo(Predicate<LevelInfo> filter) {
+        return levelTable.values().stream().filter(filter).reduce((previous, current) -> current);
     }
 
-    public static CeleInfo getCeleInfo(Predicate<CeleInfo> filter) {
-        Optional<CeleInfo> result = celebrationsTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<CeleInfo> getCeleInfo(Predicate<CeleInfo> filter) {
+        return celebrationsTable.values().stream().filter(filter).findFirst();
     }
 
-    public static LearnInfo getLearnInfo(Predicate<LearnInfo> filter) {
-        Optional<LearnInfo> result = learnTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<LearnInfo> getLearnInfo(Predicate<LearnInfo> filter) {
+        return learnTable.values().stream().filter(filter).findFirst();
     }
 
-    public static ItemFree getItemFree(Predicate<ItemFree> filter) {
-        Optional<ItemFree> result = itemFreeTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<ItemFree> getItemFree(Predicate<ItemFree> filter) {
+        return itemFreeTable.values().stream().filter(filter).findFirst();
     }
 
-    public static ItemInfo getItemInfo(Predicate<ItemInfo> filter) {
-        Optional<ItemInfo> result = itemTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<ItemInfo> getItemInfo(Predicate<ItemInfo> filter) {
+        return itemTable.values().stream().filter(filter).findFirst();
     }
 
-    public static BonusInfo getBonusInfo(Predicate<BonusInfo> filter) {
-        Optional<BonusInfo> result = bonusTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<BonusInfo> getBonusInfo(Predicate<BonusInfo> filter) {
+        return bonusTable.values().stream().filter(filter).findFirst();
     }
 
-    public static OptionInfo getOptionInfo(Predicate<OptionInfo> filter) {
-        Optional<OptionInfo> result = optionTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<OptionInfo> getOptionInfo(Predicate<OptionInfo> filter) {
+        return optionTable.values().stream().filter(filter).findFirst();
     }
 
-    public static MissionInfo getMissionInfo(Predicate<MissionInfo> filter) {
-        Optional<MissionInfo> result = missionTable.values().stream().filter(filter).findFirst();
-
-        return result.isPresent() ? result.get() : null;
+    public static Optional<MissionInfo> getMissionInfo(Predicate<MissionInfo> filter) {
+        return missionTable.values().stream().filter(filter).findFirst();
     }
 
     private static void initializeSkillTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_SKILL));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            SkillInfo row = new SkillInfo(line);
-            skillsTable.put(row.getId(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                SkillInfo element = new SkillInfo(maybeRow.get());
+                skillsTable.put(element.getId(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeCeleTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_CELE));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            CeleInfo row = new CeleInfo(line);
-            celebrationsTable.put(row.getId(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                CeleInfo element = new CeleInfo(maybeRow.get());
+                celebrationsTable.put(element.getId(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeLearnTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_LEARN));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            LearnInfo row = new LearnInfo(line);
-            learnTable.put(row.getId(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                LearnInfo element = new LearnInfo(maybeRow.get());
+                learnTable.put(element.getId(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeItemFreeTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_ITEM_FREE));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            ItemFree row = new ItemFree(line);
-            itemFreeTable.put(row.getId(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                ItemFree element = new ItemFree(maybeRow.get());
+                itemFreeTable.put(element.getId(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeItemTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_ITEM));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            ItemInfo row = new ItemInfo(line);
-            itemTable.put(row.getId(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                ItemInfo element = new ItemInfo(maybeRow.get());
+                itemTable.put(element.getId(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeBonusTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_BONUS));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            BonusInfo row = new BonusInfo(line);
-            bonusTable.put(row.getType(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                BonusInfo element = new BonusInfo(maybeRow.get());
+                bonusTable.put(element.getType(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeOptionTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_OPTION));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            OptionInfo row = new OptionInfo(line);
-            optionTable.put(row.getId(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                OptionInfo element = new OptionInfo(maybeRow.get());
+                optionTable.put(element.getId(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeLevelTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_LEVEL));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            LevelInfo row = new LevelInfo(line);
-            levelTable.put(row.getLevel(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            try {
+                LevelInfo element = new LevelInfo(maybeRow.get());
+                levelTable.put(element.getLevel(), element);
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), maybeRow.get(), reader.getIndex());
+            }
         }
     }
 
     private static void initializeMissionTable() {
         TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_MISSION));
 
-        Row line;
-        while ((line = reader.nextRow()) != null) {
-            boolean enabled = Integer.valueOf(line.columnAt(5)) == 1;
-            if (enabled) {
-                MissionInfo row = new MissionInfo(line);
-                missionTable.put(row.getId(), row);
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            Row row = maybeRow.get();
+            try {
+                boolean enabled = Integer.valueOf(row.columnAt(5)
+                        .orElseThrow(ParseRowException::new)) == 1;
+                if (enabled) {
+                    MissionInfo element = new MissionInfo(row);
+                    missionTable.put(element.getId(), element);
+                }
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), row, reader.getIndex());
             }
         }
+    }
+
+    private static void printParseWarning(ParseRowException e, String path, Row row, int index) {
+        Output.prints(Level.WARNING, e.getMessage(),
+                "Table:", path,
+                "Index:", String.valueOf(index),
+                "Column:", row.lastColumnIndex());
     }
 
     private static boolean isMissionUsable(short mission, Date date) {

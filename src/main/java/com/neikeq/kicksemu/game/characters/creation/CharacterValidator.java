@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 class CharacterValidator {
 
@@ -111,21 +112,17 @@ class CharacterValidator {
                 (character.getStats().getDefense() >= stats.getDefense());
     }
 
-    private static boolean containsValidItems(CharacterBase character) {
-        ItemFree head = TableManager.getItemFree(itemFree ->
-                (itemFree.getId() == character.getDefaultHead()) &&
-                        (itemFree.getType() == ItemType.HEAD.toInt()));
-        ItemFree shirt = TableManager.getItemFree(itemFree ->
-                (itemFree.getId() == character.getDefaultShirts()) &&
-                        (itemFree.getType() == ItemType.SHIRTS.toInt()));
-        ItemFree pant = TableManager.getItemFree(itemFree ->
-                (itemFree.getId() == character.getDefaultPants()) &&
-                        (itemFree.getType() == ItemType.PANTS.toInt()));
-        ItemFree shoes = TableManager.getItemFree(itemFree ->
-                (itemFree.getId() == character.getDefaultShoes()) &&
-                        (itemFree.getType() == ItemType.SHOES.toInt()));
+    private static boolean containsValidItems(CharacterBase cBase) {
+        Optional<ItemFree> head = TableManager.getItemFree(fi ->
+                (fi.getId() == cBase.getDefaultHead()) && (fi.getType() == ItemType.HEAD));
+        Optional<ItemFree> shirt = TableManager.getItemFree(fi ->
+                (fi.getId() == cBase.getDefaultShirts()) && (fi.getType() == ItemType.SHIRTS));
+        Optional<ItemFree> pant = TableManager.getItemFree(fi ->
+                (fi.getId() == cBase.getDefaultPants()) && (fi.getType() == ItemType.PANTS));
+        Optional<ItemFree> shoes = TableManager.getItemFree(fi ->
+                (fi.getId() == cBase.getDefaultShoes()) && (fi.getType() == ItemType.SHOES));
 
-        return (head != null) && (shirt != null) && (pant != null) && (shoes != null);
+        return head.isPresent() && shirt.isPresent() && pant.isPresent() && shoes.isPresent();
     }
 
     private static boolean isValidFace(CharacterBase character) {

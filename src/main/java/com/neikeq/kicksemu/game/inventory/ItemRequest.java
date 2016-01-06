@@ -5,6 +5,8 @@ import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 
+import java.util.Optional;
+
 class ItemRequest implements PurchaseRequest {
 
     private final int productId;
@@ -18,21 +20,25 @@ class ItemRequest implements PurchaseRequest {
         return getExpiration() == null;
     }
 
-    public boolean hasInvalidBonus(OptionInfo one, OptionInfo two) {
-        return isInvalidBonus(one, getBonusOne()) || isInvalidBonus(two, getBonusTwo());
+    public boolean hasInvalidBonus(Optional<OptionInfo> maybeOne, Optional<OptionInfo> maybeTwo) {
+        return isInvalidBonus(maybeOne, getBonusOne()) || isInvalidBonus(maybeTwo, getBonusTwo());
     }
 
-    public boolean hasIncompatibleBonusLevel(OptionInfo one, OptionInfo two, short level) {
-        return isIncompatibleBonusLevel(one, getBonusOne(), level) ||
-                isIncompatibleBonusLevel(two, getBonusTwo(), level);
+    public boolean hasIncompatibleBonusLevel(Optional<OptionInfo> maybeOne,
+                                             Optional<OptionInfo> maybeTwo, short level) {
+        return isIncompatibleBonusLevel(maybeOne, getBonusOne(), level) ||
+                isIncompatibleBonusLevel(maybeTwo, getBonusTwo(), level);
     }
 
-    private boolean isInvalidBonus(OptionInfo optionInfo, int bonusId) {
-        return (optionInfo == null) && (bonusId != 0);
+    private boolean isInvalidBonus(Optional<OptionInfo> maybeOptionInfo, int bonusId) {
+        return !maybeOptionInfo.isPresent() && (bonusId != 0);
     }
 
-    private boolean isIncompatibleBonusLevel(OptionInfo info, int bonusId, short level) {
-        return (bonusId != 0) && info.isIncompatibleLevel(level, getPayment());
+    private boolean isIncompatibleBonusLevel(Optional<OptionInfo> maybeInfo,
+                                             int bonusId, short level) {
+        return maybeInfo
+                .map(info -> (bonusId != 0) && info.isIncompatibleLevel(level, getPayment()))
+                .orElse(false);
     }
 
     public ItemRequest(ClientMessage msg) {
