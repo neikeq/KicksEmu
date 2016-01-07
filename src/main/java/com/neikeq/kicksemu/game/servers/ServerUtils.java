@@ -18,10 +18,8 @@ import java.util.List;
 public class ServerUtils {
 
     public static void serverList(Session session, ClientMessage msg) {
-        List<Short> servers = getServerList(msg.readShort());
-
-        short result = (short) (servers.isEmpty() ? -1 : 0);
-        session.send(MessageBuilder.serverList(servers, result));
+        short filter = msg.readShort();
+        session.send(MessageBuilder.serverList(getServerList(filter), (short) 0));
     }
 
     public static void serverInfo(Session session, ClientMessage msg) {
