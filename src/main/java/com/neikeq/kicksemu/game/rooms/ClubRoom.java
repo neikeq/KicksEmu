@@ -86,7 +86,7 @@ public class ClubRoom extends Room {
         }
 
         if (result != 0) {
-            session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), result));
+            session.send(joinRoomMessage(this, session.getPlayerId(), result));
         }
     }
 
