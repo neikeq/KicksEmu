@@ -156,14 +156,17 @@ public class KicksEmu {
     private static void dispose() {
         // Dispose server sockets
         Output.println(Localization.get("net.close"));
-        cleanNetworking();
+        disposeNetworking();
 
         // Update server online statics in database
         Output.println(Localization.get("mysql.clean"));
-        cleanDatabase();
+        disposeDatabase();
+
+        // Dispose EventsManager
+        EventsManager.shutdown();
     }
 
-    private static void cleanNetworking() {
+    private static void disposeNetworking() {
         if (ServerManager.getPlayers() != null) {
             ServerManager.getPlayers().values().forEach(Session::close);
         }
@@ -177,7 +180,7 @@ public class KicksEmu {
         }
     }
 
-    private static void cleanDatabase() {
+    private static void disposeDatabase() {
         short serverId = ServerManager.getServerId();
 
         if ((serverId > 0) && initialized) {

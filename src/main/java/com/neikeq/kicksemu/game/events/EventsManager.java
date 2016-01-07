@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.events;
 
 import com.neikeq.kicksemu.game.events.tournaments.TournamentEvent;
+import com.neikeq.kicksemu.io.Output;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -26,6 +27,14 @@ public class EventsManager {
     public static void cancelEvent(JobKey jobKey) throws SchedulerException {
         if (scheduler.checkExists(jobKey)) {
             scheduler.deleteJob(jobKey);
+        }
+    }
+
+    public static void shutdown() {
+        try {
+            scheduler.shutdown(false);
+        } catch (SchedulerException e) {
+            Output.println("Exception when trying to shutdown EventsManager's scheduler.");
         }
     }
 }
