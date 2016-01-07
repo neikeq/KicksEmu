@@ -117,7 +117,7 @@ public class ChallengeRoom extends Room implements Observer {
     @Override
     protected void addObserver(int playerId) {}
 
-    void onStateChanged() {
+    void onStateChanged(RoomState oldState) {
         if ((state() == RoomState.WAITING) && !getDisconnectedPlayers().isEmpty()) {
             // Notify players to remove disconnected player definitely
             getDisconnectedPlayers().forEach(playerId -> broadcast(

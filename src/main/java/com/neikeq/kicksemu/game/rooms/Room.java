@@ -123,7 +123,7 @@ public class Room {
         }
 
         if (result != 0) {
-            session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), result));
+            session.send(joinRoomMessage(this, session.getPlayerId(), result));
         }
     }
 
@@ -804,12 +804,13 @@ public class Room {
 
     public void setState(RoomState state) {
         synchronized (locker) {
+            RoomState oldState = this.state;
             this.state = state;
-            onStateChanged();
+            onStateChanged(oldState);
         }
     }
 
-    void onStateChanged() {
+    void onStateChanged(RoomState oldState) {
         if (state == RoomState.RESULT) {
             if (!getDisconnectedPlayers().isEmpty()) {
                 forcedResultAllowed = false;

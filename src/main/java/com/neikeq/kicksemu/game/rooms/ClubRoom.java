@@ -298,12 +298,18 @@ public class ClubRoom extends Room {
     @Override
     protected void addObserver(int playerId) {}
 
-    void onStateChanged() {
-        if ((state() == RoomState.WAITING) && !getDisconnectedPlayers().isEmpty()) {
-            // Notify players to remove disconnected player definitely
-            getDisconnectedPlayers().forEach(playerId -> broadcast(
-                    MessageBuilder.clubLeaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
-            getDisconnectedPlayers().clear();
+    void onStateChanged(RoomState oldState) {
+        if (state() == RoomState.WAITING) {
+            if (!getDisconnectedPlayers().isEmpty()) {
+                // Notify players to remove disconnected player definitely
+                getDisconnectedPlayers().forEach(playerId -> broadcast(
+                        MessageBuilder.clubLeaveRoom(playerId, RoomLeaveReason.DISCONNECTED)));
+                getDisconnectedPlayers().clear();
+            }
+
+            if ((oldState == RoomState.APPLYING) && TeamManager.isRegistered(getId())) {
+                TeamManager.unregister(getId());
+            }
         }
     }
 
