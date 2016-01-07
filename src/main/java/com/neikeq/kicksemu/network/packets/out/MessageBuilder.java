@@ -43,6 +43,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MessageBuilder {
     
@@ -138,7 +139,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage createCharacter(short result) {
-        return new ServerMessage(MessageId.CREATE_CHARACTER).writeShort(result);
+        return new ServerMessage(MessageId.CREATE_CHARACTER).withResult(result);
     }
 
     public static ServerMessage choiceCharacter(int characterId, short result) {
@@ -231,7 +232,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage upgradeCharacter(short result) {
-        return new ServerMessage(MessageId.UPGRADE_CHARACTER).writeShort(result);
+        return new ServerMessage(MessageId.UPGRADE_CHARACTER).withResult(result);
     }
 
     public static ServerMessage updateTutorial(TutorialState state, int reward, short result) {
@@ -251,7 +252,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage gameLogin(short result) {
-        return new ServerMessage(MessageId.GAME_LOGIN).writeShort(result);
+        return new ServerMessage(MessageId.GAME_LOGIN).withResult(result);
     }
 
     public static ServerMessage gameExit(InetSocketAddress clientIp, int characterId) {
@@ -269,7 +270,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage udpConfirm(boolean result) {
-        return new ServerMessage(MessageId.UDP_CONFIRM).writeShort((short) (result ? 0 : -3));
+        return new ServerMessage(MessageId.UDP_CONFIRM).withResult((short) (result ? 0 : -3));
     }
 
     public static ServerMessage playerInfo(Session session, short result, ConnectionRef ... con) {
@@ -450,11 +451,11 @@ public class MessageBuilder {
     }
 
     public static ServerMessage friendResponse(short result) {
-        return new ServerMessage(MessageId.FRIEND_RESPONSE).writeShort(result);
+        return new ServerMessage(MessageId.FRIEND_RESPONSE).withResult(result);
     }
 
     public static ServerMessage deleteFriend(short result) {
-        return new ServerMessage(MessageId.DELETE_FRIEND).writeShort(result);
+        return new ServerMessage(MessageId.DELETE_FRIEND).withResult(result);
     }
 
     public static ServerMessage clubInfo(int clubId) {
@@ -559,7 +560,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage unblockPlayer(short result) {
-        return new ServerMessage(MessageId.UNBLOCK_PLAYER).writeShort(result);
+        return new ServerMessage(MessageId.UNBLOCK_PLAYER).withResult(result);
     }
 
     public static ServerMessage statusMessage(String statusMessage, short result) {
@@ -641,8 +642,8 @@ public class MessageBuilder {
         if ((result == 0) && (room != null)) {
             msg.writeShort((short) room.getId());
 
-            RoomTeam team = room.getPlayerTeam(playerId);
-            short teamIndex = (team != null) ? (short) team.toInt() : -1;
+            short teamIndex = room.getPlayerTeam(playerId)
+                    .map(RoomTeam::toInt).orElse(-1).shortValue();
             msg.writeShort(teamIndex);
             msg.writeShort(teamIndex);
         }
@@ -651,7 +652,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage quickJoinRoom(short result) {
-        return new ServerMessage(MessageId.QUICK_JOIN_ROOM).writeShort(result);
+        return new ServerMessage(MessageId.QUICK_JOIN_ROOM).withResult(result);
     }
 
     public static ServerMessage nextTip(String tip, short result) {
@@ -699,8 +700,8 @@ public class MessageBuilder {
             int ownerId = session.getCache().getOwner(con);
             int clubId = MemberInfo.getClubId(playerId, con);
 
-            RoomTeam team = room.getPlayerTeam(playerId);
-            short teamIndex = (team != null) ? (short) team.toInt() : -1;
+            short teamIndex = room.getPlayerTeam(playerId)
+                    .map(RoomTeam::toInt).orElse(-1).shortValue();
 
             msg.writeBool(true, 2);
             msg.writeInt(playerId);
@@ -818,7 +819,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage kickPlayer(short result) {
-        return new ServerMessage(MessageId.KICK_PLAYER).writeShort(result);
+        return new ServerMessage(MessageId.KICK_PLAYER).withResult(result);
     }
 
     public static ServerMessage lobbyList(Integer[] players, byte page,
@@ -926,8 +927,8 @@ public class MessageBuilder {
         msg.writeShort(room.getCurrentSong());
         msg.writeShort(room.getMatchMission());
 
-        byte hostIndex = (byte) ((room.getPlayerTeam(room.getHost()) == RoomTeam.RED) ?
-                room.getRedTeam() : room.getBlueTeam()).indexOf(room.getHost());
+        byte hostIndex = room.getPlayerTeamPlayers(room.getHost())
+                .map(players -> players.indexOf(room.getHost())).orElse(0).byteValue();
 
         msg.writeInt(room.getHost());
         msg.writeByte(hostIndex);
@@ -935,8 +936,8 @@ public class MessageBuilder {
         room.getPlayers().keySet().stream()
                 .filter(playerId -> playerId != room.getHost())
                 .forEach(playerId -> {
-                    byte playerIndex = (byte) ((room.getPlayerTeam(playerId) == RoomTeam.RED) ?
-                            room.getRedTeam() : room.getBlueTeam()).indexOf(playerId);
+                    byte playerIndex = room.getPlayerTeamPlayers(playerId)
+                            .map(players -> players.indexOf(playerId)).orElse(0).byteValue();
 
                     msg.writeInt(playerId);
                     msg.writeByte(playerIndex);
@@ -946,11 +947,11 @@ public class MessageBuilder {
     }
 
     public static ServerMessage countDown(short count) {
-        return new ServerMessage(MessageId.COUNT_DOWN).writeShort(count);
+        return new ServerMessage(MessageId.COUNT_DOWN).withResult(count);
     }
 
     public static ServerMessage cancelCountDown() {
-        return new ServerMessage(MessageId.CANCEL_COUNT_DOWN).writeShort((short) 0);
+        return new ServerMessage(MessageId.CANCEL_COUNT_DOWN).withResult((short) 0);
     }
 
     public static ServerMessage matchLoading(int playerId, int roomId, short status) {
@@ -964,15 +965,15 @@ public class MessageBuilder {
     }
 
     public static ServerMessage playerReady(short result) {
-        return new ServerMessage(MessageId.PLAYER_READY).writeShort(result);
+        return new ServerMessage(MessageId.PLAYER_READY).withResult(result);
     }
 
     public static ServerMessage cancelLoading() {
-        return new ServerMessage(MessageId.CANCEL_LOADING).writeShort((short) 0);
+        return new ServerMessage(MessageId.CANCEL_LOADING).withResult((short) 0);
     }
 
     public static ServerMessage startMatch(short result) {
-        return new ServerMessage(MessageId.START_MATCH).writeShort(result);
+        return new ServerMessage(MessageId.START_MATCH).withResult(result);
     }
 
     public static ServerMessage matchResult(MatchResult result, PlayerResult playerResult,
@@ -1005,11 +1006,11 @@ public class MessageBuilder {
     }
 
     public static ServerMessage unknown1() {
-        return new ServerMessage(MessageId.ROOM_UNKNOWN1).writeShort((short) 0);
+        return new ServerMessage(MessageId.ROOM_UNKNOWN1).withResult((short) 0);
     }
 
     public static ServerMessage toRoomLobby() {
-        return new ServerMessage(MessageId.TO_ROOM_LOBBY).writeShort((short) 0);
+        return new ServerMessage(MessageId.TO_ROOM_LOBBY).withResult((short) 0);
     }
 
     public static ServerMessage updateRoomPlayer(int playerId, ConnectionRef ... con) {
@@ -1097,7 +1098,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage clubQuickJoinRoom(short result) {
-        return new ServerMessage(MessageId.CLUB_QUICK_JOIN).writeShort(result);
+        return new ServerMessage(MessageId.CLUB_QUICK_JOIN).withResult(result);
     }
 
     public static ServerMessage clubRoomCaptain(int playerId) {
@@ -1185,7 +1186,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage clubKickPlayer(short result) {
-        return new ServerMessage(MessageId.CLUB_KICK_PLAYER).writeShort(result);
+        return new ServerMessage(MessageId.CLUB_KICK_PLAYER).withResult(result);
     }
 
     public static ServerMessage clubRoomSettings(Room room, short result) {
@@ -1203,11 +1204,11 @@ public class MessageBuilder {
     }
 
     public static ServerMessage clubRegisterTeam(short result) {
-        return new ServerMessage(MessageId.CLUB_REGISTER_TEAM).writeShort(result);
+        return new ServerMessage(MessageId.CLUB_REGISTER_TEAM).withResult(result);
     }
 
     public static ServerMessage clubUnregisterTeam(short result) {
-        return new ServerMessage(MessageId.CLUB_UNREGISTER_TEAM).writeShort(result);
+        return new ServerMessage(MessageId.CLUB_UNREGISTER_TEAM).withResult(result);
     }
 
     public static ServerMessage clubTeamList(Map<Integer, ClubRoom> teams,
@@ -1222,7 +1223,7 @@ public class MessageBuilder {
             msg.writeBool(!team.isWaiting());
             msg.writeShort((short) team.getId());
             msg.writeString(team.getName(), 15);
-            msg.writeByte(room.getLevelGapDifferenceTo(team));
+            msg.writeByte(room.getLevelGapDifferenceTo(Optional.of(team)));
             msg.writeByte(team.getTotalWins());
         }
 
@@ -1252,7 +1253,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage clubCancelChallenge() {
-        return new ServerMessage(MessageId.CLUB_CANCEL_CHALLENGE).writeShort((short) 0);
+        return new ServerMessage(MessageId.CLUB_CANCEL_CHALLENGE).withResult((short) 0);
     }
 
     public static ServerMessage challengeRoomInfo(ChallengeRoom room) {
@@ -1532,7 +1533,7 @@ public class MessageBuilder {
     }
 
     public static ServerMessage updateSettings(short result) {
-        return new ServerMessage(MessageId.UPDATE_SETTINGS).writeShort(result);
+        return new ServerMessage(MessageId.UPDATE_SETTINGS).withResult(result);
     }
 
     public static ServerMessage playerDetails(Session session, short result) {

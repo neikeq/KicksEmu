@@ -10,7 +10,7 @@ import java.util.List;
 public class StatusMessage {
 
     // List of censured words
-    // TODO replace with client censured words? and use in ChatManager too?
+    // TODO replace with client's censured words table? and use in ChatManager too?
     private static final List<String> censuredWords = Arrays.asList(
             "<an_horrible_word>", "<another_horrible_word>"
     );

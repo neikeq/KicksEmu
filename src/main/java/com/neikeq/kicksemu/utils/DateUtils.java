@@ -47,10 +47,6 @@ public class DateUtils {
     }
 
     public static Timestamp toTimestamp(java.sql.Date date) {
-        if (date == null) {
-            return null;
-        }
-
         return new Timestamp(date.getTime());
     }
 
@@ -98,7 +94,7 @@ public class DateUtils {
         return calendar.get(Calendar.MINUTE);
     }
 
-    public static int stringToDayOfWeek(String str) {
+    public static int stringToDayOfWeek(String str) throws IllegalArgumentException {
         switch (str.toUpperCase()) {
             case "SUNDAY":
                 return Calendar.SUNDAY;
@@ -115,7 +111,7 @@ public class DateUtils {
             case "SATURDAY":
                 return Calendar.SATURDAY;
             default:
-                return -1;
+                throw new IllegalArgumentException("Cannot parse String to day of week: " + str);
         }
     }
 }

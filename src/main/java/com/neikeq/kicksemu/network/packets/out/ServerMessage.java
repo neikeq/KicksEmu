@@ -12,12 +12,16 @@ public class ServerMessage {
 
     private final ByteBuf body = ByteBufAllocator.DEFAULT.buffer().order(ByteOrder.LITTLE_ENDIAN);
 
-    public ServerMessage writeBool(boolean value) {
-        body.writeByte(value ? 1 : 0);
+    public ServerMessage withResult(short result) {
+        writeShort(result);
         return this;
     }
 
-    public ServerMessage writeBool(boolean value, int length) {
+    public void writeBool(boolean value) {
+        body.writeByte(value ? 1 : 0);
+    }
+
+    public void writeBool(boolean value, int length) {
         switch (length) {
             case 1:
                 writeBool(value);
@@ -30,26 +34,21 @@ public class ServerMessage {
                 break;
             default:
         }
-
-        return this;
     }
     
-    public ServerMessage writeByte(byte value) {
+    public void writeByte(byte value) {
         body.writeByte(value);
-        return this;
     }
     
-    public ServerMessage writeShort(short value) {
+    public void writeShort(short value) {
         body.writeShort(value);
-        return this;
     }
     
-    public ServerMessage writeInt(int value) {
+    public void writeInt(int value) {
         body.writeInt(value);
-        return this;
     }
 
-    private ServerMessage writeBytes(byte[] value, int length) {
+    private void writeBytes(byte[] value, int length) {
         int lengthFlag = (length > value.length) ? value.length : length;
 
         for (int i = 0; i < lengthFlag; i++) {
@@ -59,34 +58,28 @@ public class ServerMessage {
         if (lengthFlag < length) {
             writeZeros(length - lengthFlag);
         }
-
-        return this;
     }
 
-    public ServerMessage writeString(String value, int length) {
+    public void writeString(String value, int length) {
         if (value != null) {
             writeBytes(value.getBytes(Charset.forName("windows-1252")), length);
         } else {
             writeZeros(length);
         }
-
-        return this;
     }
 
-    public ServerMessage writeZeros(int length) {
-        if (length > 0)
+    public void writeZeros(int length) {
+        if (length > 0) {
             body.writeZero(length);
-        return this;
+        }
     }
 
-    public ServerMessage setShort(int index, short value) {
+    public void setShort(int index, short value) {
         body.setShort(index, value);
-        return this;
     }
 
-    public ServerMessage setInt(int index, int value) {
+    public void setInt(int index, int value) {
         body.setInt(index, value);
-        return this;
     }
 
     public ServerMessage retain() {
@@ -94,9 +87,8 @@ public class ServerMessage {
         return this;
     }
 
-    public ServerMessage release() {
+    public void release() {
         body.release();
-        return this;
     }
 
     public ByteBuf getByteBuf(int targetId) {

@@ -2,8 +2,10 @@ package com.neikeq.kicksemu.game.rooms.challenges;
 
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
+import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
 
 import java.util.Observable;
+import java.util.Optional;
 
 public class Challenge extends Observable {
 
@@ -12,6 +14,10 @@ public class Challenge extends Observable {
     private final ClubRoom blueTeam;
     private final ChallengeRoom room;
     private boolean canceled;
+
+    public Optional<ClubRoom> getClubRoomForTeam(Optional<RoomTeam> maybeTeam) {
+        return maybeTeam.map(team -> (team == RoomTeam.RED) ? redTeam : blueTeam);
+    }
 
     public void cancel() {
         canceled = true;

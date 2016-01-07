@@ -92,8 +92,9 @@ public class ChallengeRoom extends Room implements Observer {
 
     @Override
     void sendRoomPlayersInfo(Session session) {
-        List<Integer> team = (getPlayerTeam(session.getPlayerId()) == RoomTeam.RED) ?
-                getBlueTeam() : getRedTeam();
+        List<Integer> team = getPlayerTeam(session.getPlayerId())
+                .map(playerTeam -> (playerTeam == RoomTeam.RED) ? getBlueTeam() : getRedTeam())
+                .orElse(new ArrayList<>());
         try (ConnectionRef con = ConnectionRef.ref()) {
             team.forEach(player ->
                     session.send(roomPlayerInfoMessage(getPlayer(player), con)));

@@ -2,11 +2,20 @@ package com.neikeq.kicksemu.utils.table;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Row {
 
     private final List<String> columns;
     private int index;
+
+    private boolean hasColumn(int index) {
+        return (index >= 0) && (columns.size() > index);
+    }
+
+    public String lastColumnIndex() {
+        return String.valueOf(index - 1);
+    }
 
     public void ignoreColumn() {
         index++;
@@ -17,15 +26,15 @@ public class Row {
     }
 
     public boolean hasNext() {
-        return columns.size() > index;
+        return hasColumn(index);
     }
 
-    public String nextColumn() throws IndexOutOfBoundsException {
-        return columns.get(index++);
+    public Optional<String> nextColumn() throws IndexOutOfBoundsException {
+        return hasColumn(index) ? Optional.of(columns.get(index++)) : Optional.empty();
     }
 
-    public String columnAt(int idx) throws IndexOutOfBoundsException {
-        return columns.get(idx);
+    public Optional<String> columnAt(int index) throws IndexOutOfBoundsException {
+        return hasColumn(index) ? Optional.of(columns.get(index)) : Optional.empty();
     }
 
     public Row(String[] row) {

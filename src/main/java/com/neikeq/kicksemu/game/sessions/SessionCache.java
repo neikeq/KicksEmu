@@ -12,49 +12,50 @@ import com.neikeq.kicksemu.utils.DateUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SessionCache {
 
     private final Session parent;
 
-    private DefaultClothes defaultClothes;
-    private String name;
-    private Integer owner;
-    private Animation animation;
-    private Short position;
+    private Optional<DefaultClothes> defaultClothes = Optional.empty();
+    private Optional<String> name = Optional.empty();
+    private Optional<Integer> owner = Optional.empty();
+    private Optional<Animation> animation = Optional.empty();
+    private Optional<Short> position = Optional.empty();
 
-    private Map<Integer, Item> items;
-    private Map<Integer, Skill> skills;
-    private Map<Integer, Celebration> celebrations;
-    private Map<Integer, Training> learns;
+    private Optional<Map<Integer, Item>> items = Optional.empty();
+    private Optional<Map<Integer, Skill>> skills = Optional.empty();
+    private Optional<Map<Integer, Celebration>> celebrations = Optional.empty();
+    private Optional<Map<Integer, Training>> learns = Optional.empty();
 
     public void clear() {
-        owner = null;
-        defaultClothes = null;
-        animation = null;
-        position = null;
-        name = null;
+        owner = Optional.empty();
+        defaultClothes = Optional.empty();
+        animation = Optional.empty();
+        position = Optional.empty();
+        name = Optional.empty();
 
-        if (items != null) {
-            items.clear();
-            items = null;
-        }
+        items = items.flatMap(i -> {
+            i.clear();
+            return Optional.empty();
+        });
 
-        if (skills != null) {
-            skills.clear();
-            skills = null;
-        }
+        skills = skills.flatMap(i -> {
+            i.clear();
+            return Optional.empty();
+        });
 
-        if (celebrations != null) {
-            celebrations.clear();
-            celebrations = null;
-        }
+        celebrations = celebrations.flatMap(i -> {
+            i.clear();
+            return Optional.empty();
+        });
 
-        if (learns != null) {
-            learns.clear();
-            learns = null;
-        }
+        learns = learns.flatMap(i -> {
+            i.clear();
+            return Optional.empty();
+        });
     }
 
     public SessionCache(Session parent) {
@@ -62,119 +63,87 @@ public class SessionCache {
     }
 
     public Integer getOwner(ConnectionRef ... con) {
-        if (owner == null) {
-            owner = PlayerInfo.getOwner(parent.getPlayerId(), con);
-        }
-
-        return owner;
+        owner = Optional.of(owner.orElse(PlayerInfo.getOwner(parent.getPlayerId(), con)));
+        return owner.get();
     }
 
     public Animation getAnimation(ConnectionRef ... con) {
-        if (animation == null) {
-            animation = Animation.fromShort(PlayerInfo.getAnimation(parent.getPlayerId(), con));
-        }
-
-        return animation;
+        animation = Optional.of(animation
+                .orElse(Animation.fromShort(PlayerInfo.getAnimation(parent.getPlayerId(), con))));
+        return animation.get();
     }
 
     public String getName(ConnectionRef ... con) {
-        if (name == null) {
-            name = PlayerInfo.getName(parent.getPlayerId(), con);
-        }
-
-        return name;
+        name = Optional.of(name.orElse(PlayerInfo.getName(parent.getPlayerId(), con)));
+        return name.get();
     }
 
     public Map<Integer, Item> getItems(ConnectionRef ... con) {
-        if (items == null) {
-            items = PlayerInfo.getInventoryItems(parent.getPlayerId(), con);
-        }
-
-        items = items.values().stream()
-                .filter(i ->
-                        (i.getExpiration().isUsage() && (i.getUsages() > 0)) ||
-                                (i.getExpiration().isDays() &&
-                                        i.getTimestampExpire().after(DateUtils.getTimestamp())) ||
-                                i.getExpiration().isPermanent())
-                .collect(Collectors.toMap(Item::getInventoryId, i -> i,
-                        (i1, i2) -> null, LinkedHashMap::new));
-
-        return items;
+        items = Optional.of(items.orElse(PlayerInfo.getInventoryItems(parent.getPlayerId(), con)))
+                .map(i -> i.values().stream()
+                        .filter(it ->
+                                (it.getExpiration().isUsage() && (it.getUsages() > 0)) ||
+                                        (it.getExpiration().isDays() &&
+                                                it.getTimestampExpire()
+                                                        .after(DateUtils.getTimestamp())) ||
+                                        it.getExpiration().isPermanent())
+                            .collect(Collectors.toMap(Item::getInventoryId, it -> it,
+                                    (i1, i2) -> null, LinkedHashMap::new)));
+        return items.get();
     }
 
     public void addItem(int inventoryId, Item item) {
-        if (items != null) {
-            items.put(inventoryId, item);
-        }
+        items.ifPresent(i -> i.put(inventoryId, item));
     }
 
     public Map<Integer, Skill> getSkills(ConnectionRef ... con) {
-        if (skills == null) {
-            skills = PlayerInfo.getInventorySkills(parent, con);
-        }
-
-        skills = skills.values().stream()
-                .filter(s -> s.getTimestampExpire().after(DateUtils.getTimestamp()) ||
-                        s.getExpiration().isPermanent())
-                .collect(Collectors.toMap(Skill::getInventoryId, s -> s,
-                        (s1, s2) -> null, LinkedHashMap::new));
-
-        return skills;
+        skills = Optional.of(skills.orElse(PlayerInfo.getInventorySkills(parent, con)))
+                .map(i -> i.values().stream()
+                        .filter(s -> s.getTimestampExpire().after(DateUtils.getTimestamp()) ||
+                                s.getExpiration().isPermanent())
+                        .collect(Collectors.toMap(Skill::getInventoryId, s -> s,
+                                (s1, s2) -> null, LinkedHashMap::new)));
+        return skills.get();
     }
 
     public void addSkill(int inventoryId, Skill skill) {
-        if (skills != null) {
-            skills.put(inventoryId, skill);
-        }
+        skills.ifPresent(i -> i.put(inventoryId, skill));
     }
 
     public Map<Integer, Celebration> getCelebrations(ConnectionRef ... con) {
-        if (celebrations == null) {
-            celebrations = PlayerInfo.getInventoryCelebration(parent.getPlayerId(), con);
-        }
-
-        celebrations = celebrations.values().stream()
-                .filter(c -> c.getTimestampExpire().after(DateUtils.getTimestamp()) ||
-                        c.getExpiration().isPermanent())
-                .collect(Collectors.toMap(Celebration::getInventoryId, c -> c,
-                        (c1, c2) -> null, LinkedHashMap::new));
-
-        return celebrations;
+        celebrations = Optional
+                .of(celebrations
+                        .orElse(PlayerInfo.getInventoryCelebration(parent.getPlayerId(), con)))
+                .map(i -> i.values().stream()
+                        .filter(c -> c.getTimestampExpire().after(DateUtils.getTimestamp()) ||
+                                c.getExpiration().isPermanent())
+                        .collect(Collectors.toMap(Celebration::getInventoryId, c -> c,
+                                (c1, c2) -> null, LinkedHashMap::new)));
+        return celebrations.get();
     }
 
     public void addCele(int inventoryId, Celebration cele) {
-        if (celebrations != null) {
-            celebrations.put(inventoryId, cele);
-        }
+        celebrations.ifPresent(i -> i.put(inventoryId, cele));
     }
 
     public Map<Integer, Training> getLearns(ConnectionRef ... con) {
-        if (learns == null) {
-            learns = PlayerInfo.getInventoryTraining(parent.getPlayerId(), con);
-        }
-
-        return learns;
+        learns = Optional.of(learns
+                .orElse(PlayerInfo.getInventoryTraining(parent.getPlayerId(), con)));
+        return learns.get();
     }
 
     public void addLearn(int inventoryId, Training learn) {
-        if (learns != null) {
-            learns.put(inventoryId, learn);
-        }
+        learns.ifPresent(i -> i.put(inventoryId, learn));
     }
 
     public DefaultClothes getDefaultClothes(ConnectionRef ... con) {
-        if (defaultClothes == null) {
-            defaultClothes = PlayerInfo.getDefaultClothes(parent.getPlayerId(), con);
-        }
-
-        return defaultClothes;
+        defaultClothes = Optional.of(defaultClothes
+                .orElse(PlayerInfo.getDefaultClothes(parent.getPlayerId(), con)));
+        return defaultClothes.get();
     }
 
     public Short getPosition(ConnectionRef ... con) {
-        if (position == null) {
-            position = PlayerInfo.getPosition(parent.getPlayerId(), con);
-        }
-
-        return position;
+        position = Optional.of(position.orElse(PlayerInfo.getPosition(parent.getPlayerId(), con)));
+        return position.get();
     }
 }

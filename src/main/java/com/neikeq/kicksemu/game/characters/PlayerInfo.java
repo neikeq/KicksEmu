@@ -13,8 +13,6 @@ import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.inventory.products.Skill;
 import com.neikeq.kicksemu.game.inventory.products.Training;
 import com.neikeq.kicksemu.game.table.TableManager;
-import com.neikeq.kicksemu.game.table.ItemInfo;
-import com.neikeq.kicksemu.game.table.LearnInfo;
 import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.game.misc.friendship.FriendsList;
 import com.neikeq.kicksemu.game.misc.ignored.IgnoredList;
@@ -193,22 +191,22 @@ public class PlayerInfo {
 
         while (items.hasNext()) {
             Item item = items.next();
-            OptionInfo optionInfo = TableManager.getOptionInfo(oi ->
-                    oi.getId() == item.getBonusOne());
 
-            slots += optionInfo.getValue();
+            slots += TableManager.getOptionInfo(oi -> oi.getId() == item.getBonusOne())
+                    .map(OptionInfo::getValue).orElse((short) 0);
         }
 
         return slots;
     }
 
     public static Item getItemInUseByType(ItemType type, Session session, ConnectionRef ... con) {
-        Optional<Item> result = session.getCache().getItems(con).values().stream().filter(item -> {
-            ItemInfo itemInfo = TableManager.getItemInfo(i -> i.getId() == item.getId());
-            return (itemInfo != null) && (itemInfo.getType() == type.toInt()) && item.isSelected();
-        }).findFirst();
+        Optional<Item> result = session.getCache().getItems(con).values().stream()
+                .filter(item -> TableManager.getItemInfo(i -> i.getId() == item.getId())
+                        .map(itemInfo -> (itemInfo.getType() == type.toInt()) && item.isSelected())
+                        .orElse(false))
+                .findFirst();
 
-        return result.isPresent() ? result.get() : null;
+        return result.map(item -> item).orElse(null);
     }
 
     public static Item getItemHead(Session session, ConnectionRef ... con) {
@@ -307,14 +305,11 @@ public class PlayerInfo {
     public static PlayerStats getTrainingStats(Session session, ConnectionRef ... con) {
         PlayerStats learnStats = new PlayerStats();
 
-        session.getCache().getLearns(con).values().stream().forEach(learn -> {
-            LearnInfo learnInfo = TableManager.getLearnInfo(l -> l.getId() == learn.getId());
-
-            if (learnInfo != null) {
-                CharacterUtils.sumStatsByIndex(learnInfo.getStatIndex(),
-                        learnInfo.getStatPoints(), learnStats);
-            }
-        });
+        session.getCache().getLearns(con).values().stream().forEach(learn ->
+                TableManager.getLearnInfo(l -> l.getId() == learn.getId())
+                        .ifPresent(learnInfo ->
+                                CharacterUtils.sumStatsByIndex(learnInfo.getStatIndex(),
+                                        learnInfo.getStatPoints(), learnStats)));
 
         return learnStats;
     }
@@ -323,21 +318,16 @@ public class PlayerInfo {
         PlayerStats bonusStats = new PlayerStats();
 
         session.getCache().getItems(con).values().stream().filter(Item::isSelected).forEach(item -> {
-            OptionInfo optionInfoOne = TableManager.getOptionInfo(of ->
-                    of.getId() == item.getBonusOne());
-            OptionInfo optionInfoTwo = TableManager.getOptionInfo(of ->
-                    of.getId() == item.getBonusTwo());
+            TableManager.getOptionInfo(of -> of.getId() == item.getBonusOne())
+                    .ifPresent(optionInfoOne ->
+                            CharacterUtils.sumStatsByIndex(optionInfoOne.getType() - 10,
+                                    optionInfoOne.getValue(), bonusStats));
 
-            if (optionInfoOne != null) {
-                CharacterUtils.sumStatsByIndex(optionInfoOne.getType() - 10,
-                        optionInfoOne.getValue(), bonusStats);
-            }
-
-            if (optionInfoTwo != null) {
-                CharacterUtils.sumStatsByIndex(optionInfoTwo.getType() - 10,
-                        optionInfoTwo.getValue(), bonusStats);
-            }
-        });
+            TableManager.getOptionInfo(of -> of.getId() == item.getBonusTwo())
+                    .ifPresent(optionInfoTwo ->
+                            CharacterUtils.sumStatsByIndex(optionInfoTwo.getType() - 10,
+                                    optionInfoTwo.getValue(), bonusStats));
+            });
 
         return bonusStats;
     }

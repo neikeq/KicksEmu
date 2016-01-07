@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -466,14 +467,32 @@ public class Room {
         setHost((Integer) getPlayers().keySet().toArray()[0]);
     }
 
-    public RoomTeam getPlayerTeam(int playerId) {
+    public Optional<List<Integer>> getPlayerTeamPlayers(int playerId) {
+        return getTeamPlayers(getPlayerTeam(playerId));
+    }
+
+    public Optional<List<Integer>> getTeamPlayers(Optional<RoomTeam> team) {
+        return team.map(t -> (t == RoomTeam.RED) ? getRedTeam() : getBlueTeam());
+    }
+
+    public Optional<RoomTeam> getPlayerTeam(int playerId) {
         if (getRedTeam().contains(playerId)) {
-            return RoomTeam.RED;
+            return Optional.of(RoomTeam.RED);
         } else if (getBlueTeam().contains(playerId)) {
-            return RoomTeam.BLUE;
+            return Optional.of(RoomTeam.BLUE);
         }
 
-        return null;
+        return Optional.empty();
+    }
+
+    public Optional<RoomTeam> getPlayerRivalTeam(int playerId) {
+        if (getRedTeam().contains(playerId)) {
+            return Optional.of(RoomTeam.BLUE);
+        } else if (getBlueTeam().contains(playerId)) {
+            return Optional.of(RoomTeam.RED);
+        }
+
+        return Optional.empty();
     }
 
     ServerMessage roomPlayerInfoMessage(Session session, ConnectionRef... con) {
@@ -535,15 +554,11 @@ public class Room {
         }
     }
 
-    public void broadcastToTeam(ServerMessage msg, RoomTeam team, int broadcaster) {
+    public void broadcastToTeam(ServerMessage msg, Optional<RoomTeam> maybeTeam, int sender) {
         try {
-            if (team != null) {
-                List<Integer> teamPlayers = (team == RoomTeam.RED) ? getRedTeam() : getBlueTeam();
-
-                teamPlayers.stream()
-                        .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(broadcaster))
-                        .forEach(playerId -> getPlayer(playerId).sendAndFlush(msg.retain()));
-            }
+            getTeamPlayers(maybeTeam).ifPresent(teamPlayers -> teamPlayers.stream()
+                    .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(sender))
+                    .forEach(playerId -> getPlayer(playerId).sendAndFlush(msg.retain())));
         } finally {
             msg.release();
         }
@@ -828,13 +843,17 @@ public class Room {
         return loadingTimeoutFuture;
     }
 
+    public boolean hasMatchMission() {
+        return getMatchMission() != 0;
+    }
+
     public short getMatchMission() {
         return matchMission;
     }
 
-    public MissionInfo getMatchMissionInfo() {
-        return (matchMission == 0) ?
-                null : TableManager.getMissionInfo(m -> m.getId() == getMatchMission());
+    public Optional<MissionInfo> getMatchMissionInfo() {
+        return hasMatchMission() ? Optional.empty() :
+                TableManager.getMissionInfo(m -> m.getId() == getMatchMission());
     }
 
     public List<Integer> getDisconnectedPlayers() {

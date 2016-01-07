@@ -31,29 +31,7 @@ public class TutorialManager {
                 try (ConnectionRef con = ConnectionRef.ref()) {
                     TutorialState tutorialState = PlayerInfo.getTutorialState(characterId, con);
 
-                    boolean updated;
-
-                    // TODO move to method. from here...
-
-                    if (updated = areDifferent(suspiciousState.getDribbling(), tutorialState.getDribbling())) {
-                        tutorialState.setDribbling(suspiciousState.getDribbling());
-                    }
-
-                    if (updated |= areDifferent(suspiciousState.getPassing(), tutorialState.getPassing())) {
-                        tutorialState.setPassing(suspiciousState.getPassing());
-                    }
-
-                    if (updated |= areDifferent(suspiciousState.getShooting(), tutorialState.getShooting())) {
-                        tutorialState.setShooting(suspiciousState.getShooting());
-                    }
-
-                    if (updated |= areDifferent(suspiciousState.getDefense(), tutorialState.getDefense())) {
-                        tutorialState.setDefense(suspiciousState.getDefense());
-                    }
-
-                    // TODO ... to here
-
-                    if (updated) {
+                    if (tutorialChanged(tutorialState, suspiciousState)) {
                         PlayerInfo.setTutorialState(tutorialState, characterId, con);
                     }
 
@@ -70,6 +48,28 @@ public class TutorialManager {
         }
 
         session.send(MessageBuilder.updateTutorial(suspiciousState, reward, result));
+    }
+
+    private static boolean tutorialChanged(TutorialState storedState, TutorialState newState) {
+        boolean updated;
+
+        if (updated = areDifferent(newState.getDribbling(), storedState.getDribbling())) {
+            storedState.setDribbling(newState.getDribbling());
+        }
+
+        if (updated |= areDifferent(newState.getPassing(), storedState.getPassing())) {
+            storedState.setPassing(newState.getPassing());
+        }
+
+        if (updated |= areDifferent(newState.getShooting(), storedState.getShooting())) {
+            storedState.setShooting(newState.getShooting());
+        }
+
+        if (updated |= areDifferent(newState.getDefense(), storedState.getDefense())) {
+            storedState.setDefense(newState.getDefense());
+        }
+
+        return updated;
     }
 
     private static boolean areDifferent(byte tutorial, byte storedTutorial) {

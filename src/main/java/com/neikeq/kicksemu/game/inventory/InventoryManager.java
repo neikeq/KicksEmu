@@ -12,7 +12,6 @@ import com.neikeq.kicksemu.game.inventory.products.Skill;
 import com.neikeq.kicksemu.game.inventory.types.ItemType;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
 import com.neikeq.kicksemu.game.sessions.Session;
-import com.neikeq.kicksemu.game.table.ItemInfo;
 import com.neikeq.kicksemu.game.table.OptionInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.io.Output;
@@ -27,6 +26,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class InventoryManager {
 
@@ -185,25 +185,19 @@ public class InventoryManager {
     }
 
     private static short deactivateItem(Session session, Item item) {
-        short result = 0;
+        return (item != null) ?
+                TableManager.getItemInfo(o -> o.getId() == item.getId()).map(itemInfo -> {
+                    // Deactivate item
+                    ItemType itemType = ItemType.fromInt(itemInfo.getType())
+                            .orElseThrow(IllegalStateException::new);
+                    item.deactivateGracefully(itemType, session);
+                    session.send(MessageBuilder.deactivateItem(item.getInventoryId(),
+                            session, (short) 0));
 
-        int playerId = session.getPlayerId();
+                    PlayerInfo.setInventoryItem(item, session.getPlayerId());
 
-        // If item exists
-        if (item != null) {
-            ItemInfo itemInfo = TableManager.getItemInfo(o ->
-                    o.getId() == item.getId());
-
-            // Deactivate item
-            item.deactivateGracefully(ItemType.fromInt(itemInfo.getType()), session);
-            session.send(MessageBuilder.deactivateItem(item.getInventoryId(), session, result));
-
-            PlayerInfo.setInventoryItem(item, playerId);
-        } else {
-            result = -2; // Item does not exists
-        }
-
-        return result;
+                    return 0;
+                }).orElse(-2).shortValue() : -2; // Item does not exists;
     }
 
     public static void resellItem(Session session, ClientMessage msg) {
@@ -213,34 +207,35 @@ public class InventoryManager {
 
         Map<Integer, Item> items = session.getCache().getItems();
 
-        short result = 0;
+        short result;
 
         if (items.containsKey(inventoryId)) {
             Item item = items.get(inventoryId);
 
-            if (item.getExpiration().isPermanent()) {
-                ItemInfo itemInfo = TableManager.getItemInfo(ii -> ii.getId() == item.getId());
+            result = item.getExpiration().isPermanent() ?
+                    TableManager.getItemInfo(ii -> ii.getId() == item.getId())
+                            .map(itemInfo -> {
+                                Optional<OptionInfo> bonusOne = TableManager.getOptionInfo(oi ->
+                                        oi.getId() == item.getBonusOne());
+                                Optional<OptionInfo> bonusTwo = TableManager.getOptionInfo(oi ->
+                                        oi.getId() == item.getBonusTwo());
 
-                OptionInfo bonusOne = TableManager.getOptionInfo(oi ->
-                        oi.getId() == item.getBonusOne());
-                OptionInfo bonusTwo = TableManager.getOptionInfo(oi ->
-                        oi.getId() == item.getBonusTwo());
+                                int itemPrice = InventoryUtils.getItemPrice(itemInfo,
+                                        item.getExpiration(), Payment.POINTS, bonusOne, bonusTwo);
 
-                int itemPrice = InventoryUtils.getItemPrice(itemInfo, item.getExpiration(),
-                        Payment.POINTS, bonusOne, bonusTwo);
+                                // If the specified refund is valid
+                                if (refund == (itemPrice / 10)) {
+                                    PlayerInfo.removeInventoryItem(item, playerId);
+                                    items.remove(item.getInventoryId());
 
-                // If the specified refund is valid
-                if (refund == (itemPrice / 10)) {
-                    PlayerInfo.removeInventoryItem(item, playerId);
-                    items.remove(item.getInventoryId());
+                                    PlayerInfo.sumPoints(refund, playerId);
+                                } else {
+                                    return -3; // Invalid refund
+                                }
 
-                    PlayerInfo.sumPoints(refund, playerId);
-                } else {
-                    result = -3; // Invalid refund
-                }
-            } else {
-                result = -4; // The item is not permanent
-            }
+                                return 0;
+                            }).orElse(-2).shortValue() :
+                    -4; // The item is not permanent
         } else {
             result = -2; // Item does not exists
         }

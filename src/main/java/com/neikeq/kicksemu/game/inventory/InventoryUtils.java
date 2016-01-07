@@ -20,18 +20,22 @@ import java.util.stream.Collectors;
 
 class InventoryUtils {
 
-    public static int getItemPrice(ItemInfo itemInfo, Expiration expiration, Payment payment,
-                                   OptionInfo bonusOne, OptionInfo bonusTwo) {
+    public static int getItemPrice(ItemInfo itemInfo,
+                                   Expiration expiration, Payment payment,
+                                   Optional<OptionInfo> maybeBonusOne,
+                                   Optional<OptionInfo> maybeBonusTwo) {
         // Basic price without bonuses
         int price = itemInfo.getPrice().getPriceFor(expiration, payment);
 
         // Add the price for the first bonus
-        price += (bonusOne == null) ? 0 :
-                bonusOne.getPrice().getPriceFor(expiration, payment);
+        price += maybeBonusOne.map(bonusOne ->
+                bonusOne.getPrice().getPriceFor(expiration, payment))
+                .orElse(0);
 
         // Add the price for the second bonus
-        price += (bonusTwo == null) ? 0 :
-                bonusTwo.getPrice().getPriceFor(expiration, payment);
+        price += maybeBonusTwo.map(bonusTwo ->
+                bonusTwo.getPrice().getPriceFor(expiration, payment))
+                .orElse(0);
 
         return price;
     }

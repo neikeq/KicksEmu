@@ -26,17 +26,23 @@ public class ItemInfo {
         return payment.isIncompatibleWith(suspiciousPayment);
     }
 
-    public ItemInfo(Row row) {
-        row.ignoreColumn();
-        id = Integer.valueOf(row.nextColumn());
-        type = Integer.valueOf(row.nextColumn());
-        row.ignoreColumns(2);
-        gender = Animation.fromShort(Short.valueOf(row.nextColumn()));
-        level = Short.valueOf(row.nextColumn());
-        row.ignoreColumns(4);
-        payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));
-        row.ignoreColumn();
-        price = new Price(row);
+    public ItemInfo(Row row) throws ParseRowException {
+        try {
+            row.ignoreColumn();
+            id = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+            type = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+            row.ignoreColumns(2);
+            gender = Animation.fromShort(Short.valueOf(row.nextColumn()
+                    .orElseThrow(ParseRowException::new)));
+            level = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+            row.ignoreColumns(4);
+            payment = Payment.fromInt(Integer.valueOf(row.nextColumn()
+                    .orElseThrow(ParseRowException::new)));
+            row.ignoreColumn();
+            price = new Price(row);
+        } catch (NumberFormatException e) {
+            throw new ParseRowException();
+        }
     }
 
     public int getId() {

@@ -10,13 +10,14 @@ import com.neikeq.kicksemu.game.misc.quests.MissionTarget;
 import com.neikeq.kicksemu.game.misc.quests.QuestManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomTeam;
-import com.neikeq.kicksemu.game.rooms.enums.VictoryResult;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.table.MissionInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+
+import java.util.Optional;
 
 
 class PlayerRewards {
@@ -97,8 +98,10 @@ class PlayerRewards {
         // If player's base position is DF
         short playerPosition = session.getCache().getPosition(connection());
         if (Position.basePosition(playerPosition) == Position.DF) {
-            short scoredGoals = resultHandler.getPlayerTeamResult(playerId).getGoals();
-            short concededGoals = resultHandler.getRivalTeamResult(playerId).getGoals();
+            short scoredGoals = resultHandler.getPlayerTeamResult(playerId)
+                    .map(TeamResult::getGoals).orElse((short) 0);
+            short concededGoals = resultHandler.getRivalTeamResult(playerId)
+                    .map(TeamResult::getGoals).orElse((short) 0);
 
             // If player's team did not lose and conceded 1 or less goals
             applyBonusPercentageIf((concededGoals <= 1) && (scoredGoals >= concededGoals), 30);
@@ -130,75 +133,45 @@ class PlayerRewards {
     }
 
     private void applyMissionReward() {
-        MissionInfo mission = room().getMatchMissionInfo();
-
-        if ((mission != null) && isMissionCompleted(mission)) {
-            experience.sum(mission.getReward());
-            points.sum(mission.getReward());
-        }
+        room().getMatchMissionInfo().ifPresent(mission -> {
+            if (isMissionCompleted(mission)) {
+                experience.sum(mission.getReward());
+                points.sum(mission.getReward());
+            }
+        });
     }
 
     private boolean isMissionCompleted(MissionInfo mission) {
-        StatisticsCarrier targetResult = getMissionTarget(mission);
-        int missionValue = mission.getValue();
-
-        if (targetResult == null) return true;
-        if (mission.getType() == null) return true;
-
-        switch (mission.getType()) {
-            case GOALS:
-                return targetResult.getGoals() >= missionValue;
-            case ASSISTS:
-                return targetResult.getAssists() >= missionValue;
-            case STEALS:
-                return targetResult.getSteals() >= missionValue;
-            case TACKLES:
-                return targetResult.getTackles() >= missionValue;
-            case INTERCEPTIONS:
-                return targetResult.getBlocks() >= missionValue;
-            case GOALS_LIMIT:
-                return targetResult.getGoals() <= missionValue;
-            case ASSISTS_LIMIT:
-                return targetResult.getAssists() <= missionValue;
-            case STEALS_LIMIT:
-                return targetResult.getSteals() <= missionValue;
-            case TACKLES_LIMIT:
-                return targetResult.getTackles() <= missionValue;
-            case INTERCEPTIONS_LIMIT:
-                return targetResult.getBlocks() <= missionValue;
-            case WIN:
-                boolean win = getMissionTargetTeam(mission).getResult() == VictoryResult.WIN;
-                return (missionValue == 1) == win;
-            case DRAW:
-                boolean draw = getMissionTargetTeam(mission).getResult() == VictoryResult.DRAW;
-                return (missionValue == 1) == draw;
-            case LOSE:
-                boolean lose = getMissionTargetTeam(mission).getResult() == VictoryResult.LOSE;
-                return (missionValue == 1) == lose;
-            default:
-                return true;
-        }
+        return getMissionTarget(mission)
+                .map(t -> mission.getType()
+                        .resultAchievesMission(t, getMissionTargetTeam(mission), mission))
+                .orElse(true);
     }
 
-    private StatisticsCarrier getMissionTarget(MissionInfo mission) {
-        if (mission.getTarget() == null) return null;
-
+    private Optional<StatisticsCarrier> getMissionTarget(MissionInfo mission) {
         switch (mission.getTarget()) {
             case PLAYER:
-                return playerResult;
+                return Optional.of(playerResult);
             case TEAM:
-                return resultHandler.getPlayerTeamResult(playerId);
+                return resultHandler.getPlayerTeamResult(playerId)
+                        .map(teamResult -> (StatisticsCarrier) teamResult);
             case RIVAL_TEAM:
-                resultHandler.getRivalTeamResult(playerId);
+                return resultHandler.getRivalTeamResult(playerId)
+                        .map(rivalTeamResult -> (StatisticsCarrier) rivalTeamResult);
+            case NOBODY:
             default:
-                return null;
+                return Optional.empty();
         }
     }
 
-    private TeamResult getMissionTargetTeam(MissionInfo mission) {
-        return (mission.getTarget() == MissionTarget.TEAM) ?
-                resultHandler.getPlayerTeamResult(playerId) :
-                resultHandler.getRivalTeamResult(playerId);
+    private Optional<TeamResult> getMissionTargetTeam(MissionInfo mission) {
+        if (mission.getTarget() == MissionTarget.TEAM) {
+            return resultHandler.getPlayerTeamResult(playerId);
+        } else if (mission.getTarget() == MissionTarget.RIVAL_TEAM) {
+            return resultHandler.getRivalTeamResult(playerId);
+        }
+
+        return Optional.empty();
     }
 
     private void limitMaximumExperience() {
@@ -295,7 +268,7 @@ class PlayerRewards {
         this.playerResult = playerResult;
         playerId = playerResult.getPlayerId();
         session = room().getPlayer(playerId);
-        playerTeam = room().getPlayerTeam(playerId);
+        playerTeam = room().getPlayerTeam(playerId).orElseThrow(IllegalStateException::new);
         currentExperience = PlayerInfo.getExperience(playerId, connection());
     }
 }

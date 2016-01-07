@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.utils.table.Row;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class BonusInfo {
 
@@ -17,12 +18,12 @@ public class BonusInfo {
         return expiration.getType() != expirationType;
     }
 
-    public boolean isIncompatibleWithBonuses(OptionInfo one, OptionInfo two) {
-        int bonusOneType = (one == null) ? 0 : one.getType();
-        int bonusTwoType = (two == null) ? 0 : two.getType();
+    public boolean isIncompatibleWithBonuses(Optional<OptionInfo> maybeOne,
+                                             Optional<OptionInfo> maybeTwo) {
+        int bonusOneType = maybeOne.map(OptionInfo::getType).orElse(0);
+        int bonusTwoType = maybeTwo.map(OptionInfo::getType).orElse(0);
 
-        return !bonusOne.contains(bonusOneType) ||
-                !bonusTwo.contains(bonusTwoType);
+        return !bonusOne.contains(bonusOneType) || !bonusTwo.contains(bonusTwoType);
     }
 
     private List<Integer> listFromStringArray(String[] strings) {
@@ -35,11 +36,11 @@ public class BonusInfo {
         return list;
     }
 
-    public BonusInfo(Row row) {
-        type = Integer.valueOf(row.nextColumn());
-        bonusOne = listFromStringArray(row.nextColumn().split(","));
-        bonusTwo = listFromStringArray(row.nextColumn().split(","));
-        expirationType = Byte.valueOf(row.nextColumn());
+    public BonusInfo(Row row) throws ParseRowException {
+        type = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        bonusOne = listFromStringArray(row.nextColumn().map(s -> s.split(",")).orElseThrow(ParseRowException::new));
+        bonusTwo = listFromStringArray(row.nextColumn().map(s -> s.split(",")).orElseThrow(ParseRowException::new));
+        expirationType = Byte.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
     }
 
     public int getType() {

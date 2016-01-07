@@ -44,7 +44,6 @@ public enum RoomMode {
         }
     }
 
-    // TODO CLUB server checks
     public boolean notValidForServer(ServerType serverType) {
         switch (serverType) {
             case PRIVATE:

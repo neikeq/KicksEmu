@@ -9,7 +9,6 @@ import com.neikeq.kicksemu.game.inventory.products.Skill;
 import com.neikeq.kicksemu.game.inventory.products.Training;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
-import com.neikeq.kicksemu.game.table.LevelInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Output;
@@ -19,6 +18,7 @@ import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableShort;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -121,29 +121,28 @@ public class CharacterManager {
         }
     }
 
-    public static short checkIfLevelUp(Session session, short level,
-                                       int experience, ConnectionRef ... con) {
-        short levels = 0;
+    public static short checkIfLevelUp(Session s, short level, int exp, ConnectionRef ... con) {
+        MutableShort levels = new MutableShort();
 
-        LevelInfo newLevelInfo = TableManager.getLevelInfo(li ->
-                (li.getLevel() > level) && (li.getExperience() <= experience));
+        TableManager.getLevelInfo(li -> (li.getLevel() > level) && (li.getExperience() <= exp))
+                .ifPresent(newLevelInfo -> {
+            if (newLevelInfo != null) {
+                short newLevel = newLevelInfo.getLevel();
 
-        if (newLevelInfo != null) {
-            short newLevel = newLevelInfo.getLevel();
+                if (newLevel > level) {
+                    levels.setValue((short) (newLevel - level));
+                }
 
-            if (newLevel > level) {
-                levels = (short) (newLevel - level);
+                if (levels.shortValue() > 0) {
+                    int playerId = s.getPlayerId();
+                    PlayerInfo.setLevel(newLevel, playerId, con);
+                    short position = s.getCache().getPosition(con);
+                    onPlayerLevelUp(playerId, newLevel, levels.shortValue(), position, con);
+                }
             }
+        });
 
-            if (levels > 0) {
-                int playerId = session.getPlayerId();
-                PlayerInfo.setLevel(newLevel, playerId, con);
-                short position = session.getCache().getPosition(con);
-                onPlayerLevelUp(playerId, newLevel, levels, position, con);
-            }
-        }
-
-        return levels;
+        return levels.shortValue();
     }
 
     private static void onPlayerLevelUp(int id, short level, short levels,

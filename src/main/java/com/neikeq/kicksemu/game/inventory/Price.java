@@ -2,6 +2,7 @@ package com.neikeq.kicksemu.game.inventory;
 
 import com.neikeq.kicksemu.game.inventory.types.Expiration;
 import com.neikeq.kicksemu.game.inventory.types.Payment;
+import com.neikeq.kicksemu.game.table.ParseRowException;
 import com.neikeq.kicksemu.utils.table.Row;
 
 public class Price {
@@ -13,13 +14,13 @@ public class Price {
     private final int points30;
     private final int pointsPerm;
 
-    public Price(Row row) {
-        cash7 = Integer.valueOf(row.nextColumn());
-        cash30 = Integer.valueOf(row.nextColumn());
-        cashPerm = Integer.valueOf(row.nextColumn());
-        points7 = Integer.valueOf(row.nextColumn());
-        points30 = Integer.valueOf(row.nextColumn());
-        pointsPerm = Integer.valueOf(row.nextColumn());
+    public Price(Row row) throws ParseRowException {
+        cash7 = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        cash30 = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        cashPerm = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        points7 = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        points30 = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        pointsPerm = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
     }
 
     public int getPriceFor(Expiration expiration, Payment payment) {

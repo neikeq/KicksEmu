@@ -31,13 +31,14 @@ public class SkillInfo {
         return (skillPrice == -1) || (skillPrice != price);
     }
 
-    public SkillInfo(Row row) {
+    public SkillInfo(Row row) throws ParseRowException {
         row.ignoreColumn();
-        id = Integer.valueOf(row.nextColumn());
-        position = Short.valueOf(row.nextColumn());
+        id = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        position = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
         row.ignoreColumn();
-        level = Short.valueOf(row.nextColumn());
-        payment = Payment.fromInt(Integer.valueOf(row.nextColumn()));
+        level = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        payment = Payment.fromInt(Integer.valueOf(row.nextColumn()
+                .orElseThrow(ParseRowException::new)));
         price = new Price(row);
     }
 

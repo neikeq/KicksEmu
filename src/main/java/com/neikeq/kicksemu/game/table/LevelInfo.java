@@ -8,11 +8,11 @@ public class LevelInfo {
     private final int experience;
     private final int experienceGap;
 
-    public LevelInfo(Row row) {
+    public LevelInfo(Row row) throws ParseRowException {
         row.ignoreColumn();
-        level = Short.valueOf(row.nextColumn());
-        experience = Integer.valueOf(row.nextColumn());
-        experienceGap = Integer.valueOf(row.nextColumn());
+        level = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        experience = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        experienceGap = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
     }
 
     public short getLevel() {

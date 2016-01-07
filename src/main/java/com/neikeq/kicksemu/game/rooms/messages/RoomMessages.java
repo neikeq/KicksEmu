@@ -29,6 +29,8 @@ import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
 
+import java.util.Optional;
+
 public class RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 30;
@@ -287,13 +289,16 @@ public class RoomMessages {
         // If the room is valid, the player is inside it and it is in waiting state
         if ((room != null) && room.isPlayerIn(playerId) && (room.state() == RoomState.WAITING)) {
             if (!room.getSwapLocker().isPlayerLocked(playerId)) {
-                RoomTeam currentTeam = room.getPlayerTeam(playerId);
-                RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
+                Optional<RoomTeam> maybeCurrentTeam = room.getPlayerTeam(playerId);
 
-                if (newTeam != currentTeam) {
-                    room.getSwapLocker().lockPlayer(playerId);
-                    room.broadcast(MessageBuilder.swapTeam(playerId, newTeam));
-                }
+                maybeCurrentTeam.ifPresent(currentTeam -> {
+                    RoomTeam newTeam = room.swapPlayerTeam(playerId, currentTeam);
+
+                    if (newTeam != currentTeam) {
+                        room.getSwapLocker().lockPlayer(playerId);
+                        room.broadcast(MessageBuilder.swapTeam(playerId, newTeam));
+                    }
+                });
             }
         }
     }

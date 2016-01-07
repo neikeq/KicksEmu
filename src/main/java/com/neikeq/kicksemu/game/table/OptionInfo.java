@@ -17,14 +17,14 @@ public class OptionInfo {
         return (payment == Payment.CASH) ? (level < cashLevel) : (level < pointsLevel);
     }
 
-    public OptionInfo(Row row) {
+    public OptionInfo(Row row) throws ParseRowException {
         row.ignoreColumn();
-        id = Integer.valueOf(row.nextColumn());
-        type = Integer.valueOf(row.nextColumn());
+        id = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        type = Integer.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
         row.ignoreColumn();
-        value = Short.valueOf(row.nextColumn());
-        cashLevel = Short.valueOf(row.nextColumn());
-        pointsLevel = Short.valueOf(row.nextColumn());
+        value = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        cashLevel = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
+        pointsLevel = Short.valueOf(row.nextColumn().orElseThrow(ParseRowException::new));
         price = new Price(row);
     }
 
