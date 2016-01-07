@@ -32,7 +32,7 @@ import java.util.Map;
 public class ClubRoomMessages extends RoomMessages {
 
     private static final int MAX_ROOM_NAME_LENGTH = 14;
-    private static final byte MIN_ROOM_LEVEL = 3;
+    private static final byte MIN_ROOM_LEVEL = 5;
 
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
@@ -275,7 +275,9 @@ public class ClubRoomMessages extends RoomMessages {
             ClubRoom room = (ClubRoom) RoomManager.getRoomById(roomId);
 
             if (room != null) {
-                if (room.state() == RoomState.APPLYING) return;
+                if (room.state() == RoomState.APPLYING) {
+                    return;
+                }
 
                 if (room.getCurrentSize() == ClubRoom.REQUIRED_TEAM_PLAYERS) {
                     TeamManager.register(room);
