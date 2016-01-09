@@ -2,6 +2,8 @@ package com.neikeq.kicksemu.game.rooms.enums;
 
 import com.neikeq.kicksemu.game.servers.ServerType;
 
+import java.util.Optional;
+
 public enum RoomMode {
 
     AI_GOALKEEPER,
@@ -10,7 +12,11 @@ public enum RoomMode {
     TRAINING_TWO,
     TRAINING_THREE;
 
-    public static RoomMode fromInt(int mode) {
+    public static Optional<RoomMode> fromInt(int mode) {
+        return Optional.ofNullable(unsafeFromInt(mode));
+    }
+
+    private static RoomMode unsafeFromInt(int mode) {
         switch (mode) {
             case 0:
                 return AI_GOALKEEPER;
@@ -44,17 +50,17 @@ public enum RoomMode {
         }
     }
 
-    public boolean notValidForServer(ServerType serverType) {
+    public boolean isValidForServer(ServerType serverType) {
         switch (serverType) {
             case PRIVATE:
             case CLUB:
             case NORMAL:
-                return this != AI_GOALKEEPER;
+                return this == AI_GOALKEEPER;
             case PRACTICE:
-                return (this != TRAINING_ONE) && (this != TRAINING_TWO) &&
-                        (this != TRAINING_THREE);
+                return (this == TRAINING_ONE) || (this == TRAINING_TWO) ||
+                        (this == TRAINING_THREE);
             default:
-                return true;
+                return false;
         }
     }
 }

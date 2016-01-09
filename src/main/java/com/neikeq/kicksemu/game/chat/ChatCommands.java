@@ -16,12 +16,14 @@ import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.DateUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.quartz.SchedulerException;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ChatCommands {
 
@@ -40,26 +42,26 @@ public class ChatCommands {
     private static void onMaster(Session session, String... args) {
         if (args.length < 2) return;
 
-        int playerId = session.getPlayerId();
-
         if (ServerManager.getServerType() != ServerType.CLUB) {
-            Room room = RoomManager.getRoomById(session.getRoomId());
+            RoomManager.getRoomById(session.getRoomId())
+                    .filter(room -> room.state() == RoomState.WAITING)
+                    .ifPresent(room -> {
+                        int playerId = session.getPlayerId();
 
-            if ((room != null) && (room.state() == RoomState.WAITING)) {
-                if ((room.getMaster() == playerId) || PlayerInfo.isModerator(playerId)) {
-                    int targetId = CharacterUtils.getCharacterIdByName(args[1]);
+                        if ((room.getMaster() == playerId) || PlayerInfo.isModerator(playerId)) {
+                            int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
-                    if ((targetId > 0) && (targetId != room.getMaster()) &&
-                            room.isPlayerIn(targetId)) {
-                        room.setMaster(targetId);
-                        room.setHost(targetId);
-                    } else {
-                        ChatUtils.sendServerMessage(session, "Player not found.");
-                    }
-                } else {
-                    ChatUtils.sendServerMessage(session, "You are not the room's master.");
-                }
-            }
+                            if ((targetId > 0) && (targetId != room.getMaster()) &&
+                                    room.isPlayerIn(targetId)) {
+                                room.setMaster(targetId);
+                                room.setHost(targetId);
+                            } else {
+                                ChatUtils.sendServerMessage(session, "Player not found.");
+                            }
+                        } else {
+                            ChatUtils.sendServerMessage(session, "You are not the room master.");
+                        }
+                    });
         }
     }
 
@@ -92,24 +94,27 @@ public class ChatCommands {
         try {
             boolean specifiesRoomId = args.length > 2;
 
-            Room room = RoomManager.getRoomById(specifiesRoomId ?
-                    Integer.valueOf(args[2]) : session.getRoomId());
+            boolean roomNotFound = RoomManager.getRoomById(specifiesRoomId ?
+                    Integer.valueOf(args[2]) : session.getRoomId())
+                    .map(room -> {
+                        switch (args[1].toLowerCase()) {
+                            case "master":
+                                Session master = room.getPlayer(room.getMaster());
+                                ChatUtils.sendServerMessage(session,
+                                        "Master: " + master.getCache().getName());
+                                break;
+                            case "host":
+                                Session host = room.getPlayer(room.getHost());
+                                ChatUtils.sendServerMessage(session,
+                                        "Host: " + host.getCache().getName());
+                                break;
+                            default:
+                        }
 
-            if (room != null) {
-                switch (args[1].toLowerCase()) {
-                    case "master":
-                        Session master = room.getPlayer(room.getMaster());
-                        ChatUtils.sendServerMessage(session,
-                                "Master: " + master.getCache().getName());
-                        break;
-                    case "host":
-                        Session host = room.getPlayer(room.getHost());
-                        ChatUtils.sendServerMessage(session,
-                                "Host: " + host.getCache().getName());
-                        break;
-                    default:
-                }
-            } else if (specifiesRoomId) {
+                        return false;
+                    }).orElse(true);
+
+            if (roomNotFound && specifiesRoomId) {
                 ChatUtils.sendServerMessage(session, "The room does not exist.");
             }
         } catch (NumberFormatException ignored) {
@@ -121,25 +126,25 @@ public class ChatCommands {
         if (args.length < 2) return;
 
         int playerId = session.getPlayerId();
-        Room room = RoomManager.getRoomById(session.getRoomId());
+        RoomManager.getRoomById(session.getRoomId())
+                .filter(Room::isInLobbyScreen)
+                .ifPresent(room -> {
+                    if ((room.getMaster() == playerId) || PlayerInfo.isModerator(playerId)) {
+                        int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
-        if ((room != null) && room.isInLobbyScreen()) {
-            if ((room.getMaster() == playerId) || PlayerInfo.isModerator(playerId)) {
-                int targetId = CharacterUtils.getCharacterIdByName(args[1]);
+                        if (targetId != session.getPlayerId()) {
+                            Session target = room.getPlayer(targetId);
 
-                if (targetId != session.getPlayerId()) {
-                    Session target = room.getPlayer(targetId);
-
-                    if ((target != null) && !target.leaveRoom(RoomLeaveReason.KICKED)) {
-                        ChatUtils.sendServerMessage(session, "Player not found.");
+                            if ((target != null) && !target.leaveRoom(RoomLeaveReason.KICKED)) {
+                                ChatUtils.sendServerMessage(session, "Player not found.");
+                            }
+                        } else {
+                            ChatUtils.sendServerMessage(session, "You cannot kick yourself.");
+                        }
+                    } else {
+                        ChatUtils.sendServerMessage(session, "You are not the room's master.");
                     }
-                } else {
-                    ChatUtils.sendServerMessage(session, "You cannot kick yourself.");
-                }
-            } else {
-                ChatUtils.sendServerMessage(session, "You are not the room's master.");
-            }
-        }
+                });
     }
 
     private static void onPunish(Session session, String ... args) {
@@ -148,13 +153,18 @@ public class ChatCommands {
         if (PlayerInfo.isModerator(session.getPlayerId())) {
             int targetId = CharacterUtils.getCharacterIdByName(args[1]);
 
-            if (ServerManager.isPlayerConnected(targetId)) {
-                Session target = ServerManager.getSession(targetId);
+            MutableBoolean targetFound = new MutableBoolean(false);
+
+            ServerManager.getSession(targetId).ifPresent(target -> {
                 ChatUtils.sendServerMessage(target, "You have been punished by a moderator.");
                 target.close();
 
                 ChatUtils.sendServerMessage(session, "Player punished: " + args[1]);
-            } else {
+
+                targetFound.setTrue();
+            });
+
+            if (targetFound.isFalse()) {
                 ChatUtils.sendServerMessage(session, "Player not found.");
             }
         }
@@ -177,12 +187,12 @@ public class ChatCommands {
         int playerId = session.getPlayerId();
 
         if (PlayerInfo.isModerator(playerId)) {
-            Room room = null;
+            Optional<Room> maybeRoom = Optional.empty();
 
             if (session.getRoomId() > 0) {
-                room = RoomManager.getRoomById(session.getRoomId());
+                maybeRoom = RoomManager.getRoomById(session.getRoomId()).filter(Room::isWaiting);
 
-                if ((room != null) && !room.isWaiting()) {
+                if (!maybeRoom.isPresent()) {
                     return;
                 }
             }
@@ -190,7 +200,7 @@ public class ChatCommands {
             boolean observer = !session.isObserver();
             session.setObserver(observer);
 
-            if (room != null) {
+            maybeRoom.ifPresent(room -> {
                 if (!observer) {
                     room.getObservers().remove(Integer.valueOf(playerId));
                 } else {
@@ -198,7 +208,7 @@ public class ChatCommands {
                 }
 
                 room.broadcast(MessageBuilder.setObserver(playerId, observer));
-            }
+            });
 
             ChatUtils.sendServerMessage(session,
                     "Observer mode " + (observer ? "enabled." : "disabled."));

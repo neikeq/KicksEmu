@@ -21,7 +21,7 @@ import com.neikeq.kicksemu.utils.ThreadUtils;
 
 import io.netty.util.concurrent.ScheduledFuture;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.PreparedStatement;
@@ -130,7 +130,7 @@ public class Authenticator {
     }
 
     private static void instantAuthenticate(int accountId, int characterId,
-                                            InetSocketAddress address,
+                                            InetAddress address,
                                             String sessionHash) throws AuthenticationException {
         final String query = "SELECT 1 FROM users WHERE id = ?";
 
@@ -217,7 +217,7 @@ public class Authenticator {
     }
 
     private static void gameAuthenticate(int accountId, int characterId,
-                                         InetSocketAddress address,
+                                         InetAddress address,
                                          String sessionHash) throws AuthenticationException {
         if (ServerManager.isServerFull()) {
             throw new AuthenticationException("The server is full.", -4);

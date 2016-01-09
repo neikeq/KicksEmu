@@ -1,11 +1,17 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
+import java.util.Optional;
+
 public enum RoomAccessType {
 
     FREE,
     PASSWORD;
 
-    public static RoomAccessType fromShort(short type) {
+    public static Optional<RoomAccessType> fromShort(short type) {
+        return Optional.ofNullable(unsafeFromShort(type));
+    }
+
+    private static RoomAccessType unsafeFromShort(short type) {
         switch (type) {
             case 1:
                 return FREE;

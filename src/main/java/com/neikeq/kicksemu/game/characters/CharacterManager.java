@@ -7,7 +7,6 @@ import com.neikeq.kicksemu.game.inventory.products.Celebration;
 import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.inventory.products.Skill;
 import com.neikeq.kicksemu.game.inventory.products.Training;
-import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -37,11 +36,8 @@ public class CharacterManager {
     public static void playerDetails(Session session, ClientMessage msg) {
         int targetId = msg.readInt();
 
-        Session targetSession = ServerManager.getSession(targetId);
-
-        if (targetSession != null) {
-            session.send(MessageBuilder.playerDetails(targetSession, (short) 0));
-        }
+        ServerManager.getSession(targetId).ifPresent(targetSession ->
+                session.send(MessageBuilder.playerDetails(targetSession, (short) 0)));
     }
 
     private static void sendPlayerInfo(Session session) {
@@ -229,11 +225,8 @@ public class CharacterManager {
             session.send(MessageBuilder.addStatsPoints(playerId, result, con));
 
             if (session.getRoomId() > 0) {
-                Room room = RoomManager.getRoomById(session.getRoomId());
-
-                if (room != null) {
-                    room.broadcast(MessageBuilder.updateRoomPlayer(playerId, con));
-                }
+                RoomManager.getRoomById(session.getRoomId()).ifPresent(room ->
+                        room.broadcast(MessageBuilder.updateRoomPlayer(playerId, con)));
             }
         } catch (SQLException e) {
             Output.println("Exception when adding stat points: " + e.getMessage(), Level.DEBUG);

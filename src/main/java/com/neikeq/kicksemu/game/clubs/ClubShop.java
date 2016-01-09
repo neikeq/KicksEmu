@@ -34,6 +34,7 @@ public class ClubShop {
 
             Optional<MessageException> exception = maybeItemInfo.map(itemInfo -> {
                 MessageException ex = null;
+
                 try {
                     if (request.getPrice() != itemInfo.getPrice().getClubItemPrice()) {
                         throw new MessageException("Invalid price.", -4);
@@ -50,6 +51,7 @@ public class ClubShop {
                 } catch (MessageException e) {
                     ex = e;
                 }
+
                 return Optional.ofNullable(ex);
             }).orElseThrow(() -> new MessageException("Item does not exist.", -1));
 

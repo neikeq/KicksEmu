@@ -4,7 +4,6 @@ import com.neikeq.kicksemu.game.clubs.ClubManager;
 import com.neikeq.kicksemu.game.clubs.UniformType;
 import com.neikeq.kicksemu.game.lobby.Lobby;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
-import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
@@ -16,6 +15,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.ScheduledFuture;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -98,26 +98,28 @@ public class Session {
 
     /** If the session is inside a room, leave it */
     public boolean leaveRoom(RoomLeaveReason reason) {
-        Room room = RoomManager.getRoomById(roomId);
+        return RoomManager.getRoomById(roomId).map(room -> {
+            boolean insideRoom = room.isPlayerIn(playerId);
 
-        boolean insideRoom = (room != null) && room.isPlayerIn(playerId);
+            // If room exist and player is inside the room
+            if (insideRoom) {
+                room.removePlayer(this, reason);
 
-        // If room exist and player is inside the room
-        if (insideRoom) {
-            room.removePlayer(this, reason);
-
-            // Needed to notify club members in the same room
-            if (reason == RoomLeaveReason.DISCONNECTED) {
-                roomId = room.getId();
+                // Needed to notify club members in the same room
+                if (reason == RoomLeaveReason.DISCONNECTED) {
+                    roomId = room.getId();
+                }
             }
-        }
 
-        return insideRoom;
+            return insideRoom;
+        }).orElse(false);
     }
 
     /** Returns the room lobby if player is inside a room, otherwise return main lobby */
     public Lobby getCurrentLobby() {
-        return (getRoomId() > 0) ? RoomManager.getRoomById(getRoomId()).getRoomLobby() : LobbyManager.getMainLobby();
+        return RoomManager.getRoomById(getRoomId())
+                .map(room -> (Lobby) room.getRoomLobby())
+                .orElse(LobbyManager.getMainLobby());
     }
 
     public void close() {
@@ -201,8 +203,8 @@ public class Session {
         this.udpAuthenticated = udpAuthenticated;
     }
 
-    public InetSocketAddress getRemoteAddress() {
-        return (InetSocketAddress) getChannel().remoteAddress();
+    public InetAddress getRemoteAddress() {
+        return ((InetSocketAddress) getChannel().remoteAddress()).getAddress();
     }
 
     public int getRoomId() {

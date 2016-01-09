@@ -7,7 +7,6 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.utils.SeasonRange;
 import com.neikeq.kicksemu.utils.table.Row;
 
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 

@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
+import java.util.Optional;
+
 public enum RoomBall {
 
     STAR,
@@ -13,7 +15,11 @@ public enum RoomBall {
     JOHNS_EYE,
     BEACH_BALL;
 
-    public static RoomBall fromInt(int ball) {
+    public static Optional<RoomBall> fromInt(int ball) {
+        return Optional.ofNullable(unsafeFromInt(ball));
+    }
+
+    public static RoomBall unsafeFromInt(int ball) {
         switch (ball) {
             case 1:
                 return STAR;

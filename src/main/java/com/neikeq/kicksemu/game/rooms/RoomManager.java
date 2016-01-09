@@ -1,12 +1,11 @@
 package com.neikeq.kicksemu.game.rooms;
 
-import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,9 +16,13 @@ public class RoomManager {
     private static final Map<Integer, Room> ROOMS = new HashMap<>();
     private static final int ROOMS_PER_PAGE = 5;
 
-    public static Room getRoomById(Integer id) {
+    public static Optional<Room> getRoomById(Integer id) {
         synchronized (ROOMS_LOCKER) {
-            return ROOMS.get(id);
+            if (id <= 0) {
+                return Optional.empty();
+            }
+
+            return Optional.ofNullable(ROOMS.get(id));
         }
     }
 
@@ -86,15 +89,14 @@ public class RoomManager {
      * @param level the player level
      * @return the waiting room or null if no room was found for this player
      */
-    public static Room getQuickRoom(short level) {
+    public static Optional<Room> getQuickRoom(short level) {
         List<Room> freeRooms = ROOMS.values().stream()
-                .filter(r -> r.isWaiting() && (r.getAccessType() != RoomAccessType.PASSWORD) &&
-                        r.isNotFull() && r.isLevelAllowed(level))
+                .filter(r -> r.canQuickJoin() && r.isLevelAllowed(level))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         Collections.sort(freeRooms, (r1, r2) ->
                 Byte.compare(r2.getCurrentSize(), r1.getCurrentSize()));
 
-        return !freeRooms.isEmpty() ? freeRooms.get(0) : null;
+        return !freeRooms.isEmpty() ? Optional.of(freeRooms.get(0)) : Optional.empty();
     }
 }

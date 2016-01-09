@@ -19,63 +19,55 @@ import com.neikeq.kicksemu.network.server.udp.UdpPing;
 import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
+import java.util.Optional;
 
 public class ChallengeRoomMessages extends RoomMessages {
 
-    private static ChallengeRoom getRoomById(int roomId) {
-        Challenge challenge = ChallengeOrganizer.getChallengeById(roomId);
-        if (challenge != null) {
-            return challenge.getRoom();
-        }
-        return null;
+    private static Optional<ChallengeRoom> getRoomById(int roomId) {
+        return ChallengeOrganizer.getChallengeById(roomId).map(Challenge::getRoom);
     }
 
     public static void leaveRoom(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        int playerId = session.getPlayerId();
+        int player = session.getPlayerId();
 
-        ChallengeRoom room = getRoomById(roomId);
-
-        if ((room != null) && room.isPlayerIn(playerId) && room.isInLobbyScreen()) {
-            session.sendAndFlush(MessageBuilder.leaveRoom(playerId, RoomLeaveReason.LEAVED));
-            session.leaveRoom(RoomLeaveReason.LEAVED);
-        }
+        getRoomById(roomId).filter(room -> room.isPlayerIn(player) && room.isInLobbyScreen())
+                .ifPresent(room -> {
+                    session.sendAndFlush(MessageBuilder.leaveRoom(player, RoomLeaveReason.LEAVED));
+                    session.leaveRoom(RoomLeaveReason.LEAVED);
+                });
     }
 
     public static void roomMap(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         short mapId = msg.readShort();
 
-        ChallengeRoom room = getRoomById(roomId);
+        getRoomById(roomId).filter(room -> room.isPlayerIn(session.getPlayerId()))
+                .ifPresent(room ->
+                        RoomMap.fromInt(mapId).ifPresent(map -> {
+                            room.setMap(map);
 
-        if ((room != null) && room.isPlayerIn(session.getPlayerId())) {
-            RoomMap map = RoomMap.fromInt(mapId);
-
-            if (map != null) {
-                room.setMap(map);
-
-                // Notify players in room that map changed
-                room.broadcast(MessageBuilder.roomMap(mapId));
-            }
-        }
+                            // Notify players in room that map changed
+                            room.broadcast(MessageBuilder.roomMap(mapId));
+                        })
+                );
     }
 
     public static void roomBall(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         short ballId = msg.readShort();
 
-        ChallengeRoom room = getRoomById(roomId);
+        getRoomById(roomId).filter(room -> room.isPlayerIn(session.getPlayerId()))
+                .ifPresent(room ->
+                        RoomBall.fromInt(ballId).ifPresent(ball -> {
+                            room.setBall(ball);
 
-        if ((room != null) && room.isPlayerIn(session.getPlayerId())) {
-            RoomBall ball = RoomBall.fromInt(ballId);
-
-            if (ball != null) {
-                room.setBall(ball);
-
-                // Notify players in room that ball changed
-                room.broadcast(MessageBuilder.roomBall(ballId));
-            }
-        }
+                            // Notify players in room that ball changed
+                            room.broadcast(MessageBuilder.roomBall(ballId));
+                        })
+                );
     }
 
     public static void startCountDown(Session session, ClientMessage msg) {
@@ -87,62 +79,54 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
-        ChallengeRoom room = getRoomById(roomId);
+        getRoomById(roomId).filter(room -> room.isPlayerIn(playerId))
+                .ifPresent(room -> {
+                    byte type = msg.readByte();
 
-        if ((room != null) && room.isPlayerIn(playerId)) {
-            byte type = msg.readByte();
+                    switch (type) {
+                        case 1:
+                            if (!room.getConfirmedPlayers().contains(playerId)) {
+                                room.getConfirmedPlayers().add(playerId);
+                            }
 
-            switch (type) {
-                case 1:
-                    if (!room.getConfirmedPlayers().contains(playerId)) {
-                        room.getConfirmedPlayers().add(playerId);
+                            if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
+                                room.getConfirmedPlayers().clear();
+                                room.broadcast(MessageBuilder.startCountDown((byte) 1));
+                            }
+                            break;
+                        case -1:
+                            if (room.isWaiting() && (room.getMaster() == playerId)) {
+                                room.startCountdown();
+                            }
+                            break;
+                        default:
                     }
-
-                    if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
-                        room.getConfirmedPlayers().clear();
-                        room.broadcast(MessageBuilder.startCountDown((byte) 1));
-                    }
-                    break;
-                case -1:
-                    if (room.isWaiting() && (room.getMaster() == playerId)) {
-                        room.startCountdown();
-                    }
-                    break;
-                default:
-            }
-        }
+                });
     }
 
     public static void hostInfo(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        ChallengeRoom room = getRoomById(roomId);
-
-        if ((room != null) && (room.getHost() == session.getPlayerId())) {
-            room.determineMatchMission();
-            room.broadcastHostInfo();
-        }
+        getRoomById(roomId).filter(room -> room.getHost() == session.getPlayerId())
+                .ifPresent(room -> {
+                    room.determineMatchMission();
+                    room.broadcastHostInfo();
+                });
     }
 
     public static void countDown(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         short count = msg.readShort();
 
-        ChallengeRoom room = getRoomById(roomId);
-
-        if ((room != null) && (room.getMaster() == session.getPlayerId())) {
-            room.onCountdown(count);
-        }
+        getRoomById(roomId).filter(room -> room.getMaster() == session.getPlayerId())
+                .ifPresent(room -> room.onCountdown(count));
     }
 
     public static void cancelCountDown(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        ChallengeRoom room = getRoomById(roomId);
-
-        if ((room != null) && (room.getMaster() == session.getPlayerId())) {
-            room.cancelCountdown();
-        }
+        getRoomById(roomId).filter(room -> room.getMaster() == session.getPlayerId())
+                .ifPresent(ChallengeRoom::cancelCountdown);
     }
 
     public static void matchLoading(Session session, ClientMessage msg) {
@@ -151,51 +135,52 @@ public class ChallengeRoomMessages extends RoomMessages {
         int roomId = msg.readShort();
         short status = msg.readShort();
 
-        ChallengeRoom room = getRoomById(roomId);
-
-        if ((room != null) && room.isLoading() && room.isPlayerIn(playerId)) {
-            room.broadcast(MessageBuilder.matchLoading(playerId, roomId, status));
-        }
+        getRoomById(roomId).filter(room -> room.isLoading() && room.isPlayerIn(playerId))
+                .ifPresent(room ->
+                        room.broadcast(MessageBuilder.matchLoading(playerId, roomId, status)));
     }
 
     public static void playerReady(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
-        ChallengeRoom room = getRoomById(roomId);
+        MutableBoolean roomFound = new MutableBoolean(false);
 
-        if ((room != null) && room.isLoading() && room.isPlayerIn(playerId)) {
-            if (!room.getConfirmedPlayers().contains(playerId)) {
-                room.getConfirmedPlayers().add(playerId);
+        getRoomById(roomId).filter(room -> room.isLoading() && room.isPlayerIn(playerId))
+                .ifPresent(room -> {
+                    if (!room.getConfirmedPlayers().contains(playerId)) {
+                        room.getConfirmedPlayers().add(playerId);
 
-                // Instead of waiting 5 seconds (or not), we send an udp ping immediately to
-                // the client so we can update his udp port (if changed) before match starts
-                UdpPing.sendUdpPing(session);
-            }
+                        // Instead of waiting 5 seconds (or not), we send an udp ping immediately to
+                        // the client so we can update his udp port (if changed) before match starts
+                        UdpPing.sendUdpPing(session);
+                    }
 
-            if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
-                room.setState(RoomState.PLAYING);
-                room.setTimeStart(DateUtils.currentTimeMillis());
-                room.broadcast(MessageBuilder.playerReady((short) 0));
+                    if (room.getConfirmedPlayers().size() >= room.getCurrentSize()) {
+                        room.setState(RoomState.PLAYING);
+                        room.setTimeStart(DateUtils.currentTimeMillis());
+                        room.broadcast(MessageBuilder.playerReady((short) 0));
 
-                if (room.getLoadingTimeoutFuture().isCancellable()) {
-                    room.getLoadingTimeoutFuture().cancel(true);
-                }
-            }
-        } else {
+                        if (room.getLoadingTimeoutFuture().isCancellable()) {
+                            room.getLoadingTimeoutFuture().cancel(true);
+                        }
+                    }
+
+                    roomFound.setTrue();
+                });
+
+        if (roomFound.isFalse()) {
             session.send(MessageBuilder.playerReady((short) 0));
         }
     }
 
     public static void startMatch(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        short result = 0;
 
-        ChallengeRoom room = getRoomById(roomId);
-        if ((room != null) && room.isLoading() &&
-                (room.getConfirmedPlayers().size() < room.getCurrentSize())) {
-            result = -1;
-        }
+        short result = getRoomById(roomId)
+                .filter(room -> room.isLoading() &&
+                        (room.getConfirmedPlayers().size() < room.getCurrentSize()))
+                .map(room -> (short) -1).orElse((short) 0);
 
         session.send(MessageBuilder.startMatch(result));
     }
@@ -204,16 +189,17 @@ public class ChallengeRoomMessages extends RoomMessages {
         final int roomId = msg.readShort();
         msg.ignoreBytes(4);
 
-        ChallengeRoom room = getRoomById(roomId);
+        getRoomById(roomId)
+                .filter(room -> room.isPlayerIn(session.getPlayerId()) &&
+                        (room.state() == RoomState.PLAYING))
+                .ifPresent(room -> {
+                    MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().keySet());
+                    handleMatchResult(room, result);
+                });
+    }
 
-        if ((room == null) || !room.isPlayerIn(session.getPlayerId()) ||
-                (room.state() != RoomState.PLAYING)) {
-            return;
-        }
-
+    private static void handleMatchResult(ChallengeRoom room, MatchResult result) {
         room.setState(RoomState.RESULT);
-
-        MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().keySet());
 
         try (ConnectionRef con = ConnectionRef.ref()) {
             ChallengeResultHandler resultHandler = new ChallengeResultHandler(room, result, con);
@@ -227,37 +213,34 @@ public class ChallengeRoomMessages extends RoomMessages {
 
     public static void unknown1(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        ChallengeRoom room = getRoomById(roomId);
-
-        if ((room != null) && (room.getMaster() == session.getPlayerId())) {
-            room.setState(RoomState.WAITING);
-            room.broadcast(MessageBuilder.unknown1());
-        }
+        getRoomById(roomId).filter(room -> room.getMaster() == session.getPlayerId())
+                .ifPresent(room -> {
+                    room.setState(RoomState.WAITING);
+                    room.broadcast(MessageBuilder.unknown1());
+                });
     }
 
     public static void toRoomLobby(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
-        ChallengeRoom room = getRoomById(roomId);
+        getRoomById(roomId).filter(room -> room.getMaster() == session.getPlayerId())
+                .ifPresent(room -> {
+                    room.broadcast(MessageBuilder.toRoomLobby());
 
-        if ((room != null) && (room.getMaster() == session.getPlayerId())) {
-            room.broadcast(MessageBuilder.toRoomLobby());
-
-            if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
-                room.broadcast(MessageBuilder.nextTip("", (short) 0));
-            }
-        }
+                    if (GameEvents.isGoldenTime() || GameEvents.isClubTime()) {
+                        room.broadcast(MessageBuilder.nextTip("", (short) 0));
+                    }
+                });
     }
 
     public static void cancelLoading(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
         int playerId = session.getPlayerId();
 
-        ChallengeRoom room = getRoomById(roomId);
-
-        if ((room != null) && room.isLoading() &&
-                ((room.getHost() == playerId) || (room.getMaster() == playerId))) {
-            room.setState(RoomState.WAITING);
-            room.broadcast(MessageBuilder.cancelLoading());
-        }
+        getRoomById(roomId).filter(room -> room.isLoading() &&
+                ((room.getHost() == playerId) || (room.getMaster() == playerId)))
+                .ifPresent(room -> {
+                    room.setState(RoomState.WAITING);
+                    room.broadcast(MessageBuilder.cancelLoading());
+                });
     }
 }

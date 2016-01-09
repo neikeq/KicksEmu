@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
+import java.util.Optional;
+
 public enum RoomMap {
 
     A_BACK_STREET,
@@ -15,7 +17,11 @@ public enum RoomMap {
     RESERVOIR,
     OLD_TOWN;
 
-    public static RoomMap fromInt(int type) {
+    public static Optional<RoomMap> fromInt(int type) {
+        return Optional.ofNullable(unsafeFromInt(type));
+    }
+
+    public static RoomMap unsafeFromInt(int type) {
         switch (type) {
             case 1:
                 return A_BACK_STREET;

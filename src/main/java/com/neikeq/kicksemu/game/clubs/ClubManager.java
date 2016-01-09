@@ -1,7 +1,6 @@
 package com.neikeq.kicksemu.game.clubs;
 
 import com.neikeq.kicksemu.game.chat.MessageType;
-import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -65,15 +64,16 @@ public class ClubManager {
                 Predicate<Integer> filter = ServerManager::isPlayerConnected;
 
                 if (disconnected) {
-                    Room room = RoomManager.getRoomById(session.getRoomId());
-
-                    if (room != null) {
-                        filter = filter.and(member -> !room.isPlayerIn(member));
-                    }
+                    RoomManager.getRoomById(session.getRoomId())
+                            .map(room -> filter.and(member -> !room.isPlayerIn(member)))
+                            .orElse(filter);
                 }
 
                 members.stream().filter(filter).forEach(member ->
-                    ServerManager.getSession(member).sendAndFlush(notification.retain()));
+                    ServerManager.getSession(member).ifPresent(s ->
+                            s.sendAndFlush(notification.retain())
+                    )
+                );
             } finally {
                 notification.release();
             }

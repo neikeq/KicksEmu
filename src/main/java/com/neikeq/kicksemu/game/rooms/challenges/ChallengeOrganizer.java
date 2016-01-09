@@ -5,15 +5,20 @@ import com.neikeq.kicksemu.game.rooms.ClubRoom;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ChallengeOrganizer {
 
     private static final Object LOCKER = new Object();
     private static final Map<Integer, Challenge> CHALLENGES = new HashMap<>();
 
-    public static Challenge getChallengeById(Integer id) {
+    public static Optional<Challenge> getChallengeById(Integer id) {
         synchronized (LOCKER) {
-            return CHALLENGES.get(id);
+            if (id <= 0) {
+                return Optional.empty();
+            }
+
+            return Optional.ofNullable(CHALLENGES.get(id));
         }
     }
 

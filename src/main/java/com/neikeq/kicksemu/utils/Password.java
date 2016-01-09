@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.utils;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
@@ -35,19 +35,19 @@ public class Password {
         return compare(correctHash, hash);
     }
 
-    public static byte[] hashAddress(InetSocketAddress address, byte[] salt)
+    public static byte[] hashAddress(InetAddress address, byte[] salt)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return hash(address.getAddress().getHostAddress().toCharArray(), salt, 1000, 24);
+        return hash(address.getHostAddress().toCharArray(), salt, 1000, 24);
     }
 
-    public static boolean isInvalidAddressHash(InetSocketAddress address, String correctAddress)
+    public static boolean isInvalidAddressHash(InetAddress address, String correctAddress)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
         String[] stored = correctAddress.split("\\$");
 
         byte[] salt = fromBase64(stored[0]);
         byte[] correctHash = fromBase64(stored[1]);
 
-        byte[] hash = hash(address.getAddress().getHostAddress().toCharArray(),
+        byte[] hash = hash(address.getHostAddress().toCharArray(),
                 salt, 1000, correctHash.length);
 
         return !compare(correctHash, hash);

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 public class ChallengeRoom extends Room implements Observer {
 
@@ -61,7 +62,7 @@ public class ChallengeRoom extends Room implements Observer {
 
     @Override
     void onPlayerJoined(Session session) {
-        session.send(MessageBuilder.joinRoom(this, session.getPlayerId(), (short) 0));
+        session.send(MessageBuilder.joinRoom(Optional.of(this), session.getPlayerId(), (short) 0));
         // Send to the client information about players inside the room
         sendRoomPlayersInfo(session);
         // Send the room info to the client

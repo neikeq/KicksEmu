@@ -37,7 +37,7 @@ import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.Strings;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -255,12 +255,12 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.GAME_LOGIN).withResult(result);
     }
 
-    public static ServerMessage gameExit(InetSocketAddress clientIp, int characterId) {
+    public static ServerMessage gameExit(InetAddress clientIp, int characterId) {
         ServerMessage msg = new ServerMessage(MessageId.INSTANT_EXIT);
 
         msg.writeShort((short) 0);
         msg.writeInt(characterId);
-        msg.writeString(clientIp.getAddress().getHostAddress(), 16);
+        msg.writeString(clientIp.getHostAddress(), 16);
         msg.writeZeros(2);
 
         // Request the client to close the connection
@@ -422,10 +422,11 @@ public class MessageBuilder {
                     location = server;
                     break;
                 case 2:
-                    location = (short) ServerManager.getSession(friendId).getRoomId();
-                    break;
                 case 3:
-                    location = (short) ServerManager.getSession(friendId).getRoomId();
+                    location = ServerManager.getSession(friendId)
+                            .map(Session::getRoomId)
+                            .orElse(0)
+                            .shortValue();
                     break;
                 default:
             }
@@ -516,10 +517,11 @@ public class MessageBuilder {
                     location = server;
                     break;
                 case 2:
-                    location = (short) ServerManager.getSession(memberId).getRoomId();
-                    break;
                 case 3:
-                    location = (short) ServerManager.getSession(memberId).getRoomId();
+                    location = ServerManager.getSession(memberId)
+                            .map(Session::getRoomId)
+                            .orElse(0)
+                            .shortValue();
                     break;
                 default:
             }
@@ -634,19 +636,20 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage joinRoom(Room room, int playerId, short result) {
+    public static ServerMessage joinRoom(Optional<Room> room, int playerId, short result) {
         ServerMessage msg = new ServerMessage(MessageId.JOIN_ROOM);
 
         msg.writeShort(result);
 
-        if ((result == 0) && (room != null)) {
-            msg.writeShort((short) room.getId());
+        room.filter(r -> result == 0).ifPresent(r -> {
+            msg.writeShort((short) r.getId());
 
-            short teamIndex = room.getPlayerTeam(playerId)
-                    .map(RoomTeam::toInt).orElse(-1).shortValue();
+            short teamIndex = r.getPlayerTeam(playerId)
+                    .map(RoomTeam::toInt)
+                    .orElse(-1).shortValue();
             msg.writeShort(teamIndex);
             msg.writeShort(teamIndex);
-        }
+        });
 
         return msg;
     }
@@ -713,7 +716,7 @@ public class MessageBuilder {
             msg.writeByte(session.getEquippedUniform().toByte());
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
             msg.writeInt(session.getPingRay());
-            msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
+            msg.writeString(session.getRemoteAddress().getHostAddress(), 16);
             msg.writeShort((short) session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
@@ -799,12 +802,12 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage roomSettings(Room room, short result) {
+    public static ServerMessage roomSettings(Optional<Room> maybeRoom, short result) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_SETTINGS);
 
         msg.writeShort(result);
 
-        if (room != null) {
+        maybeRoom.filter(room -> result == 0).ifPresent(room -> {
             msg.writeShort((short) room.getAccessType().toInt());
             msg.writeString(room.getName(), 45);
             msg.writeString(room.getPassword(), 4);
@@ -813,7 +816,7 @@ public class MessageBuilder {
             msg.writeByte(room.getMinLevel());
             msg.writeByte(room.getMaxLevel());
             msg.writeByte((byte) room.getMaxSize().toInt());
-        }
+        });
 
         return msg;
     }
@@ -921,7 +924,7 @@ public class MessageBuilder {
 
         msg.writeShort((short) 0);
         msg.writeInt(room.getHost());
-        msg.writeString(hostSession.getRemoteAddress().getAddress().getHostAddress(), 16);
+        msg.writeString(hostSession.getRemoteAddress().getHostAddress(), 16);
         msg.writeShort((short) hostSession.getUdpPort());
         msg.writeBool(room.isTraining());
         msg.writeShort(room.getCurrentSong());
@@ -1076,14 +1079,12 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage clubJoinRoom(Room room, short result) {
+    public static ServerMessage clubJoinRoom(Optional<ClubRoom> room, short result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_JOIN_ROOM);
 
         msg.writeShort(result);
 
-        if ((result == 0) && (room != null)) {
-            msg.writeShort((short) room.getId());
-        }
+        room.filter(r -> result == 0).ifPresent(r -> msg.writeShort((short) r.getId()));
 
         return msg;
     }
@@ -1146,7 +1147,7 @@ public class MessageBuilder {
             msg.writeBool(false); // pc room
             msg.writeByte(session.getEquippedUniform().toByte());
             msg.writeShort((short) UserInfo.getSettings(ownerId).getCountry());
-            msg.writeString(session.getRemoteAddress().getAddress().getHostAddress(), 16);
+            msg.writeString(session.getRemoteAddress().getHostAddress(), 16);
             msg.writeShort((short) session.getUdpPort());
 
             MessageUtils.appendCharacterInfo(playerId, msg, con);
@@ -1189,16 +1190,16 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.CLUB_KICK_PLAYER).withResult(result);
     }
 
-    public static ServerMessage clubRoomSettings(Room room, short result) {
+    public static ServerMessage clubRoomSettings(Optional<Room> maybeRoom, short result) {
         ServerMessage msg = new ServerMessage(MessageId.CLUB_ROOM_SETTINGS);
 
         msg.writeShort(result);
 
-        if (room != null) {
+        maybeRoom.filter(room -> result == 0).ifPresent(room -> {
             msg.writeShort((short) room.getAccessType().toInt());
             msg.writeString(room.getName(), 15);
             msg.writeString(room.getPassword(), 4);
-        }
+        });
 
         return msg;
     }

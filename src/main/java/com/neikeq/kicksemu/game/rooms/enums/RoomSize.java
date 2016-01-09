@@ -1,5 +1,7 @@
 package com.neikeq.kicksemu.game.rooms.enums;
 
+import java.util.Optional;
+
 public enum RoomSize {
 
     SIZE_2V2,
@@ -7,7 +9,11 @@ public enum RoomSize {
     SIZE_4V4,
     SIZE_5V5;
 
-    public static RoomSize fromInt(int size) {
+    public static Optional<RoomSize> fromInt(int size) {
+        return Optional.ofNullable(unsafeFromInt(size));
+    }
+
+    public static RoomSize unsafeFromInt(int size) {
         switch (size) {
             case 4:
                 return SIZE_2V2;

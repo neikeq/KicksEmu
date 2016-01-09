@@ -90,7 +90,7 @@ public class Room {
         }
     }
 
-    public void tryJoinRoom(Session session, String password) {
+    public short tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
 
         short result = 0;
@@ -122,9 +122,7 @@ public class Room {
             }
         }
 
-        if (result != 0) {
-            session.send(joinRoomMessage(this, session.getPlayerId(), result));
-        }
+        return result;
     }
 
     public void addPlayer(Session session) {
@@ -508,7 +506,7 @@ public class Room {
     }
 
     ServerMessage joinRoomMessage(Room room, int playerId, short result) {
-        return MessageBuilder.joinRoom(room, playerId, result);
+        return MessageBuilder.joinRoom(Optional.ofNullable(room), playerId, result);
     }
 
     ServerMessage roomInfoMessage() {
@@ -562,6 +560,10 @@ public class Room {
         } finally {
             msg.release();
         }
+    }
+
+    public boolean canQuickJoin() {
+        return isWaiting() && (getAccessType() != RoomAccessType.PASSWORD) && isNotFull();
     }
 
     public boolean trainingFactorAllowsRewards() {

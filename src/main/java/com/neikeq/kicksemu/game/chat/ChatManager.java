@@ -4,7 +4,6 @@ import com.neikeq.kicksemu.game.characters.CharacterUtils;
 import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.Lobby;
-import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.users.UserInfo;
@@ -63,14 +62,12 @@ public class ChatManager {
 
                 lobby.getPlayers().stream()
                         .filter(id -> !PlayerInfo.getIgnoredList(id).containsPlayer(playerId))
-                        .forEach(targetId -> {
-                            Session targetSession = ServerManager.getSession(targetId);
-
-                            if (targetSession != null) {
-                                targetSession.sendAndFlush(MessageBuilder.chatMessage(playerId,
-                                        name, type, message));
-                            }
-                        });
+                        .forEach(targetId ->
+                                ServerManager.getSession(targetId).ifPresent(targetSession -> {
+                                    ServerMessage msg = MessageBuilder.chatMessage(playerId,
+                                            name, type, message);
+                                    targetSession.sendAndFlush(msg);
+                                }));
             }
         }
     }
@@ -78,16 +75,15 @@ public class ChatManager {
     private static void onMessageTeam(Session session, String name, String message) {
         int playerId = session.getPlayerId();
 
-        if (session.getCache().getName().equals(name)) {
-            if (!message.isEmpty()) {
-                Room room = RoomManager.getRoomById(session.getRoomId());
-
-                if ((room != null) && room.isPlayerIn(playerId) &&
-                        room.getRoomLobby().isTeamChatEnabled()) {
-                    ServerMessage msg = MessageBuilder.chatMessage(playerId, name, MessageType.TEAM, message);
-                    room.broadcastToTeam(msg, room.getPlayerTeam(playerId), playerId);
-                }
-            }
+        if (session.getCache().getName().equals(name) && !message.isEmpty()) {
+            RoomManager.getRoomById(session.getRoomId())
+                    .filter(room -> room.isPlayerIn(playerId) &&
+                            room.getRoomLobby().isTeamChatEnabled())
+                    .ifPresent(room -> {
+                        ServerMessage msg = MessageBuilder.chatMessage(playerId, name,
+                                MessageType.TEAM, message);
+                        room.broadcastToTeam(msg, room.getPlayerTeam(playerId), playerId);
+                    });
         }
     }
 
@@ -108,22 +104,20 @@ public class ChatManager {
 
             if (type == MessageType.WHISPER_TO) {
                 int targetId = CharacterUtils.getCharacterIdByName(target);
-                Session targetSession = ServerManager.getSession(targetId);
 
-                // If target player was found
-                if (targetSession != null) {
-                    // If the target player isIncompatibleWith whispers and is not ignoring this player
+                type = ServerManager.getSession(targetId).map(targetSession -> {
+                    // If the target player accepts whispers and is not ignoring this player
                     if (UserInfo.getSettings(targetSession.getUserId()).getWhispers() &&
                             !PlayerInfo.getIgnoredList(targetId).containsPlayer(playerId)) {
                         ServerMessage msgWhisper = MessageBuilder.chatMessage(targetId, name,
                                 MessageType.WHISPER_FROM, whisper);
                         targetSession.sendAndFlush(msgWhisper);
                     } else {
-                        type = MessageType.WHISPERS_DISABLED;
+                        return MessageType.WHISPERS_DISABLED;
                     }
-                } else {
-                    type = MessageType.INVALID_PLAYER;
-                }
+
+                    return MessageType.WHISPER_TO;
+                }).orElse(MessageType.INVALID_PLAYER);
             }
 
             session.sendAndFlush(MessageBuilder.chatMessage(playerId, target, type, whisper));

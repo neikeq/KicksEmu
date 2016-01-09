@@ -49,7 +49,7 @@ public class ClubRoom extends Room {
     }
 
     @Override
-    public void tryJoinRoom(Session session, String password) {
+    public short tryJoinRoom(Session session, String password) {
         int playerId = session.getPlayerId();
 
         short result = 0;
@@ -85,9 +85,11 @@ public class ClubRoom extends Room {
             }
         }
 
-        if (result != 0) {
+        return result;
+
+        /*if (result != 0) {
             session.send(joinRoomMessage(this, session.getPlayerId(), result));
-        }
+        }*/
     }
 
     @Override
@@ -134,10 +136,7 @@ public class ClubRoom extends Room {
     protected void onPlayerLeaved(Session session, RoomLeaveReason reason) {
         synchronized (locker) {
             if (challengeId > 0) {
-                Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
-                if (challenge != null) {
-                    challenge.cancel();
-                }
+                ChallengeOrganizer.getChallengeById(challengeId).ifPresent(Challenge::cancel);
             }
 
             super.onPlayerLeaved(session, reason);
@@ -173,7 +172,7 @@ public class ClubRoom extends Room {
 
     @Override
     protected ServerMessage joinRoomMessage(Room room, int playerId, short result) {
-        return MessageBuilder.clubJoinRoom(room, result);
+        return MessageBuilder.clubJoinRoom(Optional.of((ClubRoom) room), result);
     }
 
     @Override
@@ -265,14 +264,10 @@ public class ClubRoom extends Room {
 
     @Override
     public boolean isWaiting() {
-        if (challengeId > 0) {
-            Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
-            if (challenge != null) {
-                return challenge.getRoom().isWaiting();
-            }
-        }
-        // TODO this should be temporal, until I find a way to display the APPLYING icon
-        return super.isWaiting() || isChallenging();
+        return ChallengeOrganizer.getChallengeById(challengeId)
+                .map(challenge -> challenge.getRoom().isWaiting())
+                // TODO this should be temporal, until I find a way to display the APPLYING icon
+                .orElse(super.isWaiting() || isChallenging());
     }
 
     public boolean isChallenging() {
@@ -281,13 +276,9 @@ public class ClubRoom extends Room {
 
     @Override
     public RoomLobby getRoomLobby() {
-        if (challengeId > 0) {
-            Challenge challenge = ChallengeOrganizer.getChallengeById(challengeId);
-            if (challenge != null) {
-                return challenge.getRoom().getRoomLobby();
-            }
-        }
-        return super.getRoomLobby();
+        return ChallengeOrganizer.getChallengeById(challengeId)
+                .map(challenge -> challenge.getRoom().getRoomLobby())
+                .orElse(super.getRoomLobby());
     }
 
     @Override

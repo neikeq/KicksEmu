@@ -14,6 +14,7 @@ import com.neikeq.kicksemu.storage.ConnectionRef;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerManager {
@@ -73,9 +74,9 @@ public class ServerManager {
         }
     }
 
-    public static Session getSession(int id) {
+    public static Optional<Session> getSession(int id) {
         synchronized (locker) {
-            return getPlayers().get(id);
+            return Optional.ofNullable(getPlayers().get(id));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.neikeq.kicksemu.network.server.udp;
 
-import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
@@ -19,19 +18,19 @@ class ClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
         int playerId = message.readInt(2);
 
-        Session session = ServerManager.getSession(playerId);
+        ServerManager.getSession(playerId)
+                .filter(s -> s.getRemoteAddress().equals(packet.sender().getAddress()))
+                .ifPresent(session -> {
+                    session.setUdpPort(packet.sender().getPort());
 
-        if (session.getRemoteAddress().getAddress().equals(packet.sender().getAddress())) {
-            session.setUdpPort(packet.sender().getPort());
-
-            try {
-                // Handle the incoming message
-                ServerManager.getMessageHandler().handle(session, message);
-            } catch (UndefinedMessageException ume) {
-                Output.println(ume.getMessage() + " from: " +
-                        packet.sender().getAddress().getHostAddress(), Level.DEBUG);
-            }
-        }
+                    try {
+                        // Handle the incoming message
+                        ServerManager.getMessageHandler().handle(session, message);
+                    } catch (UndefinedMessageException ume) {
+                        Output.println(ume.getMessage() + " from: " +
+                                packet.sender().getAddress().getHostAddress(), Level.DEBUG);
+                    }
+                });
     }
 
     @Override
