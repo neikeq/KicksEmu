@@ -12,7 +12,7 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.ConnectionRef;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.sql.SQLException;
 
@@ -126,7 +126,7 @@ public class UserManager {
                     PlayerInfo.setPosition(position, playerId, con);
                     session.getCache().clear();
 
-                    MutableInteger statsPoints = new MutableInteger(0);
+                    MutableInt statsPoints = new MutableInt(0);
 
                     PlayerStats stats = PlayerInfo.getStats(playerId, con);
 
@@ -134,7 +134,7 @@ public class UserManager {
                             .getUpgradeStats().get(position), 1, stats, statsPoints);
 
                     PlayerInfo.setStats(stats, playerId, con);
-                    PlayerInfo.sumStatsPoints((short) statsPoints.get(), playerId, con);
+                    PlayerInfo.sumStatsPoints(statsPoints.shortValue(), playerId, con);
 
                 } else {
                     result = -1;

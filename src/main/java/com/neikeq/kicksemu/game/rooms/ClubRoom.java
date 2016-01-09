@@ -17,7 +17,7 @@ import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.storage.ConnectionRef;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -226,17 +226,17 @@ public class ClubRoom extends Room {
     }
 
     private void updateTotalLevels() {
-        final MutableInteger totalLevels = new MutableInteger();
+        final MutableInt totalLevels = new MutableInt();
 
         try (ConnectionRef con = ConnectionRef.ref()) {
             getPlayers().keySet().forEach(playerId ->
-                    totalLevels.sum(PlayerInfo.getLevel(playerId, con)));
+                    totalLevels.add(PlayerInfo.getLevel(playerId, con)));
         } catch (SQLException e) {
             Output.println("Failed to calculate club room total levels: " + e.getMessage(),
                     Level.DEBUG);
         }
 
-        this.totalLevels = totalLevels.get();
+        this.totalLevels = totalLevels.getValue();
     }
 
     public byte getLevelGapDifferenceTo(Optional<ClubRoom> maybeRoom) {

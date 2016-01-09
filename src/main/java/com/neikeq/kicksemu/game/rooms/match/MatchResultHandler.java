@@ -15,10 +15,9 @@ import com.neikeq.kicksemu.storage.ConnectionRef;
 import com.neikeq.kicksemu.utils.DateUtils;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import com.neikeq.kicksemu.utils.ThreadUtils;
-import com.neikeq.kicksemu.utils.mutable.MutableBoolean;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.apache.commons.lang3.mutable.MutableInt;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 public class MatchResultHandler {
@@ -30,7 +29,7 @@ public class MatchResultHandler {
     private final MatchResult result;
     private final ConnectionRef connection;
     private final LevelCache levelCache = new LevelCache();
-    private final MutableInteger roomAverageLevel = new MutableInteger();
+    private final MutableInt roomAverageLevel = new MutableInt();
 
     private final long resultTime = DateUtils.currentTimeMillis();
     private final boolean goldenTime = GameEvents.isGoldenTime();
@@ -112,11 +111,11 @@ public class MatchResultHandler {
 
                                 // If the item expired
                                 if (item.getUsages() <= 0) {
-                                    mustNotifyExpiration.set(true);
+                                    mustNotifyExpiration.setTrue();
                                 }
                             });
 
-                    if (mustNotifyExpiration.get()) {
+                    if (mustNotifyExpiration.isTrue()) {
                         CharacterManager.sendItemList(getRoom().getPlayer(playerId));
                     }
                 }
@@ -168,18 +167,18 @@ public class MatchResultHandler {
 
     private void calculateAverageLevel() {
         if (isLowersBonusEnabled() && !getResult().getPlayers().isEmpty()) {
-            MutableInteger averageLevel = new MutableInteger(0);
+            MutableInt averageLevel = new MutableInt(0);
 
             getResult().getPlayers().forEach(playerResult -> {
                 int playerId = playerResult.getPlayerId();
-                averageLevel.sum(getLevelCache().getPlayerLevel(playerId, getConnection()));
+                averageLevel.add(getLevelCache().getPlayerLevel(playerId, getConnection()));
             });
 
-            getRoomAverageLevel().sum(averageLevel.get() / getResult().getPlayers().size());
+            getRoomAverageLevel().add(averageLevel.getValue() / getResult().getPlayers().size());
         }
     }
 
-    public MatchResultHandler(Room room, MatchResult result, ConnectionRef connection) throws SQLException {
+    public MatchResultHandler(Room room, MatchResult result, ConnectionRef connection) {
         this.room = room;
         this.result = result;
         this.connection = connection;
@@ -214,7 +213,7 @@ public class MatchResultHandler {
         return levelCache;
     }
 
-    public MutableInteger getRoomAverageLevel() {
+    public MutableInt getRoomAverageLevel() {
         return roomAverageLevel;
     }
 

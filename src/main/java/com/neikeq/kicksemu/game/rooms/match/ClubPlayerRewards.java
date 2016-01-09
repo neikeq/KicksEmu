@@ -48,7 +48,7 @@ public class ClubPlayerRewards extends PlayerRewards {
             default:
         }
 
-        points.sum(levelGapPoints);
+        points.add(levelGapPoints);
     }
 
     private void calculateWinStreakBonuses() {
@@ -74,7 +74,7 @@ public class ClubPlayerRewards extends PlayerRewards {
         }).orElse(0);
 
         if (percentage > 0) {
-            experience.sum(experience.get() + (onePercentOfBaseReward * percentage));
+            experience.add(experience.getValue() + (onePercentOfBaseReward * percentage));
         }
     }
 }

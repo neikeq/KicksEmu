@@ -15,7 +15,7 @@ import com.neikeq.kicksemu.game.table.MissionInfo;
 import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.ConnectionRef;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.Optional;
 
@@ -36,8 +36,8 @@ class PlayerRewards {
     private short levelsEarned;
     private short lastQuest = -1;
 
-    final MutableInteger experience = new MutableInteger();
-    final MutableInteger points = new MutableInteger();
+    final MutableInt experience = new MutableInt();
+    final MutableInt points = new MutableInt();
     int onePercentOfBaseReward;
 
     public void applyMatchRewards() {
@@ -117,8 +117,8 @@ class PlayerRewards {
     }
 
     private void calculateItemBonuses() {
-        points.set(rewardWithBonus);
-        experience.set(rewardWithBonus);
+        points.setValue(rewardWithBonus);
+        experience.setValue(rewardWithBonus);
 
         session.getCache().getItems(connection()).values().stream()
                 .filter(Item::isSelectedUsageItem).forEach(item -> {
@@ -128,15 +128,15 @@ class PlayerRewards {
     }
 
     private void applyRewardRates() {
-        experience.multiply(Configuration.getInt("game.rewards.exp"));
-        points.multiply(Configuration.getInt("game.rewards.point"));
+        experience.setValue(experience.getValue() * Configuration.getInt("game.rewards.exp"));
+        points.setValue(points.getValue() * Configuration.getInt("game.rewards.point"));
     }
 
     private void applyMissionReward() {
         room().getMatchMissionInfo().ifPresent(mission -> {
             if (isMissionCompleted(mission)) {
-                experience.sum(mission.getReward());
-                points.sum(mission.getReward());
+                experience.add(mission.getReward());
+                points.add(mission.getReward());
             }
         });
     }
@@ -175,14 +175,14 @@ class PlayerRewards {
     }
 
     private void limitMaximumExperience() {
-        if ((currentExperience + experience.get()) > TableManager.EXPERIENCE_LIMIT) {
-            experience.set(TableManager.EXPERIENCE_LIMIT - currentExperience);
+        if ((currentExperience + experience.getValue()) > TableManager.EXPERIENCE_LIMIT) {
+            experience.setValue(TableManager.EXPERIENCE_LIMIT - currentExperience);
         }
     }
 
     private void updateResultRewards() {
-        playerResult.setExperience(experience.get());
-        playerResult.setPoints(points.get());
+        playerResult.setExperience(experience.getValue());
+        playerResult.setPoints(points.getValue());
     }
 
     private void giveReward() {
@@ -192,7 +192,7 @@ class PlayerRewards {
 
     private void checkExperienceLevel() {
         levelsEarned = CharacterManager.checkIfLevelUp(session, getPlayerLevel(),
-                currentExperience + experience.get(), connection());
+                currentExperience + experience.getValue(), connection());
     }
 
     private void checkQuestProgress() {
@@ -215,7 +215,7 @@ class PlayerRewards {
 
     private void applyLowersBonus() {
         int bonusPercentage = 0;
-        int levelsDifference = resultHandler.getRoomAverageLevel().get() - getPlayerLevel();
+        int levelsDifference = resultHandler.getRoomAverageLevel().getValue() - getPlayerLevel();
 
         boolean levelIsLowerThanRoomAverage = levelsDifference > 0;
 

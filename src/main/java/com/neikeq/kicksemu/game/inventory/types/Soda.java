@@ -1,6 +1,6 @@
 package com.neikeq.kicksemu.game.inventory.types;
 
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 public enum Soda {
 
@@ -13,17 +13,17 @@ public enum Soda {
     POINTS_200;
 
     public static void applyBonus(Soda soda, int base,
-                                  MutableInteger experience, MutableInteger points) {
+                                  MutableInt experience, MutableInt points) {
         if (soda != null) {
             soda.applyBonus(base, experience, points);
         }
     }
 
-    private void applyBonus(int base, MutableInteger experience, MutableInteger points) {
+    private void applyBonus(int base, MutableInt experience, MutableInt points) {
         if (isPointsBonus()) {
-            points.sum((base * getPercentage()) / 100);
+            points.add((base * getPercentage()) / 100);
         } else {
-            experience.sum((base * getPercentage()) / 100);
+            experience.add((base * getPercentage()) / 100);
         }
     }
 

@@ -20,7 +20,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.in.MessageException;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.storage.ConnectionRef;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -257,7 +257,7 @@ public class InventoryManager {
                 Map<Integer, Item> items = session.getCache().getItems(con);
                 Item item = items.get(inventoryId);
 
-                final MutableInteger usagesToAdd = new MutableInteger(0);
+                final MutableInt usagesToAdd = new MutableInt(0);
                 final List<Integer> toRemove = new ArrayList<>();
 
                 // If the item exists
@@ -271,19 +271,19 @@ public class InventoryManager {
                                         (i.getBonusOne() == item.getBonusOne()) &&
                                         (i.getBonusTwo() == item.getBonusTwo())).forEach(i -> {
                             // Add the item's usages to the stacked amount
-                            usagesToAdd.sum(i.getUsages());
+                            usagesToAdd.add(i.getUsages());
 
                             // Remove the item
                             toRemove.add(i.getInventoryId());
                             PlayerInfo.removeInventoryItem(i, playerId, con);
                         });
 
-                        if (usagesToAdd.get() > 0) {
+                        if (usagesToAdd.getValue() > 0) {
                             // Remove the items from the cache map
                             toRemove.forEach(items::remove);
 
                             // Add the stacked usages to the specified item and update it
-                            item.sumUsages((short) usagesToAdd.get());
+                            item.sumUsages(usagesToAdd.shortValue());
                             PlayerInfo.setInventoryItem(item, playerId, con);
 
                             usages = item.getUsages();

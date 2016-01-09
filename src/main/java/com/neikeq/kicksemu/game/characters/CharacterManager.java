@@ -16,7 +16,7 @@ import com.neikeq.kicksemu.network.packets.in.ClientMessage;
 import com.neikeq.kicksemu.network.packets.out.MessageBuilder;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.storage.ConnectionRef;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.mutable.MutableShort;
 
 import java.sql.SQLException;
@@ -91,7 +91,7 @@ public class CharacterManager {
         PlayerStats newStats = new PlayerStats(StatsInfo.getInstance()
                 .getCreationStats().get(branchPosition));
 
-        MutableInteger statsPoints = new MutableInteger(10);
+        MutableInt statsPoints = new MutableInt(10);
 
         if (level > 18) {
             onPlayerLevelUp(18, 17, branchPosition, newStats, statsPoints);
@@ -111,7 +111,7 @@ public class CharacterManager {
             PlayerInfo.setStats(newStats, playerId, con);
 
             // Set stats point
-            PlayerInfo.setStatsPoints((short) statsPoints.get(), playerId, con);
+            PlayerInfo.setStatsPoints(statsPoints.shortValue(), playerId, con);
         } catch (SQLException e) {
             Output.println("Exception when resetting stats: " + e.getMessage(), Level.DEBUG);
         }
@@ -146,10 +146,10 @@ public class CharacterManager {
         int from = level - levels;
 
         // Calculate stats points to add
-        MutableInteger statsPoints = new MutableInteger(0);
+        MutableInt statsPoints = new MutableInt(0);
 
         for (int i = from; i < level; i++) {
-            statsPoints.sum(StatsInfo.getInstance().statsPointsForLevel(i + 1));
+            statsPoints.add(StatsInfo.getInstance().statsPointsForLevel(i + 1));
         }
 
         PlayerStats stats = PlayerInfo.getStats(id, con);
@@ -162,25 +162,25 @@ public class CharacterManager {
         PlayerInfo.setStats(stats, id, con);
 
         // Add stats point
-        PlayerInfo.sumStatsPoints((short) statsPoints.get(), id, con);
+        PlayerInfo.sumStatsPoints(statsPoints.shortValue(), id, con);
     }
 
     private static void onPlayerLevelUp(int level, int levels, short position,
-                                        PlayerStats stats, MutableInteger statPoints) {
+                                        PlayerStats stats, MutableInt statPoints) {
         int from = level - levels;
 
         // Calculate stats points to add
-        MutableInteger statsPoints = new MutableInteger(0);
+        MutableInt statsPoints = new MutableInt(0);
 
         for (int i = from; i < level; i++) {
-            statsPoints.sum(StatsInfo.getInstance().statsPointsForLevel(i + 1));
+            statsPoints.add(StatsInfo.getInstance().statsPointsForLevel(i + 1));
         }
 
         // Add auto stats
         PlayerStats.sumStats(StatsInfo.getInstance().getAutoStats().get(position),
                 levels, stats, statsPoints);
 
-        statPoints.sum(statsPoints);
+        statPoints.add(statsPoints);
     }
 
     public static void addStatsPoints(Session session, ClientMessage msg) {
@@ -208,7 +208,7 @@ public class CharacterManager {
             if (result == 0) {
                 short statsPoints = PlayerInfo.getStatsPoints(playerId, con);
 
-                MutableInteger remain = new MutableInteger(0);
+                MutableInt remain = new MutableInt(0);
                 PlayerStats stats = PlayerInfo.getStats(playerId, con);
 
                 // If player have enough points
@@ -216,7 +216,7 @@ public class CharacterManager {
                     PlayerStats.sumStats(PlayerStats.fromArray(values), 1, stats, remain);
 
                     PlayerInfo.setStats(stats, playerId, con);
-                    PlayerInfo.sumStatsPoints((short) -(total - remain.get()), playerId, con);
+                    PlayerInfo.sumStatsPoints((short) -(total - remain.getValue()), playerId, con);
                 } else {
                     result = -3; // Not enough stats points
                 }

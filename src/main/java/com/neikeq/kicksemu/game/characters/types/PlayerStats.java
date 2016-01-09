@@ -1,7 +1,7 @@
 package com.neikeq.kicksemu.game.characters.types;
 
 import com.neikeq.kicksemu.game.characters.CharacterUtils;
-import com.neikeq.kicksemu.utils.mutable.MutableInteger;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 public class PlayerStats {
 
@@ -23,15 +23,15 @@ public class PlayerStats {
     private short punching;
     private short defense;
 
-    private static short sumStatsUpToHundred(int value, short current, MutableInteger statsPoints) {
+    private static short sumStatsUpToHundred(int value, short current, MutableInt statsPoints) {
         short add = CharacterUtils.statsUpToHundred(current, value);
-        statsPoints.sum(value - add);
+        statsPoints.add(value - add);
 
         return add;
     }
 
     public static void sumStats(PlayerStats add, int factor, PlayerStats stats,
-                                MutableInteger statsPoints) {
+                                MutableInt statsPoints) {
         stats.sumRunning(sumStatsUpToHundred(add.getRunning() * factor,
                 stats.getRunning(), statsPoints));
         stats.sumEndurance(sumStatsUpToHundred(add.getEndurance() * factor,
