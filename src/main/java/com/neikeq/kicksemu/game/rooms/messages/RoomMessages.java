@@ -419,14 +419,14 @@ public class RoomMessages {
     public static void hostInfo(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        if (session.getRoomId() == roomId) {
-            RoomManager.getRoomById(roomId)
-                    .filter(room -> room.getHost() == session.getPlayerId())
-                    .ifPresent(room -> {
+        RoomManager.getRoomById(roomId)
+                .filter(room -> room.getHost() == session.getPlayerId())
+                .ifPresent(room -> {
+                    if (room.isInLobbyScreen()) {
                         room.determineMatchMission();
-                        room.broadcastHostInfo();
-                    });
-        }
+                    }
+                    room.broadcastHostInfo();
+                });
     }
 
     public static void countDown(Session session, ClientMessage msg) {
@@ -467,7 +467,6 @@ public class RoomMessages {
         int playerId = session.getPlayerId();
 
         if (session.getRoomId() == roomId) {
-
             MutableBoolean roomLoading = new MutableBoolean(false);
 
             RoomManager.getRoomById(roomId)
@@ -518,10 +517,9 @@ public class RoomMessages {
         final int roomId = msg.readShort();
         msg.ignoreBytes(4);
 
-        if (session.getRoomId() != roomId) return;
-
         RoomManager.getRoomById(roomId)
-                .filter(room -> room.state() == RoomState.PLAYING)
+                .filter(room -> (room.getHost() == session.getPlayerId()) &&
+                        (room.state() == RoomState.PLAYING))
                 .ifPresent(room -> {
                     room.setState(RoomState.RESULT);
 

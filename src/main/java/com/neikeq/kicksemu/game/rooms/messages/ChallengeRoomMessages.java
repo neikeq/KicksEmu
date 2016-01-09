@@ -109,7 +109,9 @@ public class ChallengeRoomMessages extends RoomMessages {
 
         getRoomById(roomId).filter(room -> room.getHost() == session.getPlayerId())
                 .ifPresent(room -> {
-                    room.determineMatchMission();
+                    if (room.isInLobbyScreen()) {
+                        room.determineMatchMission();
+                    }
                     room.broadcastHostInfo();
                 });
     }
@@ -177,12 +179,15 @@ public class ChallengeRoomMessages extends RoomMessages {
     public static void startMatch(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        short result = getRoomById(roomId)
-                .filter(room -> room.isLoading() &&
-                        (room.getConfirmedPlayers().size() < room.getCurrentSize()))
-                .map(room -> (short) -1).orElse((short) 0);
+        if (session.getRoomId() == roomId) {
+            short result = getRoomById(roomId)
+                    .filter(r -> r.isLoading() &&
+                            (r.getConfirmedPlayers().size() < r.getCurrentSize()))
+                    .map(room -> (short) -1)
+                    .orElse((short) 0);
 
-        session.send(MessageBuilder.startMatch(result));
+            session.send(MessageBuilder.startMatch(result));
+        }
     }
 
     public static void matchResult(Session session, ClientMessage msg) {
@@ -190,7 +195,7 @@ public class ChallengeRoomMessages extends RoomMessages {
         msg.ignoreBytes(4);
 
         getRoomById(roomId)
-                .filter(room -> room.isPlayerIn(session.getPlayerId()) &&
+                .filter(room -> (room.getHost() == session.getPlayerId()) &&
                         (room.state() == RoomState.PLAYING))
                 .ifPresent(room -> {
                     MatchResult result = MatchResult.fromMessage(msg, room.getPlayers().keySet());
