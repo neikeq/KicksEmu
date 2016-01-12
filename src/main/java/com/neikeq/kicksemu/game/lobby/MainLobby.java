@@ -13,7 +13,7 @@ public class MainLobby implements Lobby {
     private final Object locker = new Object();
 
     @Override
-    public synchronized void addPlayer(int playerId) {
+    public void addPlayer(int playerId) {
         synchronized (locker) {
             if (!players.contains(playerId)) {
                 players.add(playerId);
@@ -22,7 +22,7 @@ public class MainLobby implements Lobby {
     }
 
     @Override
-    public synchronized void removePlayer(int playerId) {
+    public void removePlayer(int playerId) {
         synchronized (locker) {
             int index = players.indexOf(playerId);
 
@@ -33,7 +33,9 @@ public class MainLobby implements Lobby {
     }
 
     public List<Integer> getPlayers() {
-        return players;
+        synchronized (locker) {
+            return players;
+        }
     }
 
     public List<Integer> getVisiblePlayers(ConnectionRef... con) {

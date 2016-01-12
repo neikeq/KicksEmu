@@ -11,11 +11,13 @@ public class RoomLobby implements Lobby {
     private boolean teamChatEnabled = true;
 
     public List<Integer> getPlayers() {
-        return players;
+        synchronized (locker) {
+            return players;
+        }
     }
 
     @Override
-    public synchronized void addPlayer(int playerId) {
+    public void addPlayer(int playerId) {
         synchronized (locker) {
             if (!players.contains(playerId)) {
                 players.add(playerId);
@@ -24,7 +26,7 @@ public class RoomLobby implements Lobby {
     }
 
     @Override
-    public synchronized void removePlayer(int playerId) {
+    public void removePlayer(int playerId) {
         synchronized (locker) {
             int index = players.indexOf(playerId);
 
