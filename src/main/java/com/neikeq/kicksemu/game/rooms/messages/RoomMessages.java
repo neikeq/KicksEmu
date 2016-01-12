@@ -235,7 +235,7 @@ public class RoomMessages {
                     byte minLevel = msg.readByte();
                     byte maxLevel = msg.readByte();
                     Optional<RoomSize> maxSize = RoomSize.fromInt(msg.readByte())
-                            .filter(ms -> ms == RoomSize.SIZE_2V2);
+                            .filter(ms -> ms != RoomSize.SIZE_2V2);
 
                     if (!maxSize.isPresent() || !roomMode.isPresent()) {
                         return (short) -1;
