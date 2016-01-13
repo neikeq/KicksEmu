@@ -229,7 +229,6 @@ public class RoomMessages {
                         return (short) -3; // Player is not room's master
                     }
 
-
                     Optional<RoomMode> roomMode = RoomMode.fromInt(msg.readByte())
                             .filter(rm -> rm.isValidForServer(ServerManager.getServerType()));
                     byte minLevel = msg.readByte();

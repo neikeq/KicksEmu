@@ -347,7 +347,7 @@ public class ClubRoomMessages extends RoomMessages {
             return;
         }
 
-        RoomManager.getRoomById(roomId).filter(room -> room.getMaster() != session.getPlayerId())
+        RoomManager.getRoomById(roomId).filter(room -> room.getMaster() == session.getPlayerId())
                 .map(room -> (ClubRoom) room)
                 .ifPresent(room -> {
                     short result;
@@ -399,7 +399,7 @@ public class ClubRoomMessages extends RoomMessages {
             return;
         }
 
-        RoomManager.getRoomById(roomId).filter(room -> room.getMaster() != session.getPlayerId())
+        RoomManager.getRoomById(roomId).filter(room -> room.getMaster() == session.getPlayerId())
                 .map(room -> (ClubRoom) room)
                 .ifPresent(room -> {
                     boolean accepted = msg.readBoolean();
