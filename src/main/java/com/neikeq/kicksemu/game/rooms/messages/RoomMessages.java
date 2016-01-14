@@ -5,6 +5,7 @@ import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.Room;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
+import com.neikeq.kicksemu.game.rooms.RoomSettings;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
@@ -34,22 +35,6 @@ import java.util.Optional;
 
 public class RoomMessages {
 
-    private static final int MAX_ROOM_NAME_LENGTH = 30;
-    static final int MAX_ROOM_PASSWORD_LENGTH = 4;
-    static final byte MAX_ROOM_LEVEL = 60;
-    static final byte MIN_ROOM_LEVEL = 1;
-
-    private static class RoomSettings {
-
-        String name = "Welcome";
-        String password = "";
-        RoomAccessType accessType = RoomAccessType.FREE;
-        RoomMode mode = RoomMode.AI_GOALKEEPER;
-        RoomSize maxSize = RoomSize.SIZE_4V4;
-        byte minLevel = MIN_ROOM_LEVEL;
-        byte maxLevel = MAX_ROOM_LEVEL;
-    }
-
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
         session.send(MessageBuilder.roomList(RoomManager.getRoomsFromPage(page),
@@ -62,16 +47,20 @@ public class RoomMessages {
         }
 
         short result = RoomAccessType.fromShort(msg.readShort()).map(type -> {
-            String name = msg.readString(45);
-            String password = msg.readString(5);
+            RoomSettings settings = new RoomSettings();
+
+            settings.setAccessType(type);
+            settings.setName(msg.readString(45));
+            settings.setPassword(msg.readString(5));
 
             return RoomMode.fromInt(msg.readByte())
                     .filter(rm -> rm.isValidForServer(ServerManager.getServerType()))
                     .map(roomMode -> {
-                        byte minLevel = msg.readByte();
-                        byte maxLevel = msg.readByte();
+                        settings.setRoomMode(roomMode);
+                        settings.setMinLevel(msg.readByte());
+                        settings.setMaxLevel(msg.readByte());
 
-                        if ((minLevel < MIN_ROOM_LEVEL) || (maxLevel > MAX_ROOM_LEVEL)) {
+                        if (settings.areInvalidLevelSettings()) {
                             return (short) -3; // Wrong level settings
                         }
 
@@ -80,21 +69,14 @@ public class RoomMessages {
                         return RoomSize.fromInt(msg.readByte())
                                 .filter(rs -> rs != RoomSize.SIZE_2V2)
                                 .map(maxSize -> {
+                                    settings.setMaxSize(maxSize);
+
                                     short level = PlayerInfo.getLevel(session.getPlayerId());
 
-                                    if ((level < minLevel) || (level > maxLevel)) {
+                                    if ((level < settings.getMinLevel()) ||
+                                            (level > settings.getMaxLevel())) {
                                         return (short) -4; // Invalid level
                                     }
-
-                                    RoomSettings settings = new RoomSettings();
-
-                                    settings.name = name;
-                                    settings.password = password;
-                                    settings.accessType = type;
-                                    settings.mode = roomMode;
-                                    settings.maxSize = maxSize;
-                                    settings.minLevel = minLevel;
-                                    settings.maxLevel = maxLevel;
 
                                     createRoom(session, settings);
 
@@ -110,28 +92,7 @@ public class RoomMessages {
     private static void createRoom(Session session, RoomSettings settings) {
         Room room = new Room();
 
-        // Limit the length of the name and the password
-        if (settings.name.length() > MAX_ROOM_NAME_LENGTH) {
-            settings.name = settings.name.substring(0, MAX_ROOM_NAME_LENGTH);
-        }
-
-        if (settings.password.length() > MAX_ROOM_PASSWORD_LENGTH) {
-            settings.password = settings.password.substring(0, MAX_ROOM_PASSWORD_LENGTH);
-        }
-
-        // If password is blank, disable password usage
-        if ((settings.accessType == RoomAccessType.PASSWORD) && settings.password.isEmpty()) {
-            settings.accessType = RoomAccessType.FREE;
-        }
-
-        // Set room information from received data
-        room.setName(settings.name);
-        room.setPassword(settings.password);
-        room.setAccessType(settings.accessType);
-        room.setRoomMode(settings.mode);
-        room.setMinLevel(settings.minLevel);
-        room.setMaxLevel(settings.maxLevel);
-        room.setMaxSize(settings.maxSize);
+        room.setSettings(settings);
 
         synchronized (RoomManager.ROOMS_LOCKER) {
             // Get the room id
@@ -152,14 +113,13 @@ public class RoomMessages {
         int roomId = msg.readShort();
         String password = msg.readString(4);
 
-        Optional<Room> room = RoomManager.getRoomById(roomId);
+        short result = RoomManager.getRoomById(roomId)
+                .map(room -> room.tryJoinRoom(session, password))
+                .orElse((short) -3);
 
-        // Try to join the room.
-        if (room.isPresent()) {
-            room.get().tryJoinRoom(session, password);
-        } else {
-            // Result -3 means that the room does not exists.
-            session.send(MessageBuilder.joinRoom(null, session.getPlayerId(), (short) -3));
+        if (result != 0) {
+            session.send(MessageBuilder.joinRoom(Optional.empty(),
+                    session.getPlayerId(), (short) -3));
         }
     }
 
@@ -220,79 +180,59 @@ public class RoomMessages {
     public static void roomSettings(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        short result = RoomManager.getRoomById(roomId).map(room ->
-                RoomAccessType.fromShort(msg.readShort()).map(type -> {
-                    String name = msg.readString(45);
-                    String password = msg.readString(5);
+        short result = RoomManager.getRoomById(roomId).map(room -> {
+            if (room.getMaster() != session.getPlayerId()) {
+                return (short) -3; // Player is not room's master
+            }
 
-                    if (room.getMaster() != session.getPlayerId()) {
-                        return (short) -3; // Player is not room's master
-                    }
+            return RoomAccessType.fromShort(msg.readShort()).map(type -> {
+                RoomSettings settings = new RoomSettings();
 
-                    Optional<RoomMode> roomMode = RoomMode.fromInt(msg.readByte())
-                            .filter(rm -> rm.isValidForServer(ServerManager.getServerType()));
-                    byte minLevel = msg.readByte();
-                    byte maxLevel = msg.readByte();
-                    Optional<RoomSize> maxSize = RoomSize.fromInt(msg.readByte())
-                            .filter(ms -> ms != RoomSize.SIZE_2V2);
+                settings.setAccessType(type);
+                settings.setName(msg.readString(45));
+                settings.setPassword(msg.readString(5));
 
-                    if (!maxSize.isPresent() || !roomMode.isPresent()) {
-                        return (short) -1;
-                    }
+                Optional<RoomMode> roomMode = RoomMode.fromInt(msg.readByte())
+                        .filter(rm -> rm.isValidForServer(ServerManager.getServerType()));
 
-                    if (minLevel > maxLevel) {
-                        return (short) -5; // Wrong level settings
-                    }
+                settings.setMinLevel(msg.readByte());
+                settings.setMaxLevel(msg.readByte());
 
-                    if (minLevel < MIN_ROOM_LEVEL) {
-                        minLevel = MIN_ROOM_LEVEL;
-                    }
+                Optional<RoomSize> maxSize = RoomSize.fromInt(msg.readByte())
+                        .filter(ms -> ms != RoomSize.SIZE_2V2);
 
-                    if (maxLevel > MAX_ROOM_LEVEL) {
-                        maxLevel = MAX_ROOM_LEVEL;
-                    }
+                if (maxSize.isPresent() && roomMode.isPresent()) {
+                    settings.setRoomMode(roomMode.get());
+                    settings.setMaxSize(maxSize.get());
+                } else {
+                    return (short) -1;
+                }
 
-                    if (maxSize.filter(ms -> ms.toInt() < room.getCurrentSize()).isPresent()) {
-                        return (short) -4; // Size is lower than players in room
-                    }
+                if (settings.areInvalidLevelSettings()) {
+                    return (short) -5;
+                }
 
-                    if (!room.isValidMaxLevel(maxLevel)) {
-                        return (short) -7; // Invalid maximum level
-                    }
+                if (maxSize.filter(ms -> ms.toInt() < room.getCurrentSize()).isPresent()) {
+                    return (short) -4; // Size is lower than players in room
+                }
 
-                    if (!room.isValidMinLevel(minLevel)) {
-                        return (short) -8; // Invalid minimum level
-                    }
+                // Skipping needless result -6: Level settings are incompatible with player level
 
-                    short playerLevel = PlayerInfo.getLevel(session.getPlayerId());
+                if (!room.isValidMaxLevel(settings.getMaxLevel())) {
+                    return (short) -7; // Invalid maximum level
+                }
 
-                    if ((playerLevel < minLevel) || (playerLevel > maxLevel)) {
-                        return (short) -6; // Invalid level
-                    }
+                if (!room.isValidMinLevel(settings.getMinLevel())) {
+                    return (short) -8; // Invalid minimum level
+                }
 
-                    // Limit the length of the name and the password
-                    if (name.length() > MAX_ROOM_NAME_LENGTH) {
-                        name = name.substring(0, MAX_ROOM_NAME_LENGTH);
-                    }
+                room.setSettings(settings);
 
-                    if (password.length() > MAX_ROOM_PASSWORD_LENGTH) {
-                        password = password.substring(0, MAX_ROOM_PASSWORD_LENGTH);
-                    }
+                room.broadcast(MessageBuilder.roomSettings(Optional.of(room), (short) 0));
 
-                    // Update room settings
-                    room.setAccessType(type);
-                    room.setName(name);
-                    room.setPassword(password);
-                    room.setRoomMode(roomMode.get());
-                    room.setMinLevel(minLevel);
-                    room.setMaxLevel(maxLevel);
-                    room.setMaxSize(maxSize.get());
-
-                    room.broadcast(MessageBuilder.roomSettings(Optional.of(room), (short) 0));
-
-                    return (short) 0;
-                }).orElse((short) -1)
-        ).orElse((short) -2);
+                return (short) 0;
+            }).orElse((short) -1);
+        }).orElse((short) -2);
 
         if (result != 0) {
             session.send(MessageBuilder.roomSettings(Optional.empty(), result));
@@ -322,29 +262,31 @@ public class RoomMessages {
         int roomId = msg.readShort();
         int playerToKick = msg.readInt();
 
-        if (ServerManager.getServerType() != ServerType.CLUB) {
-            short result = RoomManager.getRoomById(session.getRoomId())
-                    .filter(room -> room.getId() == roomId)
-                    .map(room -> {
-                        // If the player is the room master
-                        if ((room.getMaster() == session.getPlayerId()) && room.isInLobbyScreen()) {
-                            // If the player is in the room
-                            if (room.isPlayerIn(playerToKick)) {
-                                room.getPlayer(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
-                            } else {
-                                return (short) -4; // Player not found
-                            }
+        if (ServerManager.getServerType() == ServerType.CLUB) {
+            return;
+        }
+
+        short result = RoomManager.getRoomById(session.getRoomId())
+                .filter(room -> room.getId() == roomId)
+                .map(room -> {
+                    // If the player is the room master
+                    if ((room.getMaster() == session.getPlayerId()) && room.isInLobbyScreen()) {
+                        // If the player is in the room
+                        if (room.isPlayerIn(playerToKick)) {
+                            room.getPlayer(playerToKick).leaveRoom(RoomLeaveReason.KICKED);
                         } else {
-                            return (short) -3; // Not the room master
+                            return (short) -4; // Player not found
                         }
+                    } else {
+                        return (short) -3; // Not the room master
+                    }
 
-                        return (short) 0;
-                    }).orElse((short) -2);
+                    return (short) 0;
+                }).orElse((short) -2);
 
-            // If there is something wrong, notify the client
-            if (result != 0) {
-                session.send(MessageBuilder.kickPlayer(result));
-            }
+        // If there is something wrong, notify the client
+        if (result != 0) {
+            session.send(MessageBuilder.kickPlayer(result));
         }
     }
 

@@ -599,24 +599,14 @@ public class Room {
         return (level >= getMinLevel()) && (level <= getMaxLevel());
     }
 
-    public boolean isValidMinLevel(byte level) {
-        for (Session s : getPlayers().values()) {
-            if (PlayerInfo.getLevel(s.getPlayerId()) < level) {
-                return false;
-            }
-        }
-
-        return true;
+    public boolean isValidMinLevel(byte minLevel) {
+        return getPlayers().values().stream()
+                .noneMatch(s -> PlayerInfo.getLevel(s.getPlayerId()) < minLevel);
     }
 
-    public boolean isValidMaxLevel(byte level) {
-        for (Session s : getPlayers().values()) {
-            if (PlayerInfo.getLevel(s.getPlayerId()) > level) {
-                return false;
-            }
-        }
-
-        return true;
+    public boolean isValidMaxLevel(byte maxLevel) {
+        return getPlayers().values().stream()
+                .noneMatch(s -> PlayerInfo.getLevel(s.getPlayerId()) > maxLevel);
     }
 
     /** Returns true if there are not enough players to play a real match */
@@ -643,6 +633,16 @@ public class Room {
 
     private void updateTrainingFactor() {
         trainingFactor = isTraining() ? 0 : getTeamSizes();
+    }
+
+    public void setSettings(RoomSettings settings) {
+        setName(settings.getName());
+        setPassword(settings.getPassword());
+        setAccessType(settings.getAccessType());
+        setRoomMode(settings.getRoomMode());
+        setMinLevel(settings.getMinLevel());
+        setMaxLevel(settings.getMaxLevel());
+        setMaxSize(settings.getMaxSize());
     }
 
     /* ---- Accessors ---- */

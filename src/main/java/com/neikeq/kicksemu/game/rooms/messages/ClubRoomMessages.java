@@ -6,15 +6,13 @@ import com.neikeq.kicksemu.game.clubs.MemberInfo;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
 import com.neikeq.kicksemu.game.rooms.ClubRoom;
+import com.neikeq.kicksemu.game.rooms.ClubRoomSettings;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.TeamManager;
 import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
-import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
 import com.neikeq.kicksemu.game.rooms.enums.RoomLeaveReason;
-import com.neikeq.kicksemu.game.rooms.enums.RoomMap;
 import com.neikeq.kicksemu.game.rooms.enums.RoomMode;
-import com.neikeq.kicksemu.game.rooms.enums.RoomSize;
 import com.neikeq.kicksemu.game.rooms.enums.RoomAccessType;
 import com.neikeq.kicksemu.game.rooms.enums.RoomState;
 import com.neikeq.kicksemu.game.sessions.Session;
@@ -29,17 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ClubRoomMessages extends RoomMessages {
-
-    private static final int MAX_ROOM_NAME_LENGTH = 14;
-    private static final byte MIN_ROOM_LEVEL = 5;
-
-    private static class ClubRoomSettings {
-
-        String name = "Welcome";
-        String password = "";
-        RoomAccessType accessType = RoomAccessType.FREE;
-        RoomMode mode = RoomMode.AI_GOALKEEPER;
-    }
 
     public static void roomList(Session session, ClientMessage msg) {
         short page = msg.readShort();
@@ -57,17 +44,22 @@ public class ClubRoomMessages extends RoomMessages {
         }
 
         short result = RoomAccessType.fromShort(msg.readShort()).map(type -> {
-            String name = msg.readString(15);
-            String password = msg.readString(5);
+            ClubRoomSettings settings = new ClubRoomSettings();
+
+            settings.setAccessType(type);
+            settings.setName(msg.readString(15));
+            settings.setPassword(msg.readString(5));
 
             return RoomMode.fromInt(msg.readByte())
                     .filter(rm -> rm.isValidForServer(ServerManager.getServerType()))
                     .map(roomMode -> {
+                        settings.setRoomMode(roomMode);
+
                         // TODO Check result -2: Too many players in the opponent team. What does that even mean?
 
                         int playerId = session.getPlayerId();
 
-                        if (PlayerInfo.getLevel(playerId) < MIN_ROOM_LEVEL) {
+                        if (PlayerInfo.getLevel(playerId) < ClubRoomSettings.MIN_ROOM_LEVEL) {
                             return (short) -3; // Does not meet the level requirements
                         }
 
@@ -81,12 +73,6 @@ public class ClubRoomMessages extends RoomMessages {
                             return (short) -5; // The club already has a team
                         }
 
-                        ClubRoomSettings settings = new ClubRoomSettings();
-                        settings.name = name;
-                        settings.password = password;
-                        settings.accessType = type;
-                        settings.mode = roomMode;
-
                         createRoom(session, clubId, settings);
 
                         return (short) 0;
@@ -99,30 +85,7 @@ public class ClubRoomMessages extends RoomMessages {
     private static void createRoom(Session session, int clubId, ClubRoomSettings settings) {
         ClubRoom room = new ClubRoom();
 
-        // Limit the length of the name and the password
-        if (settings.name.length() > MAX_ROOM_NAME_LENGTH) {
-            settings.name = settings.name.substring(0, MAX_ROOM_NAME_LENGTH);
-        }
-
-        if (settings.password.length() > MAX_ROOM_PASSWORD_LENGTH) {
-            settings.password = settings.password.substring(0, MAX_ROOM_PASSWORD_LENGTH);
-        }
-
-        // If password is blank, disable password usage
-        if ((settings.accessType == RoomAccessType.PASSWORD) && settings.password.isEmpty()) {
-            settings.accessType = RoomAccessType.FREE;
-        }
-
-        // Set room information from received data
-        room.setName(settings.name);
-        room.setPassword(settings.password);
-        room.setAccessType(settings.accessType);
-        room.setRoomMode(settings.mode);
-        room.setMinLevel(MIN_ROOM_LEVEL);
-        room.setMaxLevel(MAX_ROOM_LEVEL);
-        room.setMap(RoomMap.RESERVOIR);
-        room.setBall(RoomBall.TEAM_ARENA);
-        room.setMaxSize(RoomSize.SIZE_2V2);
+        room.setSettings(settings);
 
         synchronized (RoomManager.ROOMS_LOCKER) {
             // Get the room id
@@ -202,26 +165,20 @@ public class ClubRoomMessages extends RoomMessages {
 
         short result = RoomManager.getRoomById(roomId).map(room ->
                 RoomAccessType.fromShort(msg.readShort()).map(type -> {
-                    String name = msg.readString(15);
-                    String password = msg.readString(5);
+                    ClubRoomSettings settings = new ClubRoomSettings();
+
+                    settings.setAccessType(type);
+                    settings.setName(msg.readString(15));
+                    settings.setPassword(msg.readString(5));
 
                     if (room.getMaster() != session.getPlayerId()) {
                         // Player is not the room master (displays the same as -2 though...)
                         return (short) -3;
                     } else {
-                        // Limit the length of the name and the password
-                        if (name.length() > MAX_ROOM_NAME_LENGTH) {
-                            name = name.substring(0, MAX_ROOM_NAME_LENGTH);
-                        }
-
-                        if (password.length() > MAX_ROOM_PASSWORD_LENGTH) {
-                            password = password.substring(0, MAX_ROOM_PASSWORD_LENGTH);
-                        }
-
                         // Update room settings
-                        room.setAccessType(type);
-                        room.setName(name);
-                        room.setPassword(password);
+                        room.setAccessType(settings.getAccessType());
+                        room.setName(settings.getName());
+                        room.setPassword(settings.getPassword());
 
                         room.broadcast(MessageBuilder.clubRoomSettings(Optional.of(room), (short) 0));
                     }
