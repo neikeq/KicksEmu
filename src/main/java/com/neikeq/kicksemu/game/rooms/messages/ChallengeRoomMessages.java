@@ -2,6 +2,8 @@ package com.neikeq.kicksemu.game.rooms.messages;
 
 import com.neikeq.kicksemu.game.chat.ChatUtils;
 import com.neikeq.kicksemu.game.rooms.ChallengeRoom;
+import com.neikeq.kicksemu.game.rooms.ClubRoom;
+import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.rooms.challenges.Challenge;
 import com.neikeq.kicksemu.game.rooms.challenges.ChallengeOrganizer;
 import com.neikeq.kicksemu.game.rooms.enums.RoomBall;
@@ -179,15 +181,18 @@ public class ChallengeRoomMessages extends RoomMessages {
     public static void startMatch(Session session, ClientMessage msg) {
         int roomId = msg.readShort();
 
-        if (session.getRoomId() == roomId) {
-            short result = getRoomById(roomId)
-                    .filter(r -> r.isLoading() &&
-                            (r.getConfirmedPlayers().size() < r.getCurrentSize()))
-                    .map(room -> (short) -1)
-                    .orElse((short) 0);
+        RoomManager.getRoomById(session.getRoomId())
+                .map(room -> (ClubRoom) room)
+                .filter(room -> room.getChallengeId() == roomId)
+                .ifPresent(room -> {
+                    short result = getRoomById(roomId)
+                            .filter(r -> r.isLoading() &&
+                                    (r.getConfirmedPlayers().size() < r.getCurrentSize()))
+                            .map(r -> (short) -1)
+                            .orElse((short) 0);
 
-            session.send(MessageBuilder.startMatch(result));
-        }
+                    session.send(MessageBuilder.startMatch(result));
+                });
     }
 
     public static void matchResult(Session session, ClientMessage msg) {
