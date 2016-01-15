@@ -98,7 +98,9 @@ public class ClubRoomMessages extends RoomMessages {
     }
 
     public static void joinRoom(Session session, ClientMessage msg) {
-        if (session.getRoomId() > 0) return;
+        if (session.getRoomId() > 0) {
+            return;
+        }
 
         int roomId = msg.readShort();
         String password = msg.readString(4);
@@ -108,20 +110,23 @@ public class ClubRoomMessages extends RoomMessages {
                 .orElse((short) -3);
 
         if (result != 0) {
-            session.send(MessageBuilder.clubJoinRoom(Optional.empty(), (short) -3));
+            session.send(MessageBuilder.clubJoinRoom(Optional.empty(), result));
         }
     }
 
     public static void quickJoinRoom(Session session) {
         // Ignore the message if the player is already in a room
-        if (session.getRoomId() > 0) return;
+        if (session.getRoomId() > 0) {
+            return;
+        }
 
         int playerId = session.getPlayerId();
         short result = RoomManager.getRoomById(MemberInfo.getClubId(playerId))
-                .map(room -> room.tryJoinRoom(session, "")).orElse((short) -2);
+                .map(room -> room.tryJoinRoom(session, ""))
+                .orElse((short) -2);
 
         if (result != 0) {
-            session.send(MessageBuilder.clubQuickJoinRoom((short) -2));
+            session.send(MessageBuilder.clubQuickJoinRoom(result));
         }
     }
 
