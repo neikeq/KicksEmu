@@ -4,7 +4,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-class GoldenTimeJob implements Job {
+public class GoldenTimeJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {

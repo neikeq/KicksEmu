@@ -111,7 +111,9 @@ public class GameEvents {
     }
 
     public static boolean isGoldenTime() {
-        if (customGoldenTime) return true;
+        if (customGoldenTime) {
+            return true;
+        }
 
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("CET"));
         int day = c.get(Calendar.DAY_OF_WEEK);
@@ -128,7 +130,9 @@ public class GameEvents {
     }
 
     public static boolean isClubTime() {
-        if (customClubTime) return true;
+        if (customClubTime) {
+            return true;
+        }
 
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("CET"));
         int day = c.get(Calendar.DAY_OF_WEEK);

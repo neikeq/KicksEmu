@@ -5,7 +5,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-class TournamentJob implements Job {
+public class TournamentJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
