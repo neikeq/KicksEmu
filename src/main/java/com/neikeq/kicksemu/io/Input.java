@@ -41,10 +41,6 @@ public class Input {
     private void handle(String input) {
         String[] args = input.split(" ");
 
-        if (args.length < 2) {
-            args = new String[] { args[0], "" };
-        }
-
         if (commands.containsKey(args[0])) {
             commands.get(args[0]).handle(args);
         } else {
@@ -53,6 +49,10 @@ public class Input {
     }
 
     private void handleSave(String ... arg) {
+        if (arg.length < 2) {
+            System.out.println("Expected argument {'config', 'lang'}");
+        }
+
         try {
             switch (arg[1]) {
                 case "config":
@@ -70,6 +70,10 @@ public class Input {
     }
 
     private void handleLogs(String ... arg) {
+        if (arg.length < 2) {
+            System.out.println("Expected boolean argument");
+        }
+
         try {
             Logger logger = Logger.getInstance();
             logger.setLogging(Boolean.valueOf(arg[1]));
@@ -80,6 +84,10 @@ public class Input {
     }
 
     private void handleVerbosity(String ... arg) {
+        if (arg.length < 2) {
+            System.out.println("Expected argument {'debug', 'info', 'warning', 'critical'}");
+        }
+
         try {
             Level specifiedLevel = Level.valueOf(arg[1].toUpperCase());
             KicksEmu.getOutput().setLevel(specifiedLevel);
