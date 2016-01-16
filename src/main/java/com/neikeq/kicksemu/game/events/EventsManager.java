@@ -15,13 +15,19 @@ public class EventsManager {
         scheduler = new StdSchedulerFactory().getScheduler();
         scheduler.start();
 
-        scheduleEvent(new TournamentEvent());
+        TournamentEvent tournamentEvent = new TournamentEvent();
+
+        if (tournamentEvent.isUsable()) {
+            scheduleEvent(tournamentEvent);
+        }
     }
 
     public static void scheduleEvent(GameEvent event) throws SchedulerException {
         cancelEvent(event.getJob().getKey());
 
-        scheduler.scheduleJob(event.getJob(), event.getTrigger());
+        if (event.isUsable()) {
+            scheduler.scheduleJob(event.getJob(), event.getTrigger());
+        }
     }
 
     public static void cancelEvent(JobKey jobKey) throws SchedulerException {
