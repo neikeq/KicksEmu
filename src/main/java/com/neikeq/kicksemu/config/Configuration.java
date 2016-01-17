@@ -16,10 +16,10 @@ import java.util.Properties;
 public class Configuration {
 
     private static Configuration instance;
-
-    private final Properties config = new Properties();
+    private static boolean debugEnabled;
 
     private String configPath;
+    private final Properties config = new Properties();
 
     /**
      * Initializes the configuration properties with default values.
@@ -61,6 +61,7 @@ public class Configuration {
         if (Files.exists(Paths.get(configPath))) {
             try (InputStream configStream = new FileInputStream(configPath)) {
                 config.load(configStream);
+                debugEnabled = config.get("debug.enabled").equals("true");
             } catch (IOException e) {
                 System.out.println("Cannot read configuration file." + e.getMessage());
             }
@@ -100,6 +101,10 @@ public class Configuration {
 
     public static Level getLoggingLevel() {
         return Level.fromString(get("output.verbosity"));
+    }
+
+    public static boolean isDebugEnabled() {
+        return debugEnabled;
     }
 
     public static Configuration getInstance() {

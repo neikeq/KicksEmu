@@ -1,5 +1,6 @@
 package com.neikeq.kicksemu.network.server.tcp;
 
+import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.game.sessions.SessionManager;
 import com.neikeq.kicksemu.io.Output;
@@ -21,7 +22,9 @@ class ClientIdleHandler extends ChannelDuplexHandler {
                 Session session = SessionManager.getSession(ctx.channel());
 
                 if (session.getPingState() > 0) {
-                    session.close();
+                    if (!Configuration.isDebugEnabled()) {
+                        session.close();
+                    }
                 } else {
                     session.sendAndFlush(MessageBuilder.tcpPing());
                     session.setPingState((byte) (session.getPingState() + 1));
