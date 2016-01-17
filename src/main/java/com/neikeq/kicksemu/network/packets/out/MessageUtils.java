@@ -264,7 +264,7 @@ class MessageUtils {
         boolean training = !room.trainingFactorAllowsRewards();
 
         TeamResult tr = room.getPlayerTeam(id)
-                .filter(t -> training)
+                .filter(t -> !training)
                 .map(t -> (t == RoomTeam.RED) ? result.getRedTeam() : result.getBlueTeam())
                 .orElse(new TeamResult());
 
