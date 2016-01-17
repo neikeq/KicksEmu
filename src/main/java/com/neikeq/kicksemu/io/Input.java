@@ -4,17 +4,20 @@ import com.neikeq.kicksemu.game.chat.ChatUtils;
 import com.neikeq.kicksemu.game.lobby.LobbyManager;
 import com.neikeq.kicksemu.game.rooms.RoomManager;
 import com.neikeq.kicksemu.game.servers.ServerType;
+import com.neikeq.kicksemu.game.sessions.Session;
 import com.neikeq.kicksemu.io.logging.Level;
 import com.neikeq.kicksemu.KicksEmu;
 import com.neikeq.kicksemu.config.Configuration;
 import com.neikeq.kicksemu.config.Localization;
 import com.neikeq.kicksemu.io.logging.Logger;
+import com.neikeq.kicksemu.network.packets.out.ServerMessage;
 import com.neikeq.kicksemu.network.server.ServerManager;
 import com.neikeq.kicksemu.game.events.GameEvents;
 import org.quartz.SchedulerException;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -212,6 +215,45 @@ public class Input {
         }
     }
 
+    /**
+     * -- Usage --
+     * "send playerId messageId [radix, [bytes]]"
+     * @param arg arguments
+     */
+    private void handleSend(String ... arg) {
+        if (arg.length < 3) {
+            Output.println("Expected more arguments. Required: 'send playerId messageId'");
+            return;
+        }
+
+        try {
+            int targetId = Integer.valueOf(arg[1]);
+            int messageId = Integer.valueOf(arg[2]);
+
+            Optional<Session> maybeTarget = ServerManager.getSession(targetId);
+
+            maybeTarget.ifPresent(target -> {
+                ServerMessage msg = new ServerMessage(messageId);
+
+                if (arg.length > 3) {
+                    int radix = Integer.valueOf(arg[3]);
+
+                    for (int i = 4; i < arg.length; i++) {
+                        msg.writeByte(Byte.valueOf(arg[i], radix));
+                    }
+                }
+
+                target.sendAndFlush(msg);
+            });
+
+            if (!maybeTarget.isPresent()) {
+                Output.println("Target not found.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println();
+        }
+    }
+
     private void defineCommands() {
         commands = new TreeMap<>();
         commands.put("save", this::handleSave);
@@ -222,6 +264,7 @@ public class Input {
         commands.put("stats", arg -> handleStats());
         commands.put("goldentime", this::handleGoldenTime);
         commands.put("clubtime", this::handleClubTime);
+        commands.put("send", this::handleSend);
     }
 
     public Input() {
