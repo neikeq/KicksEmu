@@ -855,8 +855,9 @@ public class Room {
     }
 
     public Optional<MissionInfo> getMatchMissionInfo() {
-        return hasMatchMission() ? Optional.empty() :
-                TableManager.getMissionInfo(m -> m.getId() == getMatchMission());
+        return hasMatchMission() ?
+                TableManager.getMissionInfo(m -> m.getId() == getMatchMission()) :
+                Optional.empty();
     }
 
     public List<Integer> getDisconnectedPlayers() {
