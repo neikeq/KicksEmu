@@ -61,7 +61,7 @@ public class Configuration {
         if (Files.exists(Paths.get(configPath))) {
             try (InputStream configStream = new FileInputStream(configPath)) {
                 config.load(configStream);
-                debugEnabled = config.get("debug.enabled").equals("true");
+                debugEnabled = getBoolean("debug.enabled");
             } catch (IOException e) {
                 System.out.println("Cannot read configuration file." + e.getMessage());
             }
