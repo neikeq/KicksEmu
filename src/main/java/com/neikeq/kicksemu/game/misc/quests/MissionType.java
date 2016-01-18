@@ -58,11 +58,11 @@ public enum MissionType {
                 .orElse(false);
     }
 
-    public static MissionType fromString(String str) {
+    public static Optional<MissionType> fromString(String str) {
         try {
-            return valueOf(str.toUpperCase());
+            return Optional.of(valueOf(str.toUpperCase()));
         } catch (IllegalArgumentException ignored) {
-            return null;
+            return Optional.empty();
         }
     }
 

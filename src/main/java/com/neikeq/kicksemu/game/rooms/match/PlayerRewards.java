@@ -142,10 +142,9 @@ class PlayerRewards {
     }
 
     private boolean isMissionCompleted(MissionInfo mission) {
-        return getMissionTarget(mission)
-                .map(t -> mission.getType()
-                        .resultAchievesMission(t, getMissionTargetTeam(mission), mission))
-                .orElse(true);
+        return getMissionTarget(mission).map(target -> mission.getType().map(type ->
+                type.resultAchievesMission(target, getMissionTargetTeam(mission), mission)
+        ).orElse(true)).orElse(true);
     }
 
     private Optional<StatisticsCarrier> getMissionTarget(MissionInfo mission) {

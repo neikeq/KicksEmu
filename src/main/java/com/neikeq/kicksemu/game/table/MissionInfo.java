@@ -9,6 +9,7 @@ import com.neikeq.kicksemu.utils.table.Row;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Optional;
 
 public class MissionInfo {
 
@@ -16,7 +17,7 @@ public class MissionInfo {
     private final int reward;
     private final SeasonRange season;
     private final MissionTarget target;
-    private final MissionType type;
+    private final Optional<MissionType> type;
     private final int value;
 
     private static SeasonRange columnToSeasonRange(Row row) throws ParseRowException {
@@ -68,7 +69,7 @@ public class MissionInfo {
         return target;
     }
 
-    public MissionType getType() {
+    public Optional<MissionType> getType() {
         return type;
     }
 
