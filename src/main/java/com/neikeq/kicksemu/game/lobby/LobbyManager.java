@@ -26,27 +26,26 @@ public class LobbyManager {
     }
 
     public static void lobbyList(Session session, ClientMessage msg) {
-        List<Integer> players = new ArrayList<>();
-
-        byte page = msg.readByte();
-        int index = page * PLAYERS_PER_PAGE;
-
         try (ConnectionRef con = ConnectionRef.ref()) {
             List<Integer> visiblePlayers = getMainLobby().getVisiblePlayers(con);
 
-            for (int i = index; i < (index + 10); i++) {
-                if (i < visiblePlayers.size()) {
-                    players.add(visiblePlayers.get(i));
-                } else {
-                    break;
-                }
+            byte pagesCount = (byte) Math.ceil(
+                    (double) visiblePlayers.size() / (double) PLAYERS_PER_PAGE);
+
+            byte page = (byte) Math.min(msg.readByte(), pagesCount);
+            int indexFrom = page * PLAYERS_PER_PAGE;
+            int indexTo = indexFrom + 10;
+
+            List<Integer> players = new ArrayList<>();
+
+            for (int i = indexFrom; (i < indexTo) && (i < visiblePlayers.size()); i++) {
+                players.add(visiblePlayers.get(i));
             }
 
             if (!players.isEmpty()) {
                 Integer[] playersArray = new Integer[players.size()];
 
-                session.send(MessageBuilder.lobbyList(players.toArray(playersArray),
-                        page, (short) 0, con));
+                session.send(MessageBuilder.lobbyList(players.toArray(playersArray), page, con));
             }
         } catch (SQLException e) {
             Output.println("Exception when handling lobby list message: " +

@@ -16,6 +16,8 @@ public class RoomManager {
     private static final Map<Integer, Room> ROOMS = new HashMap<>();
     private static final int ROOMS_PER_PAGE = 5;
 
+    private static short pagesCount;
+
     public static Optional<Room> getRoomById(Integer id) {
         synchronized (ROOMS_LOCKER) {
             if (id <= 0) {
@@ -30,6 +32,7 @@ public class RoomManager {
         synchronized (ROOMS_LOCKER) {
             if (!ROOMS.containsKey(room.getId())) {
                 ROOMS.put(room.getId(), room);
+                updatePagesCount();
             }
         }
     }
@@ -37,6 +40,7 @@ public class RoomManager {
     public static void removeRoom(Integer id) {
         synchronized (ROOMS_LOCKER) {
             ROOMS.remove(id);
+            updatePagesCount();
         }
     }
 
@@ -44,6 +48,10 @@ public class RoomManager {
         synchronized (ROOMS_LOCKER) {
             return ROOMS.size();
         }
+    }
+
+    private static void updatePagesCount() {
+        pagesCount = (short) Math.ceil((double) roomsCount() / (double) ROOMS_PER_PAGE);
     }
 
     /**
@@ -98,5 +106,9 @@ public class RoomManager {
                 Byte.compare(r2.getCurrentSize(), r1.getCurrentSize()));
 
         return !freeRooms.isEmpty() ? Optional.of(freeRooms.get(0)) : Optional.empty();
+    }
+
+    public static short getPagesCount() {
+        return pagesCount;
     }
 }

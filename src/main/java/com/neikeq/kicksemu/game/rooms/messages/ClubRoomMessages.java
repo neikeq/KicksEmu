@@ -29,7 +29,7 @@ import java.util.Optional;
 public class ClubRoomMessages extends RoomMessages {
 
     public static void roomList(Session session, ClientMessage msg) {
-        short page = msg.readShort();
+        short page = (short) Math.min(msg.readShort(), RoomManager.getPagesCount());
         session.send(MessageBuilder.clubRoomList(RoomManager.getRoomsFromPage(page), page));
     }
 

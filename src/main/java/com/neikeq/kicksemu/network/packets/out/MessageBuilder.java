@@ -577,48 +577,45 @@ public class MessageBuilder {
         return msg;
     }
 
-    public static ServerMessage roomList(Map<Integer, Room> rooms, short page, short result) {
+    public static ServerMessage roomList(Map<Integer, Room> rooms, short page) {
         ServerMessage msg = new ServerMessage(MessageId.ROOM_LIST);
 
-        msg.writeShort(result);
+        msg.writeShort((short) 0);
+        msg.writeShort(page);
 
-        if (result == 0) {
-            msg.writeShort(page);
+        for (Room room : rooms.values()) {
+            msg.writeByte((byte) room.getAccessType().toInt());
+            msg.writeBool(!room.isWaiting());
+            msg.writeShort((short) room.getId());
+            msg.writeString(room.getName(), 46);
+            msg.writeByte(room.getMinLevel());
+            msg.writeByte(room.getMaxLevel());
+            msg.writeByte((byte) room.getMaxSize().toInt());
+            msg.writeByte(room.getCurrentSize());
 
-            for (Room room : rooms.values()) {
-                msg.writeByte((byte) room.getAccessType().toInt());
-                msg.writeBool(!room.isWaiting());
-                msg.writeShort((short) room.getId());
-                msg.writeString(room.getName(), 46);
-                msg.writeByte(room.getMinLevel());
-                msg.writeByte(room.getMaxLevel());
-                msg.writeByte((byte) room.getMaxSize().toInt());
-                msg.writeByte(room.getCurrentSize());
+            // Red team positions
 
-                // Red team positions
+            int i = 0;
 
-                int i = 0;
-
-                for (short position : room.getRedTeamPositions()) {
-                    msg.writeByte((byte) position);
-                    i++;
-                }
-
-                // Fill the remain spaces if red team is not full
-                msg.writeZeros(5 - i);
-
-                // Blue team positions
-
-                i = 0;
-
-                for (short position : room.getBlueTeamPositions()) {
-                    msg.writeByte((byte) position);
-                    i++;
-                }
-
-                // Fill the remain spaces if blue team is not full
-                msg.writeZeros(5 - i);
+            for (short position : room.getRedTeamPositions()) {
+                msg.writeByte((byte) position);
+                i++;
             }
+
+            // Fill the remain spaces if red team is not full
+            msg.writeZeros(5 - i);
+
+            // Blue team positions
+
+            i = 0;
+
+            for (short position : room.getBlueTeamPositions()) {
+                msg.writeByte((byte) position);
+                i++;
+            }
+
+            // Fill the remain spaces if blue team is not full
+            msg.writeZeros(5 - i);
         }
 
         return msg;
@@ -825,43 +822,39 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.KICK_PLAYER).withResult(result);
     }
 
-    public static ServerMessage lobbyList(Integer[] players, byte page,
-                                          short result, ConnectionRef ... con) {
+    public static ServerMessage lobbyList(Integer[] players, byte page, ConnectionRef ... con) {
         ServerMessage msg = new ServerMessage(MessageId.LOBBY_LIST);
 
-        msg.writeShort(result);
+        msg.writeShort((short) 0);
+        msg.writeByte(page);
 
-        if (result == 0) {
-            msg.writeByte(page);
+        try (ConnectionRef connection = ConnectionRef.ref(con)) {
+            String array = Strings.repeatAndSplit("?", ", ", players.length);
 
-            try (ConnectionRef connection = ConnectionRef.ref(con)) {
-                String array = Strings.repeatAndSplit("?", ", ", players.length);
+            final String query = "SELECT name, level, position, status_message" +
+                    " FROM characters WHERE" +
+                    " id IN(" + array + ") ORDER BY FIELD(id, " + array + ")";
 
-                final String query = "SELECT name, level, position, status_message" +
-                        " FROM characters WHERE" +
-                        " id IN(" + array + ") ORDER BY FIELD(id, " + array + ")";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                SqlUtils.repeatSetInt(stmt, players);
+                SqlUtils.repeatSetInt(stmt, players.length + 1, players);
 
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    SqlUtils.repeatSetInt(stmt, players);
-                    SqlUtils.repeatSetInt(stmt, players.length + 1, players);
-
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        int i = 0;
-                        while (rs.next()) {
-                            msg.writeBool(true);
-                            msg.writeInt(players[i]);
-                            msg.writeString(rs.getString("name"), 15);
-                            msg.writeShort(rs.getShort("level"));
-                            msg.writeByte((byte) rs.getShort("position"));
-                            msg.writeString(rs.getString("status_message"), 35);
-                            i++;
-                        }
+                try (ResultSet rs = stmt.executeQuery()) {
+                    int i = 0;
+                    while (rs.next()) {
+                        msg.writeBool(true);
+                        msg.writeInt(players[i]);
+                        msg.writeString(rs.getString("name"), 15);
+                        msg.writeShort(rs.getShort("level"));
+                        msg.writeByte((byte) rs.getShort("position"));
+                        msg.writeString(rs.getString("status_message"), 35);
+                        i++;
                     }
                 }
-            } catch (SQLException e) {
-                Output.println("Exception when handling lobby list message: " +
-                        e.getMessage(), Level.DEBUG);
             }
+        } catch (SQLException e) {
+            Output.println("Exception when handling lobby list message: " +
+                    e.getMessage(), Level.DEBUG);
         }
 
         return msg;

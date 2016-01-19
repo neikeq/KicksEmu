@@ -36,9 +36,8 @@ import java.util.Optional;
 public class RoomMessages {
 
     public static void roomList(Session session, ClientMessage msg) {
-        short page = msg.readShort();
-        session.send(MessageBuilder.roomList(RoomManager.getRoomsFromPage(page),
-                page, (short) 0));
+        short page = (short) Math.min(msg.readShort(), RoomManager.getPagesCount());
+        session.send(MessageBuilder.roomList(RoomManager.getRoomsFromPage(page), page));
     }
 
     public static void createRoom(Session session, ClientMessage msg) {
