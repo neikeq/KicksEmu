@@ -19,7 +19,6 @@ import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.Optional;
 
-
 class PlayerRewards {
 
     private static final int VOTE_POINTS_LIMIT = 100;

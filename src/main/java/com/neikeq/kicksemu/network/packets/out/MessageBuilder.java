@@ -1530,17 +1530,17 @@ public class MessageBuilder {
         return new ServerMessage(MessageId.UPDATE_SETTINGS).withResult(result);
     }
 
-    public static ServerMessage playerDetails(Session session, short result) {
+    public static ServerMessage playerDetails(Optional<Session> maybeTarget) {
         ServerMessage msg = new ServerMessage(MessageId.PLAYER_DETAILS);
 
-        msg.writeShort(result);
+        msg.writeShort(maybeTarget.isPresent() ? (short) 0 : -2);
 
-        if (result == 0) {
-            int playerId = session.getPlayerId();
+        maybeTarget.ifPresent(targetSession -> {
+            int playerId = targetSession.getPlayerId();
 
             msg.writeInt(playerId);
-            msg.writeString(session.getCache().getName(), 15);
-            msg.writeShort(session.getCache().getPosition());
+            msg.writeString(targetSession.getCache().getName(), 15);
+            msg.writeShort(targetSession.getCache().getPosition());
             msg.writeShort(PlayerInfo.getLevel(playerId));
             msg.writeString(ClubInfo.getName(MemberInfo.getClubId(playerId)), 15);
 
@@ -1596,9 +1596,10 @@ public class MessageBuilder {
             msg.writeShort((short) monthHistory.getTackling());
             msg.writeZeros(2);
             msg.writeShort((short) monthHistory.getTotalPoints());
+            // 120
 
             // TODO Add club info
-        }
+        });
 
         return msg;
     }

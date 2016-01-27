@@ -35,9 +35,7 @@ public class CharacterManager {
 
     public static void playerDetails(Session session, ClientMessage msg) {
         int targetId = msg.readInt();
-
-        ServerManager.getSession(targetId).ifPresent(targetSession ->
-                session.send(MessageBuilder.playerDetails(targetSession, (short) 0)));
+        session.send(MessageBuilder.playerDetails(ServerManager.getSession(targetId)));
     }
 
     private static void sendPlayerInfo(Session session) {
