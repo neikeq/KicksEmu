@@ -459,8 +459,9 @@ public class RoomMessages {
         msg.ignoreBytes(4);
 
         RoomManager.getRoomById(roomId)
-                .filter(room -> (room.getHost() == session.getPlayerId()) &&
-                        (room.state() == RoomState.PLAYING))
+                .filter(r ->
+                        ((r.getTrainingFactor() < 0) || (r.getHost() == session.getPlayerId())) &&
+                                (r.state() == RoomState.PLAYING))
                 .ifPresent(room -> {
                     room.setState(RoomState.RESULT);
 

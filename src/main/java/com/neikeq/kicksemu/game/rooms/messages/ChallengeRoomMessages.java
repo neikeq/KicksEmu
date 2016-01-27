@@ -183,12 +183,12 @@ public class ChallengeRoomMessages extends RoomMessages {
 
         RoomManager.getRoomById(session.getRoomId())
                 .map(room -> (ClubRoom) room)
-                .filter(room -> room.getChallengeId() == roomId)
-                .ifPresent(room -> {
+                .filter(clubRoom -> clubRoom.getChallengeId() == roomId)
+                .ifPresent(clubRoom -> {
                     short result = getRoomById(roomId)
                             .filter(r -> r.isLoading() &&
                                     (r.getConfirmedPlayers().size() < r.getCurrentSize()))
-                            .map(r -> (short) -1)
+                            .map(challengeRoom -> (short) -1)
                             .orElse((short) 0);
 
                     session.send(MessageBuilder.startMatch(result));
