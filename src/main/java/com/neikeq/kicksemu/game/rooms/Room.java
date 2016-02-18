@@ -632,7 +632,7 @@ public class Room {
     }
 
     private void updateTrainingFactor() {
-        trainingFactor = isTraining() ? 0 : getTeamSizes();
+        trainingFactor = isTraining() ? -1 : getTeamSizes();
     }
 
     public void setSettings(RoomSettings settings) {
