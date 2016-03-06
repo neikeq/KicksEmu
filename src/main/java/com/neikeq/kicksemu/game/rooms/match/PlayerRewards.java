@@ -127,7 +127,17 @@ class PlayerRewards {
     }
 
     private void applyRewardRates() {
-        experience.setValue(experience.getValue() * Configuration.getInt("game.rewards.exp"));
+        int multiplier = Configuration.getInt("game.rewards.exp");
+
+        if (Configuration.getBoolean("game.match.bonus.general")) {
+            if (getPlayerLevel() < 11) {
+                multiplier = Configuration.getInt("game.rewards.noob");
+            } else if (getPlayerLevel() < 26) {
+                multiplier = Configuration.getInt("game.rewards.rookie");
+            }
+        }
+
+        experience.setValue(experience.getValue() * multiplier);
         points.setValue(points.getValue() * Configuration.getInt("game.rewards.point"));
     }
 
