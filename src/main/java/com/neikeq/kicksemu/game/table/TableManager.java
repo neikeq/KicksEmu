@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class TableManager {
 
     public static int EXPERIENCE_LIMIT;
+    public static byte LEVEL_LIMIT;
 
     private static final Map<String, String> tables = new HashMap<>();
 
@@ -68,6 +69,7 @@ public class TableManager {
 
         LevelInfo lastLevel = levelTable.get(Collections.max(levelTable.keySet()));
         EXPERIENCE_LIMIT = lastLevel.getExperience() + lastLevel.getExperienceGap();
+        LEVEL_LIMIT = (byte) lastLevel.getLevel();
     }
 
     public static Optional<SkillInfo> getSkillInfo(Predicate<SkillInfo> filter) {

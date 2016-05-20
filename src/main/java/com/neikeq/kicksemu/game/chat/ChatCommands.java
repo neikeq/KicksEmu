@@ -74,7 +74,7 @@ public class ChatCommands {
             short requestedLevel = (args.length < 2) ?
                     (short) (playerLevel + 1) : Short.valueOf(args[1]);
 
-            if ((playerLevel >= requestedLevel) || (requestedLevel > 60)) {
+            if ((playerLevel >= requestedLevel) || (requestedLevel > TableManager.LEVEL_LIMIT)) {
                 return;
             }
 

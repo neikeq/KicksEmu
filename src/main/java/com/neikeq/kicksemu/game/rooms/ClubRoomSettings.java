@@ -1,6 +1,7 @@
 package com.neikeq.kicksemu.game.rooms;
 
 import com.neikeq.kicksemu.game.rooms.enums.RoomSize;
+import com.neikeq.kicksemu.game.table.TableManager;
 
 public class ClubRoomSettings extends RoomSettings {
 
@@ -16,6 +17,6 @@ public class ClubRoomSettings extends RoomSettings {
     }
 
     public byte getMaxLevel() {
-        return MAX_ROOM_LEVEL;
+        return TableManager.LEVEL_LIMIT;
     }
 }

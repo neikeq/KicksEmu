@@ -46,7 +46,7 @@ public class Room {
     private int trainingFactor;
 
     private byte minLevel = 1;
-    private byte maxLevel = 60;
+    private byte maxLevel = TableManager.LEVEL_LIMIT;
 
     private short matchMission;
     private short currentSong = (short) new Random().nextInt(SONGS_COUNT);
