@@ -56,9 +56,14 @@ class PlayerRewards {
     }
 
     private void calculateBaseReward() {
-        int rewardFactor = 0;
         short votePoints = (playerResult.getVotePoints() > VOTE_POINTS_LIMIT) ?
                 VOTE_POINTS_LIMIT : playerResult.getVotePoints();
+
+        if (votePoints <= 35) {
+            votePoints = 0;
+        }
+
+        int rewardFactor = 0;
 
         switch (room().getTrainingFactor()) {
             case -1:
