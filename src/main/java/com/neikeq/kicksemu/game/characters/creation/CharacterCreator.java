@@ -1,8 +1,14 @@
 package com.neikeq.kicksemu.game.characters.creation;
 
+import com.neikeq.kicksemu.game.characters.CharacterUtils;
+import com.neikeq.kicksemu.game.characters.PlayerInfo;
 import com.neikeq.kicksemu.game.characters.types.Animation;
 import com.neikeq.kicksemu.game.characters.types.PlayerStats;
+import com.neikeq.kicksemu.game.inventory.InventoryUtils;
+import com.neikeq.kicksemu.game.inventory.products.Item;
 import com.neikeq.kicksemu.game.sessions.Session;
+import com.neikeq.kicksemu.game.table.InitialItem;
+import com.neikeq.kicksemu.game.table.TableManager;
 import com.neikeq.kicksemu.game.users.UserInfo;
 import com.neikeq.kicksemu.io.Output;
 import com.neikeq.kicksemu.io.logging.Level;
@@ -13,6 +19,8 @@ import com.neikeq.kicksemu.storage.ConnectionRef;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 public class CharacterCreator {
 
@@ -34,6 +42,23 @@ public class CharacterCreator {
                 } else {
                     result = CreationResult.SYSTEM_PROBLEM;
                 }
+
+                Map<Integer, Item> items = session.getCache().getItems();
+                List<InitialItem> initialItems = TableManager.getInitialItems(character.getPosition());
+
+                initialItems.forEach(initialItem -> {
+                    int inventoryId = InventoryUtils.getSmallestMissingId(items.values());
+
+                    Item item = new Item(initialItem.getItemId(), inventoryId,
+                            initialItem.getExpiration().toInt(), initialItem.getBonusOne(),
+                            initialItem.getBonusTwo(), initialItem.getExpiration().getUsages(),
+                            InventoryUtils.expirationToTimestamp(initialItem.getExpiration()), true, true);
+
+                    CharacterUtils.updateItemsInUse(item, session);
+
+                    PlayerInfo.addInventoryItem(item, session.getPlayerId());
+                    session.getCache().addItem(inventoryId, item);
+                });
             }
         } else {
             result = CreationResult.CHARACTERS_LIMIT;

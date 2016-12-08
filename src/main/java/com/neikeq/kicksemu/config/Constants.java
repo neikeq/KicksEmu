@@ -12,6 +12,7 @@ public class Constants {
     public static final String TABLE_SKILL_DEFAULT = TABLE_DIR + "Table_Skill_File.csv";
     public static final String TABLE_CELE_DEFAULT = TABLE_DIR + "Table_Cele_File.csv";
     public static final String TABLE_LEARN_DEFAULT = TABLE_DIR + "Table_Learn_File.csv";
+    public static final String TABLE_INITIAL_ITEMS_DEFAULT = TABLE_DIR + "Table_Initial_Items.csv";
     public static final String TABLE_ITEM_FREE_DEFAULT = TABLE_DIR + "Table_ItemFree_File.csv";
     public static final String TABLE_ITEM_DEFAULT = TABLE_DIR + "Table_Item_File.csv";
     public static final String TABLE_BONUS_DEFAULT = TABLE_DIR + "Table_Bonus_File.csv";
@@ -25,6 +26,7 @@ public class Constants {
     public static final String PROPERTY_TABLE_SKILL = "table.skill";
     public static final String PROPERTY_TABLE_CELE = "table.cele";
     public static final String PROPERTY_TABLE_LEARN = "table.learn";
+    public static final String PROPERTY_TABLE_INITIAL_ITEMS = "table.initial.items";
     public static final String PROPERTY_TABLE_ITEM_FREE = "table.item.free";
     public static final String PROPERTY_TABLE_ITEM = "table.item";
     public static final String PROPERTY_TABLE_BONUS = "table.bonus";

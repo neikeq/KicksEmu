@@ -35,6 +35,7 @@ public class TableManager {
     private static final Map<Integer, OptionInfo> optionTable = new HashMap<>();
     private static final Map<Short, LevelInfo> levelTable = new HashMap<>();
     private static final Map<Short, MissionInfo> missionTable = new HashMap<>();
+    private static final Map<Short, InitialItem> initialItemsTable = new HashMap<>();
 
     private static final List<Short> missionsList = new ArrayList<>();
 
@@ -51,6 +52,7 @@ public class TableManager {
         tables.put(Constants.PROPERTY_TABLE_GOLDEN_TIME, Constants.TABLE_GOLDEN_TIME_DEFAULT);
         tables.put(Constants.PROPERTY_TABLE_CLUB_TIME, Constants.TABLE_CLUB_TIME_DEFAULT);
         tables.put(Constants.PROPERTY_TABLE_TIPS, Constants.TABLE_TIPS_DEFAULT);
+        tables.put(Constants.PROPERTY_TABLE_INITIAL_ITEMS, Constants.TABLE_INITIAL_ITEMS_DEFAULT);
 
         updateOverriddenTables();
 
@@ -63,6 +65,7 @@ public class TableManager {
         initializeOptionTable();
         initializeLevelTable();
         initializeMissionTable();
+        initializeInitialItemsTable();
 
         // After table initialization
         missionsList.addAll(missionTable.keySet().stream().collect(Collectors.toList()));
@@ -106,6 +109,12 @@ public class TableManager {
 
     public static Optional<MissionInfo> getMissionInfo(Predicate<MissionInfo> filter) {
         return missionTable.values().stream().filter(filter).findFirst();
+    }
+
+    public static List<InitialItem> getInitialItems(int position) {
+        return initialItemsTable.values().stream()
+                .filter(item -> item.getPosition() == position)
+                .collect(Collectors.toList());
     }
 
     private static void initializeSkillTable() {
@@ -233,6 +242,21 @@ public class TableManager {
                     MissionInfo element = new MissionInfo(row);
                     missionTable.put(element.getId(), element);
                 }
+            } catch (ParseRowException e) {
+                printParseWarning(e, reader.getTablePath(), row, reader.getIndex());
+            }
+        }
+    }
+
+    private static void initializeInitialItemsTable() {
+        TableReader reader = new TableReader(getTablePath(Constants.PROPERTY_TABLE_INITIAL_ITEMS));
+
+        Optional<Row> maybeRow;
+        while ((maybeRow = reader.nextRow()).isPresent()) {
+            Row row = maybeRow.get();
+            try {
+                InitialItem element = new InitialItem(row);
+                initialItemsTable.put(element.getId(), element);
             } catch (ParseRowException e) {
                 printParseWarning(e, reader.getTablePath(), row, reader.getIndex());
             }

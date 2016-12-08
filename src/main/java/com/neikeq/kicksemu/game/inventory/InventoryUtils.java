@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class InventoryUtils {
+public class InventoryUtils {
 
     public static int getItemPrice(ItemInfo itemInfo,
                                    Expiration expiration, Payment payment,
