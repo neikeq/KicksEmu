@@ -19,6 +19,7 @@ import com.neikeq.kicksemu.storage.ConnectionRef;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class CharacterCreator {
                     result = CreationResult.SYSTEM_PROBLEM;
                 }
 
-                Map<Integer, Item> items = session.getCache().getItems();
+                Map<Integer, Item> items = new HashMap<>();
                 List<InitialItem> initialItems = TableManager.getInitialItems(character.getPosition());
 
                 initialItems.forEach(initialItem -> {
@@ -56,8 +57,8 @@ public class CharacterCreator {
 
                     CharacterUtils.updateItemsInUse(item, session);
 
-                    PlayerInfo.addInventoryItem(item, session.getPlayerId());
-                    session.getCache().addItem(inventoryId, item);
+                    PlayerInfo.addInventoryItem(item, resultId);
+                    items.put(inventoryId, item);
                 });
             }
         } else {
